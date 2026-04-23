@@ -21,14 +21,21 @@ const WhyZDefensePage = () => {
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
         <div className="relative max-w-7xl mx-auto">
-          <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold max-w-3xl">
+          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+            WHY ZDEFENSE
+          </p>
+          <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold max-w-3xl mt-2">
             Built on Years of Doing This Work by Hand
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mt-4">
-            ZDefense is not a generic AI company. Expertise-first, AI-amplified
-            — built by a team that spent nearly a decade converting EOBs
-            (Explanation of Benefits) and indexing denials before writing a
-            single line of code.
+            ZDefense is expertise-first and AI-amplified — not a generic AI
+            company. Built by a team that spent nearly a decade converting
+            EOBs (Explanation of Benefits) and indexing denials before writing
+            a single line of platform code.
+          </p>
+          <p className="text-slate-400 text-base max-w-2xl mt-3 italic">
+            The result: a payer-intelligence moat competitors can't replicate
+            and a no-BAA entry path no enterprise vendor offers.
           </p>
         </div>
       </section>
