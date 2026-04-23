@@ -12,6 +12,11 @@ import ContactPage from "./pages/ContactPage.tsx";
 import WorkflowsPage from "./pages/WorkflowsPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
+import BlogIndexPage from "./pages/BlogIndexPage.tsx";
+import BlogPostPage from "./pages/BlogPostPage.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
+import AdminBlogList from "./pages/admin/AdminBlogList.tsx";
+import AdminBlogEditor from "./pages/admin/AdminBlogEditor.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +35,12 @@ const App = () => (
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/workflows" element={<WorkflowsPage />} />
+          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/blog" element={<AdminBlogList />} />
+          <Route path="/admin/blog/new" element={<AdminBlogEditor />} />
+          <Route path="/admin/blog/:id" element={<AdminBlogEditor />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
