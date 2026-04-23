@@ -130,10 +130,13 @@ const ContactPage = () => {
             Payer Mix.
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl mt-4">
-            Every demo is role-specific and payer-contextualized. Tell us your
-            role and your biggest challenge — we handle the rest. CFOs see
-            Forecast. Billing Specialists see Triage. Supervisors see Sentinel
-            and the Payer Weaponization Index.
+            We'll tailor the demo to your role, workflow, payer mix, and
+            biggest revenue challenge. CFOs see Forecast. Billing Specialists
+            see Triage. Supervisors see Sentinel and the Payer Weaponization
+            Index.
+          </p>
+          <p className="text-slate-400 text-sm max-w-2xl mt-3">
+            Your request will be routed to the workflow most relevant to your role.
           </p>
         </div>
       </section>
@@ -185,7 +188,7 @@ const ContactPage = () => {
               className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=start_trial bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-auto pt-3 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
               style={{ marginTop: "auto" }}
             >
-              Start My 30-Day Evaluation
+              Start Your 30-Day Evaluation — No BAA Required
             </button>
           </div>
         </div>

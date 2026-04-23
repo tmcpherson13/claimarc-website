@@ -79,12 +79,12 @@ const PricingPage = () => {
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold">
-            One Platform. Three Ways to Deploy It.
+            Same platform. Three delivery models.
           </h2>
           <p className="text-slate-600 text-lg mt-3 max-w-2xl">
-            AI³ is a single delivery model with three options — not three
-            different products. Every pricing tier is available through any
-            deployment choice.
+            AI³ = three ways to deploy the intelligence — not three different
+            products. Every pricing tier is available through any deployment
+            choice.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
             <div className="rounded-xl p-8 border-2 border-[var(--lgray)]">
@@ -192,7 +192,7 @@ const PricingPage = () => {
         subhead="Final pricing depends on organization size, claim volume, and module selection. Request a demo and we'll model the recovery economics for your specific situation."
         primaryText="Request Pricing & Demo"
         primaryHref="/contact?intent=pricing"
-        secondaryText="Start 30-Day Evaluation — No BAA Required"
+        secondaryText="Start Your 30-Day Evaluation — No BAA Required"
         secondaryHref="/contact?offer=trial"
       />
     </Layout>
