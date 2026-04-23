@@ -7,6 +7,7 @@ import HeroAccent from "@/components/HeroAccent";
 
 interface Tier {
   name: string;
+  price: string;
   recovery: string;
   modules: string[];
   bestFor: string;
@@ -17,11 +18,11 @@ interface Tier {
 }
 
 const tiers: Tier[] = [
-  { name: "INSIGHT", recovery: "Platform access", modules: ["Sentinel", "Ledger", "Forecast"], bestFor: "Starting with financial intelligence and visibility", ctaText: "Request Pricing", ctaHref: "/contact?tier=insight" },
-  { name: "DEFEND", recovery: "Platform + recovery share", modules: ["All Insight modules +", "Triage", "Shield", "Prevent"], bestFor: "Adding denial prevention and triage", ctaText: "Request Pricing", ctaHref: "/contact?tier=defend" },
-  { name: "RECOVER", recovery: "Platform + recovery share", modules: ["All Defend modules +", "Evidence", "Resolve"], bestFor: "Bulk appeal generation and maximum recovery", ctaText: "Request Pricing", ctaHref: "/contact?tier=recover" },
-  { name: "INTELLIGENCE", recovery: "Platform + recovery + underpayment share", modules: ["All 9 modules"], bestFor: "Full-platform defense with FHIR integration", ctaText: "Request Pricing", ctaHref: "/contact?tier=intelligence" },
-  { name: "ENTERPRISE", recovery: "Platform + recovery + underpayment share", modules: ["All 9 modules", "Custom integrations", "BAA active + dedicated support"], bestFor: "Health systems, IDNs, and clearinghouses", ctaText: "Talk to Sales", ctaHref: "/contact?tier=enterprise", highlighted: true, badge: "Most Complete" },
+  { name: "INSIGHT", price: "$1,500/mo", recovery: "Platform access only", modules: ["Sentinel", "Ledger", "Forecast"], bestFor: "Starting with financial intelligence and visibility", ctaText: "Request Pricing", ctaHref: "/contact?tier=insight" },
+  { name: "DEFEND", price: "$3,500/mo", recovery: "+ 1.5% recovery share", modules: ["All Insight modules +", "Triage", "Shield", "Prevent"], bestFor: "Adding denial prevention and triage", ctaText: "Request Pricing", ctaHref: "/contact?tier=defend" },
+  { name: "RECOVER", price: "$5,000/mo", recovery: "+ 3% recovery share", modules: ["All Defend modules +", "Evidence", "Resolve"], bestFor: "Bulk appeal generation and maximum recovery", ctaText: "Request Pricing", ctaHref: "/contact?tier=recover" },
+  { name: "INTELLIGENCE", price: "$8,500/mo", recovery: "+ 5% recovery + 3% underpayment", modules: ["All 9 modules"], bestFor: "Full-platform defense with FHIR integration", ctaText: "Request Pricing", ctaHref: "/contact?tier=intelligence" },
+  { name: "ENTERPRISE", price: "$15,000/mo", recovery: "+ 7% recovery + 3% underpayment", modules: ["All 9 modules", "Custom integrations", "BAA active + dedicated support"], bestFor: "Health systems, IDNs, and clearinghouses", ctaText: "Talk to Sales", ctaHref: "/contact?tier=enterprise", highlighted: true, badge: "Most Complete" },
 ];
 
 const PricingPage = () => {
@@ -78,11 +79,12 @@ const PricingPage = () => {
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold">
-            Choose How You Deploy the Intelligence
+            One Platform. Three Ways to Deploy It.
           </h2>
-          <p className="text-slate-600 text-lg mt-3">
-            Every pricing tier is available through every deployment model. Your
-            tier and delivery model are independent choices.
+          <p className="text-slate-600 text-lg mt-3 max-w-2xl">
+            AI³ is a single delivery model with three options — not three
+            different products. Every pricing tier is available through any
+            deployment choice.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
             <div className="rounded-xl p-8 border-2 border-[var(--lgray)]">
@@ -155,6 +157,7 @@ const PricingPage = () => {
                   </span>
                 )}
                 <h3 className="text-[var(--navy)] font-bold text-xl">{t.name}</h3>
+                <p className="text-[var(--navy)] text-2xl font-bold mt-2">{t.price}</p>
                 <p className="text-[var(--emerald)] text-sm font-medium mt-1">{t.recovery}</p>
                 <div className="border-t border-[var(--lgray)] my-4" />
                 <p className="text-slate-500 text-xs uppercase tracking-widest">MODULES</p>
