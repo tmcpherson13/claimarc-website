@@ -119,7 +119,7 @@ const ContactPage = () => {
           name="description"
           content="Book a role-specific ZDefense demo or start your 30-day no-obligation evaluation with live payer data — no BAA required."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/contact" />
+        <link rel="canonical" href="https://zdefense.ai/contact" />
       </Helmet>
 
       {/* SECTION 1: HERO */}
@@ -156,7 +156,7 @@ const ContactPage = () => {
             <button
               type="button"
               onClick={() => scrollToForm("demo")}
-              className="bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=book_demo bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
             >
               Book a Demo
             </button>
@@ -183,7 +183,7 @@ const ContactPage = () => {
             <button
               type="button"
               onClick={() => scrollToForm("trial")}
-              className="bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=start_trial bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
             >
               Start My 30-Day Evaluation
             </button>

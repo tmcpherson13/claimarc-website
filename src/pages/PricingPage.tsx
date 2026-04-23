@@ -33,7 +33,7 @@ const PricingPage = () => {
           name="description"
           content="Five ZDefense tiers with performance-based pricing. We only earn when you win. Three deployment models: Actionable, Augmented, and Automated AI."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/pricing" />
+        <link rel="canonical" href="https://zdefense.ai/pricing" />
       </Helmet>
 
       {/* SECTION 1: HERO */}
@@ -166,7 +166,7 @@ const PricingPage = () => {
                 <p className="text-slate-600 text-xs mt-1">{t.bestFor}</p>
                 <Link
                   to={t.ctaHref}
-                  className={`w-full text-center py-2 rounded text-sm mt-4 transition-colors ${
+                  className={`plausible-event-name=Pricing_CTA_Click plausible-event-tier=${t.name.toLowerCase()} w-full text-center py-2 rounded text-sm mt-4 transition-colors ${
                     t.highlighted ? "bg-[var(--emerald)] text-white hover:bg-emerald-600" : "bg-[var(--navy)] text-white hover:bg-[var(--navy-dk)]"
                   }`}
                 >

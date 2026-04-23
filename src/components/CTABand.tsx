@@ -27,13 +27,13 @@ const CTABand = ({
         <div className="mt-8 flex gap-4 justify-center flex-wrap">
           <Link
             to={primaryHref}
-            className="bg-[var(--navy)] text-white px-6 py-3 rounded font-semibold hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+            className="plausible-event-name=CTA_Click plausible-event-location=cta_band plausible-event-variant=primary bg-[var(--navy)] text-white px-6 py-3 rounded font-semibold hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
           >
             {primaryText}
           </Link>
           <Link
             to={secondaryHref}
-            className="border-2 border-[var(--navy)] text-[var(--navy)] px-6 py-3 rounded font-semibold hover:bg-[var(--navy)] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+            className="plausible-event-name=CTA_Click plausible-event-location=cta_band plausible-event-variant=secondary border-2 border-[var(--navy)] text-[var(--navy)] px-6 py-3 rounded font-semibold hover:bg-[var(--navy)] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
           >
             {secondaryText}
           </Link>

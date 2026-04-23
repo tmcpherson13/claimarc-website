@@ -10,7 +10,7 @@ const WorkflowsPage = () => (
         name="description"
         content="Workflow-specific guides for every major revenue cycle challenge — payer contract benchmarking, denial prevention, overpayment compliance. Coming soon."
       />
-      <link rel="canonical" href="https://z-defense-website.lovable.app/workflows" />
+      <link rel="canonical" href="https://zdefense.ai/workflows" />
     </Helmet>
 
     <section className="bg-[var(--navy)] min-h-[60vh] flex flex-col items-center justify-center px-6 md:px-12 lg:px-16 text-center">

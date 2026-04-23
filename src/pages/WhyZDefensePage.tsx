@@ -14,7 +14,7 @@ const WhyZDefensePage = () => {
           name="description"
           content="Six reasons ZDefense is different: no-BAA entry, Payer Weaponization Index, cross-portfolio 835 intelligence, and nearly a decade of EOB heritage."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/why-zdefense" />
+        <link rel="canonical" href="https://zdefense.ai/why-zdefense" />
       </Helmet>
 
       {/* SECTION 1: HERO */}
