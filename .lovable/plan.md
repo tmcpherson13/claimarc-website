@@ -1,74 +1,49 @@
 
 
-# Sitemap, Analytics & Contact Form Backend
+# Wire the Contact Form to Email `krista.mcpherson@zaparetech.com`
 
-Three independent additions, batched into one build cycle.
+The contact form currently fakes its submission (`setSubmitted(true)` only). I'll wire it to actually deliver each submission to your inbox.
 
----
+## What needs to happen
 
-## 1. Sitemap & Robots
+The workspace doesn't yet have a verified sender domain — that's the only blocker. Once a sender domain exists, I can scaffold the email infrastructure and send to any inbox (including `krista.mcpherson@zaparetech.com`, which is on a different domain — that's totally fine; the recipient address is independent of the sender domain).
 
-- Create `public/sitemap.xml` listing all 7 routes (`/`, `/platform`, `/why-zdefense`, `/solutions`, `/pricing`, `/contact`, `/workflows`) with `https://zdefense.ai` as the base URL, `<lastmod>` set to today, and sensible `<priority>` values.
-- Update `public/robots.txt` to append `Sitemap: https://zdefense.ai/sitemap.xml` so crawlers discover it automatically.
-- Update all `<link rel="canonical">` Helmet tags across the 7 pages from the `lovable.app` preview URL to `https://zdefense.ai`.
+You have two options for the sender domain:
 
-## 2. Plausible Analytics + CTA Event Tracking
+1. **Use `zaparetech.com`** (recommended) — emails arrive from something like `notify@zaparetech.com`, matching the parent company. One-time DNS dialog at your registrar.
+2. **Use `zdefense.ai`** — emails arrive from `notify@zdefense.ai`, matching the product. One-time DNS dialog at your registrar.
 
-- Add the Plausible script tag to `index.html`:
-  `<script defer data-domain="zdefense.ai" src="https://plausible.io/js/script.tagged-events.js"></script>`
-  (the `tagged-events` variant lets us track CTA clicks via class names — no cookie banner needed).
-- Create `src/lib/analytics.ts` with a typed `trackEvent(name, props?)` helper that calls `window.plausible?.(name, { props })` and no-ops if the script hasn't loaded.
-- Add `className="plausible-event-name=..."` tags (or `onClick={() => trackEvent(...)}` for programmatic CTAs) to every primary CTA across the site:
-  - Navbar: "Book a Demo", "Start 30-Day Evaluation"
-  - Homepage hero + CTABand
-  - Pricing tier "Talk to Sales" buttons (event includes tier name as a prop)
-  - ContactPage "Book a Demo" / "Start Evaluation" cards
-  - Form submission → `Form_Submit` event with `offerType` prop
-- Plausible auto-tracks page views on route changes (SPA mode is built into the script).
+Either way, the destination inbox stays `krista.mcpherson@zaparetech.com`.
 
-> **Note on your domain:** You answered `zdefense.ai`. Plausible requires the script's `data-domain` to match the domain you register in your Plausible dashboard. If the live site is currently on `z-defense-website.lovable.app`, no events will register until DNS points `zdefense.ai` at the deployed app. I'll add a brief comment in `index.html` noting this.
+## Implementation steps (after you pick a sender domain and complete the DNS dialog)
 
-## 3. Contact Form Backend (Email to Inbox)
+1. **Provision email infrastructure** — sets up the send queue, suppression list, unsubscribe handling, and the `send-transactional-email` Edge Function. No code from you.
+2. **Create one email template** — `contact-form-submission.tsx` — a clean, branded HTML email (ZDefense navy + emerald) showing all submitted fields grouped:
+   - Contact info (name, email, organization, role)
+   - Organization profile (org type, claim volume, primary challenge)
+   - Offer requested (demo / trial / interested-in-trial flag)
+   - Payer mix (selected payers + any "Other" specified)
+   - Additional message
+   - Reply-to set to the submitter's email so you can reply directly from your inbox.
+3. **Update `ContactPage.tsx` `handleSubmit`**:
+   - Add `submitting` state, disable button + show "Sending…" while in flight.
+   - Call `supabase.functions.invoke('send-transactional-email', { body: { templateName: 'contact-form-submission', recipientEmail: 'krista.mcpherson@zaparetech.com', idempotencyKey: <uuid>, templateData: { ...formData } } })`.
+   - On success → existing success screen + fire `trackEvent('Form_Submit', { offer: formData.offerType })`.
+   - On failure → toast error via existing sonner toaster, keep form data so user can retry.
+4. **Test end-to-end** — submit a test from the live preview, confirm the email lands at `krista.mcpherson@zaparetech.com`, verify formatting.
 
-- **Enable Lovable Cloud** on the project (required for Edge Functions + email infrastructure).
-- **Set up Lovable email domain** for `zdefense.ai` (one-time DNS setup dialog) so submissions can send from a branded sender like `notify@zdefense.ai`.
-- **Ask for the destination inbox** (e.g. `sales@zdefense.ai`) — I'll request this in chat once Cloud is enabled, then store it as a secret (`CONTACT_FORM_RECIPIENT`) so it's never hardcoded.
-- Create Edge Function `send-contact-submission`:
-  - Accepts the form payload, validates with Zod (firstName, lastName, email regex, organization, role, orgType, claimVolume, plus optional fields).
-  - Renders a clean HTML email with all submitted fields grouped (Contact Info, Organization, Payer Mix, Message).
-  - Sends via Lovable's transactional email queue (`enqueue_email`) to `CONTACT_FORM_RECIPIENT` with reply-to set to the submitter's email.
-  - Returns `{ success: true }` or a 4xx/5xx with a clear error.
-- Update `src/pages/ContactPage.tsx` `handleSubmit`:
-  - Set a `submitting` state, call the function via `supabase.functions.invoke('send-contact-submission', { body: formData })`.
-  - On success → show existing success screen + fire `trackEvent('Form_Submit', { offer: formData.offerType })`.
-  - On failure → toast error via existing `sonner` toaster, keep form data intact so user can retry.
+## Technical notes
 
----
+- **Recipient inbox is hardcoded** in the client call (not a secret). It's a non-sensitive routing constant; no value in storing it elsewhere. If you'd rather have it as a secret you can rotate without a code change, say the word.
+- **No new database tables, no auth changes** — purely additive.
+- **No template props are sensitive** — all values are user-submitted form data, auto-escaped by React Email.
 
-## Technical Details
+## What I need from you to proceed
 
-**New files**
-- `public/sitemap.xml`
-- `src/lib/analytics.ts`
-- `supabase/functions/send-contact-submission/index.ts`
+Just two things in your next message:
 
-**Modified files**
-- `public/robots.txt`, `index.html`
-- All 7 page files (canonical URL update + a few CTA event tags)
-- `src/components/Navbar.tsx`, `src/components/CTABand.tsx`, `src/components/TrialCallout.tsx` (CTA event tags)
-- `src/pages/PricingPage.tsx` (per-tier CTA events)
-- `src/pages/ContactPage.tsx` (form submission wired to Edge Function)
+1. **Which sender domain?** `zaparetech.com` or `zdefense.ai`
+2. After I show the DNS setup button, complete the dialog at your registrar.
 
-**Infrastructure**
-- Lovable Cloud enabled
-- Lovable email domain configured for `zdefense.ai` (DNS dialog)
-- Secret: `CONTACT_FORM_RECIPIENT`
-
-**No breaking changes.** The existing form UI/validation stays exactly as-is; only the submit handler changes from a fake `setSubmitted(true)` to a real backend call.
-
-## Execution order
-
-1. Sitemap + robots + canonical URL fixes (zero-dependency, fastest).
-2. Plausible script + analytics helper + CTA tags (zero-dependency).
-3. Enable Cloud → set up email domain → ask for recipient inbox → build Edge Function → wire form. *(This step pauses for the email domain DNS dialog and the recipient-inbox question; the first two steps complete uninterrupted.)*
+Then I'll build everything in one pass and run a live test submission.
 
