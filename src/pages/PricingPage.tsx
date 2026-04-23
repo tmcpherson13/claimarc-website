@@ -29,7 +29,7 @@ const PricingPage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Pricing — ZDefense AI³ | Performance-Based Recovery Model"
+        title="ZDefense Pricing — Performance-Based Revenue Cycle Intelligence"
         description="Five ZDefense tiers with platform fees plus performance-based recovery share. Available across all three AI³ delivery models."
         path="/pricing"
       />

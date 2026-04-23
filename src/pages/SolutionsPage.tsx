@@ -35,7 +35,7 @@ const SolutionsPage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Who It's For — ZDefense AI³ for CFOs, RC Directors, and Specialists"
+        title="Who ZDefense Is For — CFOs, Rev Cycle Leaders, Billing Teams"
         description="ZDefense routes each role to the modules that matter most — CFOs see Forecast, Specialists see Triage, Supervisors see the Payer Weaponization Index."
         path="/solutions"
       />
