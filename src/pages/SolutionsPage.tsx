@@ -51,9 +51,8 @@ const SolutionsPage = () => {
             Built for the Teams Who Live Inside the Revenue Cycle
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mt-4">
-            ZDefense routes each user to the intelligence that matters most to
-            their workflow. Select your role to see what the platform looks
-            like for you.
+            Six roles. Six entry points. Pick yours to see the modules, signals,
+            and outcomes built for the work you actually do.
           </p>
         </div>
       </section>

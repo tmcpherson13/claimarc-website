@@ -188,8 +188,8 @@ const PricingPage = () => {
         </div>
       </section>
       <CTABand
-        headline="Ready to See What Your Revenue Is Worth?"
-        subhead="Pricing is based on your organization size, claim volume, and modules selected. Request a demo and we will build a custom recovery projection for your specific situation."
+        headline="Want a Custom Recovery Projection?"
+        subhead="Final pricing depends on organization size, claim volume, and module selection. Request a demo and we'll model the recovery economics for your specific situation."
         primaryText="Request Pricing & Demo"
         primaryHref="/contact?intent=pricing"
         secondaryText="Start 30-Day Evaluation — No BAA Required"
