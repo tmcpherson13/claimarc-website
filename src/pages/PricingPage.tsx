@@ -166,7 +166,7 @@ const PricingPage = () => {
                 <p className="text-slate-600 text-xs mt-1">{t.bestFor}</p>
                 <Link
                   to={t.ctaHref}
-                  className={`w-full text-center py-2 rounded text-sm mt-4 transition-colors ${
+                  className={`plausible-event-name=Pricing_CTA_Click plausible-event-tier=${t.name.toLowerCase()} w-full text-center py-2 rounded text-sm mt-4 transition-colors ${
                     t.highlighted ? "bg-[var(--emerald)] text-white hover:bg-emerald-600" : "bg-[var(--navy)] text-white hover:bg-[var(--navy-dk)]"
                   }`}
                 >
