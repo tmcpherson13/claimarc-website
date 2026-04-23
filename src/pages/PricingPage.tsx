@@ -33,7 +33,7 @@ const PricingPage = () => {
           name="description"
           content="Five ZDefense tiers with performance-based pricing. We only earn when you win. Three deployment models: Actionable, Augmented, and Automated AI."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/pricing" />
+        <link rel="canonical" href="https://zdefense.ai/pricing" />
       </Helmet>
 
       {/* SECTION 1: HERO */}

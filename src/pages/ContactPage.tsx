@@ -119,7 +119,7 @@ const ContactPage = () => {
           name="description"
           content="Book a role-specific ZDefense demo or start your 30-day no-obligation evaluation with live payer data — no BAA required."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/contact" />
+        <link rel="canonical" href="https://zdefense.ai/contact" />
       </Helmet>
 
       {/* SECTION 1: HERO */}

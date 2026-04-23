@@ -40,7 +40,7 @@ const SolutionsPage = () => {
           name="description"
           content="ZDefense routes each user to the modules most relevant to their workflow — CFOs see Forecast, Specialists see Triage, Supervisors see Sentinel."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/solutions" />
+        <link rel="canonical" href="https://zdefense.ai/solutions" />
       </Helmet>
 
       {/* SECTION 1: HERO */}

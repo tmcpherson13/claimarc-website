@@ -15,7 +15,7 @@ const Index = () => {
           name="description"
           content="ZDefense is a revenue cycle intelligence platform with payer behavioral insights, denial prevention, automated recovery, and 90-day revenue forecasting."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/" />
+        <link rel="canonical" href="https://zdefense.ai/" />
       </Helmet>
 
       {/* SECTION 1: HERO */}

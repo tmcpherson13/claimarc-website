@@ -51,7 +51,7 @@ const PlatformPage = () => {
           name="description"
           content="ZDefense's modular revenue cycle intelligence platform. Three clusters, nine modules. Start with no-BAA modules and add as you grow."
         />
-        <link rel="canonical" href="https://z-defense-website.lovable.app/platform" />
+        <link rel="canonical" href="https://zdefense.ai/platform" />
       </Helmet>
 
       {/* SECTION 1: HERO */}
