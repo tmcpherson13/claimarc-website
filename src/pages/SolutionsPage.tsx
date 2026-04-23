@@ -35,7 +35,7 @@ const SolutionsPage = () => {
   return (
     <Layout>
       <Helmet>
-        <title>Solutions by Role — ZDefense AI³</title>
+        <title>Who It's For — ZDefense AI³</title>
         <meta
           name="description"
           content="ZDefense routes each user to the modules most relevant to their workflow — CFOs see Forecast, Specialists see Triage, Supervisors see Sentinel."

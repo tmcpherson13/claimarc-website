@@ -34,9 +34,9 @@ const Footer = () => {
             </p>
             <ul className="space-y-2">
               {[
-                { label: "Why ZDefense", to: "/why-zdefense" },
-                { label: "Solutions", to: "/solutions" },
                 { label: "Platform", to: "/platform" },
+                { label: "Why ZDefense", to: "/why-zdefense" },
+                { label: "Who It's For", to: "/solutions" },
                 { label: "Pricing", to: "/pricing" },
               ].map((l) => (
                 <li key={l.to}>
