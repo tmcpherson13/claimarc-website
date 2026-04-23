@@ -75,7 +75,7 @@ const PlatformPage = () => {
               Book a Demo
             </Link>
             <Link to="/contact?offer=trial" className="border-2 border-[var(--emerald)] text-[var(--emerald)] px-6 py-3 rounded font-semibold hover:bg-[var(--emerald)]/10 transition-colors">
-              Start 30-Day Evaluation — No BAA Required
+              Start Your 30-Day Evaluation — No BAA Required
             </Link>
           </div>
         </div>
@@ -88,14 +88,12 @@ const PlatformPage = () => {
             Start in 30 minutes. Live data. No BAA required.
           </h2>
           <p className="text-[var(--navy)]/80 text-lg max-w-2xl mx-auto mt-3">
-            Three ZDefense modules — ContractIntel, Shield, and Prevent — run
-            entirely on public payer data and activate with live intelligence
-            benchmarked to your actual market. No Business Associate Agreement.
-            No IT involvement. No legal agreements. See real payer intelligence
-            within 72 hours.
+            ContractIntel, Shield, and Prevent run on public payer data only.
+            No BAA. No IT involvement. Available for qualifying provider
+            organizations. See real payer intelligence within 72 hours.
           </p>
           <Link to="/contact?offer=trial" className="bg-[var(--navy)] text-white px-8 py-3 rounded font-semibold mt-6 inline-block hover:bg-[var(--navy-dk)] transition-colors">
-            Start Your 30-Day Evaluation
+            Start Your 30-Day Evaluation — No BAA Required
           </Link>
           <p className="text-[var(--navy)]/60 text-xs mt-2">
             Available for qualifying provider organizations.
@@ -114,6 +112,9 @@ const PlatformPage = () => {
             Three modules that give your financial leadership the forward
             intelligence to act before revenue is at risk.
           </p>
+          <p className="text-[var(--emerald)] text-sm font-semibold mt-4">
+            Proof point: $12.6M forecasted over 90 days (demo baseline).
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {predict.map((m) => <ModuleCard key={m.name} m={m} />)}
           </div>
@@ -130,6 +131,9 @@ const PlatformPage = () => {
           <p className="text-slate-600 text-lg mt-3 max-w-2xl">
             Three modules that work pre-submission and pre-audit — stopping
             revenue loss and compliance exposure before it starts.
+          </p>
+          <p className="text-[var(--emerald)] text-sm font-semibold mt-4">
+            Proof point: 89.4% clean claim rate (demo baseline).
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {protect.map((m) => <ModuleCard key={m.name} m={m} />)}
@@ -148,6 +152,9 @@ const PlatformPage = () => {
             Three modules that transform your denial queue into a structured
             recovery operation — triaged, documented, and appealed at bulk scale.
           </p>
+          <p className="text-[var(--emerald)] text-sm font-semibold mt-4">
+            Proof point: $1.146M active appeals pipeline (current live build).
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {recover.map((m) => <ModuleCard key={m.name} m={m} />)}
           </div>
@@ -159,12 +166,12 @@ const PlatformPage = () => {
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
           <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
-            Three ways to deploy ZDefense intelligence.
+            Same platform. Three delivery models.
           </h2>
           <p className="text-slate-400 text-lg mt-3 max-w-2xl">
-            AI³ refers to how the platform is delivered into your operation —
-            not what it does. Choose the model that fits your team's capacity
-            and oversight preference.
+            AI³ = three ways to deploy the intelligence — not three different
+            products. Choose the model that fits your team's capacity and
+            oversight preference. Same nine modules, every time.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
@@ -193,7 +200,7 @@ const PlatformPage = () => {
         subhead="Book a personalized demo or start your 30-day no-obligation evaluation with live payer data today."
         primaryText="Book a Demo"
         primaryHref="/contact"
-        secondaryText="Start 30-Day Evaluation — No BAA Required"
+        secondaryText="Start Your 30-Day Evaluation — No BAA Required"
         secondaryHref="/contact?offer=trial"
       />
     </Layout>

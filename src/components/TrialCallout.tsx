@@ -10,12 +10,11 @@ const TrialCallout = () => {
         Start with live payer data. No BAA required.
       </h3>
       <p className="text-slate-600 text-sm mt-3 max-w-2xl">
-        ContractIntel, Shield, and Prevent activate with live payer data
-        benchmarked to your actual market and payer mix — no Business Associate
-        Agreement required, no IT involvement, no legal agreements. You are not
-        looking at a demo. You are looking at your revenue cycle, from the
-        outside, in real time. Most organizations identify their first contract
-        gap within 72 hours of activation.
+        ContractIntel, Shield, and Prevent run on public payer data only. No
+        BAA. No IT involvement. Available for qualifying provider organizations.
+        You're not looking at a demo — you're looking at your revenue cycle,
+        from the outside, in real time. Most organizations identify their first
+        contract gap within 72 hours of activation.
       </p>
       <p className="text-slate-400 text-xs mt-3">
         Full platform access — including denial triage, appeal automation,
