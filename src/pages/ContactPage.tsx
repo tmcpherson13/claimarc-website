@@ -141,49 +141,49 @@ const ContactPage = () => {
       {/* SECTION 2: TWO-OFFER CARDS */}
       <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-[var(--lgray)] border-2 border-[var(--navy)] rounded-xl p-8">
+          <div className="bg-[var(--lgray)] border-2 border-[var(--navy)] rounded-xl p-8 flex flex-col">
             <h2 className="text-[var(--navy)] font-bold text-2xl">
               Book a Personalized Demo
             </h2>
             <p className="text-slate-600 mt-3">
-              A ZTech team member walks you through the modules most relevant
-              to your role, payer mix, and biggest revenue challenge. Includes
-              a custom recovery projection based on your organization profile.
+              A guided walkthrough of the modules that matter to your role,
+              your payers, and your biggest revenue challenge.
             </p>
-            <p className="text-slate-400 text-sm mt-2">
-              30–45 minutes · No commitment required
-            </p>
+            <ul className="mt-4 space-y-2 text-slate-700 text-sm">
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> 30–45 minutes</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> Role-specific</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> Payer-contextualized</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> Includes a custom recovery projection</li>
+            </ul>
             <button
               type="button"
               onClick={() => scrollToForm("demo")}
-              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=book_demo bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=book_demo bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-auto pt-3 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              style={{ marginTop: "auto" }}
             >
               Book a Demo
             </button>
           </div>
 
-          <div className="bg-[var(--emerald)] rounded-xl p-8">
+          <div className="bg-[var(--emerald)] rounded-xl p-8 flex flex-col">
             <h2 className="text-[var(--navy)] font-bold text-2xl">
               30-Day No-Obligation Evaluation
             </h2>
             <p className="text-[var(--navy)]/80 mt-3">
-              ContractIntel, Shield, and Prevent activate with live payer data
-              benchmarked to your actual payer mix — no BAA required, no IT
-              involvement, no legal agreements. You are not looking at a demo.
-              You are looking at your revenue cycle, from the outside, in real
-              time.
+              See your revenue cycle from the outside in — using live payer
+              data benchmarked to your actual market.
             </p>
-            <p className="text-[var(--navy)]/60 text-sm mt-2">
-              Available for qualifying provider organizations.
-            </p>
-            <p className="text-[var(--navy)]/50 text-xs mt-1">
-              Full platform requires BAA + 835 connection. Most organizations
-              complete integration within two weeks.
-            </p>
+            <ul className="mt-4 space-y-2 text-[var(--navy)] text-sm">
+              <li className="flex gap-2"><span className="font-bold" aria-hidden="true">✓</span> ContractIntel, Shield, and Prevent activate immediately</li>
+              <li className="flex gap-2"><span className="font-bold" aria-hidden="true">✓</span> No BAA required</li>
+              <li className="flex gap-2"><span className="font-bold" aria-hidden="true">✓</span> No IT involvement</li>
+              <li className="flex gap-2"><span className="font-bold" aria-hidden="true">✓</span> Available for qualifying provider organizations</li>
+            </ul>
             <button
               type="button"
               onClick={() => scrollToForm("trial")}
-              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=start_trial bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-6 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=start_trial bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-auto pt-3 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              style={{ marginTop: "auto" }}
             >
               Start My 30-Day Evaluation
             </button>
@@ -492,13 +492,13 @@ const ContactPage = () => {
             </h3>
             <ul className="space-y-3">
               {[
-                "Role-specific demo — we route to your workflow",
-                "Custom recovery projection included",
+                "Response within one business day",
                 "No commitment required",
                 "No IT setup for the 30-day evaluation",
-                "Live payer data — not a sandbox or demo environment",
-                "Response within one business day",
-                "SOC 2 Type II · ISO 27001 · HIPAA Compliant",
+                "Live payer data — not a sandbox",
+                "SOC 2 Type II",
+                "ISO 27001",
+                "HIPAA Compliant",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-3">
                   <span className="text-[var(--emerald)] font-bold text-lg mt-0.5" aria-hidden="true">✓</span>
