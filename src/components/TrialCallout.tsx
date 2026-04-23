@@ -25,7 +25,7 @@ const TrialCallout = () => {
       </p>
       <Link
         to="/contact?offer=trial"
-        className="bg-[var(--emerald)] text-white px-6 py-3 rounded mt-4 font-semibold inline-block hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2"
+        className="plausible-event-name=CTA_Click plausible-event-location=trial_callout plausible-event-cta=start_trial bg-[var(--emerald)] text-white px-6 py-3 rounded mt-4 font-semibold inline-block hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2"
       >
         Start Your 30-Day Evaluation — No BAA Required
       </Link>

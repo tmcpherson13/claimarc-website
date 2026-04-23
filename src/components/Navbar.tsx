@@ -49,13 +49,13 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/contact"
-            className="bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
           >
             Book a Demo
           </Link>
           <Link
             to="/contact?offer=trial"
-            className="border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2 rounded text-sm hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2 rounded text-sm hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
           >
             Start 30-Day Evaluation
           </Link>
@@ -105,14 +105,14 @@ const Navbar = () => {
             <Link
               to="/contact"
               onClick={closeMenu}
-              className="bg-[var(--emerald)] text-white px-4 py-2.5 rounded text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
+              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2.5 rounded text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
             >
               Book a Demo
             </Link>
             <Link
               to="/contact?offer=trial"
               onClick={closeMenu}
-              className="border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2.5 rounded text-sm text-center hover:bg-[var(--emerald)]/10 transition-colors"
+              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2.5 rounded text-sm text-center hover:bg-[var(--emerald)]/10 transition-colors"
             >
               Start 30-Day Evaluation
             </Link>
