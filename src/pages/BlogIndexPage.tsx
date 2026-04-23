@@ -77,19 +77,30 @@ const BlogIndexPage = () => {
 
           {/* Sidebar CTA */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-24 bg-[var(--navy)] text-white rounded-lg p-6">
-              <p className="text-sm uppercase tracking-wider text-[var(--emerald)] font-semibold">
-                Try ZDefense
-              </p>
-              <p className="mt-3 text-base">
-                Want to see this intelligence in your payer mix?
-              </p>
-              <Link
-                to="/contact?offer=trial"
-                className="mt-4 inline-block bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors"
-              >
-                Start your 30-day evaluation — no BAA required
-              </Link>
+            <div className="sticky top-24 space-y-4">
+              <div className="bg-[var(--navy)] text-white rounded-lg p-6">
+                <p className="text-sm uppercase tracking-wider text-[var(--emerald)] font-semibold">
+                  Try ZDefense
+                </p>
+                <p className="mt-3 text-base">
+                  Want to see this intelligence in your payer mix?
+                </p>
+                <Link
+                  to="/contact?offer=trial"
+                  className="mt-4 inline-block bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors"
+                >
+                  Start your 30-day evaluation — no BAA required
+                </Link>
+              </div>
+              <div className="border border-slate-200 rounded-lg p-4 text-xs text-slate-500 flex items-center justify-between">
+                <span>Editor access</span>
+                <Link
+                  to="/admin/login"
+                  className="font-semibold text-[var(--navy)] hover:text-[var(--emerald)]"
+                >
+                  Admin sign in →
+                </Link>
+              </div>
             </div>
           </aside>
         </div>
