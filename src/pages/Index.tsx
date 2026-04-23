@@ -36,8 +36,7 @@ const Index = () => {
           </p>
           <p className="text-slate-400 text-base md:text-lg max-w-3xl mt-3 italic">
             While payers weaponize data and shifting rules against providers,
-            ZDefense turns that same intelligence into your defense. We also
-            catch compliance landmines before they explode.
+            ZDefense turns that same intelligence into your defense.
           </p>
           <div className="mt-10 flex gap-4 flex-wrap">
             <Link
@@ -54,9 +53,9 @@ const Index = () => {
             </Link>
           </div>
           <p className="text-slate-500 text-xs mt-3">
-            ContractIntel, Shield, and Prevent activate with live payer data.
-            No BAA required. No IT involvement. Available for qualifying
-            provider organizations.
+            ContractIntel, Shield, and Prevent available immediately. No BAA
+            required. No IT involvement. Available for qualifying provider
+            organizations.
           </p>
           <div className="mt-14 pt-6 border-t border-slate-800 flex gap-8 text-slate-400 text-sm flex-wrap">
             <span>✓ SOC 2 Type II</span>
@@ -106,7 +105,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
               { stat: "41%", label: "of providers report denial rates above 10%", source: "(Industry benchmark)" },
-              { stat: "86%", label: "of denials are preventable with earlier detection", source: "(Industry benchmark)" },
+              { stat: "86%", label: "of denials are preventable", source: "(Industry benchmark)" },
               { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows", source: "(Industry benchmark)" },
             ].map((c) => (
               <div key={c.stat} className="bg-[var(--lgray)] rounded-xl p-8">
@@ -181,15 +180,6 @@ const Index = () => {
               </Link>
             </div>
             <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-semibold text-lg">Payer Weaponization Index</h3>
-              <p className="text-slate-600 text-sm mt-2">
-                Proprietary payer behavioral scoring powered by cross-portfolio
-                835 ERA analysis. Detects systematic payer strategy changes
-                7–14 days before formal policy notice across 7 standard payers.
-                UHC at 2.4x, BCBS at 2.1x in live data.
-              </p>
-            </div>
-            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
               <h3 className="text-[var(--navy)] font-semibold text-lg">Eight Years of EOB Heritage</h3>
               <p className="text-slate-600 text-sm mt-2">
                 ZTech has processed Explanation of Benefits documents at scale
@@ -199,15 +189,10 @@ const Index = () => {
                 across every major payer.
               </p>
             </div>
-            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-semibold text-lg">Compliance-First Architecture</h3>
-              <p className="text-slate-600 text-sm mt-2">
-                SOC 2 Type II certified. ISO/IEC 27001:2022 certified.
-                HIPAA-aligned from day one. Built to pass health system security
-                reviews without a six-month procurement cycle.
-              </p>
-            </div>
           </div>
+          <Link to="/why-zdefense" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+            See all differentiators →
+          </Link>
         </div>
       </section>
 
@@ -225,7 +210,7 @@ const Index = () => {
             {[
               { stat: "$12.6M", label: "90-day revenue forecast", note: "Demo baseline" },
               { stat: "89.4%", label: "Clean claim rate post-Shield", note: "Demo baseline" },
-              { stat: "$847K", label: "Active appeals pipeline", note: "Demo baseline" },
+              { stat: "$1.146M", label: "Active appeals pipeline", note: "Demo baseline" },
               { stat: "$2.8M", label: "Annual contract gap identified", note: "Demo baseline" },
             ].map((s) => (
               <div key={s.stat} className="text-center py-8 px-6">
@@ -251,27 +236,23 @@ const Index = () => {
             ZDefense routes each user to the intelligence that matters most to
             their workflow — automatically, from day one.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
             {[
-              { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling", link: "See your view →", href: "/solutions" },
+              { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling" },
               { role: "RC Director", module: "Ledger", desc: "Underpayment detection and compliance oversight" },
-              { role: "RC Manager", module: "Shield", desc: "Clean claim rate optimization — no BAA required" },
               { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability" },
               { role: "Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail" },
-              { role: "Supervisor", module: "Sentinel", desc: "Payer Weaponization Index across 7 payers" },
             ].map((r) => (
               <div key={r.role} className="bg-[var(--lgray)] rounded-xl p-5 hover:bg-emerald-50 transition-colors cursor-pointer">
                 <div className="text-[var(--navy)] font-semibold">{r.role}</div>
                 <div className="text-[var(--emerald)] text-sm mt-0.5">{r.module}</div>
                 <div className="text-slate-600 text-xs mt-1">{r.desc}</div>
-                {r.link && r.href && (
-                  <Link to={r.href} className="text-[var(--emerald)] text-xs mt-2 inline-block hover:underline">
-                    {r.link}
-                  </Link>
-                )}
               </div>
             ))}
           </div>
+          <Link to="/solutions" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+            See all roles →
+          </Link>
         </div>
       </section>
 
