@@ -72,7 +72,7 @@ const Footer = () => {
                   to="/contact?offer=trial"
                   className="text-slate-400 text-sm hover:text-white transition-colors"
                 >
-                  Start 30-Day Evaluation
+                  Start Your 30-Day Evaluation — No BAA Required
                 </Link>
               </li>
             </ul>

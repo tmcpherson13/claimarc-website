@@ -53,8 +53,8 @@ const Index = () => {
             </Link>
           </div>
           <p className="text-slate-500 text-xs mt-3">
-            ContractIntel, Shield, and Prevent available immediately. No BAA
-            required. No IT involvement. Available for qualifying provider
+            ContractIntel, Shield, and Prevent run on public payer data only.
+            No BAA. No IT involvement. Available for qualifying provider
             organizations.
           </p>
           <div className="mt-14 pt-6 border-t border-slate-800 flex gap-8 text-slate-400 text-sm flex-wrap">
@@ -70,7 +70,7 @@ const Index = () => {
       <section className="bg-[var(--navy-dk)] py-10 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-6 flex-wrap">
           <span className="text-white text-base mr-4">
-            <AI3 /> = intelligence delivered three ways:
+            <AI3 /> = three ways to deploy the intelligence. Same platform. Three delivery models:
           </span>
           <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
             Actionable AI¹ — Your team, our platform
@@ -133,16 +133,19 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
             {[
-              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", href: "/platform#predict", link: "Explore PREDICT →" },
-              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", href: "/platform#protect", link: "Explore PROTECT →" },
-              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", href: "/platform#recover", link: "Explore RECOVER →" },
+              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
+              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
+              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
             ].map((c) => (
               <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8 hover:border-emerald-800 transition-colors">
                 <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
                 <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
                 <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
                 <p className="text-slate-400 text-sm mt-3">{c.body}</p>
-                <Link to={c.href} className="text-[var(--emerald)] text-sm mt-4 inline-block hover:underline">
+                <div className="mt-4 pt-4 border-t border-slate-800 text-[var(--emerald)] text-sm font-semibold">
+                  {c.proof}
+                </div>
+                <Link to={c.href} className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
                   {c.link}
                 </Link>
               </div>
@@ -269,7 +272,7 @@ const Index = () => {
         subhead="Book a personalized demo or start your 30-day no-obligation evaluation. Live payer data. No BAA required."
         primaryText="Book a Demo"
         primaryHref="/contact"
-        secondaryText="Start 30-Day Evaluation — No BAA Required"
+        secondaryText="Start Your 30-Day Evaluation — No BAA Required"
         secondaryHref="/contact?offer=trial"
       />
     </Layout>

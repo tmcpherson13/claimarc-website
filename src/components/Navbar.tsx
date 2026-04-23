@@ -55,9 +55,9 @@ const Navbar = () => {
           </Link>
           <Link
             to="/contact?offer=trial"
-            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2 rounded text-sm hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2 rounded text-sm hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] whitespace-nowrap"
           >
-            Start 30-Day Evaluation
+            Start Your 30-Day Evaluation — No BAA Required
           </Link>
           <a
             href="https://zdefense.lovable.app/?demo=true"
@@ -114,7 +114,7 @@ const Navbar = () => {
               onClick={closeMenu}
               className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2.5 rounded text-sm text-center hover:bg-[var(--emerald)]/10 transition-colors"
             >
-              Start 30-Day Evaluation
+              Start Your 30-Day Evaluation — No BAA Required
             </Link>
             <a
               href="https://zdefense.lovable.app/?demo=true"
