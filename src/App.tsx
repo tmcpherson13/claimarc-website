@@ -11,6 +11,7 @@ import PricingPage from "./pages/PricingPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import WorkflowsPage from "./pages/WorkflowsPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/platform" element={<PlatformPage />} />

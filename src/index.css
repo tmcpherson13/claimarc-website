@@ -107,11 +107,19 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   html, body {
     font-family: Arial, sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  section[id] {
+    scroll-margin-top: 80px;
   }
 }
