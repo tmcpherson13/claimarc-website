@@ -25,21 +25,21 @@ const ModuleCard = ({ m }: { m: Module }) => (
 );
 
 const predict: Module[] = [
-  { name: "Sentinel", tagline: "Payer Weaponization Index", body: "Detects payer behavioral shifts 7–14 days before formal policy notice across all 7 standard payers. Tracks Appeal Response Velocity (ARV) and Eligibility Volatility (EV) signals. UHC at 2.4x, BCBS at 2.1x in live data.", audience: "Supervisor · RC Director", required: true },
-  { name: "ContractIntel", tagline: "Rate Benchmarking & Contract Intelligence", body: "Benchmarks contracted rates against Transparency in Coverage (TiC) data across 7 major payers. What-if contract modeler. Renewal calendar with days-to-expiration alerts. $2.8M annual contract gap on CPT 99214 visible in demo. Runs on public data only.", audience: "CFO · RC Director", required: false },
-  { name: "Forecast", tagline: "90-Day Revenue Projection", body: "Synthesizes all 8 other module signals into one 90-day revenue projection. $12.6M at 84% confidence in demo. Six driver cards. What-if sliders. The proof that the whole platform is working simultaneously.", audience: "CFO · Executive", required: true },
+  { name: "Sentinel", tagline: "Payer Weaponization Index", body: "See payer behavioral shifts 7–14 days before formal policy notice — so leadership can react before revenue is at risk.", audience: "Supervisor · RC Director", required: true },
+  { name: "ContractIntel", tagline: "Rate Benchmarking & Contract Intelligence", body: "Benchmark contracted rates against public Transparency in Coverage data. $2.8M annual contract gap surfaced in demo. Public data only.", audience: "CFO · RC Director", required: false },
+  { name: "Forecast", tagline: "90-Day Revenue Projection", body: "One unified 90-day revenue projection driven by every other module. $12.6M projected at 84% confidence in demo.", audience: "CFO · Executive", required: true },
 ];
 
 const protect: Module[] = [
-  { name: "Shield", tagline: "Pre-Submission Claim Interception", body: "89.4% clean claim rate. Regulatory Intelligence Feed surfaces CMS rule changes, MAC (Medicare Administrative Contractor) bulletins, and commercial payer policy shifts 45 days before they affect claims. Runs on public data only — no BAA required.", audience: "RC Manager · Billing Specialist", required: false },
-  { name: "Prevent", tagline: "Prior Authorization Defense", body: "Detects new prior authorization requirements 11 days in advance on average. $284K protected in demo. Specific to your CPT (Current Procedural Terminology) code mix and payer contracts. No patient data required.", audience: "RC Manager · RC Director", required: false },
-  { name: "Ledger", tagline: "Underpayment Detection & Compliance Tracking", body: "Underpayment detection against contracted rates. Medicare 60-day voluntary repayment compliance — immutable audit log, dual-approver authorization on all write-offs. Six-stage overpayment compliance workflow with full documentation trail.", audience: "RC Director · Compliance Officer", required: true },
+  { name: "Shield", tagline: "Pre-Submission Claim Interception", body: "89.4% clean claim rate in demo. Surfaces CMS, MAC, and commercial payer rule changes 45 days before they affect claims. Public data only.", audience: "RC Manager · Billing Specialist", required: false },
+  { name: "Prevent", tagline: "Prior Authorization Defense", body: "Detects new prior authorization requirements 11 days in advance on average. $284K protected in demo. No patient data required.", audience: "RC Manager · RC Director", required: false },
+  { name: "Ledger", tagline: "Underpayment Detection & Compliance Tracking", body: "Underpayment detection plus a Medicare 60-day compliance audit trail with dual-approver authorization on every write-off.", audience: "RC Director · Compliance Officer", required: true },
 ];
 
 const recover: Module[] = [
-  { name: "Triage", tagline: "AI-Powered Denial Queue", body: "Auto-classified denial queue. Recovery probability scored per claim using a 50-rule CARC (Claim Adjustment Reason Code)/RARC (Remittance Advice Remark Code) model. Rule Driver column. Natural language search. $847K active recovery pipeline in demo.", audience: "Billing Specialist · RC Manager", required: true },
-  { name: "Evidence", tagline: "Automated Evidence Assembly", body: "Automatically assembles the documentation package for each appeal — clinical notes, modifier records, authorization records, and coverage rules — organized by evidence category before a specialist touches the file.", audience: "Billing Specialist", required: true },
-  { name: "Resolve", tagline: "Bulk Appeal Generation", body: "Payer-specific appeal letters at bulk scale. 10 letters in 8 seconds at 78% confidence in demo. Six-lane routing by denial type. Outcome tracking feeds back into the recovery probability model — improves with every appeal.", audience: "Billing Specialist · RC Director", required: true },
+  { name: "Triage", tagline: "AI-Powered Denial Queue", body: "Denial queue auto-classified and ranked by recovery probability. $1.146M active recovery pipeline in current live build.", audience: "Billing Specialist · RC Manager", required: true },
+  { name: "Evidence", tagline: "Automated Evidence Assembly", body: "Assembles the full appeal documentation package — clinical notes, modifiers, authorizations, coverage rules — before a specialist opens the file.", audience: "Billing Specialist", required: true },
+  { name: "Resolve", tagline: "Bulk Appeal Generation", body: "Payer-specific appeal letters at bulk scale. Outcome tracking feeds back into the recovery model — accuracy improves with every appeal.", audience: "Billing Specialist · RC Director", required: true },
 ];
 
 const PlatformPage = () => {
@@ -154,7 +154,35 @@ const PlatformPage = () => {
         </div>
       </section>
 
-      {/* SECTION 6: CTA */}
+      {/* SECTION 6: AI³ DEPLOYMENT */}
+      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
+          <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
+            Three ways to deploy ZDefense intelligence.
+          </h2>
+          <p className="text-slate-400 text-lg mt-3 max-w-2xl">
+            AI³ refers to how the platform is delivered into your operation —
+            not what it does. Choose the model that fits your team's capacity
+            and oversight preference.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            {[
+              { tag: "Actionable AI¹", title: "Your team, our platform", body: "ZDefense surfaces the intelligence and prioritized actions. Your team executes inside their existing workflow." },
+              { tag: "Augmented AI²", title: "ZTech co-pilot", body: "ZDefense plus a ZTech analyst working alongside your team — reviewing signals, prepping appeals, and accelerating recovery." },
+              { tag: "Automated AI³", title: "Fire and forget", body: "ZDefense and ZTech operate the recovery and protection workflows end-to-end. Your team receives outcomes, not work queues." },
+            ].map((c) => (
+              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6">
+                <div className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">{c.tag}</div>
+                <div className="text-white font-semibold text-lg mt-2">{c.title}</div>
+                <p className="text-slate-400 text-sm mt-2">{c.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 7: CTA */}
       <section className="px-6 md:px-12 lg:px-16 bg-white">
         <div className="max-w-7xl mx-auto">
           <TrialCallout />
