@@ -12,6 +12,37 @@ const AdminGate = ({ children }: AdminGateProps) => {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
+  // Env var not set — block access entirely and explain what to do.
+  if (!adminAuth.isConfigured()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        <div className="w-full max-w-lg bg-white border border-slate-200 rounded-lg p-8 shadow-sm">
+          <h1 className="text-xl font-semibold text-[var(--navy)]">Admin not configured</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            The admin area is locked because <code className="px-1 py-0.5 rounded bg-slate-100 text-[var(--navy)]">VITE_ADMIN_PASSWORD</code>{" "}
+            is not set. There is no fallback password.
+          </p>
+          <ol className="mt-4 list-decimal list-inside text-sm text-slate-700 space-y-1">
+            <li>
+              Open <strong>Project&nbsp;→&nbsp;Settings&nbsp;→&nbsp;Environment Variables</strong>.
+            </li>
+            <li>
+              Add a variable named{" "}
+              <code className="px-1 py-0.5 rounded bg-slate-100 text-[var(--navy)]">VITE_ADMIN_PASSWORD</code>{" "}
+              with a strong value.
+            </li>
+            <li>Republish (or restart the preview) so the variable is baked into the client bundle.</li>
+            <li>Reload <code className="px-1 py-0.5 rounded bg-slate-100 text-[var(--navy)]">/admin</code> and sign in.</li>
+          </ol>
+          <p className="mt-4 text-xs text-slate-500">
+            Note: <code>VITE_</code> variables are embedded in the client bundle. This gate is a v0
+            convenience — switch to proper auth before granting real admin access.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (authed) return <>{children}</>;
 
   const submit = (e: React.FormEvent) => {
@@ -28,7 +59,9 @@ const AdminGate = ({ children }: AdminGateProps) => {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <form onSubmit={submit} className="w-full max-w-sm bg-white border border-slate-200 rounded-lg p-8 shadow-sm">
         <h1 className="text-xl font-semibold text-[var(--navy)]">Admin access</h1>
-        <p className="mt-1 text-sm text-slate-500">Enter the admin password to continue.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          Enter the password from <code className="px-1 py-0.5 rounded bg-slate-100">VITE_ADMIN_PASSWORD</code>.
+        </p>
         <Input
           type="password"
           placeholder="Password"
