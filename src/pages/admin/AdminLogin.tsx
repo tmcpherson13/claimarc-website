@@ -31,13 +31,20 @@ const AdminLogin = () => {
     return <Navigate to="/admin" replace />;
   }
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (submitMode: Mode) => {
     setErr(null);
+    if (!email || !password) {
+      setErr("Email and password are required.");
+      return;
+    }
+    if (password.length < 8) {
+      setErr("Password must be at least 8 characters.");
+      return;
+    }
+    setMode(submitMode);
     setBusy(true);
     try {
-      if (mode === "bootstrap") {
-        // 1. sign up the first admin
+      if (submitMode === "bootstrap") {
         const { error: signUpErr } = await supabase.auth.signUp({
           email,
           password,
@@ -45,21 +52,17 @@ const AdminLogin = () => {
         });
         if (signUpErr) throw signUpErr;
 
-        // 2. ensure a session exists (signUp returns a session when auto-confirm is on)
         const { data: sess } = await supabase.auth.getSession();
         if (!sess.session) {
-          // fall back to explicit sign-in
           const { error: siErr } = await supabase.auth.signInWithPassword({ email, password });
           if (siErr) throw siErr;
         }
 
-        // 3. claim the first-admin role
         const { data: claimed, error: rpcErr } = await supabase.rpc("bootstrap_first_admin");
         if (rpcErr) throw rpcErr;
         if (!claimed) throw new Error("An admin already exists. Sign in instead.");
 
         toast({ title: "Admin account created" });
-        // The auth listener in useAdminAuth will pick up the role and AdminGate will let you in.
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
