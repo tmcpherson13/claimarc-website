@@ -1,49 +1,55 @@
 
 
-# Wire the Contact Form to Email `krista.mcpherson@zaparetech.com`
+# Tighten the Home Page for Conversion
 
-The contact form currently fakes its submission (`setSubmitted(true)` only). I'll wire it to actually deliver each submission to your inbox.
+The Home page already has all 9 sections in roughly the right order. It needs trimming, sharper copy, brand-aligned numbers, and a more visible no-BAA pathway — not a rebuild. All shared components (Navbar, Footer, CTABand, TrialCallout, AI3) stay untouched.
 
-## What needs to happen
+## Edits, section by section
 
-The workspace doesn't yet have a verified sender domain — that's the only blocker. Once a sender domain exists, I can scaffold the email infrastructure and send to any inbox (including `krista.mcpherson@zaparetech.com`, which is on a different domain — that's totally fine; the recipient address is independent of the sender domain).
+**Hero**
+- Keep headline "Predict payer risk. Protect revenue. Recover cash."
+- Keep the approved positioning paragraph as-is.
+- Tighten the supporting line to the approved version (drop the appended "We also catch compliance landmines before they explode." — it dilutes the punch and isn't part of the approved language).
+- Replace fine print under CTAs with the approved text exactly: "ContractIntel, Shield, and Prevent available immediately. No BAA required. No IT involvement. Available for qualifying provider organizations."
+- Keep CTA buttons and trust-badge row as-is.
 
-You have two options for the sender domain:
+**AI³ band** — keep as-is. It's concise and on-brand.
 
-1. **Use `zaparetech.com`** (recommended) — emails arrive from something like `notify@zaparetech.com`, matching the parent company. One-time DNS dialog at your registrar.
-2. **Use `zdefense.ai`** — emails arrive from `notify@zdefense.ai`, matching the product. One-time DNS dialog at your registrar.
+**Market problem**
+- Keep header and intro paragraph (already tight).
+- Update stat #2 label to approved wording: "of denials are preventable" (drop "with earlier detection").
+- Other two stats already match approved values.
 
-Either way, the destination inbox stays `krista.mcpherson@zaparetech.com`.
+**Predict / Protect / Recover** — keep as-is. Already structured as 3 cluster cards with correct module lists and links.
 
-## Implementation steps (after you pick a sender domain and complete the DNS dialog)
+**Why ZDefense preview**
+- Trim from 4 cards to 2 to keep Home concise (the dedicated `/why-zdefense` page covers the rest). Keep **No-BAA Entry Path** (most important differentiator, per brief) and **Eight Years of EOB Heritage** (proof). Drop Payer Weaponization Index and Compliance-First Architecture cards on Home only — they remain on the Why page.
+- Add a "See all differentiators →" link to `/why-zdefense` under the grid.
 
-1. **Provision email infrastructure** — sets up the send queue, suppression list, unsubscribe handling, and the `send-transactional-email` Edge Function. No code from you.
-2. **Create one email template** — `contact-form-submission.tsx` — a clean, branded HTML email (ZDefense navy + emerald) showing all submitted fields grouped:
-   - Contact info (name, email, organization, role)
-   - Organization profile (org type, claim volume, primary challenge)
-   - Offer requested (demo / trial / interested-in-trial flag)
-   - Payer mix (selected payers + any "Other" specified)
-   - Additional message
-   - Reply-to set to the submitter's email so you can reply directly from your inbox.
-3. **Update `ContactPage.tsx` `handleSubmit`**:
-   - Add `submitting` state, disable button + show "Sending…" while in flight.
-   - Call `supabase.functions.invoke('send-transactional-email', { body: { templateName: 'contact-form-submission', recipientEmail: 'krista.mcpherson@zaparetech.com', idempotencyKey: <uuid>, templateData: { ...formData } } })`.
-   - On success → existing success screen + fire `trackEvent('Form_Submit', { offer: formData.offerType })`.
-   - On failure → toast error via existing sonner toaster, keep form data so user can retry.
-4. **Test end-to-end** — submit a test from the live preview, confirm the email lands at `krista.mcpherson@zaparetech.com`, verify formatting.
+**Platform demo signals (Outcomes)**
+- Update active-appeals stat from "$847K" to **"$1.146M"** to match the approved demo signal ("1.146M active appeals recovery pipeline").
+- Other 3 stats already match.
+- Keep the existing disclaimer line.
 
-## Technical notes
+**Role preview**
+- Trim from 6 role cards to 4 to keep Home concise: CFO/Executive, RC Director, Billing Specialist, Compliance Officer. (Full set lives on `/who-its-for` / Solutions.)
+- Add a "See all roles →" link below the grid pointing to `/solutions` (the existing role page).
 
-- **Recipient inbox is hardcoded** in the client call (not a secret). It's a non-sensitive routing constant; no value in storing it elsewhere. If you'd rather have it as a secret you can rotate without a code change, say the word.
-- **No new database tables, no auth changes** — purely additive.
-- **No template props are sensitive** — all values are user-submitted form data, auto-escaped by React Email.
+**30-day evaluation callout** — keep as-is (uses shared `TrialCallout`).
 
-## What I need from you to proceed
+**Final CTA band** — keep as-is.
 
-Just two things in your next message:
+## Files touched
 
-1. **Which sender domain?** `zaparetech.com` or `zdefense.ai`
-2. After I show the DNS setup button, complete the dialog at your registrar.
+- `src/pages/Index.tsx` — only file modified.
 
-Then I'll build everything in one pass and run a live test submission.
+## Files NOT touched
+
+- All shared components (`Navbar`, `Footer`, `CTABand`, `TrialCallout`, `AI3`, `HeroAccent`, `Layout`).
+- All other pages.
+- Routes, design tokens, Tailwind config.
+
+## Out of scope (carries forward)
+
+The pending contact-form email wiring still needs your sender-domain decision (`zaparetech.com` recommended). That work is unaffected by these Home edits and will resume after you confirm.
 
