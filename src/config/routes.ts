@@ -18,6 +18,7 @@ export const marketingRoutes: MarketingRoute[] = [
   { label: "Why ZDefense", to: "/why-zdefense" },
   { label: "Who It's For", to: "/solutions" },
   { label: "Pricing", to: "/pricing" },
+  { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },
 ];
 
