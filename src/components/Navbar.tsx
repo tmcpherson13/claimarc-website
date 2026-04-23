@@ -5,9 +5,9 @@ import AI3 from "./AI3";
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "Platform", to: "/platform" },
   { label: "Why ZDefense", to: "/why-zdefense" },
   { label: "Solutions", to: "/solutions" },
+  { label: "Platform", to: "/platform" },
   { label: "Pricing", to: "/pricing" },
   { label: "Contact", to: "/contact" },
 ];
