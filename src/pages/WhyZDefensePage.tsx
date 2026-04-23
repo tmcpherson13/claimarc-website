@@ -9,7 +9,7 @@ const WhyZDefensePage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Why ZDefense — Payer Behavioral Intelligence You Can Trust"
+        title="Why ZDefense — Payer Behavioral Intelligence & No-BAA Entry"
         description="Six reasons providers choose ZDefense: no-BAA entry, Payer Weaponization Index, cross-portfolio 835 intelligence, and nearly a decade of EOB heritage."
         path="/why-zdefense"
       />

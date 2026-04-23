@@ -114,7 +114,7 @@ const ContactPage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Contact ZDefense — Book a Demo or Start a 30-Day No-BAA Evaluation"
+        title="Contact ZDefense — Book a Demo or 30-Day Evaluation"
         description="Book a role-specific revenue cycle intelligence demo or start your 30-day evaluation with live payer data — no BAA, no IT involvement."
         path="/contact"
       />

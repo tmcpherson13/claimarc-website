@@ -46,7 +46,7 @@ const PlatformPage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Platform — ZDefense AI³ | Predict, Protect, Recover Architecture"
+        title="ZDefense Platform — Predict · Protect · Recover"
         description="Nine revenue cycle intelligence modules across Predict, Protect, and Recover. Start with three no-BAA modules; activate the rest as you grow."
         path="/platform"
       />
