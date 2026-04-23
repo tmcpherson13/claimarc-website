@@ -1,17 +1,14 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
+import SeoHead from "@/components/SeoHead";
 
 const WorkflowsPage = () => (
   <Layout>
-    <Helmet>
-      <title>Solutions by Workflow — ZDefense AI³ (Coming Soon)</title>
-      <meta
-        name="description"
-        content="Workflow-specific guides for every major revenue cycle challenge — payer contract benchmarking, denial prevention, overpayment compliance. Coming soon."
-      />
-      <link rel="canonical" href="https://zdefense.ai/workflows" />
-    </Helmet>
+    <SeoHead
+      title="Solutions by Workflow — ZDefense AI³ (Coming Soon)"
+      description="Workflow-specific guides for payer contract benchmarking, denial prevention, and overpayment compliance. Coming soon."
+      path="/workflows"
+    />
 
     <section className="bg-[var(--navy)] min-h-[60vh] flex flex-col items-center justify-center px-6 md:px-12 lg:px-16 text-center">
       <div className="max-w-7xl mx-auto flex flex-col items-center">

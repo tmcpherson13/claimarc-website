@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
+import SeoHead from "@/components/SeoHead";
 
 interface Module {
   name: string;
@@ -45,14 +45,11 @@ const recover: Module[] = [
 const PlatformPage = () => {
   return (
     <Layout>
-      <Helmet>
-        <title>Platform — ZDefense AI³ | 9 Modules Across Predict, Protect, Recover</title>
-        <meta
-          name="description"
-          content="ZDefense's modular revenue cycle intelligence platform. Three clusters, nine modules. Start with no-BAA modules and add as you grow."
-        />
-        <link rel="canonical" href="https://zdefense.ai/platform" />
-      </Helmet>
+      <SeoHead
+        title="Platform — ZDefense AI³ | Predict, Protect, Recover Architecture"
+        description="Nine revenue cycle intelligence modules across Predict, Protect, and Recover. Start with three no-BAA modules; activate the rest as you grow."
+        path="/platform"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
@@ -166,12 +163,10 @@ const PlatformPage = () => {
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
           <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
-            Same platform. Three delivery models.
+            AI³ = three ways to deploy the intelligence — not three different products.
           </h2>
           <p className="text-slate-400 text-lg mt-3 max-w-2xl">
-            AI³ = three ways to deploy the intelligence — not three different
-            products. Choose the model that fits your team's capacity and
-            oversight preference. Same nine modules, every time.
+            Same platform. Same nine modules. Three delivery models: Actionable AI¹, Augmented AI², Automated AI³ — choose the one that fits your team's capacity and oversight preference.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[

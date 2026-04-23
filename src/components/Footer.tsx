@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Shield, Lock, FileCheck } from "lucide-react";
 import AI3 from "./AI3";
+import { footerPlatformRoutes } from "@/config/routes";
 
 const compliance = [
   { label: "SOC 2 Type II", Icon: Shield },
@@ -33,12 +34,7 @@ const Footer = () => {
               PLATFORM
             </p>
             <ul className="space-y-2">
-              {[
-                { label: "Platform", to: "/platform" },
-                { label: "Why ZDefense", to: "/why-zdefense" },
-                { label: "Who It's For", to: "/solutions" },
-                { label: "Pricing", to: "/pricing" },
-              ].map((l) => (
+              {footerPlatformRoutes.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}

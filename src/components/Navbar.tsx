@@ -2,15 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import AI3 from "./AI3";
+import { marketingRoutes } from "@/config/routes";
 
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Platform", to: "/platform" },
-  { label: "Why ZDefense", to: "/why-zdefense" },
-  { label: "Who It's For", to: "/solutions" },
-  { label: "Pricing", to: "/pricing" },
-  { label: "Contact", to: "/contact" },
-];
+const navLinks = marketingRoutes;
 
 const Navbar = () => {
   const { pathname } = useLocation();

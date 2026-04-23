@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import SeoHead from "@/components/SeoHead";
 
 interface RoleContent {
   key: string;
@@ -34,14 +34,11 @@ const SolutionsPage = () => {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Who It's For — ZDefense AI³</title>
-        <meta
-          name="description"
-          content="ZDefense routes each user to the modules most relevant to their workflow — CFOs see Forecast, Specialists see Triage, Supervisors see Sentinel."
-        />
-        <link rel="canonical" href="https://zdefense.ai/solutions" />
-      </Helmet>
+      <SeoHead
+        title="Who It's For — ZDefense AI³ for CFOs, RC Directors, and Specialists"
+        description="ZDefense routes each role to the modules that matter most — CFOs see Forecast, Specialists see Triage, Supervisors see the Payer Weaponization Index."
+        path="/solutions"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">

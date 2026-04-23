@@ -1,22 +1,19 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import AI3 from "@/components/AI3";
 import CTABand from "@/components/CTABand";
 import TrialCallout from "@/components/TrialCallout";
 import HeroAccent from "@/components/HeroAccent";
+import SeoHead from "@/components/SeoHead";
 
 const Index = () => {
   return (
     <Layout>
-      <Helmet>
-        <title>ZDefense AI³ — Predict Payer Risk. Protect Revenue. Recover Cash.</title>
-        <meta
-          name="description"
-          content="ZDefense is a revenue cycle intelligence platform with payer behavioral insights, denial prevention, automated recovery, and 90-day revenue forecasting."
-        />
-        <link rel="canonical" href="https://zdefense.ai/" />
-      </Helmet>
+      <SeoHead
+        title="ZDefense AI³ — Revenue Cycle Intelligence Platform"
+        description="Predict payer risk. Protect revenue. Recover cash. ZDefense gives providers real-time payer behavioral insights, denial prevention, and 90-day revenue forecasting."
+        path="/"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
@@ -68,22 +65,25 @@ const Index = () => {
 
       {/* SECTION 2: AI³ BAND */}
       <section className="bg-[var(--navy-dk)] py-10 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-6 flex-wrap">
-          <span className="text-white text-base mr-4">
-            <AI3 /> = three ways to deploy the intelligence. Same platform. Three delivery models:
-          </span>
-          <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
-            Actionable AI¹ — Your team, our platform
-          </span>
-          <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
-            Augmented AI² — ZTech co-pilot
-          </span>
-          <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
-            Automated AI³ — Fire and Forget
-          </span>
-          <Link to="/pricing" className="text-slate-400 text-sm underline ml-4 hover:text-white transition-colors">
-            Learn about deployment models →
-          </Link>
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-4">
+          <p className="text-white text-base text-center max-w-3xl">
+            <AI3 /> = three ways to deploy the intelligence — not three different products.
+            Same platform. Same nine modules. Three delivery models.
+          </p>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+              Actionable AI¹ — Your team, our platform
+            </span>
+            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+              Augmented AI² — ZTech co-pilot
+            </span>
+            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+              Automated AI³ — Fire and forget
+            </span>
+            <Link to="/pricing" className="text-slate-400 text-sm underline ml-2 hover:text-white transition-colors">
+              Learn about deployment models →
+            </Link>
+          </div>
         </div>
       </section>
 
