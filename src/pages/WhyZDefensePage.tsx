@@ -47,7 +47,7 @@ const WhyZDefensePage = () => {
             THE MARKET
           </p>
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
-            The Denial Crisis Is Accelerating. Most Providers Are Fighting It with Yesterday's Tools.
+            The denial crisis is accelerating. Most providers are fighting it with yesterday's tools.
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             {[

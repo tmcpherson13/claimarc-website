@@ -133,9 +133,9 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
             {[
-              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "Anticipate risk before it becomes a denial.", body: "Real-time payer behavioral monitoring, contract benchmarking, and 90-day revenue forecasting — so your leadership team sees what's coming before it arrives.", href: "/platform#predict", link: "Explore PREDICT modules →" },
-              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Prevent financial and compliance exposure before it escalates.", body: "Pre-submission claim interception, prior authorization defense, and overpayment compliance tracking — stopping problems before payers — or regulators — find them first.", href: "/platform#protect", link: "Explore PROTECT modules →" },
-              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Convert denied claims into recovered cash.", body: "AI-powered denial triage, automated evidence assembly, and payer-specific appeal generation at bulk scale — with outcome tracking that improves every recovery cycle.", href: "/platform#recover", link: "Explore RECOVER modules →" },
+              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", href: "/platform#predict", link: "Explore PREDICT →" },
+              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", href: "/platform#protect", link: "Explore PROTECT →" },
+              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", href: "/platform#recover", link: "Explore RECOVER →" },
             ].map((c) => (
               <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8 hover:border-emerald-800 transition-colors">
                 <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
