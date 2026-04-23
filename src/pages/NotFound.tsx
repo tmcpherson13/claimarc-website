@@ -18,7 +18,7 @@ const NotFound = () => {
       <Helmet>
         <title>Page Not Found — ZDefense AI³</title>
         <meta name="description" content="The page you are looking for does not exist." />
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <section className="bg-[var(--navy)] min-h-[60vh] flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-16">

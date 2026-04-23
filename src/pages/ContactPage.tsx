@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
+import SeoHead from "@/components/SeoHead";
 
 const payerList = [
   "UHC (United Health Care)",
@@ -113,14 +113,11 @@ const ContactPage = () => {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Contact ZDefense — Book a Demo or Start a 30-Day Evaluation</title>
-        <meta
-          name="description"
-          content="Book a role-specific ZDefense demo or start your 30-day no-obligation evaluation with live payer data — no BAA required."
-        />
-        <link rel="canonical" href="https://zdefense.ai/contact" />
-      </Helmet>
+      <SeoHead
+        title="Contact ZDefense — Book a Demo or Start a 30-Day No-BAA Evaluation"
+        description="Book a role-specific revenue cycle intelligence demo or start your 30-day evaluation with live payer data — no BAA, no IT involvement."
+        path="/contact"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
@@ -136,7 +133,7 @@ const ContactPage = () => {
             Index.
           </p>
           <p className="text-slate-400 text-sm max-w-2xl mt-3">
-            Your request will be routed to the workflow most relevant to your role.
+            Your request will be routed to the modules most relevant to your role and payer mix.
           </p>
         </div>
       </section>

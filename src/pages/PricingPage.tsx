@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import SeoHead from "@/components/SeoHead";
 
 interface Tier {
   name: string;
@@ -28,14 +28,11 @@ const tiers: Tier[] = [
 const PricingPage = () => {
   return (
     <Layout>
-      <Helmet>
-        <title>Pricing — ZDefense AI³ | Performance-Based Recovery Model</title>
-        <meta
-          name="description"
-          content="Five ZDefense tiers with performance-based pricing. We only earn when you win. Three deployment models: Actionable, Augmented, and Automated AI."
-        />
-        <link rel="canonical" href="https://zdefense.ai/pricing" />
-      </Helmet>
+      <SeoHead
+        title="Pricing — ZDefense AI³ | Performance-Based Recovery Model"
+        description="Five ZDefense tiers with platform fees plus performance-based recovery share. Available across all three AI³ delivery models."
+        path="/pricing"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
@@ -79,12 +76,10 @@ const PricingPage = () => {
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold">
-            Same platform. Three delivery models.
+            AI³ = three ways to deploy the intelligence — not three different products.
           </h2>
           <p className="text-slate-600 text-lg mt-3 max-w-2xl">
-            AI³ = three ways to deploy the intelligence — not three different
-            products. Every pricing tier is available through any deployment
-            choice.
+            Same platform. Same nine modules. Three delivery models: Actionable AI¹, Augmented AI², Automated AI³. Every pricing tier is available through any delivery model.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
             <div className="rounded-xl p-8 border-2 border-[var(--lgray)]">

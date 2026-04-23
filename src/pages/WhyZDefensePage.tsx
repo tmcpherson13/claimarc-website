@@ -1,21 +1,18 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import SeoHead from "@/components/SeoHead";
 
 const WhyZDefensePage = () => {
   return (
     <Layout>
-      <Helmet>
-        <title>Why ZDefense — Built on Years of Doing This Work by Hand</title>
-        <meta
-          name="description"
-          content="Six reasons ZDefense is different: no-BAA entry, Payer Weaponization Index, cross-portfolio 835 intelligence, and nearly a decade of EOB heritage."
-        />
-        <link rel="canonical" href="https://zdefense.ai/why-zdefense" />
-      </Helmet>
+      <SeoHead
+        title="Why ZDefense — Payer Behavioral Intelligence You Can Trust"
+        description="Six reasons providers choose ZDefense: no-BAA entry, Payer Weaponization Index, cross-portfolio 835 intelligence, and nearly a decade of EOB heritage."
+        path="/why-zdefense"
+      />
 
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
@@ -89,7 +86,7 @@ const WhyZDefensePage = () => {
               { h: "Payer Weaponization Index", b: "Proprietary behavioral scoring powered by cross-portfolio 835 ERA (Electronic Remittance Advice) analysis. The only platform detecting systematic payer strategy changes — not just your denials, but cross-market patterns across hundreds of providers simultaneously. 7–14 days advance warning." },
               { h: "Cross-Portfolio 835 Intelligence", b: "ZTech processes 835 ERA files across hundreds of provider organizations. That cross-portfolio view powers pattern detection no single-provider system can replicate. When a payer changes behavior, ZDefense sees it portfolio-wide — not just your claims." },
               { h: "Nearly a Decade of EOB Heritage", b: "ZTech has processed Explanation of Benefits documents by hand for nearly a decade. ZDefense reflects codified institutional knowledge — not generic AI trained on generic data. The 50-rule CARC model reflects real denial patterns from real providers across every major payer." },
-              { h: "AI³ Delivery Flexibility", b: "AI³ = three ways to deploy the intelligence. Same platform. Three delivery models — from self-serve analytics (Actionable AI¹) to fully managed revenue cycle operations (Automated AI³). Same nine modules, every time." },
+              { h: "AI³ Delivery Flexibility", b: "AI³ = three ways to deploy the intelligence — not three different products. Same platform. Same nine modules. Three delivery models: Actionable AI¹ (your team, our platform), Augmented AI² (ZTech co-pilot), Automated AI³ (fire and forget)." },
               { h: "Compliance-First Architecture", b: "SOC 2 Type II certified. ISO/IEC 27001:2022 certified. HIPAA-aligned from day one. Built to pass health system security reviews without a six-month procurement cycle." },
             ].map((c) => (
               <div key={c.h} className="bg-white rounded-xl p-7 border border-[var(--lgray)] hover:border-emerald-200 transition-colors">
