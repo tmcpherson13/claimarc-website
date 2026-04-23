@@ -1,9 +1,9 @@
 import Layout from "@/components/Layout";
 
-const Index = () => (
+const SolutionsPage = () => (
   <Layout>
     <div className="px-8 py-16">Page coming soon</div>
   </Layout>
 );
 
-export default Index;
+export default SolutionsPage;

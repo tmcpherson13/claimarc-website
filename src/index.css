@@ -8,6 +8,14 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* ZDefense brand tokens (raw hex per spec) */
+    --navy: #0F172A;
+    --navy-dk: #1E3A5F;
+    --emerald: #10B981;
+    --slate: #64748B;
+    --amber: #F59E0B;
+    --lgray: #F1F5F9;
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -97,6 +105,10 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html, body {
+    font-family: Arial, sans-serif;
   }
 
   body {
