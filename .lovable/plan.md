@@ -1,55 +1,87 @@
+## Plan: Add Blog to nav + upgrade Admin to real auth
 
+### Part A — Surface the Blog in navbar & footer
 
-# Tighten the Home Page for Conversion
+1. **`src/config/routes.ts`**
+   - Add `{ label: "Blog", to: "/blog" }` to `marketingRoutes`, placed between "Pricing" and "Contact" (Blog is content, Contact stays last as the conversion endpoint).
+   - `footerPlatformRoutes` already filters out Home and Contact, so Blog will automatically appear in the footer "Platform" column. No further change needed there.
+   - Active-state matching in `Navbar.tsx` uses `pathname === link.to`, so `/blog/:slug` post pages won't highlight the Blog tab. Update the active check to also match when `pathname.startsWith(link.to + "/")` for non-root routes, so Blog stays highlighted on post detail pages.
 
-The Home page already has all 9 sections in roughly the right order. It needs trimming, sharper copy, brand-aligned numbers, and a more visible no-BAA pathway — not a rebuild. All shared components (Navbar, Footer, CTABand, TrialCallout, AI3) stay untouched.
+2. **`public/sitemap.xml`** — confirm `/blog` is already listed (it is, from the previous pass). No change.
 
-## Edits, section by section
+### Part B — Replace v0 password gate with real Lovable Cloud auth + roles
 
-**Hero**
-- Keep headline "Predict payer risk. Protect revenue. Recover cash."
-- Keep the approved positioning paragraph as-is.
-- Tighten the supporting line to the approved version (drop the appended "We also catch compliance landmines before they explode." — it dilutes the punch and isn't part of the approved language).
-- Replace fine print under CTAs with the approved text exactly: "ContractIntel, Shield, and Prevent available immediately. No BAA required. No IT involvement. Available for qualifying provider organizations."
-- Keep CTA buttons and trust-badge row as-is.
+Goal: replace the `VITE_ADMIN_PASSWORD` client-side gate with proper email/password authentication and a server-enforced `admin` role, following the security pattern (separate `user_roles` table + `has_role` SECURITY DEFINER function + RLS).
 
-**AI³ band** — keep as-is. It's concise and on-brand.
+#### Database migration
 
-**Market problem**
-- Keep header and intro paragraph (already tight).
-- Update stat #2 label to approved wording: "of denials are preventable" (drop "with earlier detection").
-- Other two stats already match approved values.
+1. Create enum `public.app_role` with value `admin` (extensible later: `moderator`, `user`).
+2. Create table `public.user_roles` (`id`, `user_id` → `auth.users`, `role app_role`, unique on `(user_id, role)`).
+3. Enable RLS on `user_roles`. Policies:
+   - SELECT: users can read their own roles (`auth.uid() = user_id`).
+   - No public INSERT/UPDATE/DELETE — roles are managed manually via the backend for v1.
+4. Create `public.has_role(_user_id uuid, _role app_role)` as `SECURITY DEFINER`, `STABLE`, `SET search_path = public`.
+5. **Tighten `blog_posts` RLS** — current policies allow anon to read/insert/update/delete everything, which is wide open. Replace the four "Anon can …" admin policies with role-gated equivalents:
+   - Keep: `Published posts are viewable by everyone` (unchanged).
+   - Drop: the four anon admin policies.
+   - Add: `Admins can SELECT all`, `Admins can INSERT`, `Admins can UPDATE`, `Admins can DELETE`, each `using/with check (public.has_role(auth.uid(), 'admin'))`.
 
-**Predict / Protect / Recover** — keep as-is. Already structured as 3 cluster cards with correct module lists and links.
+#### Auth configuration
 
-**Why ZDefense preview**
-- Trim from 4 cards to 2 to keep Home concise (the dedicated `/why-zdefense` page covers the rest). Keep **No-BAA Entry Path** (most important differentiator, per brief) and **Eight Years of EOB Heritage** (proof). Drop Payer Weaponization Index and Compliance-First Architecture cards on Home only — they remain on the Why page.
-- Add a "See all differentiators →" link to `/why-zdefense` under the grid.
+- Use `configure_auth` to enable auto-confirm signups (so the first admin can be bootstrapped without email verification friction during setup). The user can toggle this off later if desired.
+- Email/password only for v1 (no Google OAuth — admin surface is internal).
 
-**Platform demo signals (Outcomes)**
-- Update active-appeals stat from "$847K" to **"$1.146M"** to match the approved demo signal ("1.146M active appeals recovery pipeline").
-- Other 3 stats already match.
-- Keep the existing disclaimer line.
+#### Frontend
 
-**Role preview**
-- Trim from 6 role cards to 4 to keep Home concise: CFO/Executive, RC Director, Billing Specialist, Compliance Officer. (Full set lives on `/who-its-for` / Solutions.)
-- Add a "See all roles →" link below the grid pointing to `/solutions` (the existing role page).
+1. **Replace** `src/lib/adminAuth.ts` (delete the password-flag implementation) with a small `useAdminAuth` hook in `src/hooks/useAdminAuth.ts` that:
+   - Subscribes to `supabase.auth.onAuthStateChange` first, then calls `getSession()`.
+   - For each session, queries `user_roles` to determine if the current user has the `admin` role.
+   - Returns `{ session, user, isAdmin, loading, signOut }`.
 
-**30-day evaluation callout** — keep as-is (uses shared `TrialCallout`).
+2. **New page** `src/pages/admin/AdminLogin.tsx`
+   - Email + password form (sign in only — no public sign-up form, since signup is gated by needing a role assigned afterwards).
+   - On success, redirect to `/admin`.
+   - Show clear error messages for invalid credentials.
+   - Include a small note: "Need an admin account? Contact the site owner." (No public self-serve admin signup.)
 
-**Final CTA band** — keep as-is.
+3. **Rewrite** `src/components/AdminGate.tsx`
+   - Uses `useAdminAuth`.
+   - While `loading`: show a spinner.
+   - If no session: redirect to `/admin/login`.
+   - If session but `!isAdmin`: show "You're signed in as `<email>` but don't have admin access" with a Sign Out button.
+   - If admin: render children.
 
-## Files touched
+4. **`src/pages/admin/AdminDashboard.tsx`** — add the signed-in user email and a Sign Out button in the header.
 
-- `src/pages/Index.tsx` — only file modified.
+5. **`src/App.tsx`** — register the new `/admin/login` route (public, not wrapped in `AdminGate`).
 
-## Files NOT touched
+6. **Delete** `src/lib/adminAuth.ts` after the gate no longer imports it.
 
-- All shared components (`Navbar`, `Footer`, `CTABand`, `TrialCallout`, `AI3`, `HeroAccent`, `Layout`).
-- All other pages.
-- Routes, design tokens, Tailwind config.
+#### Bootstrapping the first admin
 
-## Out of scope (carries forward)
+Since there's no public admin signup, the user will need to:
+1. Visit `/admin/login` — but they have no account yet. Add a one-time "Create initial admin account" sign-up form on the login page that is **only visible when the `user_roles` table has zero admin rows** (checked via a public RPC or a count query against a view). Once any admin exists, the form disappears and only sign-in is available.
+2. Alternative simpler approach: provide a one-time SQL snippet in the migration's accompanying note that the user runs to grant themselves admin after they sign up via Supabase auth directly. We'll go with the **first approach** (in-app bootstrap) since it's friendlier.
 
-The pending contact-form email wiring still needs your sender-domain decision (`zaparetech.com` recommended). That work is unaffected by these Home edits and will resume after you confirm.
+Implementation detail for bootstrap: create a SECURITY DEFINER function `public.bootstrap_first_admin(_user_id uuid)` that inserts into `user_roles` only if no admin currently exists, and is callable by `authenticated` role. The login page calls this immediately after the bootstrap signup completes.
 
+#### Files touched
+
+- **Migration (new)**: app_role enum, user_roles table + RLS, has_role function, bootstrap_first_admin function, updated blog_posts policies.
+- **Created**: `src/hooks/useAdminAuth.ts`, `src/pages/admin/AdminLogin.tsx`.
+- **Rewritten**: `src/components/AdminGate.tsx`, `src/pages/admin/AdminDashboard.tsx` (add signout).
+- **Edited**: `src/config/routes.ts` (add Blog), `src/components/Navbar.tsx` (active-state matcher), `src/App.tsx` (register `/admin/login`).
+- **Deleted**: `src/lib/adminAuth.ts`.
+
+### What you'll be able to do after this
+
+- Visitors see a "Blog" link in the navbar (between Pricing and Contact) and in the footer Platform column. The link stays highlighted when reading individual posts.
+- Visiting `/admin` for the first time prompts you to create the initial admin account (email + password). After that account is created, the bootstrap form disappears and only sign-in is available.
+- Subsequent admins are added by an existing admin running an INSERT into `user_roles` (or we can add an admin user-management page in a later pass — out of scope here).
+- The `blog_posts` table is now properly locked down: only authenticated users with the `admin` role can create, update, or delete posts. Public reads remain limited to `status = 'published'`.
+
+### Notes / caveats
+
+- This removes `VITE_ADMIN_PASSWORD` entirely — that env var becomes obsolete and can be deleted from project settings after the migration.
+- Existing draft posts in the DB remain; only the access control changes.
+- Email auto-confirm will be enabled to make initial setup smooth. If you'd prefer email verification before first login, say so and I'll skip that step (you'll then need to confirm via the magic link in your inbox).
