@@ -1,13 +1,27 @@
 import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { Button } from "@/components/ui/button";
 
-const AdminDashboard = () => (
-  <AdminGate>
+const DashboardInner = () => {
+  const { user, signOut } = useAdminAuth();
+  return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-[var(--navy)] text-white px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <h1 className="text-lg font-semibold">ZDefense Admin</h1>
-          <Link to="/" className="text-sm text-white/70 hover:text-white">← Back to site</Link>
+          <div className="flex items-center gap-4">
+            {user?.email && <span className="text-xs text-white/60 hidden sm:inline">{user.email}</span>}
+            <Link to="/" className="text-sm text-white/70 hover:text-white">← Back to site</Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={signOut}
+              className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white"
+            >
+              Sign out
+            </Button>
+          </div>
         </div>
       </header>
       <main className="max-w-6xl mx-auto px-6 py-12">
@@ -23,6 +37,12 @@ const AdminDashboard = () => (
         </div>
       </main>
     </div>
+  );
+};
+
+const AdminDashboard = () => (
+  <AdminGate>
+    <DashboardInner />
   </AdminGate>
 );
 

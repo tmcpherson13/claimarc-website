@@ -23,7 +23,9 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => {
-            const active = pathname === link.to;
+            const active =
+              pathname === link.to ||
+              (link.to !== "/" && pathname.startsWith(link.to + "/"));
             return (
               <Link
                 key={link.to}
@@ -78,7 +80,9 @@ const Navbar = () => {
         <div className="lg:hidden border-t border-slate-800 bg-[var(--navy)] px-6 md:px-12 py-4">
           <div className="flex flex-col gap-3">
             {navLinks.map((link) => {
-              const active = pathname === link.to;
+              const active =
+                pathname === link.to ||
+                (link.to !== "/" && pathname.startsWith(link.to + "/"));
               return (
                 <Link
                   key={link.to}

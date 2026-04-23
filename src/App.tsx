@@ -17,6 +17,7 @@ import BlogPostPage from "./pages/BlogPostPage.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminBlogList from "./pages/admin/AdminBlogList.tsx";
 import AdminBlogEditor from "./pages/admin/AdminBlogEditor.tsx";
+import AdminLogin from "./pages/admin/AdminLogin.tsx";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/workflows" element={<WorkflowsPage />} />
           <Route path="/blog" element={<BlogIndexPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/blog" element={<AdminBlogList />} />
           <Route path="/admin/blog/new" element={<AdminBlogEditor />} />
