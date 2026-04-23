@@ -81,15 +81,16 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <form
-        onSubmit={onSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit(isBootstrap ? "bootstrap" : "signin");
+        }}
         className="w-full max-w-sm bg-white border border-slate-200 rounded-lg p-8 shadow-sm"
       >
-        <h1 className="text-xl font-semibold text-[var(--navy)]">
-          {isBootstrap ? "Create initial admin" : "Admin sign in"}
-        </h1>
+        <h1 className="text-xl font-semibold text-[var(--navy)]">Admin access</h1>
         <p className="mt-1 text-sm text-slate-500">
-          {isBootstrap
-            ? "No admin exists yet. Create the first admin account."
+          {adminExists === false
+            ? "No admin exists yet. Create the first admin, or sign in if you already have an account."
             : "Sign in with your admin email and password."}
         </p>
 
@@ -104,38 +105,57 @@ const AdminLogin = () => {
         />
 
         <label className="block mt-4 text-sm font-medium text-[var(--navy)]">Password</label>
-        <Input
-          type="password"
-          autoComplete={isBootstrap ? "new-password" : "current-password"}
-          required
-          minLength={8}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1"
-        />
+        <div className="relative mt-1">
+          <Input
+            type={showPassword ? "text" : "password"}
+            autoComplete={isBootstrap ? "new-password" : "current-password"}
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-[var(--navy)]"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
 
         {err && <p className="mt-3 text-sm text-red-600">{err}</p>}
 
-        <Button
-          type="submit"
-          disabled={busy}
-          className="mt-6 w-full bg-[var(--emerald)] hover:bg-emerald-600"
-        >
-          {busy ? "Working…" : isBootstrap ? "Create admin & sign in" : "Sign in"}
-        </Button>
-
-        {adminExists === false && !isBootstrap && (
-          <button
+        <div className="mt-6 space-y-2">
+          <Button
             type="button"
-            onClick={() => setMode("bootstrap")}
-            className="mt-3 w-full text-xs text-slate-500 hover:text-[var(--navy)]"
+            disabled={busy}
+            onClick={() => submit("signin")}
+            className="w-full bg-[var(--emerald)] hover:bg-emerald-600"
           >
-            No admin exists yet — create the first one
-          </button>
-        )}
-        {adminExists && (
+            {busy && !isBootstrap ? "Signing in…" : "Sign in"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || adminExists === true}
+            onClick={() => submit("bootstrap")}
+            className="w-full"
+            title={adminExists ? "An admin already exists" : undefined}
+          >
+            {busy && isBootstrap ? "Creating admin…" : "Create admin"}
+          </Button>
+        </div>
+
+        {adminExists === true && (
           <p className="mt-4 text-xs text-slate-500">
-            Need an admin account? Ask an existing admin to add you.
+            An admin already exists. Use “Sign in”, or ask an existing admin to add your account.
+          </p>
+        )}
+        {adminExists === false && (
+          <p className="mt-4 text-xs text-slate-500">
+            Tip: “Create admin” works only for the very first account.
           </p>
         )}
 
