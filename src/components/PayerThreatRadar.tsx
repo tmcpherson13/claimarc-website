@@ -44,24 +44,43 @@ const RADAR_STYLES = `
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-@keyframes radarPulse {
+@keyframes radarBlipPulse {
   0%   { transform: scale(1);   opacity: 0.8; }
   100% { transform: scale(2.2); opacity: 0; }
 }
 .radar-sweep-group {
   transform-origin: 250px 250px;
-  animation: radarSweep 4s linear infinite;
+  animation: radarSweep 5s linear infinite;
 }
-.radar-blip-pulse {
+.radar-blip-pulse-once {
   transform-origin: center;
   transform-box: fill-box;
-  animation: radarPulse 2s ease-out infinite;
+  animation: radarBlipPulse 600ms ease-out forwards;
 }
 `;
+
+// Sweep duration must match the CSS animation above.
+const SWEEP_DURATION_MS = 5000;
+// Convert a blip (x, y) to its "north-clockwise" angle in [0, 360).
+// Arm at rotation R points to (250, 250 - r) which is north + R clockwise.
+const blipAngle = (x: number, y: number) => {
+  const dx = x - 250;
+  const dy = y - 250;
+  // atan2(dy, dx) gives angle from +x axis CCW. Convert to north-CW:
+  // north-CW = 90 + atan2(dy, dx) in degrees, normalized.
+  let a = 90 + (Math.atan2(dy, dx) * 180) / Math.PI;
+  a = ((a % 360) + 360) % 360;
+  return a;
+};
+const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
+const HIT_TOLERANCE = 8; // degrees
 
 const PayerThreatRadar = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
+  const [activeMap, setActiveMap] = useState<boolean[]>(() => BLIPS.map(() => false));
+  const pulseKeyRef = useRef<number[]>(BLIPS.map(() => 0));
+  const [, forcePulseRender] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -78,6 +97,38 @@ const PayerThreatRadar = () => {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Track sweep arm angle and toggle blip "active" within +/- 8 degrees.
+  useEffect(() => {
+    const start = performance.now();
+    const wasActive = BLIPS.map(() => false);
+    const id = window.setInterval(() => {
+      const elapsed = performance.now() - start;
+      const armAngle = ((elapsed / SWEEP_DURATION_MS) * 360) % 360;
+      let changed = false;
+      const next = wasActive.slice();
+      let pulseChanged = false;
+      for (let i = 0; i < BLIPS.length; i++) {
+        let diff = Math.abs(armAngle - BLIP_ANGLES[i]);
+        if (diff > 180) diff = 360 - diff;
+        const isActive = diff <= HIT_TOLERANCE;
+        if (isActive !== wasActive[i]) {
+          next[i] = isActive;
+          wasActive[i] = isActive;
+          changed = true;
+          // Trigger one-shot ring pulse on rising edge.
+          if (isActive) {
+            pulseKeyRef.current[i] += 1;
+            pulseChanged = true;
+          }
+        }
+      }
+      if (changed) setActiveMap(next);
+      if (pulseChanged) forcePulseRender((n) => n + 1);
+    }, 50);
+    return () => window.clearInterval(id);
+  }, []);
+
 
   return (
     <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 border-t border-b border-slate-800">
@@ -229,26 +280,39 @@ const PayerThreatRadar = () => {
               />
             </g>
 
-            {/* Payer blips */}
-            {BLIPS.map((b) => {
+            {/* Payer blips — light up only when sweep arm passes over */}
+            {BLIPS.map((b, i) => {
               const color = WI_COLORS[b.level];
               const labelX = b.x + 12;
               const labelY = b.y - 8;
+              const active = activeMap[i];
+              const pulseKey = pulseKeyRef.current[i];
               return (
                 <g key={b.name}>
-                  {/* Pulse ring */}
+                  {/* One-shot pulse ring; remounts on each sweep hit */}
+                  {pulseKey > 0 && (
+                    <circle
+                      key={`pulse-${pulseKey}`}
+                      cx={b.x}
+                      cy={b.y}
+                      r={10}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth={1}
+                      opacity={0}
+                      className="radar-blip-pulse-once"
+                      style={{ transformOrigin: `${b.x}px ${b.y}px` }}
+                    />
+                  )}
+                  {/* Inner dot — dark by default, lights up when arm sweeps over */}
                   <circle
                     cx={b.x}
                     cy={b.y}
-                    r={10}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth={1}
-                    className="radar-blip-pulse"
-                    style={{ animationDelay: b.delay }}
+                    r={4}
+                    fill={color}
+                    className="transition-opacity duration-300"
+                    style={{ opacity: active ? 1 : 0 }}
                   />
-                  {/* Inner dot */}
-                  <circle cx={b.x} cy={b.y} r={4} fill={color} opacity={0.9} />
                   {/* Label */}
                   <text x={labelX} y={labelY} fill="#94A3B8" fontSize={9}>
                     {b.name}
