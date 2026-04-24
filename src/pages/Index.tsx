@@ -121,7 +121,7 @@ const Index = () => {
       {/* SECTION 4: PREDICT / PROTECT / RECOVER */}
       <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest text-center">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
             THE PLATFORM
           </p>
           <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
