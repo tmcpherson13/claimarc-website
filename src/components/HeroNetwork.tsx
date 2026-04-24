@@ -193,14 +193,13 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
         })}
       </g>
 
-      {/* Sweep arm + glow trail, rotating around radar center */}
+      {/* Sweep arm — clean line, rotates around radar center */}
       <g
         style={{
           transformOrigin: `${CX}px ${CY}px`,
           animation: "heroRadarSweep 9.2s linear infinite",
         }}
       >
-        <path d={SWEEP_PATH} fill="url(#hero-radar-trail)" />
         <line
           x1={CX}
           y1={CY}
