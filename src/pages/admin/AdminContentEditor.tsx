@@ -320,14 +320,14 @@ const Inner = () => {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {existing && (
-              <a
-                href={`${previewPath}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-white/70 hover:text-white"
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openPreview}
+                className="bg-white text-[var(--navy)]"
               >
                 Preview ↗
-              </a>
+              </Button>
             )}
             <Button
               variant="outline"
