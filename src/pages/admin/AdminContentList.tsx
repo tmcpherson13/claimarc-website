@@ -66,7 +66,12 @@ const Inner = () => {
   }, [items, search, typeFilter, statusFilter]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this item permanently?")) return;
+    if (
+      !confirm(
+        "Permanently delete this item? This cannot be undone. Consider archiving instead.",
+      )
+    )
+      return;
     try {
       await contentApi.remove(id);
       toast({ title: "Deleted" });
@@ -74,6 +79,41 @@ const Inner = () => {
     } catch (e: unknown) {
       toast({
         title: "Delete failed",
+        description: e instanceof Error ? e.message : "",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleArchive = async (item: ContentItem) => {
+    const next = item.status === "archived" ? "draft" : "archived";
+    const verb = next === "archived" ? "Archive" : "Unarchive";
+    if (!confirm(`${verb} "${item.title}"?`)) return;
+    try {
+      await contentApi.update(item.id, {
+        contentType: item.contentType,
+        title: item.title,
+        slug: item.slug,
+        summary: item.summary,
+        body: item.body,
+        tags: item.tags,
+        status: next,
+        featured: item.featured,
+        ctaType: item.ctaType,
+        heroAssetId: item.heroAssetId,
+        pdfAssetId: item.pdfAssetId,
+        relatedIds: item.relatedIds,
+        scheduledFor: item.scheduledFor,
+        publishedAt: item.publishedAt,
+        seoTitle: item.seoTitle,
+        seoDescription: item.seoDescription,
+        canonicalUrl: item.canonicalUrl,
+      });
+      toast({ title: `${verb}d` });
+      refresh();
+    } catch (e: unknown) {
+      toast({
+        title: `${verb} failed`,
         description: e instanceof Error ? e.message : "",
         variant: "destructive",
       });
