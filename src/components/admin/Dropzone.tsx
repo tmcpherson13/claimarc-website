@@ -22,6 +22,7 @@ const Dropzone = ({
   enablePaste = false,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const dragCounter = useRef(0);
   const [isOver, setIsOver] = useState(false);
 
@@ -35,36 +36,6 @@ const Dropzone = ({
     [onFiles, multiple],
   );
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounter.current = 0;
-    setIsOver(false);
-    if (e.dataTransfer?.files) handleFiles(e.dataTransfer.files);
-  };
-
-  const onDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounter.current += 1;
-    if (e.dataTransfer?.types?.includes("Files")) setIsOver(true);
-  };
-
-  const onDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounter.current -= 1;
-    if (dragCounter.current <= 0) {
-      dragCounter.current = 0;
-      setIsOver(false);
-    }
-  };
-
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   useEffect(() => {
     if (!enablePaste) return;
     const onPaste = (e: ClipboardEvent) => {
@@ -74,6 +45,49 @@ const Dropzone = ({
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
   }, [enablePaste, handleFiles]);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    const onDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    const onDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current = 0;
+      setIsOver(false);
+      if (e.dataTransfer?.files) handleFiles(e.dataTransfer.files);
+    };
+    const onDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current += 1;
+      if (e.dataTransfer?.types?.includes("Files")) setIsOver(true);
+    };
+    const onDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current -= 1;
+      if (dragCounter.current <= 0) {
+        dragCounter.current = 0;
+        setIsOver(false);
+      }
+    };
+
+    el.addEventListener("dragover", onDragOver, true);
+    el.addEventListener("drop", onDrop, true);
+    el.addEventListener("dragenter", onDragEnter, true);
+    el.addEventListener("dragleave", onDragLeave, true);
+    return () => {
+      el.removeEventListener("dragover", onDragOver, true);
+      el.removeEventListener("drop", onDrop, true);
+      el.removeEventListener("dragenter", onDragEnter, true);
+      el.removeEventListener("dragleave", onDragLeave, true);
+    };
+  }, [handleFiles]);
 
   const acceptAttr = accept ? `${accept}*` : undefined;
   const acceptLabel =
@@ -85,11 +99,8 @@ const Dropzone = ({
 
   return (
     <div
+      ref={rootRef}
       onClick={() => inputRef.current?.click()}
-      onDrop={onDrop}
-      onDragEnter={onDragEnter}
-      onDragLeave={onDragLeave}
-      onDragOver={onDragOver}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
