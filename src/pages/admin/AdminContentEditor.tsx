@@ -404,6 +404,7 @@ const Inner = () => {
               onSuggestTitle={(suggested) => {
                 if (!form.title.trim()) onTitleChange(suggested);
               }}
+              status={form.status}
             />
           )}
 
