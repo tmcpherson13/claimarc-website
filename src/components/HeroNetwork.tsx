@@ -20,17 +20,7 @@ const R_MAX = 420;
 
 // Sweep duration must match the CSS animation below.
 const SWEEP_DURATION_MS = 9200;
-const HIT_TOLERANCE = 10; // degrees
 
-// Build the 70deg sweep glow pie-slice path, centered along the sweep arm
-// (arm points "up" before rotation, i.e. negative Y). Arc spans -35deg to +35deg.
-const SWEEP_DEG = 70;
-const half = (SWEEP_DEG / 2) * (Math.PI / 180);
-const x1 = CX + R_MAX * Math.sin(-half);
-const y1 = CY - R_MAX * Math.cos(-half);
-const x2 = CX + R_MAX * Math.sin(half);
-const y2 = CY - R_MAX * Math.cos(half);
-const SWEEP_PATH = `M ${CX} ${CY} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R_MAX} ${R_MAX} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
 
 // Blip definitions: ring index (0=innermost..3=outer) + angle in standard
 // math degrees (0 = +x axis, CCW positive — used directly with cos/sin).
@@ -66,32 +56,57 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
   const [, forcePulse] = useState(0);
 
   useEffect(() => {
-    const start = performance.now();
+    const TRAIL_WINDOW = 6; // degrees past the blip
+    const OFF_DELAY_MS = 500;
     const wasActive = BLIPS.map(() => false);
+    const offTimers: Array<number | null> = BLIPS.map(() => null);
+
     const id = window.setInterval(() => {
-      const elapsed = performance.now() - start;
-      const armAngle = ((elapsed / SWEEP_DURATION_MS) * 360) % 360;
+      const elapsed = performance.now() % SWEEP_DURATION_MS;
+      const armAngle = (elapsed / SWEEP_DURATION_MS) * 360;
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
+
       for (let i = 0; i < BLIPS.length; i++) {
-        let diff = Math.abs(armAngle - BLIPS[i].northCw);
-        if (diff > 180) diff = 360 - diff;
-        const isActive = diff <= HIT_TOLERANCE;
-        if (isActive !== wasActive[i]) {
-          next[i] = isActive;
-          wasActive[i] = isActive;
-          changed = true;
-          if (isActive) {
-            pulseKeysRef.current[i] += 1;
-            pulseChanged = true;
+        // Trailing window: how far past the blip the arm has swept (0..360).
+        const diff = (armAngle - BLIPS[i].northCw + 360) % 360;
+        const inWindow = diff < TRAIL_WINDOW;
+
+        if (inWindow && !wasActive[i]) {
+          // Rising edge: arm just reached the blip.
+          if (offTimers[i] !== null) {
+            window.clearTimeout(offTimers[i] as number);
+            offTimers[i] = null;
           }
+          next[i] = true;
+          wasActive[i] = true;
+          changed = true;
+          pulseKeysRef.current[i] += 1;
+          pulseChanged = true;
+        } else if (!inWindow && wasActive[i] && offTimers[i] === null) {
+          // Falling edge: schedule turn-off after the fade delay.
+          const idx = i;
+          offTimers[idx] = window.setTimeout(() => {
+            wasActive[idx] = false;
+            offTimers[idx] = null;
+            setActive((prev) => {
+              if (!prev[idx]) return prev;
+              const copy = prev.slice();
+              copy[idx] = false;
+              return copy;
+            });
+          }, OFF_DELAY_MS);
         }
       }
       if (changed) setActive(next);
       if (pulseChanged) forcePulse((n) => n + 1);
     }, 50);
-    return () => window.clearInterval(id);
+
+    return () => {
+      window.clearInterval(id);
+      offTimers.forEach((t) => t !== null && window.clearTimeout(t));
+    };
   }, []);
 
   return (
@@ -104,12 +119,7 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
       focusable="false"
       style={{ overflow: "visible" }}
     >
-      <defs>
-        <radialGradient id="hero-radar-trail" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#10B981" stopOpacity="0.07" />
-          <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-        </radialGradient>
-      </defs>
+
 
       {/* Concentric rings */}
       <g>
@@ -183,14 +193,13 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
         })}
       </g>
 
-      {/* Sweep arm + glow trail, rotating around radar center */}
+      {/* Sweep arm — clean line, rotates around radar center */}
       <g
         style={{
           transformOrigin: `${CX}px ${CY}px`,
           animation: "heroRadarSweep 9.2s linear infinite",
         }}
       >
-        <path d={SWEEP_PATH} fill="url(#hero-radar-trail)" />
         <line
           x1={CX}
           y1={CY}
