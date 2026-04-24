@@ -96,17 +96,19 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
-              { stat: "41%", label: "of providers report denial rates above 10%", source: "(Industry benchmark)" },
-              { stat: "86%", label: "of denials are preventable", source: "(Industry benchmark)" },
-              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows", source: "(Industry benchmark)" },
+              { stat: "41%", label: "of providers report denial rates above 10%" },
+              { stat: "86%", label: "of denials are preventable" },
+              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows" },
             ].map((c) => (
               <div key={c.stat} className="bg-[var(--lgray)] rounded-xl p-8">
                 <div className="text-[var(--navy)] font-bold text-4xl">{c.stat}</div>
-                <div className="text-slate-600 text-sm mt-2">{c.label}</div>
-                <div className="text-slate-400 text-xs mt-1 italic">{c.source}</div>
+                <div className="text-slate-700 text-sm mt-3">{c.label}</div>
               </div>
             ))}
           </div>
+          <p className="text-slate-400 text-xs mt-6">
+            * Industry benchmarks. Sources available on request.
+          </p>
         </div>
       </section>
 
