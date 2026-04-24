@@ -493,17 +493,6 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Content type">
-              <select
-                value={form.contentType}
-                disabled={!isNew}
-                onChange={(e) => set("contentType", e.target.value as ContentType)}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:bg-slate-50"
-              >
-                <option value="blog">Blog</option>
-                <option value="white_paper">White paper</option>
-              </select>
-            </Field>
             <Field label="Tags (comma-separated)">
               <Input
                 value={form.tagsInput}
