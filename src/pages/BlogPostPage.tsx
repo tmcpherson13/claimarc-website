@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Layout from "@/components/Layout";
@@ -10,15 +10,24 @@ import RelatedContent from "@/components/RelatedContent";
 
 const BlogPostPage = () => {
   const { slug = "" } = useParams();
+  const [params] = useSearchParams();
+  const previewToken = params.get("preview");
   const [post, setPost] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    contentApi
-      .getBySlug("blog", slug)
-      .then(setPost)
-      .finally(() => setLoading(false));
-  }, [slug]);
+    const load = async () => {
+      if (previewToken) {
+        const item = await contentApi.fetchByPreviewToken(previewToken);
+        setPost(item && item.contentType === "blog" && item.slug === slug ? item : null);
+      } else {
+        const item = await contentApi.getBySlug("blog", slug);
+        setPost(item);
+      }
+      setLoading(false);
+    };
+    load();
+  }, [slug, previewToken]);
 
   if (loading) {
     return (
@@ -28,7 +37,8 @@ const BlogPostPage = () => {
     );
   }
 
-  if (!post || post.status !== "published") {
+  const isPreviewable = !!previewToken && !!post;
+  if (!post || (!isPreviewable && post.status !== "published")) {
     return (
       <Layout>
         <SeoHead
@@ -56,6 +66,12 @@ const BlogPostPage = () => {
   return (
     <Layout>
       <SeoHead title={seoTitle} description={seoDescription} path={`/blog/${post.slug}`} />
+
+      {previewToken && (
+        <div className="bg-amber-100 border-b border-amber-300 text-amber-900 text-sm text-center py-2 px-4">
+          Preview mode — viewing <strong className="capitalize">{post.status}</strong> content. Not visible to the public.
+        </div>
+      )}
 
       <article className="px-6 md:px-12 lg:px-16 py-16">
         <div className="max-w-3xl mx-auto">

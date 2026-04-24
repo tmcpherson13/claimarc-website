@@ -211,6 +211,73 @@ export const contentApi = {
     if (error) throw error;
     return data ?? [];
   },
+
+  // Restores the content_items row to the given snapshot's editable fields,
+  // which automatically creates a new revision via the DB trigger.
+  async restoreFromSnapshot(
+    id: string,
+    snapshot: Record<string, unknown>,
+  ): Promise<ContentItem> {
+    const input: ContentInput = {
+      contentType: (snapshot.content_type as ContentType) ?? "blog",
+      title: (snapshot.title as string) ?? "",
+      slug: (snapshot.slug as string) ?? "",
+      summary: (snapshot.summary as string) ?? "",
+      body: (snapshot.body as string) ?? "",
+      tags: (snapshot.tags as string[]) ?? [],
+      status: (snapshot.status as PostStatus) ?? "draft",
+      featured: Boolean(snapshot.featured),
+      ctaType: (snapshot.cta_type as CtaType) ?? "demo",
+      heroAssetId: (snapshot.hero_asset_id as string) ?? null,
+      pdfAssetId: (snapshot.pdf_asset_id as string) ?? null,
+      relatedIds: (snapshot.related_ids as string[]) ?? [],
+      scheduledFor: (snapshot.scheduled_for as string) ?? null,
+      publishedAt: (snapshot.published_at as string) ?? null,
+      seoTitle: (snapshot.seo_title as string) ?? null,
+      seoDescription: (snapshot.seo_description as string) ?? null,
+      canonicalUrl: (snapshot.canonical_url as string) ?? null,
+    };
+    return contentApi.update(id, input);
+  },
+
+  async createPreviewToken(id: string): Promise<string> {
+    const { data, error } = await supabase.functions.invoke("preview-content", {
+      method: "POST",
+      body: { id },
+      headers: { "x-action": "sign" },
+    });
+    // The edge function reads ?action= from the URL — fall back to direct fetch
+    // for query-string routing since functions.invoke doesn't expose query params.
+    if (error || !data?.token) {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/preview-content?action=sign`;
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token ?? ""}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error(`Preview token request failed (${res.status})`);
+      const j = await res.json();
+      return j.token as string;
+    }
+    return data.token as string;
+  },
+
+  async fetchByPreviewToken(token: string): Promise<ContentItem | null> {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/preview-content?action=fetch&token=${encodeURIComponent(token)}`;
+    const res = await fetch(url, {
+      headers: {
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      },
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j.item ? fromRow(j.item as Row) : null;
+  },
 };
 
 export const slugify = (s: string) =>

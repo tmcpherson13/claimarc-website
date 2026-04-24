@@ -222,33 +222,65 @@ const Inner = () => {
     }
   };
 
-  const restoreRevision = (snapshot: Record<string, unknown>) => {
-    if (!confirm("Restore this revision? Your current unsaved changes will be replaced.")) return;
-    const item: ContentItem = {
-      id: (snapshot.id as string) ?? existing?.id ?? "",
-      contentType: (snapshot.content_type as ContentType) ?? "blog",
-      title: (snapshot.title as string) ?? "",
-      slug: (snapshot.slug as string) ?? "",
-      summary: (snapshot.summary as string) ?? "",
-      body: (snapshot.body as string) ?? "",
-      tags: (snapshot.tags as string[]) ?? [],
-      status: (snapshot.status as PostStatus) ?? "draft",
-      featured: Boolean(snapshot.featured),
-      ctaType: (snapshot.cta_type as CtaType) ?? "demo",
-      heroAssetId: (snapshot.hero_asset_id as string) ?? null,
-      pdfAssetId: (snapshot.pdf_asset_id as string) ?? null,
-      authorId: (snapshot.author_id as string) ?? null,
-      relatedIds: (snapshot.related_ids as string[]) ?? [],
-      scheduledFor: (snapshot.scheduled_for as string) ?? null,
-      publishedAt: (snapshot.published_at as string) ?? null,
-      updatedAt: (snapshot.updated_at as string) ?? "",
-      createdAt: (snapshot.created_at as string) ?? "",
-      seoTitle: (snapshot.seo_title as string) ?? null,
-      seoDescription: (snapshot.seo_description as string) ?? null,
-      canonicalUrl: (snapshot.canonical_url as string) ?? null,
-    };
-    setForm(fromItem(item));
-    toast({ title: "Revision loaded — click Save to apply" });
+  const restoreRevision = async (snapshot: Record<string, unknown>) => {
+    if (!isAdmin) {
+      toast({
+        title: "Permission denied",
+        description: "Only admins can restore revisions.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!existing) return;
+    if (
+      !confirm(
+        "Restore this revision? Current content will be replaced with the snapshot and a new revision will be saved.",
+      )
+    )
+      return;
+    setSaving(true);
+    try {
+      const restored = await contentApi.restoreFromSnapshot(existing.id, snapshot);
+      setExisting(restored);
+      setForm(fromItem(restored));
+      // Refresh revision list to include the new snapshot just created by the trigger.
+      const r = await contentApi.listRevisions(existing.id);
+      setRevisions(r);
+      toast({ title: "Revision restored" });
+    } catch (e: unknown) {
+      toast({
+        title: "Restore failed",
+        description: e instanceof Error ? e.message : "",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openPreview = async () => {
+    if (!existing) {
+      toast({
+        title: "Save first",
+        description: "Save the item before generating a preview link.",
+      });
+      return;
+    }
+    if (existing.status === "published") {
+      window.open(previewPath, "_blank", "noreferrer");
+      return;
+    }
+    try {
+      const token = await contentApi.createPreviewToken(existing.id);
+      window.open(`${previewPath}?preview=${encodeURIComponent(token)}`, "_blank", "noreferrer");
+      toast({ title: "Preview link opened", description: "Token expires in 30 minutes." });
+    } catch (e: unknown) {
+      toast({
+        title: "Preview failed",
+        description: e instanceof Error ? e.message : "",
+        variant: "destructive",
+      });
+    }
   };
 
   const relatedCandidates = useMemo(
@@ -288,14 +320,14 @@ const Inner = () => {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {existing && (
-              <a
-                href={`${previewPath}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-white/70 hover:text-white"
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openPreview}
+                className="bg-white text-[var(--navy)]"
               >
                 Preview ↗
-              </a>
+              </Button>
             )}
             <Button
               variant="outline"
