@@ -163,6 +163,41 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_asset_id: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          role_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_asset_id?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          role_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_asset_id?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role_title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_avatar_asset_id_fkey"
+            columns: ["avatar_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
