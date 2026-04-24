@@ -61,6 +61,30 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Spacing tokens */
+    --space-section-y: 6rem;     /* 96px — section vertical padding */
+    --space-card: 2rem;          /* 32px — standard card padding */
+    --space-card-sm: 1.25rem;    /* 20px — compact card padding */
+    --space-stack: 1.5rem;       /* 24px — gap between stacked elements */
+
+    /* Typography scale */
+    --text-display: 3.75rem;     /* 60px — hero H1 desktop */
+    --text-h1: 2.25rem;          /* 36px — page H1 */
+    --text-h2: 1.875rem;         /* 30px — section heading */
+    --text-h2-sm: 1.5rem;        /* 24px — secondary section heading */
+    --text-h3: 1.125rem;         /* 18px — card heading */
+    --text-body: 1.0625rem;      /* 17px — body copy */
+    --text-label: 0.6875rem;     /* 11px — uppercase labels */
+
+    /* Border radius */
+    --radius-card: 0.75rem;      /* 12px — rounded-xl */
+    --radius-btn: 0.375rem;      /* 6px — rounded */
+    --radius-pill: 9999px;       /* rounded-full */
+
+    /* Shadows */
+    --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px 0 rgba(0,0,0,0.04);
+    --shadow-card-hover: 0 4px 12px 0 rgba(0,0,0,0.10);
   }
 
   .dark {
