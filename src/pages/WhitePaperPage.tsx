@@ -207,6 +207,25 @@ const WhitePaperPage = () => {
 
       <article className="px-6 md:px-12 lg:px-16 py-12 md:py-16 pb-32 lg:pb-16">
         <div className="max-w-6xl mx-auto">
+          {/* At a Glance — metadata panel */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { label: "Content Type", value: "White Paper" },
+              { label: "Read Time", value: readTime },
+              { label: "Published", value: publishedMonth },
+              { label: "Best For", value: audienceLabel },
+            ].map((m) => (
+              <div key={m.label}>
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">
+                  {m.label}
+                </p>
+                <p className="text-sm font-semibold text-[var(--navy)] mt-1">
+                  {m.value}
+                </p>
+              </div>
+            ))}
+          </div>
+
           {/* PDF VIEWER — full width, outside prose column */}
           {pdf && (
             <div className="mb-12 -mx-6 md:-mx-12 lg:-mx-16 px-6 md:px-12 lg:px-16">
