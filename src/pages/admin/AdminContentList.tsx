@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { Pencil, Archive, Trash2 } from "lucide-react";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { contentApi, ContentItem, ContentType, PostStatus } from "@/lib/contentApi";
+import { assetsApi, type Asset } from "@/lib/assetsApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +21,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { toast } from "@/hooks/use-toast";
 
@@ -42,6 +55,9 @@ const Inner = () => {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | ContentType>("all");
   const [statusFilter, setStatusFilter] = useState<"all" | PostStatus>("all");
+  const [assetMap, setAssetMap] = useState<Record<string, Asset>>({});
+  const [pendingDelete, setPendingDelete] = useState<ContentItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const refresh = () => {
     setLoading(true);
@@ -51,6 +67,19 @@ const Inner = () => {
   useEffect(() => {
     refresh();
   }, []);
+
+  // Load hero thumbnails for items that have a heroAssetId
+  useEffect(() => {
+    const ids = Array.from(
+      new Set(items.map((i) => i.heroAssetId).filter((v): v is string => Boolean(v))),
+    );
+    const missing = ids.filter((id) => !assetMap[id]);
+    if (missing.length === 0) return;
+    assetsApi
+      .getMany(missing)
+      .then((map) => setAssetMap((prev) => ({ ...prev, ...map })))
+      .catch(() => {});
+  }, [items, assetMap]);
 
   const filtered = useMemo(() => {
     return items.filter((i) => {
@@ -65,16 +94,13 @@ const Inner = () => {
     });
   }, [items, search, typeFilter, statusFilter]);
 
-  const handleDelete = async (id: string) => {
-    if (
-      !confirm(
-        "Permanently delete this item? This cannot be undone. Consider archiving instead.",
-      )
-    )
-      return;
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
-      await contentApi.remove(id);
+      await contentApi.remove(pendingDelete.id);
       toast({ title: "Deleted" });
+      setPendingDelete(null);
       refresh();
     } catch (e: unknown) {
       toast({
@@ -82,6 +108,8 @@ const Inner = () => {
         description: e instanceof Error ? e.message : "",
         variant: "destructive",
       });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -121,18 +149,8 @@ const Inner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[var(--navy)] text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/admin" className="text-lg font-semibold hover:text-[var(--emerald)]">
-            ZDefense Admin
-          </Link>
-          <Link to="/" className="text-sm text-white/70 hover:text-white">
-            ← Back to site
-          </Link>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-6 py-10">
+    <AdminLayout>
+      <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <h2 className="text-2xl font-bold text-[var(--navy)]">Content</h2>
           <DropdownMenu>
@@ -190,6 +208,7 @@ const Inner = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[64px]"></TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Status</TableHead>
@@ -200,66 +219,128 @@ const Inner = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((i) => (
-                  <TableRow key={i.id}>
-                    <TableCell className="font-medium text-[var(--navy)]">
-                      {i.title}
-                      <p className="text-[10px] text-slate-400 font-normal">/{i.slug}</p>
-                    </TableCell>
-                    <TableCell className="text-xs text-slate-600">
-                      {i.contentType === "blog" ? "Blog" : "White paper"}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded text-xs ${statusClass[i.status]}`}
-                      >
-                        {statusLabel[i.status]}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {i.featured ? "★" : "—"}
-                    </TableCell>
-                    <TableCell className="text-xs text-slate-600">
-                      {new Date(i.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-xs text-slate-600">
-                      {i.status === "scheduled" && i.scheduledFor
-                        ? new Date(i.scheduledFor).toLocaleString()
-                        : i.publishedAt
-                          ? new Date(i.publishedAt).toLocaleDateString()
-                          : "—"}
-                    </TableCell>
-                    <TableCell className="text-right space-x-3">
-                      <Link
-                        to={`/admin/content/${i.id}`}
-                        className="text-[var(--emerald)] hover:underline text-sm"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleArchive(i)}
-                        className="text-amber-700 hover:underline text-sm"
-                      >
-                        {i.status === "archived" ? "Unarchive" : "Archive"}
-                      </button>
-                      {isAdmin && (
-                        <button
-                          onClick={() => handleDelete(i.id)}
-                          className="text-red-600 hover:underline text-sm"
-                          title="Permanent delete (admin only)"
+                {filtered.map((i) => {
+                  const heroAsset = i.heroAssetId ? assetMap[i.heroAssetId] : undefined;
+                  return (
+                    <TableRow key={i.id}>
+                      <TableCell>
+                        {heroAsset ? (
+                          <img
+                            src={heroAsset.publicUrl}
+                            alt=""
+                            className="w-12 h-9 rounded object-cover bg-slate-100"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-12 h-9 rounded bg-slate-100 flex items-center justify-center text-slate-400 text-xs font-semibold">
+                            ZD
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium text-[var(--navy)]">
+                        {i.title}
+                        <p className="text-[10px] text-slate-400 font-normal">/{i.slug}</p>
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {i.contentType === "blog" ? "Blog" : "White paper"}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded text-xs ${statusClass[i.status]}`}
                         >
-                          Delete
-                        </button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          {statusLabel[i.status]}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {i.featured ? "★" : "—"}
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {new Date(i.updatedAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-xs text-slate-600">
+                        {i.status === "scheduled" && i.scheduledFor
+                          ? new Date(i.scheduledFor).toLocaleString()
+                          : i.publishedAt
+                            ? new Date(i.publishedAt).toLocaleDateString()
+                            : "—"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Link
+                            to={`/admin/content/${i.id}`}
+                            title="Edit"
+                            aria-label="Edit"
+                            className="p-2 rounded text-slate-600 hover:text-[var(--navy)] hover:bg-slate-100 transition-colors"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => handleArchive(i)}
+                            title={i.status === "archived" ? "Unarchive" : "Archive"}
+                            aria-label={i.status === "archived" ? "Unarchive" : "Archive"}
+                            className="p-2 rounded text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors"
+                          >
+                            <Archive className="h-4 w-4" />
+                          </button>
+                          {isAdmin && (
+                            <button
+                              type="button"
+                              onClick={() => setPendingDelete(i)}
+                              title="Permanent delete (admin only)"
+                              aria-label="Delete"
+                              className="p-2 rounded text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setPendingDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this item permanently?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDelete ? (
+                <>
+                  &ldquo;<span className="font-medium">{pendingDelete.title}</span>&rdquo; will be
+                  permanently removed. This cannot be undone — consider archiving instead.
+                </>
+              ) : (
+                "This cannot be undone."
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleConfirmDelete();
+              }}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deleting ? "Deleting…" : "Delete permanently"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AdminLayout>
   );
 };
 
