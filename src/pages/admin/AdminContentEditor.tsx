@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AdminGate from "@/components/AdminGate";
 import AssetPicker from "@/components/admin/AssetPicker";
+import PdfUploadCard from "@/components/admin/PdfUploadCard";
 import {
   contentApi,
   ContentItem,
@@ -373,6 +374,16 @@ const Inner = () => {
       <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main */}
         <section className="lg:col-span-2 space-y-6">
+          {form.contentType === "white_paper" && (
+            <PdfUploadCard
+              value={form.pdfAssetId}
+              onChange={(id) => set("pdfAssetId", id)}
+              onSuggestTitle={(suggested) => {
+                if (!form.title.trim()) onTitleChange(suggested);
+              }}
+            />
+          )}
+
           <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
             <Field label="Title" error={errors.title}>
               <Input value={form.title} onChange={(e) => onTitleChange(e.target.value)} />
@@ -515,17 +526,9 @@ const Inner = () => {
             />
           </Panel>
 
-          {/* PDF asset (white papers only) */}
-          {form.contentType === "white_paper" && (
-            <Panel title="Downloadable PDF (optional)">
-              <AssetPicker
-                value={form.pdfAssetId}
-                onChange={(id) => set("pdfAssetId", id)}
-                accept="application/pdf"
-                label="Pick PDF"
-              />
-            </Panel>
-          )}
+          {/* PDF asset is managed by the prominent PdfUploadCard at the top of the editor
+              for white papers, so no sidebar panel is needed here. */}
+
 
           {/* Related */}
           <Panel title="Related content (max 3)">
