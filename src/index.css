@@ -123,3 +123,34 @@ All colors MUST be HSL.
     scroll-margin-top: 80px;
   }
 }
+
+/* Rich article reading experience */
+@layer components {
+  .article-prose {
+    font-size: 1.0625rem; /* 17px mobile */
+    line-height: 1.75;
+  }
+  @media (min-width: 768px) {
+    .article-prose {
+      font-size: 1.125rem; /* 18px desktop */
+    }
+  }
+  .article-prose p,
+  .article-prose ul,
+  .article-prose ol,
+  .article-prose blockquote {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+  .article-prose h2 {
+    margin-top: 2.25em;
+    margin-bottom: 0.75em;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  .article-prose h3 {
+    margin-top: 1.75em;
+    margin-bottom: 0.5em;
+    font-size: 1.25rem;
+  }
+}

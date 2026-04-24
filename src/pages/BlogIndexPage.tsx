@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import { contentApi, ContentItem } from "@/lib/contentApi";
+import FilterBar, { matchesFilters } from "@/components/public/FilterBar";
+import FeaturedHero from "@/components/public/FeaturedHero";
+import ContentCard from "@/components/public/ContentCard";
+import WhitePaperStrip from "@/components/public/WhitePaperStrip";
 
 const BlogIndexPage = () => {
   const [posts, setPosts] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [params] = useSearchParams();
 
   useEffect(() => {
     contentApi
@@ -17,8 +22,19 @@ const BlogIndexPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const featured = posts.find((p) => p.featured) ?? null;
-  const rest = posts.filter((p) => p !== featured);
+  const search = params.get("q") ?? "";
+  const topic = params.get("topic") ?? "";
+  const audience = params.get("audience") ?? "";
+  const isFiltering = !!(search || topic || audience);
+
+  const featured = useMemo(
+    () => (isFiltering ? null : posts.find((p) => p.featured) ?? posts[0] ?? null),
+    [posts, isFiltering],
+  );
+  const grid = useMemo(() => {
+    const filtered = posts.filter((p) => matchesFilters(p, search, topic, audience));
+    return isFiltering ? filtered : filtered.filter((p) => p !== featured);
+  }, [posts, search, topic, audience, featured, isFiltering]);
 
   return (
     <Layout>
@@ -29,8 +45,8 @@ const BlogIndexPage = () => {
       />
 
       {/* Hero */}
-      <section className="bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-20">
-        <div className="max-w-5xl mx-auto">
+      <section className="bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16 md:py-20">
+        <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">ZDefense Blog</h1>
           <p className="mt-4 text-lg text-white/80 max-w-2xl">
             Payer behavior, denial intelligence, and revenue cycle strategy.
@@ -38,98 +54,39 @@ const BlogIndexPage = () => {
         </div>
       </section>
 
-      <section className="px-6 md:px-12 lg:px-16 py-16">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-10">
+      <section className="px-6 md:px-12 lg:px-16 pb-20">
+        <div className="max-w-6xl mx-auto">
+          <FilterBar items={posts} />
+
+          <div className="pt-10">
             {loading && <p className="text-slate-500">Loading posts…</p>}
             {error && <p className="text-red-600">{error}</p>}
             {!loading && !error && posts.length === 0 && (
               <p className="text-slate-500">No posts published yet. Check back soon.</p>
             )}
 
-            {featured && (
-              <article className="border-l-4 border-[var(--emerald)] pl-6 pb-8 border-b border-slate-200">
-                <p className="text-xs uppercase tracking-wider text-[var(--emerald)] font-semibold">
-                  Featured
-                </p>
-                <h2 className="mt-2 text-3xl font-bold text-[var(--navy)]">
-                  <Link to={`/blog/${featured.slug}`} className="hover:text-[var(--emerald)]">
-                    {featured.title}
-                  </Link>
-                </h2>
-                <p className="mt-2 text-slate-600">{featured.summary}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                  {featured.publishedAt && (
-                    <time dateTime={featured.publishedAt}>
-                      {new Date(featured.publishedAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                  )}
-                </div>
-              </article>
+            {!loading && !error && featured && (
+              <div className="mb-10">
+                <FeaturedHero item={featured} />
+              </div>
             )}
 
-            {rest.map((p) => (
-              <article key={p.id} className="border-b border-slate-200 pb-8">
-                <h2 className="text-2xl font-semibold text-[var(--navy)]">
-                  <Link to={`/blog/${p.slug}`} className="hover:text-[var(--emerald)]">
-                    {p.title}
-                  </Link>
-                </h2>
-                <p className="mt-2 text-slate-600">{p.summary}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                  {p.publishedAt && (
-                    <time dateTime={p.publishedAt}>
-                      {new Date(p.publishedAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                  )}
-                  {p.tags.length > 0 && (
-                    <span className="flex flex-wrap gap-2">
-                      {p.tags.map((t) => (
-                        <span key={t} className="px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                          {t}
-                        </span>
-                      ))}
-                    </span>
-                  )}
-                </div>
-              </article>
-            ))}
+            {!loading && !error && grid.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {grid.map((p) => (
+                  <ContentCard key={p.id} item={p} />
+                ))}
+              </div>
+            )}
+
+            {!loading && !error && isFiltering && grid.length === 0 && (
+              <p className="text-slate-500 py-12 text-center">
+                No posts match your filters.
+              </p>
+            )}
           </div>
 
-          {/* Sidebar CTA */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-24 space-y-4">
-              <div className="bg-[var(--navy)] text-white rounded-lg p-6">
-                <p className="text-sm uppercase tracking-wider text-[var(--emerald)] font-semibold">
-                  Try ZDefense
-                </p>
-                <p className="mt-3 text-base">Want to see this intelligence in your payer mix?</p>
-                <Link
-                  to="/contact?offer=trial"
-                  className="mt-4 inline-block bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors"
-                >
-                  Start your 30-day evaluation — no BAA required
-                </Link>
-              </div>
-              <div className="border border-slate-200 rounded-lg p-4 text-xs text-slate-500 flex items-center justify-between">
-                <span>Editor access</span>
-                <Link
-                  to="/admin/login"
-                  className="font-semibold text-[var(--navy)] hover:text-[var(--emerald)]"
-                >
-                  Admin sign in →
-                </Link>
-              </div>
-            </div>
-          </aside>
+          <WhitePaperStrip />
         </div>
       </section>
     </Layout>
