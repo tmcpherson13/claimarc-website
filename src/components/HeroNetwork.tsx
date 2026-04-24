@@ -35,9 +35,10 @@ const BLIP_DEFS = [
   { ring: 3, angle: 140 },  // H — outer
 ];
 
-// Precompute pixel positions and "north-clockwise" angle for sweep matching.
-// Sweep arm at rotation R points to (CX, CY - R_MAX) rotated CW by R, i.e.
-// north + R clockwise. Convert each blip's (dx, dy) to north-CW degrees.
+// Precompute pixel positions and SVG-atan2 angle for sweep matching.
+// In SVG space, atan2(dy, dx) gives 0° = east, increasing clockwise
+// (because y grows downward). The sweep arm at rotate(0) points north,
+// which is -90° in this space, so adjustedAngle = currentAngle - 90.
 const BLIPS = BLIP_DEFS.map((b) => {
   const r = RINGS[b.ring];
   const rad = (b.angle * Math.PI) / 180;
@@ -45,9 +46,8 @@ const BLIPS = BLIP_DEFS.map((b) => {
   const y = CY + r * Math.sin(rad);
   const dx = x - CX;
   const dy = y - CY;
-  let northCw = 90 + (Math.atan2(dy, dx) * 180) / Math.PI;
-  northCw = ((northCw % 360) + 360) % 360;
-  return { x, y, northCw };
+  const svgAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
+  return { x, y, svgAngle };
 });
 
 const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
