@@ -104,13 +104,16 @@ const PayerThreatRadar = () => {
 
     const id = window.setInterval(() => {
       const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const armAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
+      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
+      const adjustedAngle = currentAngle - 90;
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
 
       for (let i = 0; i < BLIPS.length; i++) {
-        const diff = (armAngle - BLIP_ANGLES[i] + 360) % 360;
+        const diff = (adjustedAngle - BLIP_ANGLES[i] + 720) % 360;
         const inWindow = diff < TRAIL_WINDOW;
 
         if (inWindow && !wasActive[i]) {
