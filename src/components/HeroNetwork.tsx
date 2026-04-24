@@ -119,12 +119,7 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
       focusable="false"
       style={{ overflow: "visible" }}
     >
-      <defs>
-        <radialGradient id="hero-radar-trail" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#10B981" stopOpacity="0.07" />
-          <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-        </radialGradient>
-      </defs>
+
 
       {/* Concentric rings */}
       <g>
