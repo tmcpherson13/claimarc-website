@@ -178,7 +178,7 @@ const Index = () => {
                 data. Start your 30-day evaluation with live intelligence
                 benchmarked to your market — no BAA, no IT, no legal agreements.
               </p>
-              <Link to="/contact?offer=trial" className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
+              <Link to="/contact?offer=trial" className="text-slate-500 text-sm mt-3 inline-block hover:text-[var(--navy)] hover:underline">
                 Start your no-BAA evaluation →
               </Link>
             </div>
