@@ -5,6 +5,7 @@ import CTABand from "@/components/CTABand";
 import TrialCallout from "@/components/TrialCallout";
 import HeroAccent from "@/components/HeroAccent";
 import HeroNetwork from "@/components/HeroNetwork";
+import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
 
 const Index = () => {
@@ -113,6 +114,9 @@ const Index = () => {
           </p>
         </div>
       </section>
+
+      {/* SECTION 3.5: PAYER THREAT RADAR */}
+      <PayerThreatRadar />
 
       {/* SECTION 4: PREDICT / PROTECT / RECOVER */}
       <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
