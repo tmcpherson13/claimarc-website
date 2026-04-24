@@ -145,7 +145,7 @@ const Index = () => {
                 <div className="mt-4 pt-4 border-t border-slate-800 text-[var(--emerald)] text-sm font-semibold">
                   {c.proof}
                 </div>
-                <Link to={c.href} className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
+                <Link to={c.href} className="text-slate-300 text-sm mt-3 inline-block hover:text-white hover:underline">
                   {c.link}
                 </Link>
               </div>
