@@ -1,62 +1,64 @@
 
 
-# Refined upload UI for `/admin/assets`
+# Merge Blog and White Papers into "Insights" at `/blog`
 
-Yes — fully possible. Here's the plan.
+Single hub at `/blog` showing all published content (blog posts + white papers) with a type filter. URL stays `/blog` so existing links and SEO are preserved.
 
-## What changes on the Assets page
+## Page layout (`/blog`)
 
-Replace the current "Upload file" button (top-right) with a **prominent dropzone at the top of the page**, above the search and grid.
-
-### Dropzone behavior
-- Large bordered area (~140px tall) with dashed border, cloud-upload icon, and copy: "Drag files here, or click to browse" + secondary line "Images, PDFs, docs · up to 25 MB each".
-- **Drag and drop**: Highlights emerald with solid border + tinted background while a file is hovered over the page (or the zone). Uses `dragenter` / `dragover` / `dragleave` / `drop` handlers with a counter to avoid flicker from child elements.
-- **Click anywhere in the zone** opens the native file picker.
-- **Multi-file support**: dropping/picking multiple files queues them all (current flow only handles one).
-- **Paste support**: pasting an image from clipboard while focused on the page uploads it.
-
-### Upload queue
-Below the dropzone, render a compact list of in-progress / just-finished uploads:
-- Each row: filename, size, status (Queued → Uploading → Done / Failed), and a per-file progress bar.
-- Failed rows show the error message + a "Retry" link.
-- Done rows fade out after ~3 seconds, or user can dismiss.
-- Uploads run sequentially (simpler, avoids storage rate-limit issues) but the queue UI updates live.
-
-### Validation
-- Per-file: max 25 MB (configurable constant), reject zero-byte files. Bad files are added to the queue as "Failed" with a clear reason rather than silently toasted, so the user sees exactly which file was rejected.
-- No mime-type restriction on the general assets page (it's a general library) — but the `AssetPicker` keeps its existing `accept`/`maxSizeMb` filters.
-
-### Layout order on `/admin/assets`
 ```text
-Header (Assets title)
-─────────────────────
-Dropzone               ← NEW, full-width, top of content
-Upload queue (if any)  ← NEW, appears under dropzone
-─────────────────────
-Search input
-Asset grid (existing)
+┌──────────────────────────────────────────────┐
+│  Insights                                    │
+│  Payer behavior, denial intelligence, and    │
+│  revenue cycle strategy.                     │
+└──────────────────────────────────────────────┘
+
+[Search…] [Type ▾] [Topic ▾] [Audience ▾]
+[ All ] [ Blog ] [ White Papers ]   ← pill toggle, mirrors ?type=
+
+┌────────── Featured (newest featured) ──────────┐
+└────────────────────────────────────────────────┘
+
+┌────────┐ ┌────────┐ ┌────────┐
+│ [Blog] │ │[WP·PDF]│ │ [Blog] │   ← type badge always visible
+└────────┘ └────────┘ └────────┘
 ```
 
-## Should the `AssetPicker` modal get the same treatment?
+- Combined list from `contentApi.listPublished("blog")` + `listPublished("white_paper")`, sorted by `publishedAt` desc.
+- Featured: newest item with `featured: true` across both types; falls back to newest item.
+- Cards always show the type badge; white-paper cards keep the existing PDF corner ribbon. Links continue to route to `/blog/:slug` or `/white-papers/:slug` (detail pages unchanged).
+- Type filter syncs to `?type=blog|white_paper`. Topic, Audience, Search continue to work.
 
-Yes — same dropzone component reused inside the picker dialog, but smaller (single-file mode, since the picker resolves to one selected asset). Keeps UX consistent and removes the extra "Upload" button click.
+## Navigation
+
+- `src/config/routes.ts`: replace the separate "Blog" and "White Papers" entries with a single `{ label: "Insights", to: "/blog" }`. Navbar and footer pick this up automatically.
+
+## Routing
+
+- `/blog` → renders the new merged `InsightsPage`.
+- `/white-papers` → `<Navigate to="/blog?type=white_paper" replace />`.
+- `/blog/:slug` and `/white-papers/:slug` → unchanged.
+
+## Admin
+
+No changes. Authors still pick `blog` or `white_paper` in the editor.
 
 ## Files
 
 **New**
-- `src/components/admin/Dropzone.tsx` — reusable dropzone (props: `onFiles`, `accept?`, `maxSizeMb`, `multiple`, `compact?`).
-- `src/components/admin/UploadQueue.tsx` — queue list with progress rows.
-- `src/hooks/useUploadQueue.ts` — manages queue state, sequential upload, retry.
+- `src/pages/InsightsPage.tsx` — merged listing (built from current `BlogIndexPage`, fetches both types, adds type filter).
 
 **Edited**
-- `src/pages/admin/AdminAssets.tsx` — drop top-right Upload button, mount `Dropzone` + `UploadQueue` at top of `<main>`, refresh grid when queue completes a file.
-- `src/components/admin/AssetPicker.tsx` — replace the inline "Upload" button + hidden input with `<Dropzone compact />` inside the dialog, keep `accept`/`maxSizeMb` validation.
+- `src/components/public/FilterBar.tsx` — add Type select + pill row, wire to `?type=`. `matchesFilters` gains a type check.
+- `src/components/public/ContentCard.tsx` — ensure type badge renders when `showTypeBadge` is set (no API change).
+- `src/config/routes.ts` — collapse two entries into one "Insights" → `/blog`.
+- `src/App.tsx` — point `/blog` to `InsightsPage`; `/white-papers` becomes a redirect.
 
-**No schema or storage changes** — `assetsApi.upload` already does everything needed; we just call it per file from the queue.
+**Deleted**
+- `src/pages/BlogIndexPage.tsx`
+- `src/pages/WhitePapersIndexPage.tsx`
+- `src/components/public/WhitePaperStrip.tsx` (no longer needed)
 
-## Technical notes
-
-- True upload progress requires XHR; `supabase-js` v2 storage uploads don't expose progress events, so progress bars will be **indeterminate (animated stripe)** while uploading and snap to 100% on completion. Honest about this rather than faking a percentage.
-- Drag-and-drop uses native HTML5 DnD (no extra library) — keeps bundle size flat.
-- Paste-to-upload listens on `window` only while the Assets page is mounted, cleaned up on unmount.
+**Unchanged**
+- Detail pages, `contentApi`, all admin pages, SEO on detail pages.
 
