@@ -60,16 +60,13 @@ const RADAR_STYLES = `
 
 // Sweep duration must match the CSS animation above.
 const SWEEP_DURATION_MS = 6650;
-// Convert a blip (x, y) to its "north-clockwise" angle in [0, 360).
-// Arm at rotation R points to (250, 250 - r) which is north + R clockwise.
+// Each blip's angle in SVG atan2 space (degrees), where 0° = +x (east)
+// and angles increase clockwise (since SVG y grows downward).
+// Range: (-180, 180].
 const blipAngle = (x: number, y: number) => {
   const dx = x - 250;
   const dy = y - 250;
-  // atan2(dy, dx) gives angle from +x axis CCW. Convert to north-CW:
-  // north-CW = 90 + atan2(dy, dx) in degrees, normalized.
-  let a = 90 + (Math.atan2(dy, dx) * 180) / Math.PI;
-  a = ((a % 360) + 360) % 360;
-  return a;
+  return (Math.atan2(dy, dx) * 180) / Math.PI;
 };
 const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
 
