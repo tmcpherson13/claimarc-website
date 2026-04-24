@@ -59,9 +59,28 @@ const RADAR_STYLES = `
 }
 `;
 
+// Sweep duration must match the CSS animation above.
+const SWEEP_DURATION_MS = 5000;
+// Convert a blip (x, y) to its "north-clockwise" angle in [0, 360).
+// Arm at rotation R points to (250, 250 - r) which is north + R clockwise.
+const blipAngle = (x: number, y: number) => {
+  const dx = x - 250;
+  const dy = y - 250;
+  // atan2(dy, dx) gives angle from +x axis CCW. Convert to north-CW:
+  // north-CW = 90 + atan2(dy, dx) in degrees, normalized.
+  let a = 90 + (Math.atan2(dy, dx) * 180) / Math.PI;
+  a = ((a % 360) + 360) % 360;
+  return a;
+};
+const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
+const HIT_TOLERANCE = 8; // degrees
+
 const PayerThreatRadar = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
+  const [activeMap, setActiveMap] = useState<boolean[]>(() => BLIPS.map(() => false));
+  const pulseKeyRef = useRef<number[]>(BLIPS.map(() => 0));
+  const [, forcePulseRender] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -78,6 +97,38 @@ const PayerThreatRadar = () => {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Track sweep arm angle and toggle blip "active" within +/- 8 degrees.
+  useEffect(() => {
+    const start = performance.now();
+    const wasActive = BLIPS.map(() => false);
+    const id = window.setInterval(() => {
+      const elapsed = performance.now() - start;
+      const armAngle = ((elapsed / SWEEP_DURATION_MS) * 360) % 360;
+      let changed = false;
+      const next = wasActive.slice();
+      let pulseChanged = false;
+      for (let i = 0; i < BLIPS.length; i++) {
+        let diff = Math.abs(armAngle - BLIP_ANGLES[i]);
+        if (diff > 180) diff = 360 - diff;
+        const isActive = diff <= HIT_TOLERANCE;
+        if (isActive !== wasActive[i]) {
+          next[i] = isActive;
+          wasActive[i] = isActive;
+          changed = true;
+          // Trigger one-shot ring pulse on rising edge.
+          if (isActive) {
+            pulseKeyRef.current[i] += 1;
+            pulseChanged = true;
+          }
+        }
+      }
+      if (changed) setActiveMap(next);
+      if (pulseChanged) forcePulseRender((n) => n + 1);
+    }, 50);
+    return () => window.clearInterval(id);
+  }, []);
+
 
   return (
     <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 border-t border-b border-slate-800">
