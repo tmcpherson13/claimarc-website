@@ -67,6 +67,12 @@ const BlogPostPage = () => {
     <Layout>
       <SeoHead title={seoTitle} description={seoDescription} path={`/blog/${post.slug}`} />
 
+      {previewToken && (
+        <div className="bg-amber-100 border-b border-amber-300 text-amber-900 text-sm text-center py-2 px-4">
+          Preview mode — viewing <strong className="capitalize">{post.status}</strong> content. Not visible to the public.
+        </div>
+      )}
+
       <article className="px-6 md:px-12 lg:px-16 py-16">
         <div className="max-w-3xl mx-auto">
           <Link
