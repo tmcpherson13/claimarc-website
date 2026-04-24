@@ -7,9 +7,20 @@ interface Props {
   publishedAt: string | null;
   updatedAt?: string | null;
   readTime?: string;
+  nameClassName?: string;
+  metaClassName?: string;
+  titleClassName?: string;
 }
 
-const BylineRow = ({ authorId, publishedAt, updatedAt, readTime }: Props) => {
+const BylineRow = ({
+  authorId,
+  publishedAt,
+  updatedAt,
+  readTime,
+  nameClassName,
+  metaClassName,
+  titleClassName,
+}: Props) => {
   const profile = useProfile(authorId);
   const [avatar, setAvatar] = useState<Asset | null>(null);
 
