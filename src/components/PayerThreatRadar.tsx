@@ -72,7 +72,7 @@ const blipAngle = (x: number, y: number) => {
   return a;
 };
 const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
-const HIT_TOLERANCE = 8; // degrees
+
 
 const PayerThreatRadar = () => {
   const ref = useRef<HTMLDivElement | null>(null);
