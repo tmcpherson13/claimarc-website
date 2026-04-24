@@ -136,10 +136,10 @@ const Index = () => {
                 <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
                 <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
                 <p className="text-slate-400 text-sm mt-3">{c.body}</p>
-                <div className="mt-4 pt-4 border-t border-slate-800 text-[var(--emerald)] text-sm font-semibold">
+                <div className="mt-6 pt-6 border-t border-slate-800 text-[var(--emerald)] text-sm font-bold mb-2">
                   {c.proof}
                 </div>
-                <Link to={c.href} className="text-slate-300 text-sm mt-3 inline-block hover:text-white hover:underline">
+                <Link to={c.href} className="text-slate-300 text-sm mt-1 block hover:text-white hover:underline">
                   {c.link}
                 </Link>
               </div>
