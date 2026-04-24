@@ -312,9 +312,44 @@ const PdfViewer = ({ url, fileName, sizeBytes, title, storageKey }: PdfViewerPro
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <div className="px-2 text-xs text-slate-700 tabular-nums min-w-[3.5rem] text-center">
-                {currentPage} / {numPages}
-              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const n = parseInt(pageInput, 10);
+                  if (!Number.isFinite(n) || n < 1 || n > numPages) {
+                    setPageInputError(`1–${numPages}`);
+                    trackEvent("PDF_Preview_Page_Search_Invalid", {
+                      ...analyticsBase,
+                      input: pageInput.slice(0, 12),
+                    });
+                    return;
+                  }
+                  trackEvent("PDF_Preview_Page_Search", {
+                    ...analyticsBase,
+                    page: n,
+                  });
+                  goToPage(n);
+                }}
+                className="flex items-center"
+                title={pageInputError ? `Out of range (${pageInputError})` : "Jump to page"}
+              >
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={pageInput}
+                  onChange={(e) => {
+                    setPageInput(e.target.value.replace(/[^0-9]/g, "").slice(0, 4));
+                    if (pageInputError) setPageInputError("");
+                  }}
+                  onFocus={(e) => e.currentTarget.select()}
+                  aria-label="Jump to page"
+                  className={`w-10 px-1 py-1 text-xs text-center tabular-nums bg-transparent text-slate-700 outline-none focus:bg-white focus:ring-1 focus:ring-[var(--emerald)] rounded-sm ${
+                    pageInputError ? "ring-1 ring-amber-400 bg-amber-50" : ""
+                  }`}
+                />
+                <span className="text-xs text-slate-500 px-1">/ {numPages}</span>
+              </form>
               <button
                 type="button"
                 onClick={() => goToPage(currentPage + 1)}
