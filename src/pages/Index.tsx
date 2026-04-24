@@ -229,7 +229,7 @@ const Index = () => {
       {/* SECTION 7: WHO IT'S FOR */}
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             BUILT FOR YOUR TEAM
           </p>
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold mt-2">
