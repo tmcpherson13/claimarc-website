@@ -193,7 +193,7 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <Link to="/why-zdefense" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+          <Link to="/why-zdefense" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
             See all differentiators →
           </Link>
         </div>
