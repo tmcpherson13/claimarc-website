@@ -320,7 +320,10 @@ const WhitePaperPage = () => {
             </div>
           )}
 
-          {/* Download CTA — compact horizontal */}
+          <ContentCta type={post.ctaType} />
+          <InternalLinkRail />
+
+          {/* Download CTA — compact horizontal, before related content */}
           <div className="not-prose mt-16 bg-[var(--navy)] rounded-xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="min-w-0">
               <p className="text-white font-bold text-xl">
@@ -350,8 +353,6 @@ const WhitePaperPage = () => {
             )}
           </div>
 
-          <ContentCta type={post.ctaType} />
-          <InternalLinkRail />
           <RelatedContent ids={post.relatedIds} />
         </div>
       </article>
