@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import AdminGate from "@/components/AdminGate";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AssetPicker from "@/components/admin/AssetPicker";
 import PdfUploadCard from "@/components/admin/PdfUploadCard";
+import MarkdownEditor from "@/components/admin/MarkdownEditor";
+import TagInput from "@/components/admin/TagInput";
+import HeroImagePreview from "@/components/admin/HeroImagePreview";
 import {
   contentApi,
   ContentItem,
@@ -26,7 +27,7 @@ interface FormState {
   slug: string;
   summary: string;
   body: string;
-  tagsInput: string;
+  tags: string[];
   status: PostStatus;
   featured: boolean;
   ctaType: CtaType;
@@ -52,7 +53,7 @@ const empty = (type: ContentType): FormState => ({
   slug: "",
   summary: "",
   body: "",
-  tagsInput: "",
+  tags: [],
   status: "draft",
   featured: false,
   ctaType: "demo",
@@ -80,7 +81,7 @@ const fromItem = (i: ContentItem): FormState => ({
   slug: i.slug,
   summary: i.summary,
   body: i.body,
-  tagsInput: i.tags.join(", "),
+  tags: i.tags,
   status: i.status,
   featured: i.featured,
   ctaType: i.ctaType,
@@ -197,7 +198,7 @@ const Inner = () => {
         slug: form.slug.trim(),
         summary: form.summary.trim(),
         body: form.body,
-        tags: form.tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+        tags: form.tags.map((t) => t.trim()).filter(Boolean),
         status: targetStatus,
         featured: form.featured,
         ctaType: form.ctaType,
@@ -433,28 +434,25 @@ const Inner = () => {
                 onChange={(e) => set("summary", e.target.value)}
                 rows={3}
               />
+              <p
+                className={`text-xs text-right mt-1 ${
+                  form.summary.length > 160 ? "text-red-500" : "text-slate-400"
+                }`}
+              >
+                {form.summary.length} / 160 characters
+              </p>
             </Field>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <label className="text-sm font-medium text-[var(--navy)]">Body (Markdown)</label>
-            <Textarea
+            <label className="text-sm font-medium text-[var(--navy)] block mb-2">
+              Body (Markdown)
+            </label>
+            <MarkdownEditor
               value={form.body}
-              onChange={(e) => set("body", e.target.value)}
+              onChange={(v) => set("body", v)}
               rows={20}
-              className="mt-2 font-mono text-sm"
             />
-          </div>
-
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">
-              Live preview
-            </p>
-            <div className="prose prose-slate max-w-none prose-headings:text-[var(--navy)]">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {form.body || "_Nothing to preview yet._"}
-              </ReactMarkdown>
-            </div>
           </div>
         </section>
 
@@ -494,10 +492,11 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Tags (comma-separated)">
-              <Input
-                value={form.tagsInput}
-                onChange={(e) => set("tagsInput", e.target.value)}
+            <Field label="Tags">
+              <TagInput
+                value={form.tags}
+                onChange={(tags) => set("tags", tags)}
+                placeholder="Type a tag and press Enter…"
               />
             </Field>
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
@@ -534,6 +533,10 @@ const Inner = () => {
               onChange={(id) => set("heroAssetId", id)}
               accept="image/"
               label="Pick image"
+            />
+            <HeroImagePreview
+              assetId={form.heroAssetId}
+              onRemove={() => set("heroAssetId", null)}
             />
           </Panel>
 
