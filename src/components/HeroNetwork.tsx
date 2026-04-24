@@ -22,16 +22,6 @@ const R_MAX = 420;
 const SWEEP_DURATION_MS = 9200;
 
 
-// Build the 70deg sweep glow pie-slice path, centered along the sweep arm
-// (arm points "up" before rotation, i.e. negative Y). Arc spans -35deg to +35deg.
-const SWEEP_DEG = 70;
-const half = (SWEEP_DEG / 2) * (Math.PI / 180);
-const x1 = CX + R_MAX * Math.sin(-half);
-const y1 = CY - R_MAX * Math.cos(-half);
-const x2 = CX + R_MAX * Math.sin(half);
-const y2 = CY - R_MAX * Math.cos(half);
-const SWEEP_PATH = `M ${CX} ${CY} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R_MAX} ${R_MAX} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
-
 // Blip definitions: ring index (0=innermost..3=outer) + angle in standard
 // math degrees (0 = +x axis, CCW positive — used directly with cos/sin).
 const BLIP_DEFS = [
