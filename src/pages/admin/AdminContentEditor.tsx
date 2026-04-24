@@ -526,17 +526,9 @@ const Inner = () => {
             />
           </Panel>
 
-          {/* PDF asset (white papers only) */}
-          {form.contentType === "white_paper" && (
-            <Panel title="Downloadable PDF (optional)">
-              <AssetPicker
-                value={form.pdfAssetId}
-                onChange={(id) => set("pdfAssetId", id)}
-                accept="application/pdf"
-                label="Pick PDF"
-              />
-            </Panel>
-          )}
+          {/* PDF asset is managed by the prominent PdfUploadCard at the top of the editor
+              for white papers, so no sidebar panel is needed here. */}
+
 
           {/* Related */}
           <Panel title="Related content (max 3)">
