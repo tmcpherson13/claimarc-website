@@ -23,6 +23,15 @@ const ContentCard = ({ item, showTypeBadge = false }: Props) => {
   const typeLabel = item.contentType === "blog" ? "Blog" : "White paper";
   const author = profile?.displayName?.trim() || "ZDefense Team";
 
+  const allTags = item.tags ?? [];
+  const topicTags = allTags.filter((t) => !t.startsWith("audience:")).slice(0, 2);
+  const audienceTag = allTags.find((t) => t.startsWith("audience:"));
+  const audienceLabel = audienceTag?.slice("audience:".length);
+
+  const isNew =
+    !!item.publishedAt &&
+    Date.now() - new Date(item.publishedAt).getTime() < 14 * 24 * 60 * 60 * 1000;
+
   return (
     <Link
       to={href}
@@ -41,6 +50,11 @@ const ContentCard = ({ item, showTypeBadge = false }: Props) => {
             <span className="text-white/40 text-4xl font-bold tracking-tight">ZD</span>
           </div>
         )}
+        {isNew && (
+          <span className="absolute top-3 left-3 bg-[var(--emerald)] text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded">
+            NEW
+          </span>
+        )}
         {item.contentType === "white_paper" && item.pdfAssetId && (
           <span className="absolute top-3 right-3 bg-[var(--amber)] text-[var(--navy)] text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded">
             PDF
@@ -53,11 +67,28 @@ const ContentCard = ({ item, showTypeBadge = false }: Props) => {
             {typeLabel}
           </p>
         )}
-        <h3 className="mt-1 text-lg font-semibold text-[var(--navy)] group-hover:text-[var(--emerald)] transition-colors leading-snug">
+        {(topicTags.length > 0 || audienceLabel) && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {topicTags.map((t) => (
+              <span
+                key={t}
+                className="text-[10px] uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium"
+              >
+                {t}
+              </span>
+            ))}
+            {audienceLabel && (
+              <span className="text-[10px] uppercase tracking-wider bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                {audienceLabel}
+              </span>
+            )}
+          </div>
+        )}
+        <h3 className="mt-2 text-lg font-semibold text-slate-800 group-hover:text-[var(--emerald)] transition-colors leading-snug">
           {item.title}
         </h3>
         <p className="mt-2 text-sm text-slate-600 line-clamp-3 flex-1">{item.summary}</p>
-        <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
           <span className="truncate">{author}</span>
           <span className="shrink-0">
             {item.publishedAt &&
