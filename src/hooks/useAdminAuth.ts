@@ -60,7 +60,8 @@ export const useAdminAuth = () => {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    return { error: error ?? null };
   };
 
   return { ...state, signOut };
