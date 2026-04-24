@@ -100,6 +100,8 @@ const WhitePaperPage = () => {
   const seoDescription = post.seoDescription?.trim() || post.summary;
 
   const visibleTags = (post.tags ?? []).filter((t) => !t.startsWith("audience:"));
+  const audienceTag = (post.tags ?? []).find((t) => t.startsWith("audience:"));
+  const audienceLabel = audienceTag?.slice("audience:".length) || "Revenue Cycle Leaders";
   const sizeMb = pdf ? (pdf.sizeBytes / 1024 / 1024).toFixed(1) : null;
   const readTime = estimateReadTime(post.body);
   const publishedFmt = post.publishedAt
@@ -109,6 +111,12 @@ const WhitePaperPage = () => {
         day: "numeric",
       })
     : "ZDefense";
+  const publishedMonth = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+      })
+    : "—";
 
   return (
     <Layout>
