@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, CheckCircle2, AlertTriangle, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,12 @@ import { toast } from "@/hooks/use-toast";
 type Mode = "signin" | "bootstrap";
 
 const AdminLogin = () => {
-  const { session, isAdmin, loading } = useAdminAuth();
+  const { session, user, isAdmin, loading, signOut } = useAdminAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const fromState = (location.state as { from?: { pathname?: string } } | null)?.from;
+  const fromPath = fromState?.pathname && fromState.pathname !== "/admin/login" ? fromState.pathname : null;
+
   const [mode, setMode] = useState<Mode>("signin");
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
@@ -26,9 +31,9 @@ const AdminLogin = () => {
     });
   }, []);
 
-  // Already signed in as admin → bounce to dashboard.
+  // Already signed in as admin → bounce to dashboard or original destination.
   if (!loading && session && isAdmin) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={fromPath || "/admin"} replace />;
   }
 
   const submit = async (submitMode: Mode) => {
