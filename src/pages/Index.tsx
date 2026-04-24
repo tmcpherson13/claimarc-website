@@ -248,12 +248,12 @@ const Index = () => {
             ].map((r) => (
               <div key={r.role} className="bg-[var(--lgray)] rounded-xl p-5 hover:bg-emerald-50 transition-colors cursor-pointer">
                 <div className="text-[var(--navy)] font-semibold">{r.role}</div>
-                <div className="text-[var(--emerald)] text-sm mt-0.5">{r.module}</div>
+                <div className="text-slate-500 text-sm mt-0.5">{r.module}</div>
                 <div className="text-slate-600 text-xs mt-1">{r.desc}</div>
               </div>
             ))}
           </div>
-          <Link to="/solutions" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+          <Link to="/solutions" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
             See all roles →
           </Link>
         </div>
