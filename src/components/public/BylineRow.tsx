@@ -44,7 +44,7 @@ const BylineRow = ({
     new Date(updatedAt).getTime() - new Date(publishedAt).getTime() > 24 * 60 * 60 * 1000;
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+    <div className={`flex flex-wrap items-center gap-3 text-sm ${metaClassName ?? "text-slate-500"}`}>
       <div className="flex items-center gap-3">
         {avatar ? (
           <img
@@ -58,11 +58,11 @@ const BylineRow = ({
           </div>
         )}
         <div className="leading-tight">
-          <p className="font-semibold text-[var(--navy)] text-sm">{name}</p>
-          {title && <p className="text-xs text-slate-500">{title}</p>}
+          <p className={`font-semibold text-sm ${nameClassName ?? "text-[var(--navy)]"}`}>{name}</p>
+          {title && <p className={`text-xs ${titleClassName ?? metaClassName ?? "text-slate-500"}`}>{title}</p>}
         </div>
       </div>
-      <span className="hidden sm:inline text-slate-300">·</span>
+      <span className="hidden sm:inline opacity-40">·</span>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
         {publishedAt && (
           <time dateTime={publishedAt}>
@@ -74,7 +74,7 @@ const BylineRow = ({
           </time>
         )}
         {showUpdated && (
-          <span className="text-slate-400">
+          <span className="opacity-80">
             Updated{" "}
             {new Date(updatedAt!).toLocaleDateString(undefined, {
               year: "numeric",
