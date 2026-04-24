@@ -4,6 +4,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
+import ModulePipelineFlow from "@/components/ModulePipelineFlow";
 import SeoHead from "@/components/SeoHead";
 
 interface Module {
@@ -75,6 +76,22 @@ const PlatformPage = () => {
               Start Your 30-Day Evaluation — No BAA Required
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* SECTION 1.5: MODULE PIPELINE OVERVIEW */}
+      <section className="bg-[var(--navy-dk)] py-20 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <h2 className="text-white text-3xl md:text-4xl font-bold">
+              Nine Modules. Three Clusters. One Connected Platform.
+            </h2>
+            <p className="text-slate-400 mt-4">
+              Intelligence flows in one direction — forward. Every module
+              feeds the next.
+            </p>
+          </div>
+          <ModulePipelineFlow />
         </div>
       </section>
 
