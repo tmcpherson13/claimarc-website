@@ -57,10 +57,10 @@ const InsightsPage = () => {
 
       <section className="bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16 md:py-20">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Insights</h1>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">Intelligence Center</h1>
           <p className="mt-4 text-lg text-white/80 max-w-2xl">
-            Payer behavior, denial intelligence, and revenue cycle strategy — blog posts
-            and long-form white papers from the ZDefense team.
+            Payer intelligence, denial strategy, and revenue cycle briefings —
+            curated for healthcare finance leaders.
           </p>
         </div>
       </section>
