@@ -1,127 +1,139 @@
 /**
- * HeroNetwork — purely decorative animated network background.
- * Sits behind hero text via absolute positioning. pointer-events: none.
- * All node/line positions are hardcoded for stable, non-jittery animation.
+ * HeroNetwork — decorative radar background for the hero section.
+ * A large emerald radar with a slow sweep, partially clipped at the right edge.
+ * Sits behind hero text. pointer-events: none, z-index: 0.
  */
 
 interface HeroNetworkProps {
   className?: string;
 }
 
-const NODES = [
-  { x: 703, y: 184, r: 3, opacity: 0.22, color: "#10B981" },
-  { x: 188, y: 126, r: 3, opacity: 0.21, color: "#64748B" },
-  { x: 1079, y: 249, r: 2, opacity: 0.16, color: "#64748B" },
-  { x: 896, y: 101, r: 2, opacity: 0.16, color: "#10B981" },
-  { x: 293, y: 258, r: 4, opacity: 0.21, color: "#64748B" },
-  { x: 166, y: 436, r: 2, opacity: 0.25, color: "#64748B" },
-  { x: 633, y: 459, r: 2, opacity: 0.2, color: "#10B981" },
-  { x: 802, y: 129, r: 3, opacity: 0.22, color: "#64748B" },
-  { x: 162, y: 240, r: 3, opacity: 0.22, color: "#64748B" },
-  { x: 915, y: 351, r: 3, opacity: 0.21, color: "#10B981" },
-  { x: 968, y: 400, r: 3, opacity: 0.17, color: "#64748B" },
-  { x: 408, y: 279, r: 2, opacity: 0.21, color: "#64748B" },
-  { x: 1115, y: 536, r: 3, opacity: 0.22, color: "#10B981" },
-  { x: 629, y: 104, r: 2, opacity: 0.2, color: "#64748B" },
-  { x: 377, y: 380, r: 2, opacity: 0.24, color: "#64748B" },
-  { x: 198, y: 351, r: 3, opacity: 0.22, color: "#10B981" },
-  { x: 750, y: 53, r: 3, opacity: 0.19, color: "#64748B" },
-  { x: 279, y: 535, r: 2, opacity: 0.17, color: "#64748B" },
-  { x: 547, y: 437, r: 3, opacity: 0.24, color: "#10B981" },
-  { x: 1056, y: 112, r: 2, opacity: 0.19, color: "#64748B" },
-];
+// SVG coordinate system. Radar center at 75% horizontal, 50% vertical.
+const VB_W = 1200;
+const VB_H = 600;
+const CX = VB_W * 0.75; // 900
+const CY = VB_H * 0.5;  // 300
+const RINGS = [120, 210, 310, 420];
+const R_MAX = 420;
 
-const LINES = [
-  { x1: 703, y1: 184, x2: 802, y2: 129 },
-  { x1: 703, y1: 184, x2: 629, y2: 104 },
-  { x1: 703, y1: 184, x2: 750, y2: 53 },
-  { x1: 188, y1: 126, x2: 293, y2: 258 },
-  { x1: 188, y1: 126, x2: 162, y2: 240 },
-  { x1: 1079, y1: 249, x2: 1056, y2: 112 },
-  { x1: 896, y1: 101, x2: 802, y2: 129 },
-  { x1: 896, y1: 101, x2: 750, y2: 53 },
-  { x1: 896, y1: 101, x2: 1056, y2: 112 },
-  { x1: 293, y1: 258, x2: 162, y2: 240 },
-  { x1: 293, y1: 258, x2: 408, y2: 279 },
-  { x1: 293, y1: 258, x2: 377, y2: 380 },
-  { x1: 293, y1: 258, x2: 198, y2: 351 },
-  { x1: 166, y1: 436, x2: 198, y2: 351 },
-  { x1: 166, y1: 436, x2: 279, y2: 535 },
-  { x1: 633, y1: 459, x2: 547, y2: 437 },
-  { x1: 802, y1: 129, x2: 629, y2: 104 },
-  { x1: 802, y1: 129, x2: 750, y2: 53 },
-  { x1: 162, y1: 240, x2: 198, y2: 351 },
-  { x1: 915, y1: 351, x2: 968, y2: 400 },
-  { x1: 408, y1: 279, x2: 377, y2: 380 },
-  { x1: 629, y1: 104, x2: 750, y2: 53 },
-  { x1: 377, y1: 380, x2: 547, y2: 437 },
-];
+// Build the 70deg sweep glow pie-slice path, centered along the sweep arm
+// (arm points "up" before rotation, i.e. negative Y). Arc spans -35deg to +35deg
+// from the arm. We draw the path "behind" the arm visually using a soft gradient.
+const SWEEP_DEG = 70;
+const half = (SWEEP_DEG / 2) * (Math.PI / 180);
+// Arm direction is straight up: (0, -R). Trail spans from -half..+half around up.
+const x1 = CX + R_MAX * Math.sin(-half);
+const y1 = CY - R_MAX * Math.cos(-half);
+const x2 = CX + R_MAX * Math.sin(half);
+const y2 = CY - R_MAX * Math.cos(half);
+const SWEEP_PATH = `M ${CX} ${CY} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R_MAX} ${R_MAX} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
 
-// Five pulses: pick distinct lines, vary duration and stagger begin times.
-const PULSES = [
-  { lineIdx: 0, dur: "5s", begin: "0s" },
-  { lineIdx: 4, dur: "7s", begin: "1.2s" },
-  { lineIdx: 11, dur: "6s", begin: "2.4s" },
-  { lineIdx: 15, dur: "8s", begin: "0.6s" },
-  { lineIdx: 19, dur: "4s", begin: "3s" },
+// Blip positions on rings (angle in degrees, ring index)
+const BLIPS: { angle: number; ring: number; pulse?: string }[] = [
+  { angle: 25, ring: 0, pulse: "0s" },
+  { angle: 110, ring: 1 },
+  { angle: 165, ring: 2, pulse: "1s" },
+  { angle: 215, ring: 1 },
+  { angle: 285, ring: 2 },
+  { angle: 320, ring: 0, pulse: "2s" },
+  { angle: 75, ring: 3 },
 ];
 
 const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
   return (
     <svg
       className={`pointer-events-none absolute inset-0 z-0 ${className}`}
-      viewBox="0 0 1200 600"
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
       preserveAspectRatio="xMidYMid slice"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       focusable="false"
+      style={{ overflow: "visible" }}
     >
-      {/* Connection lines */}
-      <g>
-        {LINES.map((l, i) => (
-          <line
-            key={`l-${i}`}
-            x1={l.x1}
-            y1={l.y1}
-            x2={l.x2}
-            y2={l.y2}
-            stroke="#64748B"
-            strokeWidth={0.5}
-            opacity={0.08}
-          />
-        ))}
-      </g>
+      <defs>
+        <radialGradient id="hero-radar-trail" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#10B981" stopOpacity="0.07" />
+          <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+        </radialGradient>
+      </defs>
 
-      {/* Nodes */}
+      {/* Concentric rings */}
       <g>
-        {NODES.map((n, i) => (
+        {RINGS.map((r, i) => (
           <circle
-            key={`n-${i}`}
-            cx={n.x}
-            cy={n.y}
-            r={n.r}
-            fill={n.color}
-            opacity={n.opacity}
+            key={`ring-${i}`}
+            cx={CX}
+            cy={CY}
+            r={r}
+            fill="none"
+            stroke="#10B981"
+            strokeWidth={0.75}
+            opacity={0.12}
           />
         ))}
       </g>
 
-      {/* Data pulses traveling along selected lines */}
+      {/* Crosshairs */}
       <g>
-        {PULSES.map((p, i) => {
-          const l = LINES[p.lineIdx];
-          const path = `M ${l.x1} ${l.y1} L ${l.x2} ${l.y2}`;
+        <line
+          x1={CX - R_MAX}
+          y1={CY}
+          x2={CX + R_MAX}
+          y2={CY}
+          stroke="#10B981"
+          strokeWidth={0.5}
+          opacity={0.08}
+        />
+        <line
+          x1={CX}
+          y1={CY - R_MAX}
+          x2={CX}
+          y2={CY + R_MAX}
+          stroke="#10B981"
+          strokeWidth={0.5}
+          opacity={0.08}
+        />
+      </g>
+
+      {/* Blip dots */}
+      <g>
+        {BLIPS.map((b, i) => {
+          const r = RINGS[b.ring];
+          const rad = (b.angle - 90) * (Math.PI / 180);
+          const x = CX + r * Math.cos(rad);
+          const y = CY + r * Math.sin(rad);
           return (
-            <circle key={`p-${i}`} r={1.5} fill="#10B981" opacity={0.4}>
-              <animateMotion
-                dur={p.dur}
-                begin={p.begin}
-                repeatCount="indefinite"
-                path={path}
-              />
-            </circle>
+            <circle
+              key={`blip-${i}`}
+              cx={x}
+              cy={y}
+              r={2.5}
+              fill="#10B981"
+              opacity={0.25}
+              className={b.pulse !== undefined ? "hero-radar-blip" : undefined}
+              style={b.pulse !== undefined ? { animationDelay: b.pulse, transformOrigin: `${x}px ${y}px` } : undefined}
+            />
           );
         })}
+      </g>
+
+      {/* Sweep arm + glow trail, rotating around radar center */}
+      <g
+        style={{
+          transformOrigin: `${CX}px ${CY}px`,
+          animation: "heroRadarSweep 8s linear infinite",
+        }}
+      >
+        <path d={SWEEP_PATH} fill="url(#hero-radar-trail)" />
+        <line
+          x1={CX}
+          y1={CY}
+          x2={CX}
+          y2={CY - R_MAX}
+          stroke="#10B981"
+          strokeWidth={1.5}
+          opacity={0.5}
+        />
       </g>
     </svg>
   );
