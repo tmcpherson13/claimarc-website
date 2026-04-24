@@ -123,6 +123,8 @@ const SolutionsPage = () => {
         </div>
       </section>
 
+      <RoleRoutingDiagram />
+
       <CTABand
         headline="Not Sure Where to Start?"
         subhead="Book a demo and we'll tailor it to your role, workflow, payer mix, and biggest revenue challenge."
