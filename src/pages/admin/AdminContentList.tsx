@@ -236,10 +236,17 @@ const Inner = () => {
                       >
                         Edit
                       </Link>
+                      <button
+                        onClick={() => handleArchive(i)}
+                        className="text-amber-700 hover:underline text-sm"
+                      >
+                        {i.status === "archived" ? "Unarchive" : "Archive"}
+                      </button>
                       {isAdmin && (
                         <button
                           onClick={() => handleDelete(i.id)}
                           className="text-red-600 hover:underline text-sm"
+                          title="Permanent delete (admin only)"
                         >
                           Delete
                         </button>
