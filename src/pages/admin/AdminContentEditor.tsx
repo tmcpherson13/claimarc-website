@@ -536,6 +536,10 @@ const Inner = () => {
               accept="image/"
               label="Pick image"
             />
+            <HeroImagePreview
+              assetId={form.heroAssetId}
+              onRemove={() => set("heroAssetId", null)}
+            />
           </Panel>
 
           {/* PDF asset is managed by the prominent PdfUploadCard at the top of the editor
