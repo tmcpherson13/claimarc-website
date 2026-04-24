@@ -29,7 +29,7 @@ interface FormState {
   slug: string;
   summary: string;
   body: string;
-  tagsInput: string;
+  tags: string[];
   status: PostStatus;
   featured: boolean;
   ctaType: CtaType;
@@ -55,7 +55,7 @@ const empty = (type: ContentType): FormState => ({
   slug: "",
   summary: "",
   body: "",
-  tagsInput: "",
+  tags: [],
   status: "draft",
   featured: false,
   ctaType: "demo",
@@ -83,7 +83,7 @@ const fromItem = (i: ContentItem): FormState => ({
   slug: i.slug,
   summary: i.summary,
   body: i.body,
-  tagsInput: i.tags.join(", "),
+  tags: i.tags,
   status: i.status,
   featured: i.featured,
   ctaType: i.ctaType,
@@ -200,7 +200,7 @@ const Inner = () => {
         slug: form.slug.trim(),
         summary: form.summary.trim(),
         body: form.body,
-        tags: form.tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+        tags: form.tags.map((t) => t.trim()).filter(Boolean),
         status: targetStatus,
         featured: form.featured,
         ctaType: form.ctaType,
