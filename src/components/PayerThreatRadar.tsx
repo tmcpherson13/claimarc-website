@@ -300,7 +300,6 @@ const PayerThreatRadar = () => {
                       strokeWidth={1}
                       opacity={0}
                       className="radar-blip-pulse-once"
-                      style={{ transformOrigin: `${b.x}px ${b.y}px` }}
                     />
                   )}
                   {/* Inner dot — dark by default, lights up when arm sweeps over */}
