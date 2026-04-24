@@ -44,18 +44,18 @@ const RADAR_STYLES = `
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-@keyframes radarPulse {
+@keyframes radarBlipPulse {
   0%   { transform: scale(1);   opacity: 0.8; }
   100% { transform: scale(2.2); opacity: 0; }
 }
 .radar-sweep-group {
   transform-origin: 250px 250px;
-  animation: radarSweep 4s linear infinite;
+  animation: radarSweep 5s linear infinite;
 }
-.radar-blip-pulse {
+.radar-blip-pulse-once {
   transform-origin: center;
   transform-box: fill-box;
-  animation: radarPulse 2s ease-out infinite;
+  animation: radarBlipPulse 600ms ease-out forwards;
 }
 `;
 
