@@ -157,7 +157,7 @@ const Index = () => {
       {/* SECTION 5: DIFFERENTIATION */}
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
           </p>
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
