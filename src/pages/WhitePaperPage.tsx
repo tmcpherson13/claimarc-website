@@ -13,6 +13,7 @@ import ArticleTOC, { headingId } from "@/components/public/ArticleTOC";
 import KeyTakeaways from "@/components/public/KeyTakeaways";
 import InternalLinkRail from "@/components/public/InternalLinkRail";
 import { parseTakeaways } from "@/lib/markdownExtras";
+import PdfViewer from "@/components/public/PdfViewer";
 
 const WhitePaperPage = () => {
   const { slug = "" } = useParams();
