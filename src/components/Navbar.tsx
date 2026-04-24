@@ -2,9 +2,13 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import AI3 from "./AI3";
-import { marketingRoutes } from "@/config/routes";
 
-const navLinks = marketingRoutes;
+const navLinks = [
+  { to: "/platform", label: "Platform" },
+  { to: "/solutions", label: "Solutions" },
+  { to: "/blog", label: "Intelligence Center" },
+  { to: "/pricing", label: "Pricing" },
+];
 
 const Navbar = () => {
   const { pathname } = useLocation();
@@ -42,7 +46,7 @@ const Navbar = () => {
           })}
         </div>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-4">
           <Link
             to="/contact"
             className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
@@ -51,18 +55,10 @@ const Navbar = () => {
           </Link>
           <Link
             to="/contact?offer=trial"
-            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2 rounded text-sm hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] whitespace-nowrap"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial text-[var(--emerald)] text-sm underline hover:text-emerald-400 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] rounded"
           >
-            Start Your 30-Day Evaluation — No BAA Required
+            30-Day Evaluation →
           </Link>
-          <a
-            href="https://zdefense.lovable.app/?demo=true"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/50 text-xs underline hover:text-white/80 transition-colors"
-          >
-            See Live Demo ↗
-          </a>
         </div>
 
         <button
@@ -110,19 +106,10 @@ const Navbar = () => {
             <Link
               to="/contact?offer=trial"
               onClick={closeMenu}
-              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] px-4 py-2.5 rounded text-sm text-center hover:bg-[var(--emerald)]/10 transition-colors"
+              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial text-[var(--emerald)] text-sm underline text-center"
             >
-              Start Your 30-Day Evaluation — No BAA Required
+              30-Day Evaluation →
             </Link>
-            <a
-              href="https://zdefense.lovable.app/?demo=true"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMenu}
-              className="text-white/50 text-xs underline text-center"
-            >
-              See Live Demo ↗
-            </a>
           </div>
         </div>
       )}
