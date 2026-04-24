@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Layout from "@/components/Layout";
@@ -11,16 +11,25 @@ import RelatedContent from "@/components/RelatedContent";
 
 const WhitePaperPage = () => {
   const { slug = "" } = useParams();
+  const [params] = useSearchParams();
+  const previewToken = params.get("preview");
   const [post, setPost] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [pdf, setPdf] = useState<Asset | null>(null);
 
   useEffect(() => {
-    contentApi
-      .getBySlug("white_paper", slug)
-      .then(setPost)
-      .finally(() => setLoading(false));
-  }, [slug]);
+    const load = async () => {
+      if (previewToken) {
+        const item = await contentApi.fetchByPreviewToken(previewToken);
+        setPost(item && item.contentType === "white_paper" && item.slug === slug ? item : null);
+      } else {
+        const item = await contentApi.getBySlug("white_paper", slug);
+        setPost(item);
+      }
+      setLoading(false);
+    };
+    load();
+  }, [slug, previewToken]);
 
   useEffect(() => {
     if (!post?.pdfAssetId) {
@@ -38,7 +47,8 @@ const WhitePaperPage = () => {
     );
   }
 
-  if (!post || post.status !== "published") {
+  const isPreviewable = !!previewToken && !!post;
+  if (!post || (!isPreviewable && post.status !== "published")) {
     return (
       <Layout>
         <SeoHead
