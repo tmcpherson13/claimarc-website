@@ -16,12 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -153,21 +147,12 @@ const Inner = () => {
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <h2 className="text-2xl font-bold text-[var(--navy)]">Content</h2>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="bg-[var(--emerald)] hover:bg-emerald-600">
-                + New
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link to="/admin/content/new?type=blog">Blog post</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/admin/content/new?type=white_paper">White paper</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link
+            to="/admin/content/new"
+            className="inline-flex items-center gap-1.5 bg-[var(--emerald)] hover:bg-emerald-600 text-white px-4 py-2 rounded font-semibold text-sm transition-colors"
+          >
+            + New Content
+          </Link>
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
