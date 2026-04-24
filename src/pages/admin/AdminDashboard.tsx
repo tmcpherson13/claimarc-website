@@ -118,16 +118,10 @@ const DashboardInner = () => {
         {/* Quick actions */}
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            to="/admin/content/new?type=blog"
-            className="bg-[var(--emerald)] text-white px-5 py-2.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity"
+            to="/admin/content/new"
+            className="inline-flex items-center gap-2 bg-[var(--emerald)] hover:bg-emerald-600 text-white px-5 py-2.5 rounded font-semibold text-sm transition-colors"
           >
-            + New Blog Post
-          </Link>
-          <Link
-            to="/admin/content/new?type=white_paper"
-            className="border border-[var(--navy)] text-[var(--navy)] px-5 py-2.5 rounded font-semibold text-sm hover:bg-[var(--navy)] hover:text-white transition-colors"
-          >
-            + New White Paper
+            + New Content
           </Link>
         </div>
 
