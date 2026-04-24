@@ -494,10 +494,11 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Tags (comma-separated)">
-              <Input
-                value={form.tagsInput}
-                onChange={(e) => set("tagsInput", e.target.value)}
+            <Field label="Tags">
+              <TagInput
+                value={form.tags}
+                onChange={(tags) => set("tags", tags)}
+                placeholder="Type a tag and press Enter…"
               />
             </Field>
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
