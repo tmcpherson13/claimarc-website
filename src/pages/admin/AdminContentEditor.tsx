@@ -447,24 +447,14 @@ const Inner = () => {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <label className="text-sm font-medium text-[var(--navy)]">Body (Markdown)</label>
-            <Textarea
+            <label className="text-sm font-medium text-[var(--navy)] block mb-2">
+              Body (Markdown)
+            </label>
+            <MarkdownEditor
               value={form.body}
-              onChange={(e) => set("body", e.target.value)}
+              onChange={(v) => set("body", v)}
               rows={20}
-              className="mt-2 font-mono text-sm"
             />
-          </div>
-
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">
-              Live preview
-            </p>
-            <div className="prose prose-slate max-w-none prose-headings:text-[var(--navy)]">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {form.body || "_Nothing to preview yet._"}
-              </ReactMarkdown>
-            </div>
           </div>
         </section>
 
