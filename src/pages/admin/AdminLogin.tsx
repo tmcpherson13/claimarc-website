@@ -230,7 +230,8 @@ const AdminLogin = () => {
         <p className="mt-6 text-xs text-slate-400 text-center">
           <Link to="/" className="hover:text-[var(--navy)]">← Back to site</Link>
         </p>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
