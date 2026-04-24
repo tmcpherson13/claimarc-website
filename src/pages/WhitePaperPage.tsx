@@ -180,6 +180,7 @@ const WhitePaperPage = () => {
                   fileName={pdf.originalName}
                   sizeBytes={pdf.sizeBytes}
                   title={post.title}
+                  storageKey={pdf.id}
                 />
               </div>
             )}
