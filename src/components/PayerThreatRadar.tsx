@@ -280,26 +280,39 @@ const PayerThreatRadar = () => {
               />
             </g>
 
-            {/* Payer blips */}
-            {BLIPS.map((b) => {
+            {/* Payer blips — light up only when sweep arm passes over */}
+            {BLIPS.map((b, i) => {
               const color = WI_COLORS[b.level];
               const labelX = b.x + 12;
               const labelY = b.y - 8;
+              const active = activeMap[i];
+              const pulseKey = pulseKeyRef.current[i];
               return (
                 <g key={b.name}>
-                  {/* Pulse ring */}
+                  {/* One-shot pulse ring; remounts on each sweep hit */}
+                  {pulseKey > 0 && (
+                    <circle
+                      key={`pulse-${pulseKey}`}
+                      cx={b.x}
+                      cy={b.y}
+                      r={10}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth={1}
+                      opacity={0}
+                      className="radar-blip-pulse-once"
+                      style={{ transformOrigin: `${b.x}px ${b.y}px` }}
+                    />
+                  )}
+                  {/* Inner dot — dark by default, lights up when arm sweeps over */}
                   <circle
                     cx={b.x}
                     cy={b.y}
-                    r={10}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth={1}
-                    className="radar-blip-pulse"
-                    style={{ animationDelay: b.delay }}
+                    r={4}
+                    fill={color}
+                    className="transition-opacity duration-300"
+                    style={{ opacity: active ? 1 : 0 }}
                   />
-                  {/* Inner dot */}
-                  <circle cx={b.x} cy={b.y} r={4} fill={color} opacity={0.9} />
                   {/* Label */}
                   <text x={labelX} y={labelY} fill="#94A3B8" fontSize={9}>
                     {b.name}
