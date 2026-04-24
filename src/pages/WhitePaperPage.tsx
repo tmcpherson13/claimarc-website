@@ -24,7 +24,7 @@ const WhitePaperPage = () => {
   const [pdf, setPdf] = useState<Asset | null>(null);
   const [hero, setHero] = useState<Asset | null>(null);
   const [progress, setProgress] = useState<number>(0);
-  const [copied, setCopied] = useState(false);
+  
 
   useEffect(() => {
     const onScroll = () => {
