@@ -71,13 +71,13 @@ const Index = () => {
             Same platform. Same nine modules. Three delivery models.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Actionable AI¹ — Your team, our platform
             </span>
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Augmented AI² — ZTech co-pilot
             </span>
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Automated AI³ — Fire and forget
             </span>
             <Link to="/pricing" className="text-slate-400 text-sm underline ml-2 hover:text-white transition-colors">
