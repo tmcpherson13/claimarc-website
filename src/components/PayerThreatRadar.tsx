@@ -97,35 +97,57 @@ const PayerThreatRadar = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Track sweep arm angle and toggle blip "active" within +/- 8 degrees.
+  // Track sweep arm angle and light blips up ONLY after the arm has just
+  // crossed them (trailing window). Turn off after a fade delay.
   useEffect(() => {
-    const start = performance.now();
+    const TRAIL_WINDOW = 5; // degrees past the blip
+    const OFF_DELAY_MS = 400;
     const wasActive = BLIPS.map(() => false);
+    const offTimers: Array<number | null> = BLIPS.map(() => null);
+
     const id = window.setInterval(() => {
-      const elapsed = performance.now() - start;
-      const armAngle = ((elapsed / SWEEP_DURATION_MS) * 360) % 360;
+      const elapsed = performance.now() % SWEEP_DURATION_MS;
+      const armAngle = (elapsed / SWEEP_DURATION_MS) * 360;
       let changed = false;
-      const next = wasActive.slice();
       let pulseChanged = false;
+      const next = wasActive.slice();
+
       for (let i = 0; i < BLIPS.length; i++) {
-        let diff = Math.abs(armAngle - BLIP_ANGLES[i]);
-        if (diff > 180) diff = 360 - diff;
-        const isActive = diff <= HIT_TOLERANCE;
-        if (isActive !== wasActive[i]) {
-          next[i] = isActive;
-          wasActive[i] = isActive;
-          changed = true;
-          // Trigger one-shot ring pulse on rising edge.
-          if (isActive) {
-            pulseKeyRef.current[i] += 1;
-            pulseChanged = true;
+        const diff = (armAngle - BLIP_ANGLES[i] + 360) % 360;
+        const inWindow = diff < TRAIL_WINDOW;
+
+        if (inWindow && !wasActive[i]) {
+          if (offTimers[i] !== null) {
+            window.clearTimeout(offTimers[i] as number);
+            offTimers[i] = null;
           }
+          next[i] = true;
+          wasActive[i] = true;
+          changed = true;
+          pulseKeyRef.current[i] += 1;
+          pulseChanged = true;
+        } else if (!inWindow && wasActive[i] && offTimers[i] === null) {
+          const idx = i;
+          offTimers[idx] = window.setTimeout(() => {
+            wasActive[idx] = false;
+            offTimers[idx] = null;
+            setActiveMap((prev) => {
+              if (!prev[idx]) return prev;
+              const copy = prev.slice();
+              copy[idx] = false;
+              return copy;
+            });
+          }, OFF_DELAY_MS);
         }
       }
       if (changed) setActiveMap(next);
       if (pulseChanged) forcePulseRender((n) => n + 1);
     }, 50);
-    return () => window.clearInterval(id);
+
+    return () => {
+      window.clearInterval(id);
+      offTimers.forEach((t) => t !== null && window.clearTimeout(t));
+    };
   }, []);
 
 
