@@ -269,27 +269,8 @@ const PayerThreatRadar = () => {
               270°
             </text>
 
-            {/* Sweep group: arm + trailing pie wedge, rotates as one */}
+            {/* Sweep arm — clean line, rotates around radar center */}
             <g className="radar-sweep-group">
-              {/* Trailing wedge — 60° arc behind the arm.
-                  Arm points up (north). Wedge spans from 300° to 360° (i.e.
-                  the 60° immediately counter-clockwise of the arm). */}
-              <defs>
-                <radialGradient id="radar-trail" cx="0.5" cy="0.5" r="0.5">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.0} />
-                  <stop offset="100%" stopColor="#10B981" stopOpacity={0.18} />
-                </radialGradient>
-              </defs>
-              {/* Pie slice path: from center, out to (250, 40) [arm tip],
-                  arc clockwise-back to point at angle 300° from center, back to center.
-                  Point at 300° from north (i.e. -60° rotation): 
-                  x = 250 + 210*sin(-60°) = 250 - 181.87 = 68.13
-                  y = 250 - 210*cos(-60°) = 250 - 105 = 145 */}
-              <path
-                d="M 250 250 L 250 40 A 210 210 0 0 0 68.13 145 Z"
-                fill="url(#radar-trail)"
-              />
-              {/* Sweep arm */}
               <line
                 x1={250}
                 y1={250}
