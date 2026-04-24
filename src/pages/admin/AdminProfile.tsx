@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
 import AssetPicker from "@/components/admin/AssetPicker";
+// AssetPicker has its own trigger button; we render it inline.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +19,6 @@ const Inner = () => {
   const [avatar, setAvatar] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     profilesApi
@@ -105,7 +105,7 @@ const Inner = () => {
             </div>
             <div>
               <Label>Avatar</Label>
-              <div className="mt-2 flex items-center gap-4">
+              <div className="mt-2 flex items-start gap-4">
                 {avatar ? (
                   <img
                     src={avatar.publicUrl}
@@ -117,15 +117,13 @@ const Inner = () => {
                     {(displayName || user?.email || "?").charAt(0).toUpperCase()}
                   </div>
                 )}
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setPickerOpen(true)}>
-                    {avatar ? "Change" : "Choose image"}
-                  </Button>
-                  {avatarId && (
-                    <Button variant="ghost" onClick={() => setAvatarId(null)}>
-                      Remove
-                    </Button>
-                  )}
+                <div className="flex-1">
+                  <AssetPicker
+                    value={avatarId}
+                    onChange={setAvatarId}
+                    accept="image/"
+                    label="Avatar image"
+                  />
                 </div>
               </div>
             </div>
@@ -137,15 +135,6 @@ const Inner = () => {
           </div>
         )}
       </main>
-      <AssetPicker
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        accept="image"
-        onSelect={(a) => {
-          setAvatarId(a.id);
-          setPickerOpen(false);
-        }}
-      />
     </div>
   );
 };
