@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ContentItem } from "@/lib/contentApi";
+import { ContentItem, ContentType } from "@/lib/contentApi";
 import {
   Sheet,
   SheetContent,
@@ -35,7 +35,9 @@ export const matchesFilters = (
   search: string,
   topic: string,
   audience: string,
+  type?: string,
 ) => {
+  if (type && item.contentType !== type) return false;
   if (topic && !item.tags.includes(topic)) return false;
   if (audience && !item.tags.includes(`${AUDIENCE_PREFIX}${audience}`)) return false;
   if (search) {
@@ -48,23 +50,28 @@ export const matchesFilters = (
 
 interface Props {
   items: ContentItem[];
+  showTypeFilter?: boolean;
 }
 
 const Controls = ({
   search,
   topic,
   audience,
+  type,
   topics,
   audiences,
+  showTypeFilter,
   onChange,
   onClear,
 }: {
   search: string;
   topic: string;
   audience: string;
+  type: string;
   topics: string[];
   audiences: string[];
-  onChange: (k: "search" | "topic" | "audience", v: string) => void;
+  showTypeFilter: boolean;
+  onChange: (k: "search" | "topic" | "audience" | "type", v: string) => void;
   onClear: () => void;
 }) => (
   <div className="flex flex-col md:flex-row md:items-center gap-3 w-full">
@@ -75,6 +82,18 @@ const Controls = ({
       placeholder="Search articles…"
       className="flex-1 min-w-0 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]"
     />
+    {showTypeFilter && (
+      <select
+        value={type}
+        onChange={(e) => onChange("type", e.target.value)}
+        className="px-3 py-2 border border-slate-300 rounded-md text-sm bg-white"
+        aria-label="Filter by type"
+      >
+        <option value="">All types</option>
+        <option value="blog">Blog</option>
+        <option value="white_paper">White papers</option>
+      </select>
+    )}
     <select
       value={topic}
       onChange={(e) => onChange("topic", e.target.value)}
@@ -101,7 +120,7 @@ const Controls = ({
         </option>
       ))}
     </select>
-    {(search || topic || audience) && (
+    {(search || topic || audience || type) && (
       <button
         onClick={onClear}
         className="text-sm text-[var(--emerald)] font-medium hover:underline whitespace-nowrap"
@@ -112,15 +131,16 @@ const Controls = ({
   </div>
 );
 
-const FilterBar = ({ items }: Props) => {
+const FilterBar = ({ items, showTypeFilter = false }: Props) => {
   const [params, setParams] = useSearchParams();
   const search = params.get("q") ?? "";
   const topic = params.get("topic") ?? "";
   const audience = params.get("audience") ?? "";
+  const type = params.get("type") ?? "";
 
   const { topics, audiences } = useMemo(() => splitTags(items), [items]);
 
-  const update = (k: "search" | "topic" | "audience", v: string) => {
+  const update = (k: "search" | "topic" | "audience" | "type", v: string) => {
     const next = new URLSearchParams(params);
     const key = k === "search" ? "q" : k;
     if (v) next.set(key, v);
@@ -133,22 +153,31 @@ const FilterBar = ({ items }: Props) => {
     next.delete("q");
     next.delete("topic");
     next.delete("audience");
+    next.delete("type");
     setParams(next, { replace: true });
   };
 
-  const activeCount = [search, topic, audience].filter(Boolean).length;
+  const activeCount = [search, topic, audience, type].filter(Boolean).length;
+
+  const typePills: { label: string; value: string }[] = [
+    { label: "All", value: "" },
+    { label: "Blog", value: "blog" },
+    { label: "White Papers", value: "white_paper" },
+  ];
 
   return (
     <div className="sticky top-16 z-20 bg-white/95 backdrop-blur border-b border-slate-200 -mx-6 md:-mx-12 lg:-mx-16 px-6 md:px-12 lg:px-16 py-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto space-y-3">
         {/* Desktop */}
         <div className="hidden md:block">
           <Controls
             search={search}
             topic={topic}
             audience={audience}
+            type={type}
             topics={topics}
             audiences={audiences}
+            showTypeFilter={showTypeFilter}
             onChange={update}
             onClear={clear}
           />
@@ -182,8 +211,10 @@ const FilterBar = ({ items }: Props) => {
                   search={search}
                   topic={topic}
                   audience={audience}
+                  type={type}
                   topics={topics}
                   audiences={audiences}
+                  showTypeFilter={showTypeFilter}
                   onChange={update}
                   onClear={clear}
                 />
@@ -191,6 +222,27 @@ const FilterBar = ({ items }: Props) => {
             </SheetContent>
           </Sheet>
         </div>
+
+        {showTypeFilter && (
+          <div className="flex flex-wrap gap-2">
+            {typePills.map((p) => {
+              const active = type === p.value;
+              return (
+                <button
+                  key={p.value || "all"}
+                  onClick={() => update("type", p.value)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                    active
+                      ? "bg-[var(--navy)] text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
