@@ -397,6 +397,21 @@ const Inner = () => {
       <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main */}
         <section className="lg:col-span-2 space-y-6">
+          {isNew && (
+            <div className="bg-white border border-slate-200 rounded-lg p-6">
+              <Field label="Content type">
+                <select
+                  value={form.contentType}
+                  onChange={(e) => set("contentType", e.target.value as ContentType)}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="blog">Blog post</option>
+                  <option value="white_paper">White paper</option>
+                </select>
+              </Field>
+            </div>
+          )}
+
           {form.contentType === "white_paper" && (
             <PdfUploadCard
               value={form.pdfAssetId}
