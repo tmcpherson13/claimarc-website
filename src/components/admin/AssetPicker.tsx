@@ -10,10 +10,18 @@ interface Props {
   onChange: (id: string | null) => void;
   /** Filter by mime type prefix, e.g. "image/" or "application/pdf" */
   accept?: string;
+  /** Maximum file size in MB. Defaults to 10MB for general assets. */
+  maxSizeMb?: number;
   label?: string;
 }
 
-const AssetPicker = ({ value, onChange, accept, label = "Select asset" }: Props) => {
+const AssetPicker = ({
+  value,
+  onChange,
+  accept,
+  maxSizeMb = 10,
+  label = "Select asset",
+}: Props) => {
   const [open, setOpen] = useState(false);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(false);
@@ -50,13 +58,35 @@ const AssetPicker = ({ value, onChange, accept, label = "Select asset" }: Props)
     return true;
   });
 
-  const handleUpload = async (file: File) => {
+  const validate = (file: File): string | null => {
     if (accept && !file.type.startsWith(accept)) {
+      const human =
+        accept === "image/"
+          ? "an image (JPG, PNG, WEBP, GIF, SVG)"
+          : accept === "application/pdf"
+            ? "a PDF"
+            : `a ${accept}* file`;
+      return `Please choose ${human}.`;
+    }
+    const maxBytes = maxSizeMb * 1024 * 1024;
+    if (file.size > maxBytes) {
+      const sizeMb = (file.size / 1024 / 1024).toFixed(1);
+      return `File is ${sizeMb} MB. Maximum allowed is ${maxSizeMb} MB.`;
+    }
+    if (file.size === 0) return "File appears to be empty.";
+    return null;
+  };
+
+  const handleUpload = async (file: File) => {
+    const err = validate(file);
+    if (err) {
       toast({
-        title: "Wrong file type",
-        description: `Expected ${accept}*`,
+        title: "Can’t upload that file",
+        description: err,
         variant: "destructive",
       });
+      // Reset the input so picking the same bad file again still triggers onChange
+      if (fileRef.current) fileRef.current.value = "";
       return;
     }
     setUploading(true);
@@ -65,7 +95,7 @@ const AssetPicker = ({ value, onChange, accept, label = "Select asset" }: Props)
       onChange(asset.id);
       setSelected(asset);
       await refresh();
-      toast({ title: "Uploaded" });
+      toast({ title: "Uploaded", description: file.name });
       setOpen(false);
     } catch (e: unknown) {
       toast({
@@ -75,6 +105,7 @@ const AssetPicker = ({ value, onChange, accept, label = "Select asset" }: Props)
       });
     } finally {
       setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
     }
   };
 
@@ -123,6 +154,13 @@ const AssetPicker = ({ value, onChange, accept, label = "Select asset" }: Props)
           <DialogHeader>
             <DialogTitle>Select an asset</DialogTitle>
           </DialogHeader>
+          <p className="text-xs text-slate-500">
+            {accept === "image/"
+              ? `Images only (JPG, PNG, WEBP, GIF, SVG). Max ${maxSizeMb} MB.`
+              : accept === "application/pdf"
+                ? `PDF files only. Max ${maxSizeMb} MB.`
+                : `Max ${maxSizeMb} MB per file.`}
+          </p>
           <div className="flex items-center gap-2">
             <Input
               placeholder="Search by name…"

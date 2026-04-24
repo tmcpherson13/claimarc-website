@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
 import AssetPicker from "@/components/admin/AssetPicker";
-// AssetPicker has its own trigger button; we render it inline.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +9,44 @@ import { profilesApi } from "@/lib/profilesApi";
 import { assetsApi, Asset } from "@/lib/assetsApi";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { toast } from "@/hooks/use-toast";
+
+const MAX_NAME = 80;
+const MAX_TITLE = 120;
+
+const validate = (name: string, title: string) => {
+  const errors: { displayName?: string; roleTitle?: string } = {};
+  const n = name.trim();
+  const t = title.trim();
+  if (!n) errors.displayName = "Display name is required.";
+  else if (n.length > MAX_NAME) errors.displayName = `Keep it under ${MAX_NAME} characters.`;
+  if (t && t.length > MAX_TITLE) errors.roleTitle = `Keep it under ${MAX_TITLE} characters.`;
+  return errors;
+};
+
+const Skeleton = () => (
+  <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-6 animate-pulse">
+    <div>
+      <div className="h-3 w-20 bg-slate-200 rounded" />
+      <div className="mt-2 h-4 w-48 bg-slate-200 rounded" />
+    </div>
+    <div>
+      <div className="h-3 w-24 bg-slate-200 rounded" />
+      <div className="mt-2 h-9 w-full bg-slate-100 rounded" />
+    </div>
+    <div>
+      <div className="h-3 w-20 bg-slate-200 rounded" />
+      <div className="mt-2 h-9 w-full bg-slate-100 rounded" />
+    </div>
+    <div>
+      <div className="h-3 w-14 bg-slate-200 rounded" />
+      <div className="mt-3 flex gap-4">
+        <div className="h-16 w-16 rounded-full bg-slate-200" />
+        <div className="flex-1 h-9 bg-slate-100 rounded" />
+      </div>
+    </div>
+    <div className="h-9 w-32 bg-slate-200 rounded" />
+  </div>
+);
 
 const Inner = () => {
   const { user } = useAdminAuth();
@@ -19,6 +56,7 @@ const Inner = () => {
   const [avatar, setAvatar] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [touched, setTouched] = useState(false);
 
   useEffect(() => {
     profilesApi
@@ -41,7 +79,12 @@ const Inner = () => {
     assetsApi.getMany([avatarId]).then((m) => setAvatar(m[avatarId] ?? null));
   }, [avatarId]);
 
+  const errors = useMemo(() => validate(displayName, roleTitle), [displayName, roleTitle]);
+  const isValid = Object.keys(errors).length === 0;
+
   const save = async () => {
+    setTouched(true);
+    if (!isValid) return;
     setSaving(true);
     try {
       await profilesApi.upsertMine({
@@ -49,7 +92,7 @@ const Inner = () => {
         roleTitle: roleTitle.trim(),
         avatarAssetId: avatarId,
       });
-      toast({ title: "Profile saved" });
+      toast({ title: "Profile saved", description: "Your byline will refresh shortly." });
     } catch (e) {
       toast({
         title: "Save failed",
@@ -73,7 +116,7 @@ const Inner = () => {
       </header>
       <main className="max-w-3xl mx-auto px-6 py-12">
         {loading ? (
-          <p className="text-slate-500">Loading…</p>
+          <Skeleton />
         ) : (
           <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-6">
             <div>
@@ -81,17 +124,33 @@ const Inner = () => {
               <p className="font-medium text-[var(--navy)]">{user?.email}</p>
             </div>
             <div>
-              <Label htmlFor="displayName">Display name</Label>
+              <Label htmlFor="displayName">
+                Display name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="displayName"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
+                onBlur={() => setTouched(true)}
                 placeholder="e.g. Jane Doe"
+                maxLength={MAX_NAME + 5}
                 className="mt-1"
+                aria-invalid={touched && !!errors.displayName}
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Shown as the byline on articles you author.
-              </p>
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <p
+                  className={`text-xs ${
+                    touched && errors.displayName ? "text-red-600" : "text-slate-500"
+                  }`}
+                >
+                  {touched && errors.displayName
+                    ? errors.displayName
+                    : "Shown as the byline on articles you author."}
+                </p>
+                <span className="text-[10px] text-slate-400 shrink-0">
+                  {displayName.trim().length}/{MAX_NAME}
+                </span>
+              </div>
             </div>
             <div>
               <Label htmlFor="roleTitle">Role / title</Label>
@@ -99,9 +158,26 @@ const Inner = () => {
                 id="roleTitle"
                 value={roleTitle}
                 onChange={(e) => setRoleTitle(e.target.value)}
+                onBlur={() => setTouched(true)}
                 placeholder="e.g. Director of Revenue Cycle Strategy"
+                maxLength={MAX_TITLE + 5}
                 className="mt-1"
+                aria-invalid={touched && !!errors.roleTitle}
               />
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <p
+                  className={`text-xs ${
+                    touched && errors.roleTitle ? "text-red-600" : "text-slate-500"
+                  }`}
+                >
+                  {touched && errors.roleTitle
+                    ? errors.roleTitle
+                    : "Optional. Appears under your name on bylines."}
+                </p>
+                <span className="text-[10px] text-slate-400 shrink-0">
+                  {roleTitle.trim().length}/{MAX_TITLE}
+                </span>
+              </div>
             </div>
             <div>
               <Label>Avatar</Label>
@@ -122,15 +198,24 @@ const Inner = () => {
                     value={avatarId}
                     onChange={setAvatarId}
                     accept="image/"
+                    maxSizeMb={2}
                     label="Avatar image"
                   />
+                  <p className="mt-1 text-xs text-slate-500">
+                    Square images work best. Max 2 MB.
+                  </p>
                 </div>
               </div>
             </div>
             <div className="pt-2">
-              <Button onClick={save} disabled={saving}>
+              <Button onClick={save} disabled={saving || !isValid}>
                 {saving ? "Saving…" : "Save profile"}
               </Button>
+              {touched && !isValid && (
+                <p className="mt-2 text-xs text-red-600">
+                  Please fix the highlighted fields before saving.
+                </p>
+              )}
             </div>
           </div>
         )}

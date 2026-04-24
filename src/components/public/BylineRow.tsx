@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { profilesApi, Profile } from "@/lib/profilesApi";
+import { useProfile } from "@/hooks/useProfile";
 import { assetsApi, Asset } from "@/lib/assetsApi";
 
 interface Props {
@@ -10,13 +10,8 @@ interface Props {
 }
 
 const BylineRow = ({ authorId, publishedAt, updatedAt, readTime }: Props) => {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const profile = useProfile(authorId);
   const [avatar, setAvatar] = useState<Asset | null>(null);
-
-  useEffect(() => {
-    if (!authorId) return;
-    profilesApi.get(authorId).then(setProfile);
-  }, [authorId]);
 
   useEffect(() => {
     if (!profile?.avatarAssetId) {

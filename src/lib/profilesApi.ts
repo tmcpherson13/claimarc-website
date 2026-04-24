@@ -24,8 +24,15 @@ const fromRow = (r: Row): Profile => ({
   updatedAt: r.updated_at,
 });
 
-// Tiny in-memory cache so a page with several bylines hits the network once.
+// In-memory cache + subscriber list so updates propagate live to any mounted
+// BylineRow / ContentCard without a hard reload.
 const cache = new Map<string, Profile | null>();
+type Listener = (id: string, profile: Profile | null) => void;
+const listeners = new Set<Listener>();
+
+const notify = (id: string, profile: Profile | null) => {
+  for (const l of listeners) l(id, profile);
+};
 
 export const profilesApi = {
   async get(id: string): Promise<Profile | null> {
@@ -75,6 +82,25 @@ export const profilesApi = {
     if (error) throw error;
     const p = fromRow(data as unknown as Row);
     cache.set(uid, p);
+    notify(uid, p);
     return p;
+  },
+
+  /** Drop a single id (or all) from cache and notify subscribers. */
+  invalidate(id?: string) {
+    if (id) {
+      cache.delete(id);
+      notify(id, null);
+    } else {
+      const ids = [...cache.keys()];
+      cache.clear();
+      for (const i of ids) notify(i, null);
+    }
+  },
+
+  /** Subscribe to profile updates. Returns an unsubscribe fn. */
+  subscribe(listener: Listener): () => void {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
   },
 };
