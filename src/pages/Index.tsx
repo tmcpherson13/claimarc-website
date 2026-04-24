@@ -152,10 +152,10 @@ const Index = () => {
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
           </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
+          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
             Denial management companies fight denials. ZDefense understands payers.
           </h2>
-          <p className="text-slate-600 max-w-2xl mt-4 text-lg">
+          <p className="text-slate-600 max-w-xl mt-4 text-lg">
             Every denial management vendor works with data after it enters your
             system. ZDefense works at the point where data is created — the raw
             payer output, before any provider system transforms it. That is a
