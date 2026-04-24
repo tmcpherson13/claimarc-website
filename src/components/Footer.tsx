@@ -71,6 +71,14 @@ const Footer = () => {
                   Start Your 30-Day Evaluation — No BAA Required
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/admin/login"
+                  className="text-slate-400 text-sm hover:text-white transition-colors"
+                >
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
 
