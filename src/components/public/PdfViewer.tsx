@@ -80,11 +80,50 @@ const PdfViewer = ({ url, fileName, sizeBytes, title, storageKey }: PdfViewerPro
   const [restoredNotice, setRestoredNotice] = useState<number | null>(
     initialPage > 1 ? initialPage : null,
   );
+  const [pageInput, setPageInput] = useState<string>(String(initialPage));
+  const [pageInputError, setPageInputError] = useState<string>("");
 
   const analyticsBase = useMemo(
     () => ({ file: fileName, key: storageKey ?? "unknown" }),
     [fileName, storageKey],
   );
+
+  // Keep the input synced when page changes via thumbnails / arrows.
+  useEffect(() => {
+    setPageInput(String(currentPage));
+    setPageInputError("");
+  }, [currentPage]);
+
+  // Fire a "restored" event once the doc is ready and we did restore a saved page.
+  const restoredEventSentRef = useRef(false);
+  useEffect(() => {
+    if (
+      status === "ready" &&
+      !restoredEventSentRef.current &&
+      initialPage > 1 &&
+      numPages > 0
+    ) {
+      restoredEventSentRef.current = true;
+      trackEvent("PDF_Preview_Page_Restored", {
+        ...analyticsBase,
+        page: initialPage,
+        total: numPages,
+      });
+    }
+  }, [status, initialPage, numPages, analyticsBase]);
+
+  // Debounced page-view tracker — fires once the reader settles on a page.
+  useEffect(() => {
+    if (status !== "ready") return;
+    const t = setTimeout(() => {
+      trackEvent("PDF_Preview_Page_View", {
+        ...analyticsBase,
+        page: currentPage,
+        total: numPages || 0,
+      });
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [status, currentPage, numPages, analyticsBase]);
 
   // 1) HEAD reachability probe — catches blocked CORS / 404 / wrong URL.
   useEffect(() => {
