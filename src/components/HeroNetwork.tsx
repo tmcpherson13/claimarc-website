@@ -20,7 +20,7 @@ const R_MAX = 420;
 
 // Sweep duration must match the CSS animation below.
 const SWEEP_DURATION_MS = 9200;
-const HIT_TOLERANCE = 10; // degrees
+
 
 // Build the 70deg sweep glow pie-slice path, centered along the sweep arm
 // (arm points "up" before rotation, i.e. negative Y). Arc spans -35deg to +35deg.
