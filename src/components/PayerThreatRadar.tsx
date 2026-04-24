@@ -50,7 +50,6 @@ const RADAR_STYLES = `
 }
 .radar-sweep-group {
   transform-origin: 250px 250px;
-  transform-box: fill-box;
   animation: radarSweep 4s linear infinite;
 }
 .radar-blip-pulse {
