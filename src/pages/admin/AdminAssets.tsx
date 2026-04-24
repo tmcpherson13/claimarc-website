@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { Asset, assetsApi } from "@/lib/assetsApi";
 import { Input } from "@/components/ui/input";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -51,18 +51,8 @@ const Inner = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[var(--navy)] text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/admin" className="text-lg font-semibold hover:text-[var(--emerald)]">
-            ZDefense Admin
-          </Link>
-          <Link to="/" className="text-sm text-white/70 hover:text-white">
-            ← Back to site
-          </Link>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-6 py-10">
+    <AdminLayout>
+      <div className="max-w-7xl mx-auto px-6 py-10">
         <h2 className="text-2xl font-bold text-[var(--navy)]">Assets</h2>
 
         <div className="mt-6">
