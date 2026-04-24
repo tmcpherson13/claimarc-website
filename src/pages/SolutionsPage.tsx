@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import RoleRoutingDiagram from "@/components/RoleRoutingDiagram";
 import SeoHead from "@/components/SeoHead";
 
 interface RoleContent {
@@ -121,6 +122,8 @@ const SolutionsPage = () => {
           </div>
         </div>
       </section>
+
+      <RoleRoutingDiagram />
 
       <CTABand
         headline="Not Sure Where to Start?"
