@@ -45,22 +45,21 @@ const RADAR_STYLES = `
   to   { transform: rotate(360deg); }
 }
 @keyframes radarBlipPulse {
-  0%   { transform: scale(1);   opacity: 0.8; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0%   { opacity: 0; }
+  40%  { opacity: 0.8; }
+  100% { opacity: 0; }
 }
 .radar-sweep-group {
   transform-origin: 250px 250px;
-  animation: radarSweep 5s linear infinite;
+  animation: radarSweep 6.65s linear infinite;
 }
 .radar-blip-pulse-once {
-  transform-origin: center;
-  transform-box: fill-box;
   animation: radarBlipPulse 600ms ease-out forwards;
 }
 `;
 
 // Sweep duration must match the CSS animation above.
-const SWEEP_DURATION_MS = 5000;
+const SWEEP_DURATION_MS = 6650;
 // Convert a blip (x, y) to its "north-clockwise" angle in [0, 360).
 // Arm at rotation R points to (250, 250 - r) which is north + R clockwise.
 const blipAngle = (x: number, y: number) => {
@@ -301,7 +300,6 @@ const PayerThreatRadar = () => {
                       strokeWidth={1}
                       opacity={0}
                       className="radar-blip-pulse-once"
-                      style={{ transformOrigin: `${b.x}px ${b.y}px` }}
                     />
                   )}
                   {/* Inner dot — dark by default, lights up when arm sweeps over */}
