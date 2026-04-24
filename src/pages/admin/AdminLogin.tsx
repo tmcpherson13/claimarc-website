@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, CheckCircle2, AlertTriangle, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,12 @@ import { toast } from "@/hooks/use-toast";
 type Mode = "signin" | "bootstrap";
 
 const AdminLogin = () => {
-  const { session, isAdmin, loading } = useAdminAuth();
+  const { session, user, isAdmin, loading, signOut } = useAdminAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const fromState = (location.state as { from?: { pathname?: string } } | null)?.from;
+  const fromPath = fromState?.pathname && fromState.pathname !== "/admin/login" ? fromState.pathname : null;
+
   const [mode, setMode] = useState<Mode>("signin");
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
@@ -26,9 +31,9 @@ const AdminLogin = () => {
     });
   }, []);
 
-  // Already signed in as admin → bounce to dashboard.
+  // Already signed in as admin → bounce to dashboard or original destination.
   if (!loading && session && isAdmin) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={fromPath || "/admin"} replace />;
   }
 
   const submit = async (submitMode: Mode) => {
@@ -67,6 +72,7 @@ const AdminLogin = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Signed in" });
+        if (fromPath) navigate(fromPath, { replace: true });
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Something went wrong";
@@ -79,15 +85,77 @@ const AdminLogin = () => {
   const isBootstrap = mode === "bootstrap";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit(isBootstrap ? "bootstrap" : "signin");
-        }}
-        className="w-full max-w-sm bg-white border border-slate-200 rounded-lg p-8 shadow-sm"
-      >
-        <h1 className="text-xl font-semibold text-[var(--navy)]">Admin access</h1>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-10">
+      <div className="w-full max-w-sm">
+        {session && isAdmin && (
+          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
+              <div className="flex-1">
+                <p>
+                  You're already signed in as <span className="font-medium">{user?.email}</span> with admin access.
+                </p>
+                <div className="mt-3 flex items-center gap-3">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => navigate(fromPath || "/admin")}
+                    className="bg-[var(--emerald)] hover:bg-emerald-600"
+                  >
+                    Go to dashboard
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="text-xs underline text-emerald-900 hover:text-emerald-700"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {session && !isAdmin && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-600" />
+              <div className="flex-1">
+                <p>
+                  You're signed in as <span className="font-medium">{user?.email}</span>, but this account
+                  doesn't have admin access.
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={signOut}
+                  className="mt-3 border-amber-300 text-amber-900 hover:bg-amber-100"
+                >
+                  Sign out
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+        {!session && fromPath && (
+          <div className="mb-4 rounded-lg border border-slate-200 bg-slate-100 p-4 text-sm text-slate-700">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 mt-0.5 flex-shrink-0 text-slate-500" />
+              <p>
+                You need to sign in to access <code className="px-1 py-0.5 rounded bg-white border border-slate-200 text-xs">{fromPath}</code>. We'll send you back after sign-in.
+              </p>
+            </div>
+          </div>
+        )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit(isBootstrap ? "bootstrap" : "signin");
+          }}
+          className="w-full bg-white border border-slate-200 rounded-lg p-8 shadow-sm"
+        >
+          <h1 className="text-xl font-semibold text-[var(--navy)]">Admin access</h1>
         <p className="mt-1 text-sm text-slate-500">
           {adminExists === false
             ? "No admin exists yet. Create the first admin, or sign in if you already have an account."
@@ -162,7 +230,8 @@ const AdminLogin = () => {
         <p className="mt-6 text-xs text-slate-400 text-center">
           <Link to="/" className="hover:text-[var(--navy)]">← Back to site</Link>
         </p>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

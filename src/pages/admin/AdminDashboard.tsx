@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import AdminGate from "@/components/AdminGate";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,9 @@ const DashboardInner = () => {
               variant="outline"
               size="sm"
               onClick={signOut}
-              className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white"
+              className="bg-transparent border-white text-white hover:bg-white/15 hover:text-white gap-2"
             >
+              <LogOut className="h-4 w-4" />
               Sign out
             </Button>
           </div>
