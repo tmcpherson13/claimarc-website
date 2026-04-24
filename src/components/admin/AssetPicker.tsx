@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Asset, assetsApi } from "@/lib/assetsApi";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import Dropzone from "@/components/admin/Dropzone";
 
 interface Props {
   value: string | null;
@@ -28,7 +29,6 @@ const AssetPicker = ({
   const [search, setSearch] = useState("");
   const [uploading, setUploading] = useState(false);
   const [selected, setSelected] = useState<Asset | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = async () => {
     setLoading(true);
@@ -77,7 +77,9 @@ const AssetPicker = ({
     return null;
   };
 
-  const handleUpload = async (file: File) => {
+  const handleFiles = async (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
     const err = validate(file);
     if (err) {
       toast({
@@ -85,8 +87,6 @@ const AssetPicker = ({
         description: err,
         variant: "destructive",
       });
-      // Reset the input so picking the same bad file again still triggers onChange
-      if (fileRef.current) fileRef.current.value = "";
       return;
     }
     setUploading(true);
@@ -105,7 +105,6 @@ const AssetPicker = ({
       });
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
     }
   };
 
@@ -161,31 +160,21 @@ const AssetPicker = ({
                 ? `PDF files only. Max ${maxSizeMb} MB.`
                 : `Max ${maxSizeMb} MB per file.`}
           </p>
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search by name…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <input
-              ref={fileRef}
-              type="file"
-              accept={accept ? `${accept}*` : undefined}
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleUpload(f);
-              }}
-            />
-            <Button
-              size="sm"
-              disabled={uploading}
-              onClick={() => fileRef.current?.click()}
-              className="bg-[var(--emerald)] hover:bg-emerald-600"
-            >
-              {uploading ? "Uploading…" : "Upload"}
-            </Button>
-          </div>
+          <Dropzone
+            onFiles={handleFiles}
+            accept={accept}
+            maxSizeMb={maxSizeMb}
+            multiple={false}
+            compact
+          />
+          {uploading && (
+            <p className="text-xs text-[var(--emerald)]">Uploading…</p>
+          )}
+          <Input
+            placeholder="Search by name…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
           {loading ? (
             <p className="text-sm text-slate-500 py-8 text-center">Loading…</p>

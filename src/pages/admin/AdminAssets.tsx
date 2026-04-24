@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
 import { Asset, assetsApi } from "@/lib/assetsApi";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { toast } from "@/hooks/use-toast";
+import Dropzone from "@/components/admin/Dropzone";
+import UploadQueue from "@/components/admin/UploadQueue";
+import { useUploadQueue } from "@/hooks/useUploadQueue";
 
 const Inner = () => {
   const { isAdmin } = useAdminAuth();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = () => {
     setLoading(true);
@@ -21,22 +21,10 @@ const Inner = () => {
   };
   useEffect(refresh, []);
 
-  const onUpload = async (file: File) => {
-    setUploading(true);
-    try {
-      await assetsApi.upload(file);
-      toast({ title: "Uploaded" });
-      refresh();
-    } catch (e: unknown) {
-      toast({
-        title: "Upload failed",
-        description: e instanceof Error ? e.message : "",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
+  const { items, enqueue, retry, remove } = useUploadQueue({
+    maxSizeMb: 25,
+    onUploaded: () => refresh(),
+  });
 
   const onDelete = async (asset: Asset) => {
     if (!confirm(`Delete ${asset.originalName}?`)) return;
@@ -75,26 +63,11 @@ const Inner = () => {
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <h2 className="text-2xl font-bold text-[var(--navy)]">Assets</h2>
-          <div className="flex items-center gap-2">
-            <input
-              ref={fileRef}
-              type="file"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) onUpload(f);
-              }}
-            />
-            <Button
-              disabled={uploading}
-              onClick={() => fileRef.current?.click()}
-              className="bg-[var(--emerald)] hover:bg-emerald-600"
-            >
-              {uploading ? "Uploading…" : "Upload file"}
-            </Button>
-          </div>
+        <h2 className="text-2xl font-bold text-[var(--navy)]">Assets</h2>
+
+        <div className="mt-6">
+          <Dropzone onFiles={enqueue} maxSizeMb={25} multiple enablePaste />
+          <UploadQueue items={items} onRetry={retry} onDismiss={remove} />
         </div>
 
         <Input
