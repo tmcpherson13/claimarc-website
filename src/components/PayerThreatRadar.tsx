@@ -60,16 +60,13 @@ const RADAR_STYLES = `
 
 // Sweep duration must match the CSS animation above.
 const SWEEP_DURATION_MS = 6650;
-// Convert a blip (x, y) to its "north-clockwise" angle in [0, 360).
-// Arm at rotation R points to (250, 250 - r) which is north + R clockwise.
+// Each blip's angle in SVG atan2 space (degrees), where 0° = +x (east)
+// and angles increase clockwise (since SVG y grows downward).
+// Range: (-180, 180].
 const blipAngle = (x: number, y: number) => {
   const dx = x - 250;
   const dy = y - 250;
-  // atan2(dy, dx) gives angle from +x axis CCW. Convert to north-CW:
-  // north-CW = 90 + atan2(dy, dx) in degrees, normalized.
-  let a = 90 + (Math.atan2(dy, dx) * 180) / Math.PI;
-  a = ((a % 360) + 360) % 360;
-  return a;
+  return (Math.atan2(dy, dx) * 180) / Math.PI;
 };
 const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
 
@@ -107,13 +104,16 @@ const PayerThreatRadar = () => {
 
     const id = window.setInterval(() => {
       const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const armAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
+      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
+      const adjustedAngle = currentAngle - 90;
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
 
       for (let i = 0; i < BLIPS.length; i++) {
-        const diff = (armAngle - BLIP_ANGLES[i] + 360) % 360;
+        const diff = (adjustedAngle - BLIP_ANGLES[i] + 720) % 360;
         const inWindow = diff < TRAIL_WINDOW;
 
         if (inWindow && !wasActive[i]) {
