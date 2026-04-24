@@ -178,3 +178,18 @@ All colors MUST be HSL.
     font-size: 1.25rem;
   }
 }
+
+/* Hero radar background animations */
+@keyframes heroRadarSweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes heroRadarBlip {
+  0%, 100% { transform: scale(1); opacity: 0.25; }
+  50%      { transform: scale(1.6); opacity: 0.5; }
+}
+
+.hero-radar-blip {
+  animation: heroRadarBlip 3s ease-in-out infinite;
+}
