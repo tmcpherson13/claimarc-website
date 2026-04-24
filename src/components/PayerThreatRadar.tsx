@@ -1,38 +1,68 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-} from "recharts";
 
 /**
- * PayerThreatRadar — illustrative behavioral comparison of major payers
- * across 5 threat dimensions. Decorative + narrative; values are illustrative.
+ * PayerThreatRadar — sweeping SVG radar visualization of payer behavior
+ * with a Weaponization Index (WI) callout. Pure SVG + CSS animation
+ * (no chart library). Decorative; values illustrative.
  */
 
-const data = [
-  { axis: "Denial Rate", UHC: 88, BCBS: 62, Aetna: 71, Cigna: 65, Humana: 58, Molina: 74 },
-  { axis: "Auth Requirements", UHC: 82, BCBS: 55, Aetna: 68, Cigna: 60, Humana: 52, Molina: 70 },
-  { axis: "Days to Pay", UHC: 75, BCBS: 48, Aetna: 60, Cigna: 55, Humana: 45, Molina: 65 },
-  { axis: "Policy Volatility", UHC: 90, BCBS: 58, Aetna: 72, Cigna: 62, Humana: 50, Molina: 68 },
-  { axis: "Appeal Difficulty", UHC: 85, BCBS: 60, Aetna: 70, Cigna: 58, Humana: 55, Molina: 72 },
+type WiLevel = "high" | "med" | "low";
+
+const WI_COLORS: Record<WiLevel, string> = {
+  high: "#EF4444",
+  med: "#F59E0B",
+  low: "#10B981",
+};
+
+interface Blip {
+  name: string;
+  x: number;
+  y: number;
+  level: WiLevel;
+  wi: string;
+  delay: string;
+}
+
+const BLIPS: Blip[] = [
+  { name: "UHC", x: 170, y: 110, level: "high", wi: "2.4x", delay: "0s" },
+  { name: "BCBS", x: 370, y: 150, level: "high", wi: "2.1x", delay: "0.3s" },
+  { name: "Aetna", x: 410, y: 310, level: "med", wi: "1.7x", delay: "0.6s" },
+  { name: "Cigna", x: 290, y: 410, level: "low", wi: "1.3x", delay: "0.9s" },
+  { name: "Humana", x: 120, y: 350, level: "low", wi: "1.2x", delay: "1.2s" },
+  { name: "Molina", x: 150, y: 190, level: "med", wi: "1.8x", delay: "1.5s" },
 ];
 
-const payers = [
-  { key: "UHC", color: "#EF4444", fillOpacity: 0.08 },
-  { key: "BCBS", color: "#3B82F6", fillOpacity: 0.06 },
-  { key: "Aetna", color: "#F59E0B", fillOpacity: 0.06 },
-  { key: "Cigna", color: "#10B981", fillOpacity: 0.06 },
-  { key: "Humana", color: "#8B5CF6", fillOpacity: 0.06 },
-  { key: "Molina", color: "#64748B", fillOpacity: 0.06 },
+const WI_ROWS = [
+  { name: "UHC", wi: "2.4x", badge: "bg-red-900/60 text-red-400" },
+  { name: "BCBS", wi: "2.1x", badge: "bg-amber-900/60 text-amber-400" },
+  { name: "Aetna", wi: "1.7x", badge: "bg-slate-700 text-slate-300" },
 ];
+
+// Inline keyframes — scoped via a <style> tag rendered once with the component.
+const RADAR_STYLES = `
+@keyframes radarSweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes radarPulse {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.radar-sweep-group {
+  transform-origin: 250px 250px;
+  transform-box: fill-box;
+  animation: radarSweep 4s linear infinite;
+}
+.radar-blip-pulse {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: radarPulse 2s ease-out infinite;
+}
+`;
 
 const PayerThreatRadar = () => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [inView, setInView] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -40,7 +70,7 @@ const PayerThreatRadar = () => {
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setInView(true);
+          setVisible(true);
           obs.disconnect();
         }
       },
@@ -51,79 +81,192 @@ const PayerThreatRadar = () => {
   }, []);
 
   return (
-    <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
+    <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 border-t border-b border-slate-800">
+      <style>{RADAR_STYLES}</style>
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        {/* Left column */}
+        {/* LEFT COLUMN — text + WI callout */}
         <div>
-          <p className="text-[var(--amber)] text-xs font-semibold uppercase tracking-[0.2em]">
-            Payer Threat Intelligence
+          <p className="text-[var(--amber)] text-xs uppercase tracking-widest font-semibold">
+            Sentinel — Payer Threat Intelligence
           </p>
-          <h2 className="text-white text-3xl font-bold mt-3">
+          <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
             Not all payers behave the same way.
           </h2>
-          <p className="text-slate-400 mt-5 leading-relaxed">
-            Sentinel tracks behavioral patterns across every major payer in
-            real time. The difference between UHC and Humana isn't just denial
-            rate — it's the combination of aggression signals that predicts
-            your next 90 days.
+          <p className="text-slate-400 text-base mt-4 max-w-md">
+            ZDefense Sentinel monitors behavioral patterns across every major
+            commercial payer in real time — detecting shifts in denial
+            strategy before they impact your revenue.
           </p>
+
+          <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-5 mt-6 max-w-md">
+            <p className="text-[var(--amber)] text-[10px] uppercase tracking-widest font-semibold">
+              Payer Weaponization Index (WI)
+            </p>
+            <p className="text-slate-300 text-sm mt-2 leading-relaxed">
+              A multiplier measuring how aggressively a payer is behaving
+              relative to their own 90-day baseline. A WI above 2.0x signals
+              a systematic strategy shift — not random variation. At 2.4x,
+              UHC is actively weaponizing denial logic against this provider.
+            </p>
+            <ul className="mt-4">
+              {WI_ROWS.map((row) => (
+                <li
+                  key={row.name}
+                  className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0"
+                >
+                  <span className="text-slate-300 text-sm">{row.name}</span>
+                  <span
+                    className={`text-xs font-bold px-2 py-0.5 rounded font-mono ${row.badge}`}
+                  >
+                    {row.wi}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Right column — chart */}
+        {/* RIGHT COLUMN — sweeping radar */}
         <div
           ref={ref}
-          className={`transition-all duration-700 ease-out ${
-            inView
+          className={`max-w-[480px] mx-auto w-full transition-all duration-700 ease-out ${
+            visible
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-4"
+              : "opacity-0 translate-y-6"
           }`}
         >
-          <div className="w-full h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={data} outerRadius="75%">
-                <PolarGrid gridType="polygon" stroke="#1E3A5F" />
-                <PolarAngleAxis
-                  dataKey="axis"
-                  tick={{ fill: "#64748B", fontSize: 12 }}
-                />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, 100]}
-                  axisLine={false}
-                  tick={false}
-                />
-                {payers.map((p) => (
-                  <Radar
-                    key={p.key}
-                    name={p.key}
-                    dataKey={p.key}
-                    stroke={p.color}
-                    fill={p.color}
-                    fillOpacity={p.fillOpacity}
-                    strokeWidth={2}
-                    isAnimationActive={inView}
-                    animationDuration={900}
-                  />
-                ))}
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
+          <svg
+            viewBox="0 0 500 500"
+            className="w-full h-auto"
+            aria-hidden="true"
+          >
+            {/* Dark backing circle */}
+            <circle
+              cx={250}
+              cy={250}
+              r={215}
+              fill="#0F172A"
+              stroke="#1E3A5F"
+              strokeWidth={1}
+            />
 
-          {/* Legend */}
-          <ul className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2">
-            {payers.map((p) => (
-              <li
-                key={p.key}
-                className="flex items-center gap-2 text-slate-300 text-sm"
-              >
-                <span
-                  className="inline-block w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: p.color }}
-                />
-                {p.key}
-              </li>
+            {/* Concentric rings */}
+            {[60, 110, 160, 210].map((r) => (
+              <circle
+                key={r}
+                cx={250}
+                cy={250}
+                r={r}
+                fill="none"
+                stroke="#1E3A5F"
+                strokeWidth={1}
+                opacity={0.8}
+              />
             ))}
-          </ul>
+
+            {/* Crosshairs */}
+            <line
+              x1={40}
+              y1={250}
+              x2={460}
+              y2={250}
+              stroke="#1E3A5F"
+              strokeWidth={0.5}
+              opacity={0.5}
+            />
+            <line
+              x1={250}
+              y1={40}
+              x2={250}
+              y2={460}
+              stroke="#1E3A5F"
+              strokeWidth={0.5}
+              opacity={0.5}
+            />
+
+            {/* Compass labels */}
+            <text x={250} y={32} textAnchor="middle" fill="#475569" fontSize={10}>
+              0°
+            </text>
+            <text x={470} y={254} textAnchor="middle" fill="#475569" fontSize={10}>
+              90°
+            </text>
+            <text x={250} y={478} textAnchor="middle" fill="#475569" fontSize={10}>
+              180°
+            </text>
+            <text x={28} y={254} textAnchor="middle" fill="#475569" fontSize={10}>
+              270°
+            </text>
+
+            {/* Sweep group: arm + trailing pie wedge, rotates as one */}
+            <g className="radar-sweep-group">
+              {/* Trailing wedge — 60° arc behind the arm.
+                  Arm points up (north). Wedge spans from 300° to 360° (i.e.
+                  the 60° immediately counter-clockwise of the arm). */}
+              <defs>
+                <radialGradient id="radar-trail" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.0} />
+                  <stop offset="100%" stopColor="#10B981" stopOpacity={0.18} />
+                </radialGradient>
+              </defs>
+              {/* Pie slice path: from center, out to (250, 40) [arm tip],
+                  arc clockwise-back to point at angle 300° from center, back to center.
+                  Point at 300° from north (i.e. -60° rotation): 
+                  x = 250 + 210*sin(-60°) = 250 - 181.87 = 68.13
+                  y = 250 - 210*cos(-60°) = 250 - 105 = 145 */}
+              <path
+                d="M 250 250 L 250 40 A 210 210 0 0 0 68.13 145 Z"
+                fill="url(#radar-trail)"
+              />
+              {/* Sweep arm */}
+              <line
+                x1={250}
+                y1={250}
+                x2={250}
+                y2={40}
+                stroke="#10B981"
+                strokeWidth={2}
+                opacity={0.9}
+              />
+            </g>
+
+            {/* Payer blips */}
+            {BLIPS.map((b) => {
+              const color = WI_COLORS[b.level];
+              const labelX = b.x + 12;
+              const labelY = b.y - 8;
+              return (
+                <g key={b.name}>
+                  {/* Pulse ring */}
+                  <circle
+                    cx={b.x}
+                    cy={b.y}
+                    r={10}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={1}
+                    className="radar-blip-pulse"
+                    style={{ animationDelay: b.delay }}
+                  />
+                  {/* Inner dot */}
+                  <circle cx={b.x} cy={b.y} r={4} fill={color} opacity={0.9} />
+                  {/* Label */}
+                  <text x={labelX} y={labelY} fill="#94A3B8" fontSize={9}>
+                    {b.name}
+                  </text>
+                  <text
+                    x={labelX}
+                    y={labelY + 10}
+                    fill={color}
+                    fontSize={8}
+                    fontFamily="ui-monospace, SFMono-Regular, monospace"
+                  >
+                    {b.wi}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
         </div>
       </div>
     </section>
