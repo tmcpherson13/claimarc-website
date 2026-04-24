@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import AssetPicker from "@/components/admin/AssetPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,16 +105,9 @@ const Inner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[var(--navy)] text-white px-6 py-4">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <h1 className="text-lg font-semibold">My profile</h1>
-          <Link to="/admin" className="text-sm text-white/70 hover:text-white">
-            ← Dashboard
-          </Link>
-        </div>
-      </header>
-      <main className="max-w-3xl mx-auto px-6 py-12">
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <h2 className="text-2xl font-bold text-[var(--navy)] mb-6">My profile</h2>
         {loading ? (
           <Skeleton />
         ) : (
@@ -219,8 +212,8 @@ const Inner = () => {
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

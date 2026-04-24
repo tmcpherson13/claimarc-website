@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { LogOut, FileText, Image as ImageIcon, User } from "lucide-react";
+import { FileText, Image as ImageIcon, User } from "lucide-react";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { Button } from "@/components/ui/button";
 import { contentApi, type ContentItem, type PostStatus } from "@/lib/contentApi";
 
 const statusPillClasses: Record<PostStatus, string> = {
@@ -59,7 +59,7 @@ const NavCard = ({
 );
 
 const DashboardInner = () => {
-  const { user, isAdmin, signOut } = useAdminAuth();
+  const { isAdmin } = useAdminAuth();
   const [items, setItems] = useState<ContentItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,34 +96,16 @@ const DashboardInner = () => {
   }, [items]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[var(--navy)] text-white px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <h1 className="text-lg font-semibold">ZDefense Admin</h1>
-          <div className="flex items-center gap-4">
-            {user?.email && (
-              <span className="hidden sm:inline-flex items-center gap-2 text-xs text-white/70">
-                <span>{user.email}</span>
-                <span className="px-2 py-0.5 rounded-full bg-[var(--emerald)]/20 text-[var(--emerald)] font-semibold uppercase tracking-wide">
-                  {isAdmin ? "Admin" : "Member"}
-                </span>
-              </span>
-            )}
-            <Link to="/" className="text-sm text-white/70 hover:text-white">← Back to site</Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={signOut}
-              className="bg-transparent border-white text-white hover:bg-white/15 hover:text-white gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
-          </div>
+    <AdminLayout>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-bold text-[var(--navy)]">Dashboard</h2>
+          {isAdmin && (
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--emerald)]">
+              Admin
+            </span>
+          )}
         </div>
-      </header>
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-bold text-[var(--navy)]">Dashboard</h2>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
@@ -208,8 +190,8 @@ const DashboardInner = () => {
             desc="Set your display name, role, and avatar — used as your byline on articles."
           />
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 
