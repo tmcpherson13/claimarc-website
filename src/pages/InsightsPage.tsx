@@ -11,7 +11,7 @@ const InsightsPage = () => {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     Promise.all([
@@ -57,10 +57,10 @@ const InsightsPage = () => {
 
       <section className="bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16 md:py-20">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Insights</h1>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">Intelligence Center</h1>
           <p className="mt-4 text-lg text-white/80 max-w-2xl">
-            Payer behavior, denial intelligence, and revenue cycle strategy — blog posts
-            and long-form white papers from the ZDefense team.
+            Payer intelligence, denial strategy, and revenue cycle briefings —
+            curated for healthcare finance leaders.
           </p>
         </div>
       </section>
@@ -68,6 +68,42 @@ const InsightsPage = () => {
       <section className="px-6 md:px-12 lg:px-16 pb-20">
         <div className="max-w-6xl mx-auto">
           <FilterBar items={items} showTypeFilter />
+
+          <div className="mt-6 -mx-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+            <div className="flex gap-2 px-2 min-w-max">
+              {[
+                { label: "All", value: "" },
+                { label: "Payer Behavior", value: "payer-behavior" },
+                { label: "Denial Prevention", value: "denial-prevention" },
+                { label: "Prior Authorization", value: "prior-authorization" },
+                { label: "Contract Intelligence", value: "contract-intelligence" },
+                { label: "Underpayment Recovery", value: "underpayment-recovery" },
+                { label: "Compliance", value: "compliance" },
+                { label: "Forecasting", value: "forecasting" },
+              ].map((pill) => {
+                const isActive = (topic || "") === pill.value;
+                return (
+                  <button
+                    key={pill.label}
+                    type="button"
+                    onClick={() => {
+                      const next = new URLSearchParams(params);
+                      if (pill.value) next.set("topic", pill.value);
+                      else next.delete("topic");
+                      setParams(next, { replace: true });
+                    }}
+                    className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap transition-colors ${
+                      isActive
+                        ? "bg-[var(--navy)] text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {pill.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="pt-10">
             {loading && <p className="text-slate-500">Loading…</p>}
@@ -92,7 +128,8 @@ const InsightsPage = () => {
 
             {!loading && !error && isFiltering && grid.length === 0 && (
               <p className="text-slate-500 py-12 text-center">
-                No content matches your filters.
+                No intelligence matched those filters — try broadening your search
+                or clearing a filter above.
               </p>
             )}
           </div>
