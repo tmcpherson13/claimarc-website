@@ -82,6 +82,19 @@ const AdminLogin = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Sign out failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Signed out" });
+    }
+  };
+
   const isBootstrap = mode === "bootstrap";
 
   return (
@@ -99,6 +112,7 @@ const AdminLogin = () => {
                   <Button
                     type="button"
                     size="sm"
+                    disabled={loading || busy}
                     onClick={() => navigate(fromPath || "/admin")}
                     className="bg-[var(--emerald)] hover:bg-emerald-600"
                   >
@@ -106,8 +120,9 @@ const AdminLogin = () => {
                   </Button>
                   <button
                     type="button"
-                    onClick={signOut}
-                    className="text-xs underline text-emerald-900 hover:text-emerald-700"
+                    disabled={loading || busy}
+                    onClick={handleSignOut}
+                    className="text-xs underline text-emerald-900 hover:text-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Sign out
                   </button>
@@ -129,7 +144,8 @@ const AdminLogin = () => {
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={signOut}
+                  disabled={loading || busy}
+                  onClick={handleSignOut}
                   className="mt-3 border-amber-300 text-amber-900 hover:bg-amber-100"
                 >
                   Sign out
