@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const slugifyHeading = (s: string) =>
   s
@@ -35,6 +35,27 @@ const extractHeadings = (markdown: string): Heading[] => {
 const ArticleTOC = ({ body }: { body: string }) => {
   const headings = useMemo(() => extractHeadings(body), [body]);
   const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string>("");
+
+  useEffect(() => {
+    if (headings.length === 0) return;
+    const ids = headings.map((h) => h.id);
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { threshold: 0, rootMargin: "-20% 0% -70% 0%" }
+    );
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [headings]);
 
   if (headings.length < 2) return null;
 
@@ -46,17 +67,24 @@ const ArticleTOC = ({ body }: { body: string }) => {
           <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3">
             On this page
           </p>
-          <ul className="space-y-2 text-sm border-l-2 border-slate-200">
-            {headings.map((h) => (
-              <li key={h.id}>
-                <a
-                  href={`#${h.id}`}
-                  className="block pl-4 -ml-0.5 border-l-2 border-transparent hover:border-[var(--emerald)] hover:text-[var(--emerald)] text-slate-600 transition-colors py-0.5"
-                >
-                  {h.text}
-                </a>
-              </li>
-            ))}
+          <ul className="space-y-1 text-sm border-l-2 border-slate-200">
+            {headings.map((h) => {
+              const isActive = h.id === activeId;
+              return (
+                <li key={h.id}>
+                  <a
+                    href={`#${h.id}`}
+                    className={`block py-1 text-sm transition-colors -ml-0.5 pl-4 border-l-2 ${
+                      isActive
+                        ? "border-[var(--emerald)] text-[var(--emerald)] font-medium"
+                        : "border-transparent text-slate-500 hover:text-[var(--navy)] hover:border-slate-300"
+                    }`}
+                  >
+                    {h.text}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </aside>
