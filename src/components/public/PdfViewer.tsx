@@ -167,7 +167,7 @@ const PdfViewer = ({ url, fileName, sizeBytes, title, storageKey }: PdfViewerPro
           canvas.height = viewport.height;
           const ctx = canvas.getContext("2d");
           if (!ctx) continue;
-          await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+          await page.render({ canvasContext: ctx, viewport }).promise;
           out.push({ page: i, dataUrl: canvas.toDataURL("image/jpeg", 0.7) });
           if (!cancelled) setThumbs([...out]);
         }
