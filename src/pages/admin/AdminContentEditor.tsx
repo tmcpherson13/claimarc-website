@@ -39,6 +39,12 @@ interface FormState {
   canonicalUrl: string;
 }
 
+const todayLocal = (): string => {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const empty = (type: ContentType): FormState => ({
   contentType: type,
   title: "",
@@ -53,7 +59,7 @@ const empty = (type: ContentType): FormState => ({
   pdfAssetId: null,
   relatedIds: [],
   scheduledFor: "",
-  publishedAt: "",
+  publishedAt: todayLocal(),
   seoTitle: "",
   seoDescription: "",
   canonicalUrl: "",
@@ -318,6 +324,21 @@ const Inner = () => {
               {isNew ? "New " : "Edit "}
               {form.contentType === "blog" ? "blog post" : "white paper"}
             </span>
+            {existing && (
+              <span
+                className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                  existing.status === "published"
+                    ? "bg-emerald-100 text-emerald-800"
+                    : existing.status === "scheduled"
+                      ? "bg-amber-100 text-amber-800"
+                      : existing.status === "archived"
+                        ? "bg-zinc-200 text-zinc-700"
+                        : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {existing.status.charAt(0).toUpperCase() + existing.status.slice(1)}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {existing && (
@@ -472,17 +493,6 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Content type">
-              <select
-                value={form.contentType}
-                disabled={!isNew}
-                onChange={(e) => set("contentType", e.target.value as ContentType)}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:bg-slate-50"
-              >
-                <option value="blog">Blog</option>
-                <option value="white_paper">White paper</option>
-              </select>
-            </Field>
             <Field label="Tags (comma-separated)">
               <Input
                 value={form.tagsInput}
