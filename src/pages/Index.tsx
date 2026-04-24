@@ -88,7 +88,7 @@ const Index = () => {
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
             Payers are winning. Most providers don't know it yet.
           </h2>
-          <p className="text-slate-600 max-w-2xl mt-4 text-lg">
+          <p className="text-slate-600 max-w-xl mt-4 text-lg">
             Payers have deployed AI to identify denial opportunities faster than
             ever — shifting rules, weaponizing data, and moving faster than
             traditional revenue cycle workflows can detect. The gap between
@@ -152,10 +152,10 @@ const Index = () => {
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
           </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
+          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
             Denial management companies fight denials. ZDefense understands payers.
           </h2>
-          <p className="text-slate-600 max-w-2xl mt-4 text-lg">
+          <p className="text-slate-600 max-w-xl mt-4 text-lg">
             Every denial management vendor works with data after it enters your
             system. ZDefense works at the point where data is created — the raw
             payer output, before any provider system transforms it. That is a
@@ -194,7 +194,7 @@ const Index = () => {
       {/* SECTION 6: OUTCOMES */}
       <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-white text-3xl font-bold text-center">
+          <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
             Platform Performance Signals
           </h2>
           <p className="text-slate-500 text-center text-xs mt-2">
@@ -224,10 +224,10 @@ const Index = () => {
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             BUILT FOR YOUR TEAM
           </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold mt-2">
+          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold mt-2">
             Different roles. Different modules. Same platform.
           </h2>
-          <p className="text-slate-600 text-lg mt-3 max-w-2xl">
+          <p className="text-slate-600 text-lg mt-3 max-w-xl">
             ZDefense routes each user to the intelligence that matters most to
             their workflow — automatically, from day one.
           </p>
