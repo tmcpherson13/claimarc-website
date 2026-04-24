@@ -155,11 +155,22 @@ const WhitePaperPage = () => {
       )}
 
       <article className="px-6 md:px-12 lg:px-16 py-12 md:py-16 pb-32 md:pb-16">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-10 lg:gap-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] gap-10 lg:gap-16">
           <ArticleTOC body={parsed.body} />
 
-          <div className="min-w-0 max-w-[68ch] mx-auto lg:mx-0">
+          <div className="min-w-0 max-w-[68ch] mx-auto lg:mx-0 lg:col-start-2">
             <KeyTakeaways items={parsed.takeaways} />
+
+            {!parsed.body.trim() && !pdf && (
+              <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <p className="font-semibold text-[var(--navy)]">No content yet</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  This white paper has no body text and no PDF attached. Open it in the admin
+                  editor and either write the body or pick a PDF asset under
+                  “Downloadable PDF”.
+                </p>
+              </div>
+            )}
 
             <div
               className="article-prose prose prose-slate max-w-none
