@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { LogOut, FileText, Image as ImageIcon, User } from "lucide-react";
+import { FileText, Image as ImageIcon, User } from "lucide-react";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { Button } from "@/components/ui/button";
 import { contentApi, type ContentItem, type PostStatus } from "@/lib/contentApi";
 
 const statusPillClasses: Record<PostStatus, string> = {
