@@ -88,7 +88,7 @@ const Index = () => {
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
             Payers are winning. Most providers don't know it yet.
           </h2>
-          <p className="text-slate-600 max-w-2xl mt-4 text-lg">
+          <p className="text-slate-600 max-w-xl mt-4 text-lg">
             Payers have deployed AI to identify denial opportunities faster than
             ever — shifting rules, weaponizing data, and moving faster than
             traditional revenue cycle workflows can detect. The gap between
