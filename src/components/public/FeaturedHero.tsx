@@ -31,8 +31,32 @@ const FeaturedHero = ({ item }: { item: ContentItem }) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[var(--navy)] to-[var(--navy-dk)] flex items-center justify-center">
-              <span className="text-white/40 text-6xl font-bold">ZD</span>
+            <div className="w-full h-full bg-[var(--navy)] relative overflow-hidden flex items-center justify-center">
+              {/* Subtle grid pattern */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(100,116,139,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(100,116,139,0.08) 1px, transparent 1px)",
+                  backgroundSize: "32px 32px",
+                }}
+              />
+
+              {/* Floating metric chips - static, not animated */}
+              <div className="absolute top-6 right-8 border border-emerald-800/40 text-emerald-400 text-xs font-mono px-3 py-1 rounded-full bg-[var(--navy)]/80">
+                $12.6M forecast
+              </div>
+              <div className="absolute bottom-8 left-6 border border-emerald-800/40 text-emerald-400 text-xs font-mono px-3 py-1 rounded-full bg-[var(--navy)]/80">
+                89.4% clean claim rate
+              </div>
+
+              {/* Central wordmark */}
+              <div className="relative text-center">
+                <div className="text-white/20 text-2xl font-bold tracking-tight">
+                  ZDefense AI³
+                </div>
+                <div className="w-10 h-0.5 bg-[var(--emerald)] mx-auto mt-3 opacity-60" />
+              </div>
             </div>
           )}
         </div>
