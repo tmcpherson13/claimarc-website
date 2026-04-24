@@ -320,37 +320,35 @@ const WhitePaperPage = () => {
             </div>
           )}
 
-          {/* Bottom download block */}
-          {pdf && (
-            <div className="not-prose mt-16 rounded-xl bg-[var(--navy)] p-8 md:p-10 text-center">
-              <p className="text-[var(--emerald)] text-xs uppercase tracking-widest font-semibold">
-                Full Research Document
+          {/* Download CTA — compact horizontal */}
+          <div className="not-prose mt-16 bg-[var(--navy)] rounded-xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="min-w-0">
+              <p className="text-white font-bold text-xl">
+                {pdf ? "Download this white paper" : "Request this briefing"}
               </p>
-              <p className="text-white text-2xl font-bold mt-2">
-                Take this white paper with you
+              <p className="text-slate-300 text-sm mt-1 line-clamp-2">
+                {post.title}
               </p>
-              <p className="text-slate-400 text-sm mt-2">
-                Download the complete PDF to share with your team or read offline.
-              </p>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href={pdf.publicUrl}
-                  download={pdf.originalName}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[var(--emerald)] hover:bg-emerald-500 text-white px-7 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  ↓ Download PDF ({sizeMb} MB)
-                </a>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center justify-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/40 px-7 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  Discuss with ZTech →
-                </Link>
-              </div>
             </div>
-          )}
+            {pdf ? (
+              <a
+                href={pdf.publicUrl}
+                download={pdf.originalName}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0 inline-flex items-center justify-center gap-2 bg-[var(--emerald)] text-white px-6 py-3 rounded font-semibold hover:bg-emerald-600 transition-colors whitespace-nowrap"
+              >
+                Download PDF →
+              </a>
+            ) : (
+              <Link
+                to="/contact"
+                className="shrink-0 inline-flex items-center justify-center gap-2 bg-[var(--emerald)] text-white px-6 py-3 rounded font-semibold hover:bg-emerald-600 transition-colors whitespace-nowrap"
+              >
+                Request this briefing →
+              </Link>
+            )}
+          </div>
 
           <ContentCta type={post.ctaType} />
           <InternalLinkRail />
