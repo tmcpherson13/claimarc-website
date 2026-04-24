@@ -69,6 +69,42 @@ const InsightsPage = () => {
         <div className="max-w-6xl mx-auto">
           <FilterBar items={items} showTypeFilter />
 
+          <div className="mt-6 -mx-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+            <div className="flex gap-2 px-2 min-w-max">
+              {[
+                { label: "All", value: "" },
+                { label: "Payer Behavior", value: "payer-behavior" },
+                { label: "Denial Prevention", value: "denial-prevention" },
+                { label: "Prior Authorization", value: "prior-authorization" },
+                { label: "Contract Intelligence", value: "contract-intelligence" },
+                { label: "Underpayment Recovery", value: "underpayment-recovery" },
+                { label: "Compliance", value: "compliance" },
+                { label: "Forecasting", value: "forecasting" },
+              ].map((pill) => {
+                const isActive = (topic || "") === pill.value;
+                return (
+                  <button
+                    key={pill.label}
+                    type="button"
+                    onClick={() => {
+                      const next = new URLSearchParams(params);
+                      if (pill.value) next.set("topic", pill.value);
+                      else next.delete("topic");
+                      setParams(next, { replace: true });
+                    }}
+                    className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap transition-colors ${
+                      isActive
+                        ? "bg-[var(--navy)] text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {pill.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="pt-10">
             {loading && <p className="text-slate-500">Loading…</p>}
             {error && <p className="text-red-600">{error}</p>}
@@ -92,7 +128,8 @@ const InsightsPage = () => {
 
             {!loading && !error && isFiltering && grid.length === 0 && (
               <p className="text-slate-500 py-12 text-center">
-                No content matches your filters.
+                No intelligence matched those filters — try broadening your search
+                or clearing a filter above.
               </p>
             )}
           </div>
