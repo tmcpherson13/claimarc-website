@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const TrialCallout = () => {
   return (
     <div className="border-l-4 border-[var(--emerald)] bg-[var(--lgray)] p-8 rounded-r-xl my-12">
-      <p className="text-[var(--emerald)] text-xs font-semibold uppercase tracking-widest">
+      <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest">
         30-DAY NO-OBLIGATION EVALUATION
       </p>
       <h3 className="text-[var(--navy)] text-xl font-bold mt-2">

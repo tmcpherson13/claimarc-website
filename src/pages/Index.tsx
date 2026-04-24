@@ -19,7 +19,7 @@ const Index = () => {
       <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
         <HeroAccent />
         <div className="relative w-full max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             Revenue Cycle Intelligence Platform
           </p>
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mt-4 leading-tight">
@@ -71,13 +71,13 @@ const Index = () => {
             Same platform. Same nine modules. Three delivery models.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Actionable AI¹ — Your team, our platform
             </span>
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Augmented AI² — ZTech co-pilot
             </span>
-            <span className="border border-[var(--emerald)] text-[var(--emerald)] rounded-full px-5 py-1.5 text-sm">
+            <span className="border border-slate-600 text-slate-300 rounded-full px-5 py-1.5 text-sm">
               Automated AI³ — Fire and forget
             </span>
             <Link to="/pricing" className="text-slate-400 text-sm underline ml-2 hover:text-white transition-colors">
@@ -121,7 +121,7 @@ const Index = () => {
       {/* SECTION 4: PREDICT / PROTECT / RECOVER */}
       <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest text-center">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
             THE PLATFORM
           </p>
           <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
@@ -145,7 +145,7 @@ const Index = () => {
                 <div className="mt-4 pt-4 border-t border-slate-800 text-[var(--emerald)] text-sm font-semibold">
                   {c.proof}
                 </div>
-                <Link to={c.href} className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
+                <Link to={c.href} className="text-slate-300 text-sm mt-3 inline-block hover:text-white hover:underline">
                   {c.link}
                 </Link>
               </div>
@@ -157,7 +157,7 @@ const Index = () => {
       {/* SECTION 5: DIFFERENTIATION */}
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
           </p>
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
@@ -178,7 +178,7 @@ const Index = () => {
                 data. Start your 30-day evaluation with live intelligence
                 benchmarked to your market — no BAA, no IT, no legal agreements.
               </p>
-              <Link to="/contact?offer=trial" className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
+              <Link to="/contact?offer=trial" className="text-slate-500 text-sm mt-3 inline-block hover:text-[var(--navy)] hover:underline">
                 Start your no-BAA evaluation →
               </Link>
             </div>
@@ -193,7 +193,7 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <Link to="/why-zdefense" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+          <Link to="/why-zdefense" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
             See all differentiators →
           </Link>
         </div>
@@ -229,7 +229,7 @@ const Index = () => {
       {/* SECTION 7: WHO IT'S FOR */}
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             BUILT FOR YOUR TEAM
           </p>
           <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold mt-2">
@@ -248,12 +248,12 @@ const Index = () => {
             ].map((r) => (
               <div key={r.role} className="bg-[var(--lgray)] rounded-xl p-5 hover:bg-emerald-50 transition-colors cursor-pointer">
                 <div className="text-[var(--navy)] font-semibold">{r.role}</div>
-                <div className="text-[var(--emerald)] text-sm mt-0.5">{r.module}</div>
+                <div className="text-slate-500 text-sm mt-0.5">{r.module}</div>
                 <div className="text-slate-600 text-xs mt-1">{r.desc}</div>
               </div>
             ))}
           </div>
-          <Link to="/solutions" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
+          <Link to="/solutions" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
             See all roles →
           </Link>
         </div>
