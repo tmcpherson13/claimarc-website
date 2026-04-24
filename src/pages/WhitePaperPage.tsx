@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,6 +8,11 @@ import { contentApi, ContentItem, estimateReadTime } from "@/lib/contentApi";
 import { assetsApi, Asset } from "@/lib/assetsApi";
 import ContentCta from "@/components/ContentCta";
 import RelatedContent from "@/components/RelatedContent";
+import BylineRow from "@/components/public/BylineRow";
+import ArticleTOC, { headingId } from "@/components/public/ArticleTOC";
+import KeyTakeaways from "@/components/public/KeyTakeaways";
+import InternalLinkRail from "@/components/public/InternalLinkRail";
+import { parseTakeaways } from "@/lib/markdownExtras";
 
 const WhitePaperPage = () => {
   const { slug = "" } = useParams();
@@ -16,6 +21,7 @@ const WhitePaperPage = () => {
   const [post, setPost] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [pdf, setPdf] = useState<Asset | null>(null);
+  const [hero, setHero] = useState<Asset | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -32,12 +38,19 @@ const WhitePaperPage = () => {
   }, [slug, previewToken]);
 
   useEffect(() => {
-    if (!post?.pdfAssetId) {
+    const ids = [post?.pdfAssetId, post?.heroAssetId].filter(Boolean) as string[];
+    if (ids.length === 0) {
       setPdf(null);
+      setHero(null);
       return;
     }
-    assetsApi.getMany([post.pdfAssetId]).then((m) => setPdf(m[post.pdfAssetId!] ?? null));
-  }, [post?.pdfAssetId]);
+    assetsApi.getMany(ids).then((m) => {
+      setPdf(post?.pdfAssetId ? m[post.pdfAssetId] ?? null : null);
+      setHero(post?.heroAssetId ? m[post.heroAssetId] ?? null : null);
+    });
+  }, [post?.pdfAssetId, post?.heroAssetId]);
+
+  const parsed = useMemo(() => parseTakeaways(post?.body ?? ""), [post?.body]);
 
   if (loading) {
     return (
@@ -72,6 +85,21 @@ const WhitePaperPage = () => {
   const seoTitle = post.seoTitle?.trim() || `${post.title} – ZDefense White Paper`;
   const seoDescription = post.seoDescription?.trim() || post.summary;
 
+  const downloadButton = pdf && (
+    <a
+      href={pdf.publicUrl}
+      download={pdf.originalName}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-2 bg-[var(--emerald)] text-white px-5 py-3 rounded font-semibold hover:bg-emerald-600 transition-colors shadow-sm"
+    >
+      ⬇ Download PDF
+      <span className="text-xs opacity-80 font-normal">
+        ({(pdf.sizeBytes / 1024 / 1024).toFixed(1)} MB)
+      </span>
+    </a>
+  );
+
   return (
     <Layout>
       <SeoHead title={seoTitle} description={seoDescription} path={`/white-papers/${post.slug}`} />
@@ -82,7 +110,8 @@ const WhitePaperPage = () => {
         </div>
       )}
 
-      <article className="px-6 md:px-12 lg:px-16 py-16">
+      {/* Hero band */}
+      <header className="bg-slate-50 border-b border-slate-200 px-6 md:px-12 lg:px-16 py-10 md:py-14">
         <div className="max-w-3xl mx-auto">
           <Link
             to="/white-papers"
@@ -90,48 +119,105 @@ const WhitePaperPage = () => {
           >
             ← Back to white papers
           </Link>
-          <h1 className="mt-6 text-4xl md:text-5xl font-bold text-[var(--navy)] leading-tight">
+          <p className="mt-4 text-xs uppercase tracking-wider text-[var(--emerald)] font-semibold">
+            White paper
+          </p>
+          <h1 className="mt-2 text-3xl md:text-5xl font-bold text-[var(--navy)] leading-tight">
             {post.title}
           </h1>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
-            {post.publishedAt && (
-              <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            )}
-            <span>·</span>
-            <span>{estimateReadTime(post.body)}</span>
-          </div>
-
-          {pdf && (
-            <a
-              href={pdf.publicUrl}
-              download={pdf.originalName}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-flex items-center gap-2 bg-[var(--emerald)] text-white px-5 py-3 rounded font-semibold hover:bg-emerald-600 transition-colors"
-            >
-              ⬇ Download PDF ({(pdf.sizeBytes / 1024 / 1024).toFixed(1)} MB)
-            </a>
+          {post.summary && (
+            <p className="mt-4 text-lg md:text-xl text-slate-600 leading-relaxed">
+              {post.summary}
+            </p>
           )}
-
-          <div
-            className="prose prose-slate max-w-none mt-10
-            prose-headings:text-[var(--navy)]
-            prose-a:text-[var(--emerald)] prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-[var(--navy)]"
-          >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body}</ReactMarkdown>
+          <div className="mt-6">
+            <BylineRow
+              authorId={post.authorId}
+              publishedAt={post.publishedAt}
+              updatedAt={post.updatedAt}
+              readTime={estimateReadTime(post.body)}
+            />
           </div>
+          {downloadButton && <div className="mt-6">{downloadButton}</div>}
+        </div>
+      </header>
 
-          <ContentCta type={post.ctaType} />
-          <RelatedContent ids={post.relatedIds} />
+      {hero && (
+        <div className="px-6 md:px-12 lg:px-16 -mt-px">
+          <div className="max-w-5xl mx-auto">
+            <img
+              src={hero.publicUrl}
+              alt={post.title}
+              className="w-full max-h-[28rem] object-cover rounded-b-lg"
+            />
+          </div>
+        </div>
+      )}
+
+      <article className="px-6 md:px-12 lg:px-16 py-12 md:py-16 pb-32 md:pb-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-10 lg:gap-16">
+          <ArticleTOC body={parsed.body} />
+
+          <div className="min-w-0 max-w-[68ch] mx-auto lg:mx-0">
+            <KeyTakeaways items={parsed.takeaways} />
+
+            <div
+              className="article-prose prose prose-slate max-w-none
+              prose-headings:text-[var(--navy)] prose-headings:scroll-mt-24
+              prose-a:text-[var(--emerald)] prose-a:no-underline hover:prose-a:underline
+              prose-strong:text-[var(--navy)]
+              prose-img:rounded-lg"
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h2: ({ children, ...props }) => {
+                    const text = String(children);
+                    return (
+                      <h2 id={headingId(text)} {...props}>
+                        {children}
+                      </h2>
+                    );
+                  },
+                }}
+              >
+                {parsed.body}
+              </ReactMarkdown>
+            </div>
+
+            {downloadButton && (
+              <div className="mt-12 p-6 border border-emerald-200 bg-emerald-50/40 rounded-lg text-center">
+                <p className="font-semibold text-[var(--navy)]">
+                  Take this research with you
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Download the full PDF to share with your team.
+                </p>
+                <div className="mt-4">{downloadButton}</div>
+              </div>
+            )}
+
+            <ContentCta type={post.ctaType} />
+            <InternalLinkRail />
+            <RelatedContent ids={post.relatedIds} />
+          </div>
         </div>
       </article>
+
+      {/* Mobile sticky download CTA */}
+      {pdf && (
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 px-4 py-3 shadow-lg">
+          <a
+            href={pdf.publicUrl}
+            download={pdf.originalName}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 w-full bg-[var(--emerald)] text-white py-3 rounded font-semibold"
+          >
+            ⬇ Download PDF ({(pdf.sizeBytes / 1024 / 1024).toFixed(1)} MB)
+          </a>
+        </div>
+      )}
     </Layout>
   );
 };

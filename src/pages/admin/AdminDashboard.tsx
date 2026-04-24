@@ -33,7 +33,7 @@ const DashboardInner = () => {
       </header>
       <main className="max-w-6xl mx-auto px-6 py-12">
         <h2 className="text-2xl font-bold text-[var(--navy)]">Dashboard</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Link
             to="/admin/content"
             className="block p-6 bg-white border border-slate-200 rounded-lg hover:border-[var(--emerald)] transition-colors"
@@ -50,6 +50,15 @@ const DashboardInner = () => {
             <p className="font-semibold text-[var(--navy)]">Assets</p>
             <p className="text-sm text-slate-500 mt-1">
               Upload and manage images and downloadable PDFs.
+            </p>
+          </Link>
+          <Link
+            to="/admin/profile"
+            className="block p-6 bg-white border border-slate-200 rounded-lg hover:border-[var(--emerald)] transition-colors"
+          >
+            <p className="font-semibold text-[var(--navy)]">My profile</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Set your display name, role, and avatar — used as your byline on articles.
             </p>
           </Link>
         </div>
