@@ -19,21 +19,16 @@ const Index = () => {
       <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
         <HeroAccent />
         <div className="relative w-full max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
-            Revenue Cycle Intelligence Platform
+          <p className="text-slate-400 italic text-base max-w-xl">
+            While payers weaponize data and shifting rules against providers,
+            ZDefense turns that same intelligence into your defense.
           </p>
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mt-4 leading-tight">
             Predict payer risk. Protect revenue. Recover cash.
           </h1>
-          <p className="text-slate-300 text-lg md:text-xl max-w-3xl mt-6">
-            ZDefense is a revenue cycle intelligence platform that gives
-            providers real-time payer behavioral insights, denial prevention,
-            automated recovery, regulatory intelligence, and compliance
-            protection — unified into 90-day revenue forecasts.
-          </p>
-          <p className="text-slate-400 text-base md:text-lg max-w-3xl mt-3 italic">
-            While payers weaponize data and shifting rules against providers,
-            ZDefense turns that same intelligence into your defense.
+          <p className="text-slate-300 text-lg md:text-xl max-w-xl mt-6">
+            Nine modules. One platform. Real-time intelligence from payer
+            behavior to 90-day revenue forecast.
           </p>
           <div className="mt-10 flex gap-4 flex-wrap">
             <Link
@@ -45,20 +40,17 @@ const Index = () => {
             <Link
               to="/contact?offer=trial"
               className="border-2 border-[var(--emerald)] text-[var(--emerald)] px-7 py-3 rounded font-semibold text-lg hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+              title="ContractIntel, Shield, and Prevent run on public payer data only. No BAA. No IT involvement."
             >
-              Start Your 30-Day Evaluation — No BAA Required
+              30-Day Evaluation
             </Link>
           </div>
-          <p className="text-slate-500 text-xs mt-3">
-            ContractIntel, Shield, and Prevent run on public payer data only.
-            No BAA. No IT involvement. Available for qualifying provider
-            organizations.
-          </p>
           <div className="mt-14 pt-6 border-t border-slate-800 flex gap-8 text-slate-400 text-sm flex-wrap">
             <span>✓ SOC 2 Type II</span>
             <span>✓ ISO/IEC 27001:2022</span>
             <span>✓ HIPAA Compliant</span>
             <span>✓ 7-Year Remittance Archive</span>
+            <span>✓ No BAA Required for ContractIntel, Shield, and Prevent</span>
           </div>
         </div>
       </section>
