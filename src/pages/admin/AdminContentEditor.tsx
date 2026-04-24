@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AdminGate from "@/components/AdminGate";
+import AdminLayout from "@/components/admin/AdminLayout";
 import AssetPicker from "@/components/admin/AssetPicker";
 import PdfUploadCard from "@/components/admin/PdfUploadCard";
 import {
@@ -309,12 +310,12 @@ const Inner = () => {
     form.contentType === "blog" ? `/blog/${form.slug}` : `/white-papers/${form.slug}`;
 
   if (loading) {
-    return <div className="min-h-screen bg-slate-50 p-10 text-slate-500">Loading…</div>;
+    return <AdminLayout><div className="p-10 text-slate-500">Loading…</div></AdminLayout>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[var(--navy)] text-white px-6 py-4 sticky top-0 z-10">
+    <AdminLayout>
+      <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-4">
             <Link to="/admin/content" className="text-sm text-white/70 hover:text-white">
