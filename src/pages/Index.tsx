@@ -199,6 +199,9 @@ const Index = () => {
           <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
             Platform Performance Signals
           </h2>
+          <p className="text-slate-500 text-center text-xs mt-1">
+            300-bed community hospital demo baseline · Figures are illustrative.
+          </p>
           <p className="text-slate-500 text-center text-xs mt-2">
             Figures shown reflect ZDefense platform demo outputs. Results vary
             by organization and data configuration.
@@ -209,8 +212,13 @@ const Index = () => {
               { stat: "89.4%", label: "Clean claim rate post-Shield", note: "Demo baseline" },
               { stat: "$1.146M", label: "Active appeals pipeline", note: "Demo baseline" },
               { stat: "$2.8M", label: "Annual contract gap identified", note: "Demo baseline" },
-            ].map((s) => (
-              <div key={s.stat} className="text-center py-8 px-6">
+            ].map((s, i) => (
+              <div
+                key={s.stat}
+                className={`text-center py-8 px-6 min-h-[120px] flex flex-col justify-center ${
+                  i < 2 ? "border-b border-slate-800 md:border-b-0" : ""
+                }`}
+              >
                 <div className="text-[var(--emerald)] text-4xl font-bold">{s.stat}</div>
                 <div className="text-white text-sm mt-2">{s.label}</div>
                 <div className="text-slate-500 text-xs mt-1">{s.note}</div>
