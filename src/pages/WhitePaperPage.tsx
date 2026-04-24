@@ -172,6 +172,48 @@ const WhitePaperPage = () => {
               </div>
             )}
 
+            {pdf && (
+              <div className="mb-10 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 shadow-sm">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-white">
+                  <p className="text-sm font-semibold text-[var(--navy)] truncate">
+                    {pdf.originalName}
+                  </p>
+                  <a
+                    href={pdf.publicUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-[var(--emerald)] font-semibold hover:underline shrink-0 ml-3"
+                  >
+                    Open in new tab ↗
+                  </a>
+                </div>
+                <object
+                  data={`${pdf.publicUrl}#view=FitH`}
+                  type="application/pdf"
+                  className="w-full h-[80vh] min-h-[600px] bg-white"
+                  aria-label={`${post.title} PDF preview`}
+                >
+                  <iframe
+                    src={`${pdf.publicUrl}#view=FitH`}
+                    title={`${post.title} PDF preview`}
+                    className="w-full h-[80vh] min-h-[600px] bg-white"
+                  />
+                  <div className="p-6 text-center text-sm text-slate-600">
+                    Your browser can't display this PDF inline.{" "}
+                    <a
+                      href={pdf.publicUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[var(--emerald)] font-semibold hover:underline"
+                    >
+                      Open the PDF
+                    </a>{" "}
+                    in a new tab instead.
+                  </div>
+                </object>
+              </div>
+            )}
+
             <div
               className="article-prose prose prose-slate max-w-none
               prose-headings:text-[var(--navy)] prose-headings:scroll-mt-24
