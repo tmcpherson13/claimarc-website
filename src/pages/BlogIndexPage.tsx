@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
-import { blogApi, BlogPost } from "@/lib/blogApi";
+import { contentApi, ContentItem } from "@/lib/contentApi";
 
 const BlogIndexPage = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    blogApi
-      .listPublished()
+    contentApi
+      .listPublished("blog")
       .then(setPosts)
       .catch((e) => setError(e.message ?? "Failed to load posts"))
       .finally(() => setLoading(false));
   }, []);
+
+  const featured = posts.find((p) => p.featured) ?? null;
+  const rest = posts.filter((p) => p !== featured);
 
   return (
     <Layout>
@@ -43,7 +46,33 @@ const BlogIndexPage = () => {
             {!loading && !error && posts.length === 0 && (
               <p className="text-slate-500">No posts published yet. Check back soon.</p>
             )}
-            {posts.map((p) => (
+
+            {featured && (
+              <article className="border-l-4 border-[var(--emerald)] pl-6 pb-8 border-b border-slate-200">
+                <p className="text-xs uppercase tracking-wider text-[var(--emerald)] font-semibold">
+                  Featured
+                </p>
+                <h2 className="mt-2 text-3xl font-bold text-[var(--navy)]">
+                  <Link to={`/blog/${featured.slug}`} className="hover:text-[var(--emerald)]">
+                    {featured.title}
+                  </Link>
+                </h2>
+                <p className="mt-2 text-slate-600">{featured.summary}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                  {featured.publishedAt && (
+                    <time dateTime={featured.publishedAt}>
+                      {new Date(featured.publishedAt).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+                  )}
+                </div>
+              </article>
+            )}
+
+            {rest.map((p) => (
               <article key={p.id} className="border-b border-slate-200 pb-8">
                 <h2 className="text-2xl font-semibold text-[var(--navy)]">
                   <Link to={`/blog/${p.slug}`} className="hover:text-[var(--emerald)]">
@@ -82,9 +111,7 @@ const BlogIndexPage = () => {
                 <p className="text-sm uppercase tracking-wider text-[var(--emerald)] font-semibold">
                   Try ZDefense
                 </p>
-                <p className="mt-3 text-base">
-                  Want to see this intelligence in your payer mix?
-                </p>
+                <p className="mt-3 text-base">Want to see this intelligence in your payer mix?</p>
                 <Link
                   to="/contact?offer=trial"
                   className="mt-4 inline-block bg-[var(--emerald)] text-white px-4 py-2 rounded text-sm font-semibold hover:bg-emerald-600 transition-colors"

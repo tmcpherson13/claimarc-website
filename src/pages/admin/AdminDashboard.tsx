@@ -35,11 +35,22 @@ const DashboardInner = () => {
         <h2 className="text-2xl font-bold text-[var(--navy)]">Dashboard</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <Link
-            to="/admin/blog"
+            to="/admin/content"
             className="block p-6 bg-white border border-slate-200 rounded-lg hover:border-[var(--emerald)] transition-colors"
           >
-            <p className="font-semibold text-[var(--navy)]">Blog posts</p>
-            <p className="text-sm text-slate-500 mt-1">Create, edit, publish, and unpublish posts.</p>
+            <p className="font-semibold text-[var(--navy)]">Content</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Blog posts and white papers — draft, schedule, publish, archive.
+            </p>
+          </Link>
+          <Link
+            to="/admin/assets"
+            className="block p-6 bg-white border border-slate-200 rounded-lg hover:border-[var(--emerald)] transition-colors"
+          >
+            <p className="font-semibold text-[var(--navy)]">Assets</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Upload and manage images and downloadable PDFs.
+            </p>
           </Link>
         </div>
       </main>
