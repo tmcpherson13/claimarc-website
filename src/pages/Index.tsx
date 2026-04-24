@@ -96,17 +96,19 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
-              { stat: "41%", label: "of providers report denial rates above 10%", source: "(Industry benchmark)" },
-              { stat: "86%", label: "of denials are preventable", source: "(Industry benchmark)" },
-              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows", source: "(Industry benchmark)" },
+              { stat: "41%", label: "of providers report denial rates above 10%" },
+              { stat: "86%", label: "of denials are preventable" },
+              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows" },
             ].map((c) => (
               <div key={c.stat} className="bg-[var(--lgray)] rounded-xl p-8">
                 <div className="text-[var(--navy)] font-bold text-4xl">{c.stat}</div>
-                <div className="text-slate-600 text-sm mt-2">{c.label}</div>
-                <div className="text-slate-400 text-xs mt-1 italic">{c.source}</div>
+                <div className="text-slate-700 text-sm mt-3">{c.label}</div>
               </div>
             ))}
           </div>
+          <p className="text-slate-400 text-xs mt-6">
+            * Industry benchmarks. Sources available on request.
+          </p>
         </div>
       </section>
 
@@ -134,10 +136,10 @@ const Index = () => {
                 <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
                 <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
                 <p className="text-slate-400 text-sm mt-3">{c.body}</p>
-                <div className="mt-4 pt-4 border-t border-slate-800 text-[var(--emerald)] text-sm font-semibold">
+                <div className="mt-6 pt-6 border-t border-slate-800 text-[var(--emerald)] text-sm font-bold mb-2">
                   {c.proof}
                 </div>
-                <Link to={c.href} className="text-slate-300 text-sm mt-3 inline-block hover:text-white hover:underline">
+                <Link to={c.href} className="text-slate-300 text-sm mt-1 block hover:text-white hover:underline">
                   {c.link}
                 </Link>
               </div>
@@ -197,6 +199,9 @@ const Index = () => {
           <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
             Platform Performance Signals
           </h2>
+          <p className="text-slate-500 text-center text-xs mt-1">
+            300-bed community hospital demo baseline · Figures are illustrative.
+          </p>
           <p className="text-slate-500 text-center text-xs mt-2">
             Figures shown reflect ZDefense platform demo outputs. Results vary
             by organization and data configuration.
@@ -207,8 +212,13 @@ const Index = () => {
               { stat: "89.4%", label: "Clean claim rate post-Shield", note: "Demo baseline" },
               { stat: "$1.146M", label: "Active appeals pipeline", note: "Demo baseline" },
               { stat: "$2.8M", label: "Annual contract gap identified", note: "Demo baseline" },
-            ].map((s) => (
-              <div key={s.stat} className="text-center py-8 px-6">
+            ].map((s, i) => (
+              <div
+                key={s.stat}
+                className={`text-center py-8 px-6 min-h-[120px] flex flex-col justify-center ${
+                  i < 2 ? "border-b border-slate-800 md:border-b-0" : ""
+                }`}
+              >
                 <div className="text-[var(--emerald)] text-4xl font-bold">{s.stat}</div>
                 <div className="text-white text-sm mt-2">{s.label}</div>
                 <div className="text-slate-500 text-xs mt-1">{s.note}</div>
