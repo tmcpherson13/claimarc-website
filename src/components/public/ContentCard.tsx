@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ContentItem, estimateReadTime } from "@/lib/contentApi";
 import { assetsApi, Asset } from "@/lib/assetsApi";
-import { profilesApi, Profile } from "@/lib/profilesApi";
+import { useProfile } from "@/hooks/useProfile";
 
 interface Props {
   item: ContentItem;
@@ -11,17 +11,12 @@ interface Props {
 
 const ContentCard = ({ item, showTypeBadge = false }: Props) => {
   const [hero, setHero] = useState<Asset | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const profile = useProfile(item.authorId);
 
   useEffect(() => {
     if (!item.heroAssetId) return;
     assetsApi.getMany([item.heroAssetId]).then((m) => setHero(m[item.heroAssetId!] ?? null));
   }, [item.heroAssetId]);
-
-  useEffect(() => {
-    if (!item.authorId) return;
-    profilesApi.get(item.authorId).then(setProfile);
-  }, [item.authorId]);
 
   const href =
     item.contentType === "blog" ? `/blog/${item.slug}` : `/white-papers/${item.slug}`;
