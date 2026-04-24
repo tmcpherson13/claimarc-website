@@ -19,7 +19,7 @@ const Index = () => {
       <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
         <HeroAccent />
         <div className="relative w-full max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             Revenue Cycle Intelligence Platform
           </p>
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mt-4 leading-tight">
