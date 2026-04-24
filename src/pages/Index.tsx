@@ -4,6 +4,7 @@ import AI3 from "@/components/AI3";
 import CTABand from "@/components/CTABand";
 import TrialCallout from "@/components/TrialCallout";
 import HeroAccent from "@/components/HeroAccent";
+import HeroNetwork from "@/components/HeroNetwork";
 import SeoHead from "@/components/SeoHead";
 
 const Index = () => {
@@ -18,7 +19,8 @@ const Index = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
         <HeroAccent />
-        <div className="relative w-full max-w-7xl mx-auto">
+        <HeroNetwork className="absolute inset-0 w-full h-full" />
+        <div className="relative z-10 w-full max-w-7xl mx-auto">
           <p className="text-slate-400 italic text-base max-w-xl">
             While payers weaponize data and shifting rules against providers,
             ZDefense turns that same intelligence into your defense.
