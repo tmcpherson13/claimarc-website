@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import AdminGate from "@/components/AdminGate";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AssetPicker from "@/components/admin/AssetPicker";
