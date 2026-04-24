@@ -212,8 +212,8 @@ const Inner = () => {
             </div>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 
