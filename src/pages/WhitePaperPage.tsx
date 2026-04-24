@@ -23,6 +23,19 @@ const WhitePaperPage = () => {
   const [loading, setLoading] = useState(true);
   const [pdf, setPdf] = useState<Asset | null>(null);
   const [hero, setHero] = useState<Asset | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.body.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+      setProgress(Math.min(100, Math.max(0, pct)));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const load = async () => {
