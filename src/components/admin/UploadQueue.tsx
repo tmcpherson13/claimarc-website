@@ -47,7 +47,7 @@ const UploadQueue = ({ items, onRetry, onDismiss }: Props) => {
             </div>
             {item.status === "uploading" && (
               <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-slate-100">
-                <div className="h-full w-1/3 bg-[var(--emerald)] animate-[indeterminate_1.2s_ease-in-out_infinite]" />
+                <div className="h-full w-2/3 bg-[var(--emerald)] animate-pulse rounded-full" />
               </div>
             )}
             {item.status === "queued" && (
