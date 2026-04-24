@@ -11,6 +11,7 @@ interface Props {
   /** Called with a humanized title derived from the filename when a new file is uploaded. */
   onSuggestTitle?: (title: string) => void;
   maxSizeMb?: number;
+  status?: "draft" | "scheduled" | "published" | "archived";
 }
 
 const humanizeFilename = (filename: string): string => {
@@ -33,7 +34,7 @@ const humanizeFilename = (filename: string): string => {
     .join(" ");
 };
 
-const PdfUploadCard = ({ value, onChange, onSuggestTitle, maxSizeMb = 25 }: Props) => {
+const PdfUploadCard = ({ value, onChange, onSuggestTitle, maxSizeMb = 25, status }: Props) => {
   const [asset, setAsset] = useState<Asset | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -130,10 +131,18 @@ const PdfUploadCard = ({ value, onChange, onSuggestTitle, maxSizeMb = 25 }: Prop
           <p className="text-xs uppercase tracking-wider text-[var(--emerald)] font-bold">
             White paper PDF
           </p>
-          <p className="text-xs text-slate-500 mt-0.5">Attached and ready to publish.</p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {status === "published" ? "Published and live." : "Attached and ready to publish."}
+          </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-emerald-50 text-emerald-700">
-          ● Attached
+        <span
+          className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded ${
+            status === "published"
+              ? "bg-emerald-100 text-emerald-800"
+              : "bg-emerald-50 text-emerald-700"
+          }`}
+        >
+          ● {status === "published" ? "Published" : "Attached"}
         </span>
       </div>
 
