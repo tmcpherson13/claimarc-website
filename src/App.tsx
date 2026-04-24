@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,9 +14,12 @@ import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 import BlogIndexPage from "./pages/BlogIndexPage.tsx";
 import BlogPostPage from "./pages/BlogPostPage.tsx";
+import WhitePapersIndexPage from "./pages/WhitePapersIndexPage.tsx";
+import WhitePaperPage from "./pages/WhitePaperPage.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
-import AdminBlogList from "./pages/admin/AdminBlogList.tsx";
-import AdminBlogEditor from "./pages/admin/AdminBlogEditor.tsx";
+import AdminContentList from "./pages/admin/AdminContentList.tsx";
+import AdminContentEditor from "./pages/admin/AdminContentEditor.tsx";
+import AdminAssets from "./pages/admin/AdminAssets.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 
 const queryClient = new QueryClient();
@@ -38,11 +41,18 @@ const App = () => (
           <Route path="/workflows" element={<WorkflowsPage />} />
           <Route path="/blog" element={<BlogIndexPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/white-papers" element={<WhitePapersIndexPage />} />
+          <Route path="/white-papers/:slug" element={<WhitePaperPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/blog" element={<AdminBlogList />} />
-          <Route path="/admin/blog/new" element={<AdminBlogEditor />} />
-          <Route path="/admin/blog/:id" element={<AdminBlogEditor />} />
+          <Route path="/admin/content" element={<AdminContentList />} />
+          <Route path="/admin/content/new" element={<AdminContentEditor />} />
+          <Route path="/admin/content/:id" element={<AdminContentEditor />} />
+          <Route path="/admin/assets" element={<AdminAssets />} />
+          {/* Legacy redirects */}
+          <Route path="/admin/blog" element={<Navigate to="/admin/content" replace />} />
+          <Route path="/admin/blog/new" element={<Navigate to="/admin/content/new?type=blog" replace />} />
+          <Route path="/admin/blog/:id" element={<Navigate to="/admin/content" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

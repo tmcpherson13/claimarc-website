@@ -38,9 +38,15 @@
   </url>
   <url>
     <loc>https://zdefense.ai/blog</loc>
-    <lastmod>2026-04-23</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- Per-post entries should be appended here as posts are published. -->
+  <url>
+    <loc>https://zdefense.ai/white-papers</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Per-post and per-white-paper entries should be appended here as items are published. -->
 </urlset>

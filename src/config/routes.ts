@@ -1,9 +1,5 @@
 // Single source of truth for primary marketing routes.
 // Consumed by Navbar and Footer so labels can be updated in one place.
-// NOTE: We intentionally keep the existing /solutions path while displaying
-// the public label "Who It's For" to avoid breaking inbound links.
-// When the production domain (https://zdefense.ai) is live, update SITE_URL
-// below and remove the noindex robots meta on each page.
 
 export const SITE_URL = "https://z-defense-website.lovable.app";
 
@@ -19,6 +15,7 @@ export const marketingRoutes: MarketingRoute[] = [
   { label: "Who It's For", to: "/solutions" },
   { label: "Pricing", to: "/pricing" },
   { label: "Blog", to: "/blog" },
+  { label: "White Papers", to: "/white-papers" },
   { label: "Contact", to: "/contact" },
 ];
 

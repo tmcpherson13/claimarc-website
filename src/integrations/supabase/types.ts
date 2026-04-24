@@ -14,53 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
-      blog_posts: {
+      assets: {
         Row: {
-          body: string
-          canonical_url: string | null
           created_at: string
           id: string
+          mime_type: string
+          original_name: string
+          size_bytes: number
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mime_type: string
+          original_name: string
+          size_bytes?: number
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mime_type?: string
+          original_name?: string
+          size_bytes?: number
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      content_items: {
+        Row: {
+          author_id: string | null
+          body: string
+          canonical_url: string | null
+          content_type: Database["public"]["Enums"]["content_type"]
+          created_at: string
+          cta_type: string
+          featured: boolean
+          hero_asset_id: string | null
+          id: string
+          pdf_asset_id: string | null
           published_at: string | null
+          related_ids: string[]
+          scheduled_for: string | null
           seo_description: string | null
           seo_title: string | null
           slug: string
-          status: string
+          status: Database["public"]["Enums"]["post_status"]
           summary: string
           tags: string[]
           title: string
           updated_at: string
         }
         Insert: {
+          author_id?: string | null
           body?: string
           canonical_url?: string | null
+          content_type?: Database["public"]["Enums"]["content_type"]
           created_at?: string
+          cta_type?: string
+          featured?: boolean
+          hero_asset_id?: string | null
           id?: string
+          pdf_asset_id?: string | null
           published_at?: string | null
+          related_ids?: string[]
+          scheduled_for?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
-          status?: string
+          status?: Database["public"]["Enums"]["post_status"]
           summary?: string
           tags?: string[]
           title: string
           updated_at?: string
         }
         Update: {
+          author_id?: string | null
           body?: string
           canonical_url?: string | null
+          content_type?: Database["public"]["Enums"]["content_type"]
           created_at?: string
+          cta_type?: string
+          featured?: boolean
+          hero_asset_id?: string | null
           id?: string
+          pdf_asset_id?: string | null
           published_at?: string | null
+          related_ids?: string[]
+          scheduled_for?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
-          status?: string
+          status?: Database["public"]["Enums"]["post_status"]
           summary?: string
           tags?: string[]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "content_items_hero_asset_id_fkey"
+            columns: ["hero_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_items_pdf_asset_id_fkey"
+            columns: ["pdf_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_revisions: {
+        Row: {
+          content_id: string
+          created_at: string
+          edited_by: string | null
+          id: string
+          snapshot: Json
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          edited_by?: string | null
+          id?: string
+          snapshot: Json
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          edited_by?: string | null
+          id?: string
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_revisions_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -97,9 +198,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      publish_scheduled_content: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin"
+      app_role: "admin" | "editor"
+      content_type: "blog" | "white_paper"
+      post_status: "draft" | "scheduled" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -227,7 +331,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin"],
+      app_role: ["admin", "editor"],
+      content_type: ["blog", "white_paper"],
+      post_status: ["draft", "scheduled", "published", "archived"],
     },
   },
 } as const
