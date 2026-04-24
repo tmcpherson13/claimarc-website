@@ -11,7 +11,7 @@ const InsightsPage = () => {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     Promise.all([
