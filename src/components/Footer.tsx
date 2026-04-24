@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Shield, Lock, FileCheck } from "lucide-react";
 import AI3 from "./AI3";
 import { footerPlatformRoutes } from "@/config/routes";
@@ -72,12 +72,18 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/admin/login"
-                  className="text-slate-400 text-sm hover:text-white transition-colors"
+                  className={({ isActive }) =>
+                    `text-sm transition-colors ${
+                      isActive
+                        ? "text-[var(--emerald)] font-medium underline underline-offset-4"
+                        : "text-slate-400 hover:text-white"
+                    }`
+                  }
                 >
                   Admin
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
