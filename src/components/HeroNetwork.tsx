@@ -63,14 +63,17 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
 
     const id = window.setInterval(() => {
       const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const armAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
+      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
+      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
+      const adjustedAngle = currentAngle - 90;
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
 
       for (let i = 0; i < BLIPS.length; i++) {
         // Trailing window: how far past the blip the arm has swept (0..360).
-        const diff = (armAngle - BLIPS[i].northCw + 360) % 360;
+        const diff = (adjustedAngle - BLIPS[i].svgAngle + 720) % 360;
         const inWindow = diff < TRAIL_WINDOW;
 
         if (inWindow && !wasActive[i]) {
