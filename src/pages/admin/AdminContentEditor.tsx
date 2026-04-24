@@ -436,6 +436,13 @@ const Inner = () => {
                 onChange={(e) => set("summary", e.target.value)}
                 rows={3}
               />
+              <p
+                className={`text-xs text-right mt-1 ${
+                  form.summary.length > 160 ? "text-red-500" : "text-slate-400"
+                }`}
+              >
+                {form.summary.length} / 160 characters
+              </p>
             </Field>
           </div>
 
