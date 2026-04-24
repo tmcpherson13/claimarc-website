@@ -194,7 +194,7 @@ const Index = () => {
       {/* SECTION 6: OUTCOMES */}
       <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-white text-3xl font-bold text-center">
+          <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
             Platform Performance Signals
           </h2>
           <p className="text-slate-500 text-center text-xs mt-2">
