@@ -12,9 +12,8 @@ import ContactPage from "./pages/ContactPage.tsx";
 import WorkflowsPage from "./pages/WorkflowsPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
-import BlogIndexPage from "./pages/BlogIndexPage.tsx";
+import InsightsPage from "./pages/InsightsPage.tsx";
 import BlogPostPage from "./pages/BlogPostPage.tsx";
-import WhitePapersIndexPage from "./pages/WhitePapersIndexPage.tsx";
 import WhitePaperPage from "./pages/WhitePaperPage.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminContentList from "./pages/admin/AdminContentList.tsx";
@@ -40,9 +39,9 @@ const App = () => (
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/workflows" element={<WorkflowsPage />} />
-          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog" element={<InsightsPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/white-papers" element={<WhitePapersIndexPage />} />
+          <Route path="/white-papers" element={<Navigate to="/blog?type=white_paper" replace />} />
           <Route path="/white-papers/:slug" element={<WhitePaperPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
