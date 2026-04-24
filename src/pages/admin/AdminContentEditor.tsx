@@ -39,6 +39,12 @@ interface FormState {
   canonicalUrl: string;
 }
 
+const todayLocal = (): string => {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const empty = (type: ContentType): FormState => ({
   contentType: type,
   title: "",
@@ -53,7 +59,7 @@ const empty = (type: ContentType): FormState => ({
   pdfAssetId: null,
   relatedIds: [],
   scheduledFor: "",
-  publishedAt: "",
+  publishedAt: todayLocal(),
   seoTitle: "",
   seoDescription: "",
   canonicalUrl: "",
