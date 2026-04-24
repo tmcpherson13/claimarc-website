@@ -324,6 +324,21 @@ const Inner = () => {
               {isNew ? "New " : "Edit "}
               {form.contentType === "blog" ? "blog post" : "white paper"}
             </span>
+            {existing && (
+              <span
+                className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                  existing.status === "published"
+                    ? "bg-emerald-100 text-emerald-800"
+                    : existing.status === "scheduled"
+                      ? "bg-amber-100 text-amber-800"
+                      : existing.status === "archived"
+                        ? "bg-zinc-200 text-zinc-700"
+                        : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {existing.status.charAt(0).toUpperCase() + existing.status.slice(1)}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {existing && (
