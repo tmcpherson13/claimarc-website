@@ -224,10 +224,10 @@ const Index = () => {
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             BUILT FOR YOUR TEAM
           </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold mt-2">
+          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold mt-2">
             Different roles. Different modules. Same platform.
           </h2>
-          <p className="text-slate-600 text-lg mt-3 max-w-2xl">
+          <p className="text-slate-600 text-lg mt-3 max-w-xl">
             ZDefense routes each user to the intelligence that matters most to
             their workflow — automatically, from day one.
           </p>
