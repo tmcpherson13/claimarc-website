@@ -1,46 +1,62 @@
 
 
-# Admin login UX improvements
+# Refined upload UI for `/admin/assets`
 
-Three small, independent changes to make the admin login flow easier to find and reason about.
+Yes — fully possible. Here's the plan.
 
-## 1. Banner on `/admin/login` showing current auth state
+## What changes on the Assets page
 
-In `src/pages/admin/AdminLogin.tsx`:
+Replace the current "Upload file" button (top-right) with a **prominent dropzone at the top of the page**, above the search and grid.
 
-- Read `from` location state (set by `AdminGate` when it redirects unauthenticated users — needs a small change there too).
-- Render a banner above the form when `session` exists:
-  - **Signed in as admin** (green): "You're already signed in as `{email}` with admin access." + button "Go to dashboard" (`/admin`) + "Sign out" link.
-  - **Signed in, no admin role** (amber): "You're signed in as `{email}` but this account doesn't have admin access." + "Sign out" button.
-  - **Redirected here** (slate, only when `from` is present and no session): "You need to sign in to access `{from.pathname}`. We'll send you back after sign-in."
-- After successful sign-in, if `from` is set, navigate there instead of `/admin`.
+### Dropzone behavior
+- Large bordered area (~140px tall) with dashed border, cloud-upload icon, and copy: "Drag files here, or click to browse" + secondary line "Images, PDFs, docs · up to 25 MB each".
+- **Drag and drop**: Highlights emerald with solid border + tinted background while a file is hovered over the page (or the zone). Uses `dragenter` / `dragover` / `dragleave` / `drop` handlers with a counter to avoid flicker from child elements.
+- **Click anywhere in the zone** opens the native file picker.
+- **Multi-file support**: dropping/picking multiple files queues them all (current flow only handles one).
+- **Paste support**: pasting an image from clipboard while focused on the page uploads it.
 
-In `src/components/AdminGate.tsx`:
+### Upload queue
+Below the dropzone, render a compact list of in-progress / just-finished uploads:
+- Each row: filename, size, status (Queued → Uploading → Done / Failed), and a per-file progress bar.
+- Failed rows show the error message + a "Retry" link.
+- Done rows fade out after ~3 seconds, or user can dismiss.
+- Uploads run sequentially (simpler, avoids storage rate-limit issues) but the queue UI updates live.
 
-- When redirecting to `/admin/login`, pass `state={{ from: location }}` via `useLocation()` so the login page knows where to return the user.
+### Validation
+- Per-file: max 25 MB (configurable constant), reject zero-byte files. Bad files are added to the queue as "Failed" with a clear reason rather than silently toasted, so the user sees exactly which file was rejected.
+- No mime-type restriction on the general assets page (it's a general library) — but the `AssetPicker` keeps its existing `accept`/`maxSizeMb` filters.
 
-## 2. Footer "Admin" link
+### Layout order on `/admin/assets`
+```text
+Header (Assets title)
+─────────────────────
+Dropzone               ← NEW, full-width, top of content
+Upload queue (if any)  ← NEW, appears under dropzone
+─────────────────────
+Search input
+Asset grid (existing)
+```
 
-In `src/components/Footer.tsx`:
+## Should the `AssetPicker` modal get the same treatment?
 
-- Add a small `Admin` link to the existing **Company** column, pointing to `/admin/login`. Plain text, same styling as the other footer links — no special emphasis. (Pushback: an "admin-only header" link doesn't make sense since we can't show it conditionally on public pages without an auth check on every public route — the footer link is the right call.)
-
-## 3. Sign-out button on admin dashboard
-
-In `src/pages/admin/AdminDashboard.tsx`:
-
-- The header already shows a `Sign out` button via `useAdminAuth().signOut`, but it's styled as a low-contrast outline that's easy to miss. Bump its visibility:
-  - Keep the outline variant but increase contrast (white border, white text, hover fills white at 15% opacity — already there) and add a `LogOut` icon from `lucide-react` to the left of the label.
-  - On sign-out, redirect to `/admin/login` (currently `signOut` just clears the session; rely on `AdminGate` redirect, which already sends to `/admin/login` — confirmed correct, no change needed beyond the icon + ensuring it stands out).
-- Also add a matching sign-out button on the `AdminGate` "no admin access" screen — already present, no change.
+Yes — same dropzone component reused inside the picker dialog, but smaller (single-file mode, since the picker resolves to one selected asset). Keeps UX consistent and removes the extra "Upload" button click.
 
 ## Files
 
-**Edited:**
-- `src/pages/admin/AdminLogin.tsx` — banner, return-to-origin redirect.
-- `src/components/AdminGate.tsx` — pass `from` location state on redirect.
-- `src/components/Footer.tsx` — add `Admin` link to Company column.
-- `src/pages/admin/AdminDashboard.tsx` — add `LogOut` icon to existing sign-out button.
+**New**
+- `src/components/admin/Dropzone.tsx` — reusable dropzone (props: `onFiles`, `accept?`, `maxSizeMb`, `multiple`, `compact?`).
+- `src/components/admin/UploadQueue.tsx` — queue list with progress rows.
+- `src/hooks/useUploadQueue.ts` — manages queue state, sequential upload, retry.
 
-**No schema changes. No new files.**
+**Edited**
+- `src/pages/admin/AdminAssets.tsx` — drop top-right Upload button, mount `Dropzone` + `UploadQueue` at top of `<main>`, refresh grid when queue completes a file.
+- `src/components/admin/AssetPicker.tsx` — replace the inline "Upload" button + hidden input with `<Dropzone compact />` inside the dialog, keep `accept`/`maxSizeMb` validation.
+
+**No schema or storage changes** — `assetsApi.upload` already does everything needed; we just call it per file from the queue.
+
+## Technical notes
+
+- True upload progress requires XHR; `supabase-js` v2 storage uploads don't expose progress events, so progress bars will be **indeterminate (animated stripe)** while uploading and snap to 100% on completion. Honest about this rather than faking a percentage.
+- Drag-and-drop uses native HTML5 DnD (no extra library) — keeps bundle size flat.
+- Paste-to-upload listens on `window` only while the Assets page is mounted, cleaned up on unmount.
 
