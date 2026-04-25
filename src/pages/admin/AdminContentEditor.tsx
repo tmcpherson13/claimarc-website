@@ -406,7 +406,7 @@ const Inner = () => {
       });
       return;
     }
-    if (!validate()) return;
+    if (!validate(targetStatus === "published")) return;
     setSaving(true);
     try {
       let publishedAt = fromLocal(form.publishedAt);
