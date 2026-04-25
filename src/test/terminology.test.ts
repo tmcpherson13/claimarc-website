@@ -83,12 +83,17 @@ function findForbiddenUserFacing(text: string): string[] {
 }
 
 describe("terminology guard — code & static assets", () => {
-  it("contains no forbidden terms in src/", () => {
+  it("contains no user-facing forbidden terms in src/", () => {
     const offenders: { file: string; hits: string[] }[] = [];
     for (const file of walk(join(ROOT, "src"))) {
       const rel = relative(ROOT, file).replace(/\\/g, "/");
       if (ALLOWLIST.has(rel)) continue;
-      const hits = findForbidden(readFileSync(file, "utf8"));
+      const text = readFileSync(file, "utf8");
+      // For TS/TSX/JS/JSX use the strict scanner (strings + JSX text only),
+      // since identifier names like `ClusterKey` are intentionally kept.
+      // For JSON/MD/HTML/CSS treat the whole file as user-facing-ish content.
+      const useStrict = /\.(t|j)sx?$/.test(file);
+      const hits = useStrict ? findForbiddenUserFacing(text) : findForbidden(text);
       if (hits.length) offenders.push({ file: rel, hits });
     }
     expect(offenders, JSON.stringify(offenders, null, 2)).toEqual([]);
