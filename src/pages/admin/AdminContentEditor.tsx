@@ -397,6 +397,48 @@ const Inner = () => {
     set("tags", [...next, tag]);
   };
 
+  // Heuristic auto-suggest: score each topic/audience tag by keyword overlap
+  // with title + summary + existing tags.
+  const tagSuggestions = useMemo(() => {
+    const haystack = `${form.title} ${form.summary} ${form.tags.join(" ")}`.toLowerCase();
+    const tokens = new Set(haystack.split(/[^a-z0-9]+/).filter(Boolean));
+
+    const TOPIC_KEYWORDS: Record<(typeof TOPIC_TAGS)[number], string[]> = {
+      "payer-behavior": ["payer", "payers", "weaponization", "behavioral", "shift", "sentinel"],
+      "denial-prevention": ["denial", "denials", "deny", "shield", "prevention", "clean", "claims"],
+      "prior-authorization": ["prior", "auth", "authorization", "preauth", "prevent"],
+      "contract-intelligence": ["contract", "rate", "benchmark", "tic", "transparency", "contractintel"],
+      "underpayment-recovery": ["underpayment", "underpaid", "recovery", "ledger", "writeoff"],
+      "compliance": ["compliance", "audit", "auditor", "medicare", "ledger"],
+      "forecasting": ["forecast", "projection", "revenue", "pipeline", "predict"],
+    };
+
+    const AUDIENCE_KEYWORDS: Record<(typeof AUDIENCE_TAGS)[number], string[]> = {
+      "audience:CFO": ["cfo", "finance", "revenue", "forecast", "executive"],
+      "audience:RC Director": ["director", "rc", "leadership", "vp"],
+      "audience:RC Manager": ["manager", "operations", "shield", "prevent"],
+      "audience:Billing Specialist": ["billing", "specialist", "appeal", "triage", "evidence", "resolve"],
+      "audience:Compliance Officer": ["compliance", "auditor", "audit", "officer", "ledger"],
+    };
+
+    const score = (keywords: string[]) =>
+      keywords.reduce((n, kw) => n + (tokens.has(kw) ? 1 : 0), 0);
+
+    const topic = (Object.keys(TOPIC_KEYWORDS) as (typeof TOPIC_TAGS)[number][])
+      .map((tag) => ({ tag, s: score(TOPIC_KEYWORDS[tag]) }))
+      .filter((c) => c.s > 0 && !form.tags.includes(c.tag))
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 3);
+
+    const audience = (Object.keys(AUDIENCE_KEYWORDS) as (typeof AUDIENCE_TAGS)[number][])
+      .map((tag) => ({ tag, s: score(AUDIENCE_KEYWORDS[tag]) }))
+      .filter((c) => c.s > 0 && !form.tags.includes(c.tag))
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 3);
+
+    return { topic, audience };
+  }, [form.title, form.summary, form.tags]);
+
   const validate = (forPublish = false, allowHeroOverride = false) => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Title is required.";
