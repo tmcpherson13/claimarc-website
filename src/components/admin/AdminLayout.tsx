@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FileText, FileEdit, Image as ImageIcon, User } from "lucide-react";
+import { LayoutDashboard, FileText, FileEdit, Image as ImageIcon, User, Users } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
 import AI3 from "@/components/AI3";
 
-const navItems = [
+const baseNavItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/content", label: "Content", icon: FileText, end: false },
   { to: "/admin/about", label: "About Page", icon: FileEdit, end: false },
@@ -17,8 +18,32 @@ interface Props {
 }
 
 const AdminLayout = ({ children }: Props) => {
-  const { signOut } = useAdminAuth();
+  const { signOut, user, isAdmin } = useAdminAuth();
   const { pathname } = useLocation();
+  const [isBootstrapAdmin, setIsBootstrapAdmin] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!isAdmin || !user?.id) {
+      setIsBootstrapAdmin(false);
+      return;
+    }
+    (async () => {
+      const { data } = await supabase.rpc("list_admins");
+      if (!active) return;
+      const list = (data as Array<{ user_id: string; created_at: string }> | null) ?? [];
+      // Oldest created_at = bootstrap admin (list_admins returns ASC)
+      const bootstrap = list[0];
+      setIsBootstrapAdmin(!!bootstrap && bootstrap.user_id === user.id);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [isAdmin, user?.id]);
+
+  const navItems = isBootstrapAdmin
+    ? [...baseNavItems, { to: "/admin/users", label: "Users", icon: Users, end: false }]
+    : baseNavItems;
 
   const isActive = (to: string, end: boolean) =>
     end ? pathname === to : pathname === to || pathname.startsWith(`${to}/`);
