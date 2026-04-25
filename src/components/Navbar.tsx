@@ -130,6 +130,18 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-slate-800">
             <Link
+              to="/blog"
+              onClick={closeMenu}
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm text-white"
+              style={{
+                background:
+                  'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #10B981 100%)',
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald)] animate-ping" />
+              Intelligence Center →
+            </Link>
+            <Link
               to="/contact"
               onClick={closeMenu}
               className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2.5 rounded text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
