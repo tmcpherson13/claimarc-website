@@ -18,9 +18,51 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase } from "@/integrations/supabase/client";
+
+// Intelligence Center taxonomy — must stay in sync with the generate-content
+// edge function's SYSTEM_PROMPT.
+const TOPIC_TAGS = [
+  "payer-behavior",
+  "denial-prevention",
+  "prior-authorization",
+  "contract-intelligence",
+  "underpayment-recovery",
+  "compliance",
+  "forecasting",
+] as const;
+
+const AUDIENCE_TAGS = [
+  "audience:CFO",
+  "audience:RC Director",
+  "audience:RC Manager",
+  "audience:Billing Specialist",
+  "audience:Compliance Officer",
+] as const;
+
+const isTopicTag = (t: string) => (TOPIC_TAGS as readonly string[]).includes(t);
+const isAudienceTag = (t: string) => t.startsWith("audience:");
+
+// Generation settings shown in the sidebar so a user can reproduce outputs.
+const GEN_SETTINGS = {
+  model: "claude-sonnet-4-6",
+  maxTokens: 8192,
+  blogTarget: "600–900 words",
+  whitePaperTarget: "1,500–2,500 words",
+};
 
 interface FormState {
   contentType: ContentType;
@@ -135,6 +177,14 @@ const Inner = () => {
   const [suggestedPhotos, setSuggestedPhotos] = useState<SuggestedPhoto[]>([]);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [hasMorePhotos, setHasMorePhotos] = useState(true);
+
+  // Publish-confirm dialog state
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [ackPreview, setAckPreview] = useState(false);
+  const [ackHero, setAckHero] = useState(false);
+  const [ackSeo, setAckSeo] = useState(false);
 
   const fetchSuggestedImages = async (title: string, tags: string[] = [], page = 1) => {
     const stopWords = new Set([
@@ -154,13 +204,25 @@ const Inner = () => {
       [...new Set([...titleWords, ...tagWords])].slice(0, 4).join(" ") ||
       "healthcare revenue cycle";
 
-    const { data, error } = await supabase.functions.invoke("fetch-images", {
-      body: { query, page },
-    });
+    setPhotosLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("fetch-images", {
+        body: { query, page },
+      });
 
-    if (!error && data?.photos?.length) {
-      setSuggestedPhotos(data.photos as SuggestedPhoto[]);
-      setSelectedPhotoId(null);
+      if (!error && Array.isArray(data?.photos)) {
+        const photos = data.photos as SuggestedPhoto[];
+        if (photos.length > 0) {
+          setSuggestedPhotos(photos);
+          setSelectedPhotoId(null);
+        }
+        // Unsplash returns up to 4 per page; fewer means we've reached the end.
+        setHasMorePhotos(photos.length >= 4);
+      } else {
+        setHasMorePhotos(false);
+      }
+    } finally {
+      setPhotosLoading(false);
     }
   };
 
@@ -294,13 +356,42 @@ const Inner = () => {
     }));
   };
 
-  const validate = () => {
+  // Tag analysis used by validation, the publish dialog, and the auto-suggest UI.
+  const tagAnalysis = useMemo(() => {
+    const topicMatches = form.tags.filter(isTopicTag);
+    const audienceMatches = form.tags.filter(isAudienceTag);
+    const missingTopic = topicMatches.length === 0;
+    const tooManyTopics = topicMatches.length > 1;
+    const missingAudience = audienceMatches.length === 0;
+    const valid = !missingTopic && !tooManyTopics && !missingAudience;
+    return { topicMatches, audienceMatches, missingTopic, tooManyTopics, missingAudience, valid };
+  }, [form.tags]);
+
+  const addTag = (tag: string) => {
+    if (form.tags.includes(tag)) return;
+    set("tags", [...form.tags, tag]);
+  };
+
+  const replaceTopicTag = (tag: string) => {
+    const next = form.tags.filter((t) => !isTopicTag(t));
+    set("tags", [...next, tag]);
+  };
+
+  const validate = (forPublish = false) => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Title is required.";
     if (!form.slug.trim()) e.slug = "Slug is required.";
     if (slugAvailable === false) e.slug = "This slug is already used by another item of this type.";
     if (form.status === "scheduled" && !form.scheduledFor)
       e.scheduledFor = "Scheduled time is required.";
+    if (forPublish) {
+      if (tagAnalysis.missingTopic)
+        e.tags = "Add exactly one Intelligence Center topic tag before publishing.";
+      else if (tagAnalysis.tooManyTopics)
+        e.tags = "Only one Intelligence Center topic tag is allowed. Remove the extras.";
+      else if (tagAnalysis.missingAudience)
+        e.tags = "Add at least one audience: tag before publishing.";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -315,7 +406,7 @@ const Inner = () => {
       });
       return;
     }
-    if (!validate()) return;
+    if (!validate(targetStatus === "published")) return;
     setSaving(true);
     try {
       let publishedAt = fromLocal(form.publishedAt);
@@ -394,6 +485,34 @@ const Inner = () => {
       setSaving(false);
     }
   };
+
+  const requestPublish = () => {
+    // Run publish-grade validation up front so the dialog only opens on
+    // an item that's structurally ready to publish.
+    if (!validate(true)) {
+      toast({
+        title: "Cannot publish yet",
+        description: "Fix the highlighted issues, then try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setAckPreview(false);
+    setAckHero(false);
+    setAckSeo(false);
+    setPublishDialogOpen(true);
+  };
+
+  const confirmPublish = async () => {
+    setPublishDialogOpen(false);
+    await save("published");
+  };
+
+  const allChecksAcked = ackPreview && ackHero && ackSeo;
+  const heroOk = !!form.heroAssetId;
+  const seoOk =
+    form.seoTitle.trim().length > 0 &&
+    form.seoDescription.trim().length > 0;
 
   const openPreview = async () => {
     if (!existing) {
@@ -502,7 +621,7 @@ const Inner = () => {
             {isAdmin && (
               <Button
                 disabled={saving}
-                onClick={() => save("published")}
+                onClick={requestPublish}
                 className="bg-[var(--emerald)] hover:bg-emerald-600"
               >
                 Publish
@@ -525,20 +644,24 @@ const Inner = () => {
       <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main */}
         <section className="lg:col-span-2 space-y-6">
-          {isNew && (
-            <div className="bg-white border border-slate-200 rounded-lg p-6">
-              <Field label="Content type">
-                <select
-                  value={form.contentType}
-                  onChange={(e) => set("contentType", e.target.value as ContentType)}
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                >
-                  <option value="blog">Blog post</option>
-                  <option value="white_paper">White paper</option>
-                </select>
-              </Field>
-            </div>
-          )}
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <Field label="Content type">
+              <select
+                value={form.contentType}
+                onChange={(e) => set("contentType", e.target.value as ContentType)}
+                disabled={!isNew}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                <option value="blog">Blog post (600–900 words)</option>
+                <option value="white_paper">White paper (1,500–2,500 words)</option>
+              </select>
+              <p className="mt-1 text-xs text-slate-500">
+                {isNew
+                  ? "Drives AI word-count rules and image-suggestion bias."
+                  : "Content type is locked after creation."}
+              </p>
+            </Field>
+          </div>
 
           {form.contentType === "white_paper" && (
             <PdfUploadCard
@@ -656,29 +779,53 @@ const Inner = () => {
           {/* Suggested hero images (Unsplash) */}
           {suggestedPhotos.length > 0 && (
             <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-slate-900 font-semibold text-sm">
                   Suggested Hero Images
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    disabled={photosLoading || imageRefreshPage <= 1}
                     onClick={() => {
-                      const nextPage = imageRefreshPage + 1;
-                      setImageRefreshPage(nextPage);
-                      fetchSuggestedImages(form.title, form.tags, nextPage);
+                      const prev = imageRefreshPage - 1;
+                      setImageRefreshPage(prev);
+                      fetchSuggestedImages(form.title, form.tags, prev);
                     }}
-                    className="text-slate-400 hover:text-slate-600 text-xs"
+                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    ↻ Refresh
+                    ← Prev
+                  </button>
+                  <span className="text-[11px] text-slate-500 tabular-nums min-w-[44px] text-center">
+                    {photosLoading ? (
+                      <span className="inline-flex items-center gap-1">
+                        <span className="inline-block w-3 h-3 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                      </span>
+                    ) : (
+                      `Page ${imageRefreshPage}`
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={photosLoading || !hasMorePhotos}
+                    onClick={() => {
+                      const next = imageRefreshPage + 1;
+                      setImageRefreshPage(next);
+                      fetchSuggestedImages(form.title, form.tags, next);
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Next →
                   </button>
                   <button
                     type="button"
                     onClick={() => {
                       setSuggestedPhotos([]);
                       setSelectedPhotoId(null);
+                      setImageRefreshPage(1);
+                      setHasMorePhotos(true);
                     }}
-                    className="text-slate-400 hover:text-slate-600 text-xs"
+                    className="text-slate-400 hover:text-slate-600 text-xs ml-1"
                   >
                     Dismiss
                   </button>
@@ -762,13 +909,73 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Tags">
+            <Field label="Tags" error={errors.tags}>
               <TagInput
                 value={form.tags}
                 onChange={(tags) => set("tags", tags)}
                 placeholder="Type a tag and press Enter…"
               />
             </Field>
+
+            {/* Required-tag validation status with one-click fixes */}
+            <div
+              className={`rounded-md border p-3 text-xs ${
+                tagAnalysis.valid
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-amber-200 bg-amber-50 text-amber-900"
+              }`}
+            >
+              <p className="font-semibold mb-2">
+                {tagAnalysis.valid
+                  ? "✓ Required tags look good"
+                  : "Required tags missing"}
+              </p>
+
+              {/* Topic tag — exactly one */}
+              {(tagAnalysis.missingTopic || tagAnalysis.tooManyTopics) && (
+                <div className="mb-2">
+                  <p className="mb-1">
+                    {tagAnalysis.missingTopic
+                      ? "Pick one Intelligence Center topic tag:"
+                      : "Only one topic tag allowed — pick one to keep:"}
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {TOPIC_TAGS.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() =>
+                          tagAnalysis.tooManyTopics ? replaceTopicTag(t) : addTag(t)
+                        }
+                        className="px-2 py-0.5 rounded-full bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-[11px]"
+                      >
+                        + {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Audience tags — at least one */}
+              {tagAnalysis.missingAudience && (
+                <div>
+                  <p className="mb-1">Add at least one audience tag:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {AUDIENCE_TAGS.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => addTag(t)}
+                        className="px-2 py-0.5 rounded-full bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-[11px]"
+                      >
+                        + {t.replace("audience:", "")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
               <input
                 type="checkbox"
@@ -918,8 +1125,123 @@ const Inner = () => {
               )}
             </Panel>
           )}
+          {/* Generation settings — read-only reference for reproducing outputs */}
+          <Panel title="Generation settings">
+            <dl className="text-xs text-slate-700 space-y-1.5">
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Model</dt>
+                <dd className="font-mono text-[11px] text-slate-900">{GEN_SETTINGS.model}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Max tokens</dt>
+                <dd className="font-mono text-[11px] text-slate-900">{GEN_SETTINGS.maxTokens}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Content type</dt>
+                <dd className="text-slate-900">
+                  {form.contentType === "blog" ? "Blog post" : "White paper"}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Target length</dt>
+                <dd className="text-slate-900">
+                  {form.contentType === "blog"
+                    ? GEN_SETTINGS.blogTarget
+                    : GEN_SETTINGS.whitePaperTarget}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-2 text-[10px] text-slate-400 leading-relaxed">
+              Reuse the same prompt with these settings to reproduce a draft.
+            </p>
+          </Panel>
         </aside>
       </main>
+
+      {/* Publish confirmation dialog with required checklist */}
+      <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Publish to production?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will make <span className="font-semibold">{form.title || "this item"}</span>{" "}
+              live at{" "}
+              <span className="font-mono text-xs">{previewPath}</span>. Confirm each item below.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-3 my-2">
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackPreview}
+                onCheckedChange={(v) => setAckPreview(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                I opened the preview link and reviewed the rendered post.
+                {existing && (
+                  <button
+                    type="button"
+                    onClick={openPreview}
+                    className="ml-2 text-[var(--emerald)] hover:underline text-xs"
+                  >
+                    Open preview ↗
+                  </button>
+                )}
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackHero}
+                onCheckedChange={(v) => setAckHero(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                Hero image is set.
+                {!heroOk && (
+                  <span className="ml-1 text-amber-600 text-xs">
+                    (No hero image attached — confirm anyway only if intentional.)
+                  </span>
+                )}
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackSeo}
+                onCheckedChange={(v) => setAckSeo(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                SEO title and description are filled in.
+                {!seoOk && (
+                  <span className="ml-1 text-amber-600 text-xs">
+                    (One or both SEO fields are empty.)
+                  </span>
+                )}
+              </span>
+            </label>
+          </div>
+
+          <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-xs text-slate-600 space-y-1">
+            <div><span className="text-slate-400">Type:</span> {form.contentType === "blog" ? "Blog post" : "White paper"}</div>
+            <div><span className="text-slate-400">Slug:</span> <span className="font-mono">{form.slug}</span></div>
+            <div><span className="text-slate-400">Tags:</span> {form.tags.join(", ") || "—"}</div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!allChecksAcked || saving}
+              onClick={confirmPublish}
+              className="bg-[var(--emerald)] hover:bg-emerald-600"
+            >
+              Publish now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 };
