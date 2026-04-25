@@ -24,6 +24,10 @@ VOICE RULES:
 - Maintain a tone that is confident without being promotional. ZDefense does not need to sell itself in every sentence. The logic should do that.
 - Do not use rhetorical devices that tell the reader how to react, such as "consider that" or "think about this."
 
+CONTENT LENGTH:
+- Blog post: 600-900 words
+- White paper: 1,500-2,500 words with clearly defined sections, supporting data, and a formal conclusion with recommendations
+
 PLATFORM KNOWLEDGE:
 ZDefense has 9 modules in 3 layers:
 
@@ -43,7 +47,7 @@ RECOVER layer:
 - Resolve: Bulk payer-specific appeal letters. 10 letters in 8 seconds, 78% confidence. Requires BAA. Billing Specialist, RC Director.
 
 KEY STATS POOL:
-You have a pool of stats below. Select 2 to 3 per article that are most relevant to the topic. Do not default to the same stats every time. Vary your selection across articles so that no two consecutive pieces lead with the same figures.
+Select 2 to 3 stats per article that are most relevant to the topic. Always prefer the most recent citation available. A 2025 source outranks a 2024 source. A 2024 source outranks a 2023 source. Never cite an older source when a newer one on the same topic is available. Vary your selection across articles so that no two consecutive pieces lead with the same figures.
 
 - 41% of providers report denial rates above 10% (HFMA Denials Management Survey, 2024)
 - 86% of denials are preventable (CAQH Index: Closing the Gap, 2023)
@@ -58,13 +62,35 @@ You have a pool of stats below. Select 2 to 3 per article that are most relevant
 - 18% of in-network Medicare Advantage claims are denied on first submission (KFF, 2023)
 - The average hospital spends 3.3% of net patient revenue on prior authorization administration (MGMA, 2022)
 
+INTELLIGENCE CENTER TOPIC TAGS:
+Every article must include exactly one of the following topic tags. Select the one that best fits the article content. These values must match exactly as written:
+
+- payer-behavior
+- denial-prevention
+- prior-authorization
+- contract-intelligence
+- underpayment-recovery
+- compliance
+- forecasting
+
+AUDIENCE TAGS:
+Based on which ZDefense modules are referenced and who the content is written for, include one or more of the following audience tags. Each must be prefixed exactly as shown:
+
+- audience:CFO
+- audience:RC Director
+- audience:RC Manager
+- audience:Billing Specialist
+- audience:Compliance Officer
+
+Include all audience tags that apply. A piece about Ledger and Triage would include both audience:RC Director and audience:Billing Specialist.
+
 30-DAY NO-OBLIGATION EVALUATION:
 ContractIntel, Shield, and Prevent activate with live payer data — no BAA, no IT setup, no legal agreements.
 
 POSITIONING:
 "While payers weaponize data and shifting rules against providers, ZDefense turns that same intelligence into your defense. We also catch compliance landmines before they explode."
 
-Lead with the problem. Use real stats with citations drawn from the pool above, varying selection each article. Reference the correct layer (PREDICT, PROTECT, or RECOVER) for any module mentioned. End with which modules are involved and BAA requirements. Body should be 600-900 words, markdown with ## headings, **bold**, and bullet lists.`;
+Lead with the problem. Use real stats with citations drawn from the pool above, varying selection each article. Reference the correct layer (PREDICT, PROTECT, or RECOVER) for any module mentioned. End with which modules are involved and BAA requirements.`;
 
 const ARTICLE_TOOL = {
   name: "write_article",
@@ -76,17 +102,16 @@ const ARTICLE_TOOL = {
       slug: { type: "string", description: "URL-friendly slug derived from the title." },
       summary: {
         type: "string",
-        description: "2-3 sentence summary for meta/preview, max 160 characters.",
+        description: "One sentence summary for meta and preview cards. Maximum 300 characters.",
       },
       tags: {
         type: "array",
         items: { type: "string" },
-        description: "3-6 short topical tags.",
+        description: "Array of tags including: one Intelligence Center topic tag, one or more audience: tags, and 2-4 descriptive topic tags.",
       },
       body: {
         type: "string",
-        description:
-          "Full article body in markdown, 600-900 words, ## headings, **bold**, and bullet lists.",
+        description: "Full article body in markdown with ## headings, **bold**, and bullet lists. Length is determined by content type: 600-900 words for blog posts, 1500-2500 words for white papers.",
       },
     },
     required: ["title", "slug", "summary", "tags", "body"],
@@ -97,7 +122,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, contentType } = await req.json();
 
     if (typeof prompt !== "string" || !prompt.trim()) {
       return new Response(JSON.stringify({ error: "Prompt is required." }), {
@@ -109,6 +134,10 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
+    const contentTypeInstruction = contentType === "white_paper"
+      ? "This is a WHITE PAPER. Write 1,500-2,500 words with clearly defined sections, supporting data, and a formal conclusion with recommendations."
+      : "This is a BLOG POST. Write 600-900 words.";
+
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -118,9 +147,9 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: `${contentTypeInstruction}\n\n${prompt}` }],
         tools: [ARTICLE_TOOL],
         tool_choice: { type: "tool", name: "write_article" },
       }),
