@@ -198,6 +198,42 @@ export type Database = {
           },
         ]
       }
+      site_pages: {
+        Row: {
+          body: string
+          headline: string
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          page_key: string
+          subheadline: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          headline?: string
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          page_key: string
+          subheadline?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          headline?: string
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          page_key?: string
+          subheadline?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
