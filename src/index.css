@@ -213,7 +213,7 @@ All colors MUST be HSL.
   animation-name: complianceGlow;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  transition: color 200ms ease;
+  transition: color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
