@@ -4,6 +4,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
+import PlatformCommandCenter from "@/components/PlatformCommandCenter";
 import ModulePipelineFlow from "@/components/ModulePipelineFlow";
 import SeoHead from "@/components/SeoHead";
 import { PHRASES } from "@/config/terminology";
