@@ -278,6 +278,59 @@ export const contentApi = {
     const j = await res.json();
     return j.item ? fromRow(j.item as Row) : null;
   },
+
+  async logPublishAudit(entry: {
+    contentId: string;
+    action: "publish" | "unpublish" | "archive";
+    fromStatus: PostStatus | null;
+    toStatus: PostStatus;
+    ackPreview: boolean;
+    ackHero: boolean;
+    ackSeo: boolean;
+    heroOverride: boolean;
+    notes?: string | null;
+  }) {
+    const { data: userRes } = await supabase.auth.getUser();
+    const actorId = userRes.user?.id;
+    if (!actorId) return;
+    // Cast: table is new and may not yet appear in generated types.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from("content_publish_audit").insert({
+      content_id: entry.contentId,
+      actor_id: actorId,
+      action: entry.action,
+      from_status: entry.fromStatus,
+      to_status: entry.toStatus,
+      ack_preview: entry.ackPreview,
+      ack_hero: entry.ackHero,
+      ack_seo: entry.ackSeo,
+      hero_override: entry.heroOverride,
+      notes: entry.notes ?? null,
+    });
+  },
+
+  async listAudit(contentId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from("content_publish_audit")
+      .select("id, action, from_status, to_status, ack_preview, ack_hero, ack_seo, hero_override, created_at, actor_id")
+      .eq("content_id", contentId)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) return [];
+    return (data ?? []) as Array<{
+      id: string;
+      action: "publish" | "unpublish" | "archive";
+      from_status: PostStatus | null;
+      to_status: PostStatus;
+      ack_preview: boolean;
+      ack_hero: boolean;
+      ack_seo: boolean;
+      hero_override: boolean;
+      created_at: string;
+      actor_id: string | null;
+    }>;
+  },
 };
 
 export const slugify = (s: string) =>
