@@ -49,11 +49,9 @@ const Index = () => {
             </Link>
           </div>
           <div className="mt-14 pt-6 border-t border-slate-800 flex gap-8 text-slate-400 text-sm flex-wrap">
-            <span>✓ SOC 2 Type II</span>
+            <span>✓ SOC 2 Type II Certified</span>
             <span>✓ ISO/IEC 27001:2022</span>
             <span>✓ HIPAA Compliant</span>
-            <span>✓ 7-Year Remittance Archive</span>
-            <span>✓ No BAA Required for ContractIntel, Shield, and Prevent</span>
           </div>
         </div>
       </section>
@@ -99,19 +97,17 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {[
-              { stat: "41%", label: "of providers report denial rates above 10%" },
-              { stat: "86%", label: "of denials are preventable" },
-              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts using traditional workflows" },
+              { stat: "41%", label: "of providers report denial rates above 10%", source: "HFMA Denials Management Survey, 2024" },
+              { stat: "86%", label: "of denials are preventable with earlier detection", source: "CAQH Index: Closing the Gap, 2023" },
+              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts", source: "Becker's Hospital Review, Revenue Cycle, 2023" },
             ].map((c) => (
               <div key={c.stat} className="bg-[var(--lgray)] rounded-xl p-8">
                 <div className="text-[var(--navy)] font-bold text-4xl">{c.stat}</div>
                 <div className="text-slate-700 text-sm mt-3">{c.label}</div>
+                <div className="text-slate-500 text-xs mt-3 italic">{c.source}</div>
               </div>
             ))}
           </div>
-          <p className="text-slate-400 text-xs mt-6">
-            * Industry benchmarks. Sources available on request.
-          </p>
         </div>
       </section>
 
