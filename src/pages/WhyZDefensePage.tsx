@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
@@ -7,6 +8,19 @@ import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 
 const WhyZDefensePage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.slice(1);
+    // Wait a tick for content to render before scrolling.
+    const t = window.setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, [location.hash]);
+
   return (
     <Layout>
       <SeoHead
