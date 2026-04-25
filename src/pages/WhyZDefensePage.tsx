@@ -4,6 +4,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import SeoHead from "@/components/SeoHead";
+import ComplianceStrip from "@/components/ComplianceStrip";
 
 const WhyZDefensePage = () => {
   return (
@@ -34,6 +35,9 @@ const WhyZDefensePage = () => {
             The result: a payer-intelligence moat competitors can't replicate
             and a no-BAA entry path no enterprise vendor offers.
           </p>
+          <div className="mt-10 max-w-3xl">
+            <ComplianceStrip />
+          </div>
         </div>
       </section>
 

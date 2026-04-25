@@ -7,6 +7,7 @@ import HeroAccent from "@/components/HeroAccent";
 import HeroNetwork from "@/components/HeroNetwork";
 import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
+import ComplianceStrip from "@/components/ComplianceStrip";
 import { PHRASES } from "@/config/terminology";
 
 const Index = () => {
@@ -49,10 +50,8 @@ const Index = () => {
               30-Day Evaluation
             </Link>
           </div>
-          <div className="mt-14 pt-6 border-t border-slate-800 flex gap-8 text-slate-400 text-sm flex-wrap">
-            <span>✓ SOC 2 Type II Certified</span>
-            <span>✓ ISO/IEC 27001:2022</span>
-            <span>✓ HIPAA Compliant</span>
+          <div className="mt-14 pt-6 border-t border-slate-800 max-w-3xl">
+            <ComplianceStrip />
           </div>
         </div>
       </section>
