@@ -185,6 +185,12 @@ const Inner = () => {
   const [ackPreview, setAckPreview] = useState(false);
   const [ackHero, setAckHero] = useState(false);
   const [ackSeo, setAckSeo] = useState(false);
+  const [heroOverride, setHeroOverride] = useState(false);
+
+  // Audit log state
+  type AuditEntry = Awaited<ReturnType<typeof contentApi.listAudit>>[number];
+  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
 
   const fetchSuggestedImages = async (title: string, tags: string[] = [], page = 1) => {
     const stopWords = new Set([
