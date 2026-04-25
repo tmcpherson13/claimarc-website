@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
@@ -7,6 +8,19 @@ import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 
 const WhyZDefensePage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.slice(1);
+    // Wait a tick for content to render before scrolling.
+    const t = window.setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, [location.hash]);
+
   return (
     <Layout>
       <SeoHead
@@ -117,6 +131,7 @@ const WhyZDefensePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-14">
             {[
               {
+                id: "compliance-soc2",
                 badge: "SOC 2",
                 sub: "Type II Certified",
                 color: "from-emerald-500 to-emerald-700",
@@ -125,6 +140,7 @@ const WhyZDefensePage = () => {
                 icon: "🛡",
               },
               {
+                id: "compliance-iso",
                 badge: "ISO 27001",
                 sub: "IEC 27001:2022",
                 color: "from-blue-500 to-blue-700",
@@ -133,6 +149,7 @@ const WhyZDefensePage = () => {
                 icon: "🔒",
               },
               {
+                id: "compliance-hipaa",
                 badge: "HIPAA",
                 sub: "Compliant",
                 color: "from-violet-500 to-violet-700",
@@ -143,7 +160,8 @@ const WhyZDefensePage = () => {
             ].map((c, i) => (
               <div
                 key={c.badge}
-                className="relative bg-white/5 border border-white/10 rounded-2xl p-8 text-center overflow-hidden hover:border-white/30 transition-all duration-500 hover:-translate-y-1"
+                id={c.id}
+                className="relative bg-white/5 border border-white/10 rounded-2xl p-8 text-center overflow-hidden hover:border-white/30 transition-all duration-500 hover:-translate-y-1 scroll-mt-24 target:ring-2 target:ring-[var(--emerald)]"
                 style={{ animationDelay: `${i * 150}ms` }}
               >
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full blur-2xl opacity-20 bg-gradient-to-br ${c.color}`} />
