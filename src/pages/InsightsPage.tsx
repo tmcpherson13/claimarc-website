@@ -70,14 +70,14 @@ const InsightsPage = () => {
           <FilterBar items={items} showTypeFilter />
 
           <div className="mt-6">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 lg:flex-nowrap">
               {[
                 { label: "All", value: "" },
                 { label: "Payer Behavior", value: "payer-behavior" },
-                { label: "Denial Prevention", value: "denial-prevention" },
-                { label: "Prior Authorization", value: "prior-authorization" },
-                { label: "Contract Intelligence", value: "contract-intelligence" },
-                { label: "Underpayment Recovery", value: "underpayment-recovery" },
+                { label: "Denials", value: "denial-prevention" },
+                { label: "Prior Auth", value: "prior-authorization" },
+                { label: "Contracts", value: "contract-intelligence" },
+                { label: "Underpayments", value: "underpayment-recovery" },
                 { label: "Compliance", value: "compliance" },
                 { label: "Forecasting", value: "forecasting" },
               ].map((pill) => {
@@ -92,7 +92,7 @@ const InsightsPage = () => {
                       else next.delete("topic");
                       setParams(next, { replace: true });
                     }}
-                    className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap transition-colors ${
+                    className={`rounded-full px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap transition-colors ${
                       isActive
                         ? "bg-[var(--navy)] text-white"
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
