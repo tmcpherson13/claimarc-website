@@ -1125,8 +1125,123 @@ const Inner = () => {
               )}
             </Panel>
           )}
+          {/* Generation settings — read-only reference for reproducing outputs */}
+          <Panel title="Generation settings">
+            <dl className="text-xs text-slate-700 space-y-1.5">
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Model</dt>
+                <dd className="font-mono text-[11px] text-slate-900">{GEN_SETTINGS.model}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Max tokens</dt>
+                <dd className="font-mono text-[11px] text-slate-900">{GEN_SETTINGS.maxTokens}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Content type</dt>
+                <dd className="text-slate-900">
+                  {form.contentType === "blog" ? "Blog post" : "White paper"}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-500">Target length</dt>
+                <dd className="text-slate-900">
+                  {form.contentType === "blog"
+                    ? GEN_SETTINGS.blogTarget
+                    : GEN_SETTINGS.whitePaperTarget}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-2 text-[10px] text-slate-400 leading-relaxed">
+              Reuse the same prompt with these settings to reproduce a draft.
+            </p>
+          </Panel>
         </aside>
       </main>
+
+      {/* Publish confirmation dialog with required checklist */}
+      <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Publish to production?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will make <span className="font-semibold">{form.title || "this item"}</span>{" "}
+              live at{" "}
+              <span className="font-mono text-xs">{previewPath}</span>. Confirm each item below.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-3 my-2">
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackPreview}
+                onCheckedChange={(v) => setAckPreview(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                I opened the preview link and reviewed the rendered post.
+                {existing && (
+                  <button
+                    type="button"
+                    onClick={openPreview}
+                    className="ml-2 text-[var(--emerald)] hover:underline text-xs"
+                  >
+                    Open preview ↗
+                  </button>
+                )}
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackHero}
+                onCheckedChange={(v) => setAckHero(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                Hero image is set.
+                {!heroOk && (
+                  <span className="ml-1 text-amber-600 text-xs">
+                    (No hero image attached — confirm anyway only if intentional.)
+                  </span>
+                )}
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox
+                checked={ackSeo}
+                onCheckedChange={(v) => setAckSeo(v === true)}
+                className="mt-0.5"
+              />
+              <span>
+                SEO title and description are filled in.
+                {!seoOk && (
+                  <span className="ml-1 text-amber-600 text-xs">
+                    (One or both SEO fields are empty.)
+                  </span>
+                )}
+              </span>
+            </label>
+          </div>
+
+          <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-xs text-slate-600 space-y-1">
+            <div><span className="text-slate-400">Type:</span> {form.contentType === "blog" ? "Blog post" : "White paper"}</div>
+            <div><span className="text-slate-400">Slug:</span> <span className="font-mono">{form.slug}</span></div>
+            <div><span className="text-slate-400">Tags:</span> {form.tags.join(", ") || "—"}</div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!allChecksAcked || saving}
+              onClick={confirmPublish}
+              className="bg-[var(--emerald)] hover:bg-emerald-600"
+            >
+              Publish now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 };
