@@ -49,7 +49,7 @@ const WhyZDefensePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             {[
               { h: "Payer AI Is Weaponized", b: "Payers deploy machine learning to identify denial opportunities, shift rules mid-year, and change adjudication behavior faster than provider workflows can detect. The gap is widening — providers are on the wrong side of it." },
-              { h: "Prevention Is Underserved", b: "86% of denials are preventable. Most revenue cycle platforms focus on recovery after the denial. ZDefense focuses on the 30 days before the claim leaves your system — and makes three of those modules available with no data sharing required." },
+              { h: "Prevention Is Underserved", b: "86% of denials are preventable. Most revenue cycle platforms focus on recovery after the denial. ZDefense focuses on the 30 days before the claim leaves your system — and makes three of those modules available with no data sharing required. (CAQH Index, 2023)" },
               { h: "Detection Lag Is Costly", b: "Traditional workflows detect payer behavioral shifts 60–90 days after they begin. ZDefense detects them in 7–14 days. That window is the difference between denial prevention and denial recovery." },
               { h: "Mid-Market Is Underserved", b: "Enterprise health systems have analytics teams. Smaller providers have spreadsheets. ZDefense gives community hospitals and multi-specialty groups the same intelligence advantage that payers already have." },
             ].map((c) => (
@@ -99,23 +99,76 @@ const WhyZDefensePage = () => {
       </section>
 
       {/* SECTION 4: TRUST + CTA */}
-      <section className="bg-white py-20 px-6 md:px-12 lg:px-16">
+      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold text-center">
-            Compliance That Protects
+          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest text-center">
+            COMPLIANCE & SECURITY
+          </p>
+          <h2 className="text-white text-4xl font-bold text-center mt-2">
+            Built to Pass Any Security Review
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+          <p className="text-slate-400 text-center mt-3 max-w-xl mx-auto text-lg">
+            Three independent certifications. Zero exceptions.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-14">
             {[
-              { h: "SOC 2 Type II", b: "Independently audited against the AICPA SOC 2 Type II framework for security, availability, confidentiality, and data integrity across all operations." },
-              { h: "ISO/IEC 27001:2022", b: "Information Security Management System (ISMS) aligned with ISO/IEC 27001:2022 to safeguard sensitive healthcare data and manage information security risks." },
-              { h: "HIPAA Compliant", b: "HIPAA-aligned administrative, technical, and physical safeguards for all ePHI (electronic Protected Health Information) handling across all platform operations." },
-            ].map((c) => (
-              <div key={c.h} className="border border-[var(--lgray)] rounded-xl p-6 text-center">
-                <h3 className="text-[var(--navy)] font-semibold text-lg">{c.h}</h3>
-                <p className="text-slate-600 text-sm mt-2">{c.b}</p>
+              {
+                badge: "SOC 2",
+                sub: "Type II Certified",
+                color: "from-emerald-500 to-emerald-700",
+                glow: "shadow-emerald-500/30",
+                body: "Independently audited against the AICPA SOC 2 Type II framework for security, availability, confidentiality, and data integrity. Annual audit cycle.",
+                icon: "🛡",
+              },
+              {
+                badge: "ISO 27001",
+                sub: "IEC 27001:2022",
+                color: "from-blue-500 to-blue-700",
+                glow: "shadow-blue-500/30",
+                body: "Information Security Management System aligned with ISO/IEC 27001:2022 — the global gold standard for healthcare data protection.",
+                icon: "🔒",
+              },
+              {
+                badge: "HIPAA",
+                sub: "Compliant",
+                color: "from-violet-500 to-violet-700",
+                glow: "shadow-violet-500/30",
+                body: "HIPAA-aligned administrative, technical, and physical safeguards for all ePHI handling. BAA available for all full-platform engagements.",
+                icon: "✦",
+              },
+            ].map((c, i) => (
+              <div
+                key={c.badge}
+                className="relative bg-white/5 border border-white/10 rounded-2xl p-8 text-center overflow-hidden hover:border-white/30 transition-all duration-500 hover:-translate-y-1"
+                style={{ animationDelay: `${i * 150}ms` }}
+              >
+                <div className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full blur-2xl opacity-20 bg-gradient-to-br ${c.color}`} />
+                <div className={`relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br ${c.color} shadow-xl ${c.glow} mx-auto mb-5`}>
+                  <span className="text-white text-2xl">{c.icon}</span>
+                </div>
+                <p className="text-white font-bold text-2xl">{c.badge}</p>
+                <p className="text-slate-400 text-sm mt-0.5">{c.sub}</p>
+                <p className="text-slate-400 text-sm mt-4 leading-relaxed">{c.body}</p>
+                <div
+                  className={`absolute top-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-br ${c.color} opacity-20 animate-ping`}
+                  style={{ animationDuration: '3s', animationDelay: `${i * 0.5}s` }}
+                />
               </div>
             ))}
           </div>
+          <div className="mt-10 border-t border-white/10 pt-8 flex flex-wrap justify-center gap-8 text-slate-500 text-xs uppercase tracking-widest">
+            <span>Annual Independent Audit</span>
+            <span>·</span>
+            <span>Zero PHI Incidents</span>
+            <span>·</span>
+            <span>BAA Available on Request</span>
+            <span>·</span>
+            <span>SOC 2 Report on Request</span>
+          </div>
+        </div>
+      </section>
+      <section className="bg-white px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
           <TrialCallout />
         </div>
       </section>
