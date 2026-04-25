@@ -486,6 +486,34 @@ const Inner = () => {
     }
   };
 
+  const requestPublish = () => {
+    // Run publish-grade validation up front so the dialog only opens on
+    // an item that's structurally ready to publish.
+    if (!validate(true)) {
+      toast({
+        title: "Cannot publish yet",
+        description: "Fix the highlighted issues, then try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setAckPreview(false);
+    setAckHero(false);
+    setAckSeo(false);
+    setPublishDialogOpen(true);
+  };
+
+  const confirmPublish = async () => {
+    setPublishDialogOpen(false);
+    await save("published");
+  };
+
+  const allChecksAcked = ackPreview && ackHero && ackSeo;
+  const heroOk = !!form.heroAssetId;
+  const seoOk =
+    form.seoTitle.trim().length > 0 &&
+    form.seoDescription.trim().length > 0;
+
   const openPreview = async () => {
     if (!existing) {
       toast({
