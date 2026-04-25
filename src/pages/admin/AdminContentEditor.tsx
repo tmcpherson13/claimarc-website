@@ -177,6 +177,14 @@ const Inner = () => {
   const [suggestedPhotos, setSuggestedPhotos] = useState<SuggestedPhoto[]>([]);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [hasMorePhotos, setHasMorePhotos] = useState(true);
+
+  // Publish-confirm dialog state
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [ackPreview, setAckPreview] = useState(false);
+  const [ackHero, setAckHero] = useState(false);
+  const [ackSeo, setAckSeo] = useState(false);
 
   const fetchSuggestedImages = async (title: string, tags: string[] = [], page = 1) => {
     const stopWords = new Set([
