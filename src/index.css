@@ -188,3 +188,30 @@ All colors MUST be HSL.
 .hero-radar-blip-pulse {
   animation: heroRadarBlipPulse 800ms ease-out forwards;
 }
+
+/* Staggered compliance badge glow — slow chill pulse */
+@keyframes complianceGlow {
+  0%, 66%, 100% {
+    color: rgb(148 163 184); /* slate-400 — resting */
+    text-shadow: none;
+  }
+  16%, 22% {
+    color: rgb(255 255 255);
+    text-shadow:
+      0 0 12px hsl(var(--emerald, 158 64% 52%) / 0.55),
+      0 0 24px hsl(var(--emerald, 158 64% 52%) / 0.25);
+  }
+}
+
+.compliance-glow {
+  animation-name: complianceGlow;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  transition: color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compliance-glow {
+    animation: none;
+  }
+}
