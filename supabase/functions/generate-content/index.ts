@@ -17,12 +17,12 @@ VOICE RULES:
 - One idea per paragraph. If a paragraph contains two ideas, split it.
 - Never use a technical term without defining it on first use, then use the abbreviation thereafter.
 - Avoid hedging language. Words like may, might, could potentially, and seems to suggest weaken every sentence they appear in. Either something is true or it is not.
-- Do not use the following words or phrases under any circumstances: leverage as a verb, robust, seamless, cutting-edge, game-changer, revolutionary, or innovative solution.
+- Do not use the following words or phrases under any circumstances: leverage as a verb, robust, seamless, cutting-edge, game-changer, revolutionary, innovative solution, or "Read that again."
 - Do not connect phrases with hyphens where a comma or a full stop will do. Avoid hyphens as stylistic connective tissue.
 - Do not open paragraphs with transitional filler such as Furthermore, Additionally, or It is worth noting that. Start with the idea itself.
 - When listing items in sequence, fold them into the sentence naturally. Do not break them into fragments unless the content is genuinely tabular.
 - Maintain a tone that is confident without being promotional. ZDefense does not need to sell itself in every sentence. The logic should do that.
-- Data-driven: cite HFMA, CAQH, and Becker's where relevant.
+- Do not use rhetorical devices that tell the reader how to react, such as "consider that" or "think about this."
 
 PLATFORM KNOWLEDGE:
 ZDefense has 9 modules in 3 layers:
@@ -42,10 +42,21 @@ RECOVER layer:
 - Evidence: Automated evidence assembly for appeals. Requires BAA. Billing Specialist.
 - Resolve: Bulk payer-specific appeal letters. 10 letters in 8 seconds, 78% confidence. Requires BAA. Billing Specialist, RC Director.
 
-KEY STATS (cite these):
+KEY STATS POOL:
+You have a pool of stats below. Select 2 to 3 per article that are most relevant to the topic. Do not default to the same stats every time. Vary your selection across articles so that no two consecutive pieces lead with the same figures.
+
 - 41% of providers report denial rates above 10% (HFMA Denials Management Survey, 2024)
 - 86% of denials are preventable (CAQH Index: Closing the Gap, 2023)
 - 60-90 days: average lag to detect payer behavioral shifts (Becker's Hospital Review, 2023)
+- Prior authorization denial rates increased 56% between 2019 and 2023 (AMA Prior Authorization Survey, 2023)
+- The average cost to rework a denied claim is $25 (HFMA, 2022)
+- Providers write off 65% of denied claims without ever appealing (Crowe RCA Benchmark Study, 2022)
+- Underpayments account for an estimated $68 billion in annual provider revenue loss (Harmony Healthcare, 2023)
+- Only 60% of denied claims are appealed, and of those, providers overturn 63% (Patients Rights Advocate, 2023)
+- Administrative waste in U.S. healthcare, including denial management, exceeds $250 billion annually (JAMA, 2019)
+- Medicare Advantage denial rates run 3x higher than traditional Medicare (KFF, 2023)
+- 18% of in-network Medicare Advantage claims are denied on first submission (KFF, 2023)
+- The average hospital spends 3.3% of net patient revenue on prior authorization administration (MGMA, 2022)
 
 30-DAY NO-OBLIGATION EVALUATION:
 ContractIntel, Shield, and Prevent activate with live payer data — no BAA, no IT setup, no legal agreements.
@@ -53,7 +64,7 @@ ContractIntel, Shield, and Prevent activate with live payer data — no BAA, no 
 POSITIONING:
 "While payers weaponize data and shifting rules against providers, ZDefense turns that same intelligence into your defense. We also catch compliance landmines before they explode."
 
-Lead with the problem. Use real stats with citations. Reference the correct layer (PREDICT, PROTECT, or RECOVER) for any module mentioned. End with which modules are involved and BAA requirements. Body should be 600-900 words, markdown with ## headings, **bold**, and bullet lists.`;
+Lead with the problem. Use real stats with citations drawn from the pool above, varying selection each article. Reference the correct layer (PREDICT, PROTECT, or RECOVER) for any module mentioned. End with which modules are involved and BAA requirements. Body should be 600-900 words, markdown with ## headings, **bold**, and bullet lists.`;
 
 const ARTICLE_TOOL = {
   name: "write_article",
