@@ -80,10 +80,10 @@ Deno.serve(async (req) => {
   try {
     const { prompt, model } = await req.json();
     const MODELS: Record<string, string> = {
-      claude: "anthropic/claude-sonnet-4-20250514",
+      claude: "openai/gpt-5",
       gemini: "google/gemini-3-flash-preview",
     };
-    const selectedModel = MODELS[model as string] ?? MODELS.claude;
+    const selectedModel = MODELS[model as string] ?? MODELS.gemini;
     if (typeof prompt !== "string" || !prompt.trim()) {
       return new Response(JSON.stringify({ error: "Prompt is required." }), {
         status: 400,
