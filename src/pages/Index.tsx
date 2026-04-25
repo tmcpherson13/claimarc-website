@@ -7,6 +7,7 @@ import HeroAccent from "@/components/HeroAccent";
 import HeroNetwork from "@/components/HeroNetwork";
 import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
+import ComplianceStrip from "@/components/ComplianceStrip";
 import { PHRASES } from "@/config/terminology";
 
 const Index = () => {
