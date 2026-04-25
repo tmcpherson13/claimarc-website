@@ -5,7 +5,7 @@ import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import RoleRoutingDiagram from "@/components/RoleRoutingDiagram";
 import SeoHead from "@/components/SeoHead";
-import TriageWarRoom from "@/components/TriageWarRoom";
+import SolutionFlowStream from "@/components/SolutionFlowStream";
 
 interface RoleContent {
   key: string;
