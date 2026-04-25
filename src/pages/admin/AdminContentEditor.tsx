@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormState {
   contentType: ContentType;
@@ -114,6 +115,54 @@ const Inner = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [revisions, setRevisions] = useState<any[]>([]);
   const [revisionsOpen, setRevisionsOpen] = useState(false);
+
+  // AI generation panel
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [showAiPanel, setShowAiPanel] = useState(false);
+
+  const generateWithAI = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-content", {
+        body: { prompt: aiPrompt },
+      });
+      if (error) throw new Error(error.message || "Generation failed.");
+      const parsed = data as {
+        title?: string;
+        slug?: string;
+        summary?: string;
+        tags?: string[];
+        body?: string;
+        error?: string;
+      };
+      if (parsed?.error) throw new Error(parsed.error);
+
+      setForm((prev) => ({
+        ...prev,
+        title: parsed.title ?? prev.title,
+        slug: parsed.slug ? slugify(parsed.slug) : prev.slug,
+        summary: parsed.summary ?? prev.summary,
+        tags: Array.isArray(parsed.tags) && parsed.tags.length ? parsed.tags : prev.tags,
+        body: parsed.body ?? prev.body,
+      }));
+      // Mark slug as user-touched so it won't be re-derived from the title.
+      if (parsed.slug) setSlugTouched(true);
+      setShowAiPanel(false);
+      setAiPrompt("");
+      toast({
+        title: "Content generated",
+        description: "Review the draft and publish when ready.",
+      });
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Generation failed. Try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isNew) {
