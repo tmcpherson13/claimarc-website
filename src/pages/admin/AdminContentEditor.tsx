@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormState {
   contentType: ContentType;
@@ -114,6 +115,54 @@ const Inner = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [revisions, setRevisions] = useState<any[]>([]);
   const [revisionsOpen, setRevisionsOpen] = useState(false);
+
+  // AI generation panel
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [showAiPanel, setShowAiPanel] = useState(false);
+
+  const generateWithAI = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-content", {
+        body: { prompt: aiPrompt },
+      });
+      if (error) throw new Error(error.message || "Generation failed.");
+      const parsed = data as {
+        title?: string;
+        slug?: string;
+        summary?: string;
+        tags?: string[];
+        body?: string;
+        error?: string;
+      };
+      if (parsed?.error) throw new Error(parsed.error);
+
+      setForm((prev) => ({
+        ...prev,
+        title: parsed.title ?? prev.title,
+        slug: parsed.slug ? slugify(parsed.slug) : prev.slug,
+        summary: parsed.summary ?? prev.summary,
+        tags: Array.isArray(parsed.tags) && parsed.tags.length ? parsed.tags : prev.tags,
+        body: parsed.body ?? prev.body,
+      }));
+      // Mark slug as user-touched so it won't be re-derived from the title.
+      if (parsed.slug) setSlugTouched(true);
+      setShowAiPanel(false);
+      setAiPrompt("");
+      toast({
+        title: "Content generated",
+        description: "Review the draft and publish when ready.",
+      });
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Generation failed. Try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isNew) {
@@ -474,6 +523,57 @@ const Inner = () => {
 
         {/* Sidebar */}
         <aside className="space-y-6">
+          {/* AI Generate panel */}
+          <div className="bg-gradient-to-br from-[var(--navy)] to-[var(--navy-dk)] rounded-xl p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white font-semibold text-sm">AI Generate</p>
+                <p className="text-white/50 text-xs mt-0.5">
+                  Describe what you want — we write it.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAiPanel(!showAiPanel)}
+                className="text-[var(--emerald)] text-xs hover:underline shrink-0"
+              >
+                {showAiPanel ? "Cancel" : "Open"}
+              </button>
+            </div>
+            {showAiPanel && (
+              <div className="mt-4">
+                <textarea
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder='e.g. "Write an article explaining how Ledger handles Medicare 60-day compliance for auditors and compliance officers"'
+                  rows={4}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--emerald)] focus:ring-1 focus:ring-[var(--emerald)] resize-none"
+                />
+                {aiError && <p className="text-red-400 text-xs mt-2">{aiError}</p>}
+                <div className="flex items-center justify-between mt-3">
+                  <p className="text-white/30 text-[10px] leading-tight max-w-[140px]">
+                    Overwrites title, summary, body, and tags. Slug auto-generated.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={generateWithAI}
+                    disabled={aiLoading || !aiPrompt.trim()}
+                    className="bg-[var(--emerald)] hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shrink-0"
+                  >
+                    {aiLoading ? (
+                      <>
+                        <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Writing…
+                      </>
+                    ) : (
+                      "✦ Generate"
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Status panel */}
           <Panel title="Status">
             <Field label="Status">
