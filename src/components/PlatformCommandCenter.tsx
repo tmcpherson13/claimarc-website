@@ -156,6 +156,7 @@ const PlatformCommandCenter = () => {
         viewBox="0 0 1200 400"
         className="w-full h-full"
         preserveAspectRatio="xMidYMid slice"
+        opacity={0.5}
         aria-hidden="true"
       >
         <rect x={0} y={0} width={1200} height={400} fill="#0B1628" />
