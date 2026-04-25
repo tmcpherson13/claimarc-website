@@ -68,8 +68,7 @@ const ContactPage = () => {
       if (role === "director") next.role = "Revenue Cycle Director";
       if (role === "manager") next.role = "Revenue Cycle Manager";
       if (role === "specialist") next.role = "Billing Specialist";
-      if (role === "compliance") next.role = "Compliance Officer";
-      if (role === "supervisor") next.role = "Supervisor";
+      if (role === "compliance") next.role = "Auditor/Compliance Officer";
       if (tier) next.message = `Interested in: ${tier} tier`;
       if (intent === "pricing") next.message = "Requesting pricing information";
       return next;
@@ -129,8 +128,7 @@ const ContactPage = () => {
           <p className="text-slate-300 text-lg max-w-2xl mt-4">
             We'll tailor the demo to your role, workflow, payer mix, and
             biggest revenue challenge. CFOs see Forecast. Billing Specialists
-            see Triage. Supervisors see Sentinel and the Payer Weaponization
-            Index.
+            see Triage.
           </p>
           <p className="text-slate-400 text-sm max-w-2xl mt-3">
             Your request will be routed to the modules most relevant to your role and payer mix.
@@ -310,9 +308,8 @@ const ContactPage = () => {
                     <option>CFO / Executive</option>
                     <option>Revenue Cycle Director</option>
                     <option>Revenue Cycle Manager</option>
-                    <option>Compliance Officer</option>
+                    <option>Auditor/Compliance Officer</option>
                     <option>Billing Specialist</option>
-                    <option>Supervisor</option>
                     <option>Other</option>
                   </select>
                 </div>
