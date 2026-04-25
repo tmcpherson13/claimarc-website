@@ -4,12 +4,12 @@ import { Menu, X } from "lucide-react";
 import AI3 from "./AI3";
 
 const navLinks = [
-  { to: "/platform", label: "Platform" },
+  { to: "/platform",     label: "Platform" },
+  { to: "/solutions",    label: "Solutions" },
   { to: "/why-zdefense", label: "Why ZDefense" },
-  { to: "/about", label: "About" },
-  { to: "/solutions", label: "Solutions" },
-  { to: "/blog", label: "Intelligence Center" },
-  { to: "/pricing", label: "Pricing" },
+  { to: "/pricing",      label: "Pricing" },
+  { to: "/blog",         label: "Intelligence Center" },
+  { to: "/about",        label: "About" },
 ];
 
 const Navbar = () => {
