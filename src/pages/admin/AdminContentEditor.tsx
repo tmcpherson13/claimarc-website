@@ -204,13 +204,25 @@ const Inner = () => {
       [...new Set([...titleWords, ...tagWords])].slice(0, 4).join(" ") ||
       "healthcare revenue cycle";
 
-    const { data, error } = await supabase.functions.invoke("fetch-images", {
-      body: { query, page },
-    });
+    setPhotosLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("fetch-images", {
+        body: { query, page },
+      });
 
-    if (!error && data?.photos?.length) {
-      setSuggestedPhotos(data.photos as SuggestedPhoto[]);
-      setSelectedPhotoId(null);
+      if (!error && Array.isArray(data?.photos)) {
+        const photos = data.photos as SuggestedPhoto[];
+        if (photos.length > 0) {
+          setSuggestedPhotos(photos);
+          setSelectedPhotoId(null);
+        }
+        // Unsplash returns up to 4 per page; fewer means we've reached the end.
+        setHasMorePhotos(photos.length >= 4);
+      } else {
+        setHasMorePhotos(false);
+      }
+    } finally {
+      setPhotosLoading(false);
     }
   };
 
