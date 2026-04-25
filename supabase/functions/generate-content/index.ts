@@ -78,7 +78,12 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, model } = await req.json();
+    const MODELS: Record<string, string> = {
+      claude: "claude-sonnet-4-20250514",
+      gemini: "google/gemini-3-flash-preview",
+    };
+    const selectedModel = MODELS[model as string] ?? MODELS.claude;
     if (typeof prompt !== "string" || !prompt.trim()) {
       return new Response(JSON.stringify({ error: "Prompt is required." }), {
         status: 400,
@@ -96,7 +101,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: selectedModel,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt },
