@@ -1,49 +1,35 @@
-## Goal
+## What changes
 
-Expand each of the three compliance cards in the "Built to Pass Any Security Review" section on `/why-zdefense` so the body content matches the depth of the new pill tooltips. Each card gets a labeled "What it means" paragraph plus a "Why it matters" bullet list.
+Three files updated, then both edge functions deployed in a single batch.
 
-## Changes
+### 1. `supabase/functions/generate-content/index.ts` (replace)
+New version adds:
+- `contentType` request param (`blog` | `white_paper`) to drive length: 600-900 words for blog, 1,500-2,500 for white papers.
+- `max_tokens` raised to 8192 to fit white papers.
+- Updated SYSTEM_PROMPT: recency-ranked stat selection, required Intelligence Center topic tag (one of 7), required `audience:` tags, expanded tool-schema descriptions.
+- Article tool summary limit raised to 300 chars.
 
-**File: `src/pages/WhyZDefensePage.tsx`**
+### 2. `supabase/functions/fetch-images/index.ts` (replace)
+New version biases Unsplash queries toward "healthcare finance" via a `DOMAIN_PREFIX`, restricts to landscape + high content filter, and returns 4 photos per page with credit metadata.
 
-In the compliance card array (the SOC 2 / ISO 27001 / HIPAA cards with anchor IDs), replace the single `body` string field with two new fields:
+### 3. `src/pages/admin/AdminContentEditor.tsx` (replace)
+New version wires up the AI panel + image suggestions:
+- Calls `generate-content` with `{ prompt, contentType: form.contentType }`.
+- After generation, calls `fetch-images` with derived keywords from title + tags.
+- Adds suggested-photo grid with `selectAndUploadPhoto` → invokes `upload-unsplash` and sets `heroAssetId`.
+- Adds `imageRefreshPage` state for paging through suggestions.
+- All other editor behavior (revisions, preview tokens, scheduled publish, related items, SEO fields) unchanged.
 
-- `whatItMeans` — a 1–2 sentence plain-English explanation (mirrors the tooltip).
-- `whyItMatters` — an array of 3 short bullet points framed as buyer benefits.
+### 4. Deploy
+Single `deploy_edge_functions` call for `["generate-content", "fetch-images"]`. The `AdminContentEditor.tsx` change is frontend — it goes live in preview immediately and ships to production on next Publish.
 
-Then update the card JSX to render:
+## Notes / dependencies
 
-1. Existing icon + badge + sub-label (unchanged).
-2. **What it means** — small uppercase label, then the paragraph.
-3. **Why it matters** — small uppercase label, then a left-aligned bulleted list with emerald check marks.
+- `ANTHROPIC_API_KEY` and `UNSPLASH_ACCESS_KEY` are already set as runtime secrets — no secret work needed.
+- `upload-unsplash` edge function is already deployed and unchanged.
+- No DB migrations.
+- `claude-sonnet-4-6` model name is preserved as-is from your file.
 
-The cards stay center-aligned at the top (icon/badge), but the explanation blocks switch to left-aligned text so bullets read naturally. Card layout, hover effects, gradient halo, and anchor scroll behavior are preserved.
+## Efficiency
 
-### Proposed copy
-
-**SOC 2 Type II**
-- *What it means:* Independent auditors observed our security controls operating in production over an extended period — not a snapshot, a sustained track record. Renewed annually.
-- *Why it matters:*
-  - Hardest of the three certifications to earn and keep
-  - Proves controls actually work day after day, not just on paper
-  - Accepted by enterprise security teams without additional testing
-
-**ISO/IEC 27001:2022**
-- *What it means:* Our information security management system is aligned to the global standard for protecting sensitive data, including the 2022 update covering modern cloud and supply-chain risks.
-- *Why it matters:*
-  - Required baseline for most enterprise health-system reviews
-  - Recognized internationally — clears procurement in any region
-  - Demonstrates a managed program, not ad-hoc security
-
-**HIPAA Compliant**
-- *What it means:* Administrative, technical, and physical safeguards for all ePHI handling are aligned to the HIPAA Security and Privacy Rules. BAA available for all full-platform engagements.
-- *Why it matters:*
-  - Table-stakes requirement for any healthcare vendor
-  - Covers ePHI at rest, in transit, and in workflow
-  - BAA-ready when you move beyond the no-BAA entry path
-
-## Out of scope
-
-- The pill tooltips and click-to-scroll behavior already shipped — no changes there.
-- The homepage compliance strip — unchanged.
-- The `<ComplianceStrip />` component itself — unchanged.
+Both edge functions deploy in parallel in one tool call. Frontend file is written in the same batch. Total: 3 file writes + 1 deploy call.
