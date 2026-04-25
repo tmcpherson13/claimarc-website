@@ -621,7 +621,7 @@ const Inner = () => {
             {isAdmin && (
               <Button
                 disabled={saving}
-                onClick={() => save("published")}
+                onClick={requestPublish}
                 className="bg-[var(--emerald)] hover:bg-emerald-600"
               >
                 Publish
