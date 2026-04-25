@@ -240,15 +240,15 @@ const Index = () => {
             Different roles. Different modules. Same platform.
           </h2>
           <p className="text-slate-600 text-lg mt-3 max-w-xl">
-            ZDefense routes each user to the intelligence that matters most to
-            their workflow — automatically, from day one.
+            ZDefense routes each role to the modules that matter most — CFOs
+            see Forecast, Directors see Ledger, Specialists see Triage.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
             {[
               { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling" },
               { role: "RC Director", module: "Ledger", desc: "Underpayment detection and compliance oversight" },
               { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability" },
-              { role: "Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail" },
+              { role: "Auditor/Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail" },
             ].map((r) => (
               <div key={r.role} className="bg-[var(--lgray)] rounded-xl p-5 hover:bg-emerald-50 transition-colors cursor-pointer">
                 <div className="text-[var(--navy)] font-semibold">{r.role}</div>

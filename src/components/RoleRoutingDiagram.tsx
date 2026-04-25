@@ -21,7 +21,7 @@ const ROLES = [
   { key: "manager", label: "Revenue Cycle Manager", target: "shield" },
   { key: "billing", label: "Billing Specialist", target: "triage" },
   { key: "denial", label: "Denial Coordinator", target: "triage" },
-  { key: "compliance", label: "Compliance Officer", target: "ledger" },
+  { key: "compliance", label: "Auditor/Compliance Officer", target: "ledger" },
   { key: "audit", label: "Internal Audit", target: "ledger" },
 ] as const;
 

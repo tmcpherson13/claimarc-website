@@ -25,8 +25,7 @@ const roles: RoleContent[] = [
   { key: "director", tab: "RC Director", headline: "See Underpayments, Overpayments, and Compliance in One View.", body: "Ledger gives you claim-level financial oversight — underpayment detection, Medicare 60-day repayment compliance, and an immutable audit trail. Pair with Forecast for the full picture from claim to projection.", supporting: "Also recommended: Forecast · Sentinel", ctaText: "Book a Director-Focused Demo", ctaHref: "/contact?role=director", moduleName: "Ledger", stats: ["Contract variance tracked per claim", "Six-stage compliance workflow", "Immutable audit log", "Dual-approver write-offs"] },
   { key: "manager", tab: "RC Manager", headline: "Stop Denials Before They Leave Your System.", body: "Shield scans every outbound claim batch against live payer rules pre-submission — no BAA required. The Regulatory Intelligence Feed flags CMS and payer policy shifts 45 days ahead. Activate today with live data.", supporting: "Also recommended: Prevent · Triage", ctaText: "Start Your 30-Day Evaluation — No BAA Required", ctaHref: "/contact?offer=trial", ctaEmerald: true, ctaNote: "Shield and Prevent included. Live data. Activates immediately.", moduleName: "Shield", stats: ["89.4% clean claim rate", "45-day regulatory advance feed", "No BAA Required", "Activates in 30 minutes"] },
   { key: "specialist", tab: "Billing Specialist", headline: "Work the Claims Most Likely to Pay. In That Order.", body: "Triage ranks your denial queue by recovery probability so you start with the cash that's actually recoverable. Every claim shows its score, rule driver, and AI insight — with one-click evidence assembly behind it.", supporting: "Also recommended: Evidence · Resolve", ctaText: "Book a Specialist-Focused Demo", ctaHref: "/contact?role=specialist", moduleName: "Triage", stats: ["$1.146M active recovery pipeline", "Recovery probability per claim", "Natural language search", "One-click evidence assembly"] },
-  { key: "compliance", tab: "Compliance Officer", headline: "The Medicare 60-Day Rule Has No Margin for Error.", body: "Ledger enforces the 60-day voluntary repayment rule automatically — immutable audit log, dual-approver authorization on every write-off, six-stage workflow. If regulators knock, your documentation is already time-stamped.", supporting: "Also recommended: Shield", ctaText: "Book a Compliance-Focused Demo", ctaHref: "/contact?role=compliance", moduleName: "Ledger", stats: ["Medicare 60-day enforcement", "Dual-approver write-offs", "Immutable audit log", "Six-stage overpayment workflow"] },
-  { key: "supervisor", tab: "Supervisor", headline: "Know When a Payer Changes Strategy — Before Your Team Feels It.", body: "Sentinel tracks the Payer Weaponization Index across all 7 standard payers. Appeal Response Velocity and Eligibility Volatility signals give you 7–14 days of warning before behavioral shifts become denial patterns.", supporting: "Also recommended: Triage · Shield", ctaText: "Book a Supervisor-Focused Demo", ctaHref: "/contact?role=supervisor", moduleName: "Sentinel", stats: ["7–14 day advance warning", "UHC 2.4x · BCBS 2.1x (live data)", "ARV + EV signal tracking", "All 7 standard payers"] },
+  { key: "compliance", tab: "Auditor/Compliance Officer", headline: "The Medicare 60-Day Rule Has No Margin for Error.", body: "Ledger enforces the 60-day voluntary repayment rule automatically — immutable audit log, dual-approver authorization on every write-off, six-stage workflow. If regulators knock, your documentation is already time-stamped.", supporting: "Also recommended: Shield", ctaText: "Book a Compliance-Focused Demo", ctaHref: "/contact?role=compliance", moduleName: "Ledger", stats: ["Medicare 60-day enforcement", "Dual-approver write-offs", "Immutable audit log", "Six-stage overpayment workflow"] },
 ];
 
 const SolutionsPage = () => {
@@ -37,7 +36,7 @@ const SolutionsPage = () => {
     <Layout>
       <SeoHead
         title="Who ZDefense Is For — CFOs, Rev Cycle Leaders, Billing Teams"
-        description="ZDefense routes each role to the modules that matter most — CFOs see Forecast, Specialists see Triage, Supervisors see the Payer Weaponization Index."
+        description="ZDefense routes each role to the modules that matter most — CFOs see Forecast, Directors see Ledger, Specialists see Triage."
         path="/solutions"
       />
 
@@ -49,7 +48,7 @@ const SolutionsPage = () => {
             Built for the Teams Who Live Inside the Revenue Cycle
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mt-4">
-            Six roles. Six entry points. Pick yours to see the modules, signals,
+            Five roles. Five entry points. Pick yours to see the modules, signals,
             and outcomes built for the work you actually do.
           </p>
         </div>

@@ -26,7 +26,7 @@ const ModuleCard = ({ m }: { m: Module }) => (
 );
 
 const predict: Module[] = [
-  { name: "Sentinel", tagline: "Payer Weaponization Index", body: "See payer behavioral shifts 7–14 days before formal policy notice — so leadership can react before revenue is at risk.", audience: "Supervisor · RC Director", required: true },
+  { name: "Sentinel", tagline: "Payer Weaponization Index", body: "See payer behavioral shifts 7–14 days before formal policy notice — so leadership can react before revenue is at risk.", audience: "RC Director", required: true },
   { name: "ContractIntel", tagline: "Rate Benchmarking & Contract Intelligence", body: "Benchmark contracted rates against public Transparency in Coverage data. $2.8M annual contract gap surfaced in demo. Public data only.", audience: "CFO · RC Director", required: false },
   { name: "Forecast", tagline: "90-Day Revenue Projection", body: "One unified 90-day revenue projection driven by every other module. $12.6M projected at 84% confidence in demo.", audience: "CFO · Executive", required: true },
 ];
@@ -34,7 +34,7 @@ const predict: Module[] = [
 const protect: Module[] = [
   { name: "Shield", tagline: "Pre-Submission Claim Interception", body: "89.4% clean claim rate in demo. Surfaces CMS, MAC, and commercial payer rule changes 45 days before they affect claims. Public data only.", audience: "RC Manager · Billing Specialist", required: false },
   { name: "Prevent", tagline: "Prior Authorization Defense", body: "Detects new prior authorization requirements 11 days in advance on average. $284K protected in demo. No patient data required.", audience: "RC Manager · RC Director", required: false },
-  { name: "Ledger", tagline: "Underpayment Detection & Compliance Tracking", body: "Underpayment detection plus a Medicare 60-day compliance audit trail with dual-approver authorization on every write-off.", audience: "RC Director · Compliance Officer", required: true },
+  { name: "Ledger", tagline: "Underpayment Detection & Compliance Tracking", body: "Underpayment detection plus a Medicare 60-day compliance audit trail with dual-approver authorization on every write-off.", audience: "RC Director · Auditor/Compliance Officer", required: true },
 ];
 
 const recover: Module[] = [
