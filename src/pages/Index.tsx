@@ -50,7 +50,7 @@ const Index = () => {
               30-Day Evaluation
             </Link>
           </div>
-          <div className="mt-14 pt-6 border-t border-slate-800 max-w-3xl">
+          <div className="mt-14 pt-6 border-t border-slate-800">
             <ComplianceStrip />
           </div>
         </div>
