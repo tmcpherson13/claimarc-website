@@ -179,12 +179,7 @@ All colors MUST be HSL.
   }
 }
 
-/* Hero radar background animations */
-@keyframes heroRadarSweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
+/* Hero radar blip pulse (one-shot ring) */
 @keyframes heroRadarBlipPulse {
   0%   { transform: scale(1); opacity: 0.5; }
   100% { transform: scale(2); opacity: 0; }
