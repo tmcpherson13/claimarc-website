@@ -44,6 +44,7 @@ const SolutionsPage = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
         <HeroAccent />
+        <SolutionFlowStream />
         <div className="relative max-w-7xl mx-auto">
           <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold max-w-3xl">
             Built for the Teams Who Live Inside the Revenue Cycle
