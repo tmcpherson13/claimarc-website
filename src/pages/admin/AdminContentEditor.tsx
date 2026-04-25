@@ -1362,17 +1362,31 @@ const Inner = () => {
               <Checkbox
                 checked={ackHero}
                 onCheckedChange={(v) => setAckHero(v === true)}
+                disabled={!heroGatePassed}
                 className="mt-0.5"
               />
               <span>
                 Hero image is set.
                 {!heroOk && (
-                  <span className="ml-1 text-amber-600 text-xs">
-                    (No hero image attached — confirm anyway only if intentional.)
+                  <span className="block mt-1 text-amber-700 text-xs">
+                    No hero image attached. Publish is blocked unless an admin overrides below.
                   </span>
                 )}
               </span>
             </label>
+
+            {!heroOk && isAdmin && (
+              <label className="flex items-start gap-3 text-sm cursor-pointer pl-7 border-l-2 border-amber-300">
+                <Checkbox
+                  checked={heroOverride}
+                  onCheckedChange={(v) => setHeroOverride(v === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-amber-900">
+                  Override: publish without a hero image (logged to audit).
+                </span>
+              </label>
+            )}
 
             <label className="flex items-start gap-3 text-sm cursor-pointer">
               <Checkbox
