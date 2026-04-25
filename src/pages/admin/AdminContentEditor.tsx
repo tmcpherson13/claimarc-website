@@ -623,11 +623,13 @@ const Inner = () => {
     });
   };
 
-  const allChecksAcked = ackPreview && ackHero && ackSeo;
   const heroOk = !!form.heroAssetId;
   const seoOk =
     form.seoTitle.trim().length > 0 &&
     form.seoDescription.trim().length > 0;
+  // Hard hero gate: must have a hero OR an explicit admin override.
+  const heroGatePassed = heroOk || heroOverride;
+  const allChecksAcked = ackPreview && ackHero && ackSeo && heroGatePassed;
 
   const openPreview = async () => {
     if (!existing) {
