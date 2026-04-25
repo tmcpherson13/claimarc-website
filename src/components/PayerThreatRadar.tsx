@@ -38,35 +38,31 @@ const WI_ROWS = [
   { name: "Aetna", wi: "1.7x", badge: "bg-slate-700 text-slate-300" },
 ];
 
-// Inline keyframes — scoped via a <style> tag rendered once with the component.
+// Inline keyframes — only the one-shot blip pulse remains; the sweep arm
+// is now driven by a React rAF loop, not CSS animation.
 const RADAR_STYLES = `
-@keyframes radarSweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 @keyframes radarBlipPulse {
   0%   { opacity: 0; }
   40%  { opacity: 0.8; }
   100% { opacity: 0; }
-}
-.radar-sweep-group {
-  transform-origin: 250px 250px;
-  animation: radarSweep 6.65s linear infinite;
 }
 .radar-blip-pulse-once {
   animation: radarBlipPulse 600ms ease-out forwards;
 }
 `;
 
-// Sweep duration must match the CSS animation above.
-const SWEEP_DURATION_MS = 6650;
-// Each blip's angle in SVG atan2 space (degrees), where 0° = +x (east)
-// and angles increase clockwise (since SVG y grows downward).
-// Range: (-180, 180].
+const DURATION = 6650;
+const TRAIL_WINDOW = 8; // degrees
+const CENTER_X = 250;
+const CENTER_Y = 250;
+
+// Angle in clockwise-from-north degrees (0 = up, increasing clockwise)
+// matching the inline rotate(armAngle) on the sweep arm group.
 const blipAngle = (x: number, y: number) => {
-  const dx = x - 250;
-  const dy = y - 250;
-  return (Math.atan2(dy, dx) * 180) / Math.PI;
+  return (
+    (((Math.atan2(y - CENTER_Y, x - CENTER_X) * 180) / Math.PI + 90 + 360) %
+      360)
+  );
 };
 const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
 
