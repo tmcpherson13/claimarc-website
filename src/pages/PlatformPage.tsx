@@ -6,6 +6,7 @@ import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
 import ModulePipelineFlow from "@/components/ModulePipelineFlow";
 import SeoHead from "@/components/SeoHead";
+import { PHRASES } from "@/config/terminology";
 
 interface Module {
   name: string;
@@ -64,7 +65,7 @@ const PlatformPage = () => {
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mt-4">
             ZDefense is a modular revenue cycle intelligence platform organized
-            into three operational layers. Start with the modules that match
+            into {PHRASES.threeOperationalLayers}. Start with the modules that match
             your biggest pain — no BAA required for three of them. Add modules
             as your organization grows.
           </p>
@@ -84,7 +85,7 @@ const PlatformPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-white text-3xl md:text-4xl font-bold">
-              Nine Modules. Three Layers. One Connected Platform.
+              {PHRASES.nineModulesThreeLayers}
             </h2>
             <p className="text-slate-400 mt-4">
               Intelligence flows in one direction — forward. Every module

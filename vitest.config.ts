@@ -11,6 +11,11 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      // jsdom optionally tries to load `canvas`; the native binary is not
+      // available in CI/sandbox, so stub it out.
+      canvas: path.resolve(__dirname, "./src/test/canvas-stub.cjs"),
+    },
   },
 });
