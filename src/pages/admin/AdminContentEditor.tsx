@@ -779,29 +779,53 @@ const Inner = () => {
           {/* Suggested hero images (Unsplash) */}
           {suggestedPhotos.length > 0 && (
             <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-slate-900 font-semibold text-sm">
                   Suggested Hero Images
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    disabled={photosLoading || imageRefreshPage <= 1}
                     onClick={() => {
-                      const nextPage = imageRefreshPage + 1;
-                      setImageRefreshPage(nextPage);
-                      fetchSuggestedImages(form.title, form.tags, nextPage);
+                      const prev = imageRefreshPage - 1;
+                      setImageRefreshPage(prev);
+                      fetchSuggestedImages(form.title, form.tags, prev);
                     }}
-                    className="text-slate-400 hover:text-slate-600 text-xs"
+                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    ↻ Refresh
+                    ← Prev
+                  </button>
+                  <span className="text-[11px] text-slate-500 tabular-nums min-w-[44px] text-center">
+                    {photosLoading ? (
+                      <span className="inline-flex items-center gap-1">
+                        <span className="inline-block w-3 h-3 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                      </span>
+                    ) : (
+                      `Page ${imageRefreshPage}`
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={photosLoading || !hasMorePhotos}
+                    onClick={() => {
+                      const next = imageRefreshPage + 1;
+                      setImageRefreshPage(next);
+                      fetchSuggestedImages(form.title, form.tags, next);
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Next →
                   </button>
                   <button
                     type="button"
                     onClick={() => {
                       setSuggestedPhotos([]);
                       setSelectedPhotoId(null);
+                      setImageRefreshPage(1);
+                      setHasMorePhotos(true);
                     }}
-                    className="text-slate-400 hover:text-slate-600 text-xs"
+                    className="text-slate-400 hover:text-slate-600 text-xs ml-1"
                   >
                     Dismiss
                   </button>
