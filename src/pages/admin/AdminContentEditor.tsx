@@ -331,6 +331,20 @@ const Inner = () => {
     contentApi.listAll().then(setAllItems).catch(() => {});
   }, []);
 
+  // Load audit log for this content item.
+  useEffect(() => {
+    if (!existing?.id) {
+      setAuditEntries([]);
+      return;
+    }
+    setAuditLoading(true);
+    contentApi
+      .listAudit(existing.id)
+      .then(setAuditEntries)
+      .catch(() => setAuditEntries([]))
+      .finally(() => setAuditLoading(false));
+  }, [existing?.id]);
+
   // Slug availability check (debounced)
   useEffect(() => {
     if (!form.slug.trim()) {
