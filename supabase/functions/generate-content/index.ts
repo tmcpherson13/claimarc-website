@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
   try {
     const { prompt, model } = await req.json();
     const MODELS: Record<string, string> = {
-      claude: "claude-sonnet-4-20250514",
+      claude: "anthropic/claude-sonnet-4-20250514",
       gemini: "google/gemini-3-flash-preview",
     };
     const selectedModel = MODELS[model as string] ?? MODELS.claude;
