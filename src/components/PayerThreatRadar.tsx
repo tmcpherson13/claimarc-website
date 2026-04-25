@@ -150,7 +150,7 @@ const PayerThreatRadar = () => {
           </p>
 
           <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-5 mt-6 max-w-md">
-            <p className="text-[var(--amber)] text-[10px] uppercase tracking-widest font-semibold">
+            <p className="text-[var(--amber)] text-[14px] uppercase tracking-widest font-semibold">
               Payer Weaponization Index (WI)
             </p>
             <p className="text-slate-300 text-sm mt-2 leading-relaxed">
