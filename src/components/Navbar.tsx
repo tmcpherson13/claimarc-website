@@ -8,7 +8,6 @@ const navLinks = [
   { to: "/solutions",    label: "Solutions" },
   { to: "/why-zdefense", label: "Why ZDefense" },
   { to: "/pricing",      label: "Pricing" },
-  { to: "/blog",         label: "Intelligence Center" },
   { to: "/about",        label: "About" },
 ];
 
