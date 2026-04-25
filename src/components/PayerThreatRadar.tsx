@@ -73,6 +73,9 @@ const PayerThreatRadar = () => {
   const [activeMap, setActiveMap] = useState<boolean[]>(() => BLIPS.map(() => false));
   const pulseKeyRef = useRef<number[]>(BLIPS.map(() => 0));
   const [, forcePulseRender] = useState(0);
+  const [armAngle, setArmAngle] = useState(0);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -90,62 +93,43 @@ const PayerThreatRadar = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Track sweep arm angle and light blips up ONLY after the arm has just
-  // crossed them (trailing window). Turn off after a fade delay.
+  // Single rAF loop: drive arm rotation AND blip activation off the same angle.
   useEffect(() => {
-    const TRAIL_WINDOW = 5; // degrees past the blip
-    const OFF_DELAY_MS = 400;
     const wasActive = BLIPS.map(() => false);
-    const offTimers: Array<number | null> = BLIPS.map(() => null);
 
-    const id = window.setInterval(() => {
-      const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
-      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
-      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
-      const adjustedAngle = currentAngle - 90;
+    const animate = (timestamp: number) => {
+      if (startTimeRef.current === null) startTimeRef.current = timestamp;
+      const elapsed = timestamp - startTimeRef.current;
+      const angle = ((elapsed % DURATION) / DURATION) * 360;
+
+      setArmAngle(angle);
+
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
-
       for (let i = 0; i < BLIPS.length; i++) {
-        const diff = (adjustedAngle - BLIP_ANGLES[i] + 720) % 360;
-        const inWindow = diff < TRAIL_WINDOW;
+        const diff = (angle - BLIP_ANGLES[i] + 360) % 360;
+        const inWindow = diff >= 0 && diff < TRAIL_WINDOW;
 
-        if (inWindow && !wasActive[i]) {
-          if (offTimers[i] !== null) {
-            window.clearTimeout(offTimers[i] as number);
-            offTimers[i] = null;
-          }
-          next[i] = true;
-          wasActive[i] = true;
+        if (inWindow !== wasActive[i]) {
+          next[i] = inWindow;
+          wasActive[i] = inWindow;
           changed = true;
-          pulseKeyRef.current[i] += 1;
-          pulseChanged = true;
-        } else if (!inWindow && wasActive[i] && offTimers[i] === null) {
-          const idx = i;
-          offTimers[idx] = window.setTimeout(() => {
-            wasActive[idx] = false;
-            offTimers[idx] = null;
-            setActiveMap((prev) => {
-              if (!prev[idx]) return prev;
-              const copy = prev.slice();
-              copy[idx] = false;
-              return copy;
-            });
-          }, OFF_DELAY_MS);
+          if (inWindow) {
+            pulseKeyRef.current[i] += 1;
+            pulseChanged = true;
+          }
         }
       }
       if (changed) setActiveMap(next);
       if (pulseChanged) forcePulseRender((n) => n + 1);
-    }, 50);
 
-    return () => {
-      window.clearInterval(id);
-      offTimers.forEach((t) => t !== null && window.clearTimeout(t));
+      rafRef.current = requestAnimationFrame(animate);
     };
-  }, []);
 
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
 
   return (
     <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 border-t border-b border-slate-800">
