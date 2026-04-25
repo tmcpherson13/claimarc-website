@@ -356,13 +356,42 @@ const Inner = () => {
     }));
   };
 
-  const validate = () => {
+  // Tag analysis used by validation, the publish dialog, and the auto-suggest UI.
+  const tagAnalysis = useMemo(() => {
+    const topicMatches = form.tags.filter(isTopicTag);
+    const audienceMatches = form.tags.filter(isAudienceTag);
+    const missingTopic = topicMatches.length === 0;
+    const tooManyTopics = topicMatches.length > 1;
+    const missingAudience = audienceMatches.length === 0;
+    const valid = !missingTopic && !tooManyTopics && !missingAudience;
+    return { topicMatches, audienceMatches, missingTopic, tooManyTopics, missingAudience, valid };
+  }, [form.tags]);
+
+  const addTag = (tag: string) => {
+    if (form.tags.includes(tag)) return;
+    set("tags", [...form.tags, tag]);
+  };
+
+  const replaceTopicTag = (tag: string) => {
+    const next = form.tags.filter((t) => !isTopicTag(t));
+    set("tags", [...next, tag]);
+  };
+
+  const validate = (forPublish = false) => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Title is required.";
     if (!form.slug.trim()) e.slug = "Slug is required.";
     if (slugAvailable === false) e.slug = "This slug is already used by another item of this type.";
     if (form.status === "scheduled" && !form.scheduledFor)
       e.scheduledFor = "Scheduled time is required.";
+    if (forPublish) {
+      if (tagAnalysis.missingTopic)
+        e.tags = "Add exactly one Intelligence Center topic tag before publishing.";
+      else if (tagAnalysis.tooManyTopics)
+        e.tags = "Only one Intelligence Center topic tag is allowed. Remove the extras.";
+      else if (tagAnalysis.missingAudience)
+        e.tags = "Add at least one audience: tag before publishing.";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
