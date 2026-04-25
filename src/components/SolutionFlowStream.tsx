@@ -116,7 +116,7 @@ const SolutionFlowStream = () => {
     0.04 + ((Math.sin((elapsed / 1000) * ((2 * Math.PI) / (GLOW_PERIOD_MS / 1000))) + 1) / 2) * 0.06;
 
   return (
-    <div ref={ref} className="absolute inset-0 w-full h-full pointer-events-none">
+    <div ref={ref} className="absolute inset-0 w-full h-full opacity-90 pointer-events-none">
       <svg
         viewBox="0 0 1200 340"
         className="w-full h-full"
