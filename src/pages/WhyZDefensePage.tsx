@@ -136,7 +136,13 @@ const WhyZDefensePage = () => {
                 sub: "Type II Certified",
                 color: "from-emerald-500 to-emerald-700",
                 glow: "shadow-emerald-500/30",
-                body: "Independently audited against the AICPA SOC 2 Type II framework for security, availability, confidentiality, and data integrity. Annual audit cycle.",
+                whatItMeans:
+                  "Independent auditors observed our security controls operating in production over an extended period — not a snapshot, a sustained track record. Renewed annually.",
+                whyItMatters: [
+                  "Hardest of the three certifications to earn and keep",
+                  "Proves controls actually work day after day, not just on paper",
+                  "Accepted by enterprise security teams without additional testing",
+                ],
                 icon: "🛡",
               },
               {
@@ -145,7 +151,13 @@ const WhyZDefensePage = () => {
                 sub: "IEC 27001:2022",
                 color: "from-blue-500 to-blue-700",
                 glow: "shadow-blue-500/30",
-                body: "Information Security Management System aligned with ISO/IEC 27001:2022 — the global gold standard for healthcare data protection.",
+                whatItMeans:
+                  "Our information security management system is aligned to the global standard for protecting sensitive data, including the 2022 update covering modern cloud and supply-chain risks.",
+                whyItMatters: [
+                  "Required baseline for most enterprise health-system reviews",
+                  "Recognized internationally — clears procurement in any region",
+                  "Demonstrates a managed program, not ad-hoc security",
+                ],
                 icon: "🔒",
               },
               {
@@ -154,7 +166,13 @@ const WhyZDefensePage = () => {
                 sub: "Compliant",
                 color: "from-violet-500 to-violet-700",
                 glow: "shadow-violet-500/30",
-                body: "HIPAA-aligned administrative, technical, and physical safeguards for all ePHI handling. BAA available for all full-platform engagements.",
+                whatItMeans:
+                  "Administrative, technical, and physical safeguards for all ePHI handling are aligned to the HIPAA Security and Privacy Rules. BAA available for all full-platform engagements.",
+                whyItMatters: [
+                  "Table-stakes requirement for any healthcare vendor",
+                  "Covers ePHI at rest, in transit, and in workflow",
+                  "BAA-ready when you move beyond the no-BAA entry path",
+                ],
                 icon: "✦",
               },
             ].map((c, i) => (
@@ -170,7 +188,31 @@ const WhyZDefensePage = () => {
                 </div>
                 <p className="text-white font-bold text-2xl">{c.badge}</p>
                 <p className="text-slate-400 text-sm mt-0.5">{c.sub}</p>
-                <p className="text-slate-400 text-sm mt-4 leading-relaxed">{c.body}</p>
+
+                <div className="relative mt-6 text-left">
+                  <p className="text-[var(--emerald)] text-[10px] font-semibold uppercase tracking-widest">
+                    What it means
+                  </p>
+                  <p className="text-slate-300 text-sm mt-1.5 leading-relaxed">
+                    {c.whatItMeans}
+                  </p>
+
+                  <p className="text-[var(--emerald)] text-[10px] font-semibold uppercase tracking-widest mt-5">
+                    Why it matters
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {c.whyItMatters.map((point) => (
+                      <li
+                        key={point}
+                        className="text-slate-300 text-sm leading-relaxed flex gap-2"
+                      >
+                        <span className="text-[var(--emerald)] mt-0.5 shrink-0">✓</span>
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
                 <div
                   className={`absolute top-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-br ${c.color} opacity-20 animate-ping`}
                   style={{ animationDuration: '3s', animationDelay: `${i * 0.5}s` }}
