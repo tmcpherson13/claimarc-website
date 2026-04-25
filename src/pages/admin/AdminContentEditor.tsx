@@ -383,7 +383,7 @@ const Inner = () => {
     set("tags", [...next, tag]);
   };
 
-  const validate = (forPublish = false) => {
+  const validate = (forPublish = false, allowHeroOverride = false) => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Title is required.";
     if (!form.slug.trim()) e.slug = "Slug is required.";
@@ -397,6 +397,9 @@ const Inner = () => {
         e.tags = "Only one Intelligence Center topic tag is allowed. Remove the extras.";
       else if (tagAnalysis.missingAudience)
         e.tags = "Add at least one audience: tag before publishing.";
+      // Hard hero-image gate. Admins can override via the publish dialog.
+      if (!form.heroAssetId && !allowHeroOverride)
+        e.heroAssetId = "A hero image is required to publish. Pick one or override in the publish dialog.";
     }
     setErrors(e);
     return Object.keys(e).length === 0;
