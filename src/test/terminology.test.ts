@@ -53,6 +53,35 @@ function findForbidden(text: string): string[] {
   return hits;
 }
 
+/**
+ * Stricter scanner for source files: only flag occurrences that appear in
+ * user-facing surfaces — string literals, template literals, and JSX text.
+ * This intentionally ignores identifiers, type names, and comments so we can
+ * keep internal code names like `ClusterKey` while still catching any
+ * forbidden term that would render to a user.
+ */
+function findForbiddenUserFacing(text: string): string[] {
+  // Strip block + line comments first so identifiers in commented-out code
+  // are ignored.
+  const stripped = text
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1");
+
+  const hits: string[] = [];
+  // 1. Quoted strings: "...", '...', `...`
+  const stringRe = /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`/g;
+  let match: RegExpExecArray | null;
+  while ((match = stringRe.exec(stripped)) !== null) {
+    hits.push(...findForbidden(match[0]));
+  }
+  // 2. JSX text nodes: text between `>` and `<` that isn't pure whitespace.
+  const jsxTextRe = />([^<>{}]+)</g;
+  while ((match = jsxTextRe.exec(stripped)) !== null) {
+    hits.push(...findForbidden(match[1]));
+  }
+  return hits;
+}
+
 describe("terminology guard — code & static assets", () => {
   it("contains no forbidden terms in src/", () => {
     const offenders: { file: string; hits: string[] }[] = [];
