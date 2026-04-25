@@ -123,6 +123,79 @@ const Inner = () => {
   const [showAiPanel, setShowAiPanel] = useState(false);
   const [aiModel, setAiModel] = useState<"claude" | "gemini">("claude");
 
+  // Suggested hero images (Unsplash) — populated after AI generation
+  type SuggestedPhoto = {
+    id: string;
+    thumb: string;
+    full: string;
+    downloadLocation: string;
+    alt: string;
+    credit: { name: string; link: string };
+  };
+  const [suggestedPhotos, setSuggestedPhotos] = useState<SuggestedPhoto[]>([]);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const fetchSuggestedImages = async (title: string, tags: string[] = []) => {
+    const stopWords = new Set([
+      "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
+      "of", "with", "how", "why", "what", "when", "where", "your", "our",
+    ]);
+    const titleWords = title
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, " ")
+      .split(" ")
+      .filter((w) => w.length > 3 && !stopWords.has(w))
+      .slice(0, 3);
+    const tagWords = tags
+      .slice(0, 2)
+      .map((t) => t.toLowerCase().replace(/[^a-z0-9]/g, ""));
+    const query =
+      [...new Set([...titleWords, ...tagWords])].slice(0, 4).join(" ") ||
+      "healthcare revenue cycle";
+
+    const { data, error } = await supabase.functions.invoke("fetch-images", {
+      body: { query },
+    });
+
+    if (!error && data?.photos?.length) {
+      setSuggestedPhotos(data.photos as SuggestedPhoto[]);
+      setSelectedPhotoId(null);
+    }
+  };
+
+  const selectAndUploadPhoto = async (photo: SuggestedPhoto) => {
+    setSelectedPhotoId(photo.id);
+    setUploadingPhoto(true);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "upload-unsplash",
+        {
+          body: {
+            photoUrl: photo.full,
+            downloadLocation: photo.downloadLocation,
+            alt: photo.alt,
+            credit: photo.credit,
+          },
+        },
+      );
+      if (error || !data?.assetId) throw new Error("Upload failed");
+      setForm((prev) => ({ ...prev, heroAssetId: data.assetId as string }));
+      toast({
+        title: "Hero image set",
+        description: `Photo by ${photo.credit.name} on Unsplash`,
+      });
+    } catch {
+      toast({
+        title: "Image upload failed",
+        description: "Try selecting another photo.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const generateWithAI = async () => {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
@@ -158,6 +231,10 @@ const Inner = () => {
         title: "Content generated",
         description: "Review the draft and publish when ready.",
       });
+      // Kick off image suggestions in the background
+      if (parsed.title) {
+        fetchSuggestedImages(parsed.title, parsed.tags ?? []);
+      }
     } catch (err) {
       setAiError(err instanceof Error ? err.message : "Generation failed. Try again.");
     } finally {
