@@ -185,6 +185,12 @@ const Inner = () => {
   const [ackPreview, setAckPreview] = useState(false);
   const [ackHero, setAckHero] = useState(false);
   const [ackSeo, setAckSeo] = useState(false);
+  const [heroOverride, setHeroOverride] = useState(false);
+
+  // Audit log state
+  type AuditEntry = Awaited<ReturnType<typeof contentApi.listAudit>>[number];
+  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
 
   const fetchSuggestedImages = async (title: string, tags: string[] = [], page = 1) => {
     const stopWords = new Set([
@@ -325,6 +331,20 @@ const Inner = () => {
     contentApi.listAll().then(setAllItems).catch(() => {});
   }, []);
 
+  // Load audit log for this content item.
+  useEffect(() => {
+    if (!existing?.id) {
+      setAuditEntries([]);
+      return;
+    }
+    setAuditLoading(true);
+    contentApi
+      .listAudit(existing.id)
+      .then(setAuditEntries)
+      .catch(() => setAuditEntries([]))
+      .finally(() => setAuditLoading(false));
+  }, [existing?.id]);
+
   // Slug availability check (debounced)
   useEffect(() => {
     if (!form.slug.trim()) {
@@ -377,7 +397,49 @@ const Inner = () => {
     set("tags", [...next, tag]);
   };
 
-  const validate = (forPublish = false) => {
+  // Heuristic auto-suggest: score each topic/audience tag by keyword overlap
+  // with title + summary + existing tags.
+  const tagSuggestions = useMemo(() => {
+    const haystack = `${form.title} ${form.summary} ${form.tags.join(" ")}`.toLowerCase();
+    const tokens = new Set(haystack.split(/[^a-z0-9]+/).filter(Boolean));
+
+    const TOPIC_KEYWORDS: Record<(typeof TOPIC_TAGS)[number], string[]> = {
+      "payer-behavior": ["payer", "payers", "weaponization", "behavioral", "shift", "sentinel"],
+      "denial-prevention": ["denial", "denials", "deny", "shield", "prevention", "clean", "claims"],
+      "prior-authorization": ["prior", "auth", "authorization", "preauth", "prevent"],
+      "contract-intelligence": ["contract", "rate", "benchmark", "tic", "transparency", "contractintel"],
+      "underpayment-recovery": ["underpayment", "underpaid", "recovery", "ledger", "writeoff"],
+      "compliance": ["compliance", "audit", "auditor", "medicare", "ledger"],
+      "forecasting": ["forecast", "projection", "revenue", "pipeline", "predict"],
+    };
+
+    const AUDIENCE_KEYWORDS: Record<(typeof AUDIENCE_TAGS)[number], string[]> = {
+      "audience:CFO": ["cfo", "finance", "revenue", "forecast", "executive"],
+      "audience:RC Director": ["director", "rc", "leadership", "vp"],
+      "audience:RC Manager": ["manager", "operations", "shield", "prevent"],
+      "audience:Billing Specialist": ["billing", "specialist", "appeal", "triage", "evidence", "resolve"],
+      "audience:Compliance Officer": ["compliance", "auditor", "audit", "officer", "ledger"],
+    };
+
+    const score = (keywords: string[]) =>
+      keywords.reduce((n, kw) => n + (tokens.has(kw) ? 1 : 0), 0);
+
+    const topic = (Object.keys(TOPIC_KEYWORDS) as (typeof TOPIC_TAGS)[number][])
+      .map((tag) => ({ tag, s: score(TOPIC_KEYWORDS[tag]) }))
+      .filter((c) => c.s > 0 && !form.tags.includes(c.tag))
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 3);
+
+    const audience = (Object.keys(AUDIENCE_KEYWORDS) as (typeof AUDIENCE_TAGS)[number][])
+      .map((tag) => ({ tag, s: score(AUDIENCE_KEYWORDS[tag]) }))
+      .filter((c) => c.s > 0 && !form.tags.includes(c.tag))
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 3);
+
+    return { topic, audience };
+  }, [form.title, form.summary, form.tags]);
+
+  const validate = (forPublish = false, allowHeroOverride = false) => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Title is required.";
     if (!form.slug.trim()) e.slug = "Slug is required.";
@@ -391,12 +453,23 @@ const Inner = () => {
         e.tags = "Only one Intelligence Center topic tag is allowed. Remove the extras.";
       else if (tagAnalysis.missingAudience)
         e.tags = "Add at least one audience: tag before publishing.";
+      // Hard hero-image gate. Admins can override via the publish dialog.
+      if (!form.heroAssetId && !allowHeroOverride)
+        e.heroAssetId = "A hero image is required to publish. Pick one or override in the publish dialog.";
     }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const save = async (status?: PostStatus) => {
+  const save = async (
+    status?: PostStatus,
+    audit?: {
+      ackPreview: boolean;
+      ackHero: boolean;
+      ackSeo: boolean;
+      heroOverride: boolean;
+    },
+  ) => {
     const targetStatus = status ?? form.status;
     if (!isAdmin && (targetStatus === "published" || targetStatus === "archived")) {
       toast({
@@ -406,7 +479,7 @@ const Inner = () => {
       });
       return;
     }
-    if (!validate(targetStatus === "published")) return;
+    if (!validate(targetStatus === "published", audit?.heroOverride ?? false)) return;
     setSaving(true);
     try {
       let publishedAt = fromLocal(form.publishedAt);
@@ -430,9 +503,45 @@ const Inner = () => {
         seoDescription: form.seoDescription.trim() || null,
         canonicalUrl: form.canonicalUrl.trim() || null,
       };
+      const previousStatus = existing?.status ?? null;
       const saved = isNew
         ? await contentApi.create(input)
         : await contentApi.update(id!, input);
+
+      // Write audit row for status transitions we care about. Drafts and
+      // scheduled saves are not audited — those go to the revisions log.
+      const auditAction =
+        targetStatus === "published"
+          ? "publish"
+          : targetStatus === "archived"
+            ? "archive"
+            : previousStatus === "published" && targetStatus === "draft"
+              ? "unpublish"
+              : null;
+
+      if (auditAction) {
+        try {
+          await contentApi.logPublishAudit({
+            contentId: saved.id,
+            action: auditAction,
+            fromStatus: previousStatus,
+            toStatus: targetStatus,
+            ackPreview: audit?.ackPreview ?? false,
+            ackHero: audit?.ackHero ?? false,
+            ackSeo: audit?.ackSeo ?? false,
+            heroOverride: audit?.heroOverride ?? false,
+          });
+          // Refresh the inline audit panel so the new row shows immediately.
+          contentApi.listAudit(saved.id).then(setAuditEntries).catch(() => {});
+        } catch {
+          // Audit failure should not block the save itself.
+          toast({
+            title: "Audit log warning",
+            description: "Action saved, but audit entry could not be written.",
+          });
+        }
+      }
+
       toast({ title: targetStatus === "published" ? "Published" : "Saved" });
       if (isNew) navigate(`/admin/content/${saved.id}`, { replace: true });
       else {
@@ -487,9 +596,9 @@ const Inner = () => {
   };
 
   const requestPublish = () => {
-    // Run publish-grade validation up front so the dialog only opens on
-    // an item that's structurally ready to publish.
-    if (!validate(true)) {
+    // Validate everything except the hero gate — the dialog handles the
+    // hero override flow in-context.
+    if (!validate(true, true)) {
       toast({
         title: "Cannot publish yet",
         description: "Fix the highlighted issues, then try again.",
@@ -500,19 +609,27 @@ const Inner = () => {
     setAckPreview(false);
     setAckHero(false);
     setAckSeo(false);
+    setHeroOverride(false);
     setPublishDialogOpen(true);
   };
 
   const confirmPublish = async () => {
     setPublishDialogOpen(false);
-    await save("published");
+    await save("published", {
+      ackPreview,
+      ackHero,
+      ackSeo,
+      heroOverride,
+    });
   };
 
-  const allChecksAcked = ackPreview && ackHero && ackSeo;
   const heroOk = !!form.heroAssetId;
   const seoOk =
     form.seoTitle.trim().length > 0 &&
     form.seoDescription.trim().length > 0;
+  // Hard hero gate: must have a hero OR an explicit admin override.
+  const heroGatePassed = heroOk || heroOverride;
+  const allChecksAcked = ackPreview && ackHero && ackSeo && heroGatePassed;
 
   const openPreview = async () => {
     if (!existing) {
@@ -976,6 +1093,56 @@ const Inner = () => {
               )}
             </div>
 
+            {/* Auto-suggest from title/summary */}
+            {(tagSuggestions.topic.length > 0 || tagSuggestions.audience.length > 0) && (
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-xs">
+                <p className="font-semibold text-slate-700 mb-2">
+                  ✨ Suggested tags
+                  <span className="ml-1 font-normal text-slate-500">
+                    based on title and summary
+                  </span>
+                </p>
+                {tagSuggestions.topic.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-slate-500 mb-1">Topic</p>
+                    <div className="flex flex-wrap gap-1">
+                      {tagSuggestions.topic.map(({ tag }) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() =>
+                            tagAnalysis.topicMatches.length > 0
+                              ? replaceTopicTag(tag)
+                              : addTag(tag)
+                          }
+                          className="px-2 py-0.5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-[11px]"
+                        >
+                          + {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {tagSuggestions.audience.length > 0 && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Audience</p>
+                    <div className="flex flex-wrap gap-1">
+                      {tagSuggestions.audience.map(({ tag }) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => addTag(tag)}
+                          className="px-2 py-0.5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-[11px]"
+                        >
+                          + {tag.replace("audience:", "")}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
               <input
                 type="checkbox"
@@ -1155,6 +1322,59 @@ const Inner = () => {
               Reuse the same prompt with these settings to reproduce a draft.
             </p>
           </Panel>
+
+          {/* Publish history (audit log) */}
+          {existing && (
+            <Panel title="Publish history">
+              {auditLoading ? (
+                <p className="text-xs text-slate-500">Loading…</p>
+              ) : auditEntries.length === 0 ? (
+                <p className="text-xs text-slate-500">No publish events yet.</p>
+              ) : (
+                <ul className="space-y-2 max-h-72 overflow-y-auto">
+                  {auditEntries.map((a) => (
+                    <li key={a.id} className="text-xs border border-slate-200 rounded px-2 py-1.5">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`font-semibold ${
+                            a.action === "publish"
+                              ? "text-emerald-700"
+                              : a.action === "unpublish"
+                                ? "text-amber-700"
+                                : "text-slate-600"
+                          }`}
+                        >
+                          {a.action.charAt(0).toUpperCase() + a.action.slice(1)}
+                        </span>
+                        <span className="text-slate-500">
+                          {new Date(a.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-slate-500">
+                        {a.from_status ?? "—"} → {a.to_status}
+                      </div>
+                      {a.action === "publish" && (
+                        <div className="mt-1 flex flex-wrap gap-1 text-[10px]">
+                          <span className={a.ack_preview ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_preview ? "✓" : "✗"} preview
+                          </span>
+                          <span className={a.ack_hero ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_hero ? "✓" : "✗"} hero
+                          </span>
+                          <span className={a.ack_seo ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_seo ? "✓" : "✗"} SEO
+                          </span>
+                          {a.hero_override && (
+                            <span className="text-amber-700 font-semibold">⚠ hero override</span>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+          )}
         </aside>
       </main>
 
@@ -1195,17 +1415,31 @@ const Inner = () => {
               <Checkbox
                 checked={ackHero}
                 onCheckedChange={(v) => setAckHero(v === true)}
+                disabled={!heroGatePassed}
                 className="mt-0.5"
               />
               <span>
                 Hero image is set.
                 {!heroOk && (
-                  <span className="ml-1 text-amber-600 text-xs">
-                    (No hero image attached — confirm anyway only if intentional.)
+                  <span className="block mt-1 text-amber-700 text-xs">
+                    No hero image attached. Publish is blocked unless an admin overrides below.
                   </span>
                 )}
               </span>
             </label>
+
+            {!heroOk && isAdmin && (
+              <label className="flex items-start gap-3 text-sm cursor-pointer pl-7 border-l-2 border-amber-300">
+                <Checkbox
+                  checked={heroOverride}
+                  onCheckedChange={(v) => setHeroOverride(v === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-amber-900">
+                  Override: publish without a hero image (logged to audit).
+                </span>
+              </label>
+            )}
 
             <label className="flex items-start gap-3 text-sm cursor-pointer">
               <Checkbox

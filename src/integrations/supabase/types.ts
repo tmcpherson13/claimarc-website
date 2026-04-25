@@ -131,6 +131,59 @@ export type Database = {
           },
         ]
       }
+      content_publish_audit: {
+        Row: {
+          ack_hero: boolean
+          ack_preview: boolean
+          ack_seo: boolean
+          action: string
+          actor_id: string | null
+          content_id: string
+          created_at: string
+          from_status: Database["public"]["Enums"]["post_status"] | null
+          hero_override: boolean
+          id: string
+          notes: string | null
+          to_status: Database["public"]["Enums"]["post_status"]
+        }
+        Insert: {
+          ack_hero?: boolean
+          ack_preview?: boolean
+          ack_seo?: boolean
+          action: string
+          actor_id?: string | null
+          content_id: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["post_status"] | null
+          hero_override?: boolean
+          id?: string
+          notes?: string | null
+          to_status: Database["public"]["Enums"]["post_status"]
+        }
+        Update: {
+          ack_hero?: boolean
+          ack_preview?: boolean
+          ack_seo?: boolean
+          action?: string
+          actor_id?: string | null
+          content_id?: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["post_status"] | null
+          hero_override?: boolean
+          id?: string
+          notes?: string | null
+          to_status?: Database["public"]["Enums"]["post_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_publish_audit_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_revisions: {
         Row: {
           content_id: string
