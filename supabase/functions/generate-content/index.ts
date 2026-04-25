@@ -1,5 +1,5 @@
 // AI content generator for the admin editor.
-// Uses the Lovable AI Gateway (server-side LOVABLE_API_KEY) and returns
+// Uses the Anthropic API directly and returns
 // a structured article via tool calling so we never have to parse markdown
 // fences from the model output.
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
@@ -56,46 +56,38 @@ POSITIONING:
 Lead with the problem. Use real stats with citations. Reference the correct layer (PREDICT, PROTECT, or RECOVER) for any module mentioned. End with which modules are involved and BAA requirements. Body should be 600-900 words, markdown with ## headings, **bold**, and bullet lists.`;
 
 const ARTICLE_TOOL = {
-  type: "function",
-  function: {
-    name: "write_article",
-    description: "Return a fully-drafted article for the admin editor.",
-    parameters: {
-      type: "object",
-      properties: {
-        title: { type: "string", description: "Compelling, specific headline." },
-        slug: { type: "string", description: "URL-friendly slug derived from the title." },
-        summary: {
-          type: "string",
-          description: "2-3 sentence summary for meta/preview, max 160 characters.",
-        },
-        tags: {
-          type: "array",
-          items: { type: "string" },
-          description: "3-6 short topical tags.",
-        },
-        body: {
-          type: "string",
-          description:
-            "Full article body in markdown, 600-900 words, ## headings, **bold**, bullet lists.",
-        },
+  name: "write_article",
+  description: "Return a fully-drafted article for the admin editor.",
+  input_schema: {
+    type: "object",
+    properties: {
+      title: { type: "string", description: "Compelling, specific headline." },
+      slug: { type: "string", description: "URL-friendly slug derived from the title." },
+      summary: {
+        type: "string",
+        description: "2-3 sentence summary for meta/preview, max 160 characters.",
       },
-      required: ["title", "slug", "summary", "tags", "body"],
-      additionalProperties: false,
+      tags: {
+        type: "array",
+        items: { type: "string" },
+        description: "3-6 short topical tags.",
+      },
+      body: {
+        type: "string",
+        description:
+          "Full article body in markdown, 600-900 words, ## headings, **bold**, and bullet lists.",
+      },
     },
+    required: ["title", "slug", "summary", "tags", "body"],
   },
-} as const;
+};
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { prompt, model } = await req.json();
-    const MODELS: Record<string, string> = {
-      claude: "anthropic/claude-sonnet-4-6",
-      gemini: "google/gemini-3-flash-preview",
-    };
-    const selectedModel = MODELS[model as string] ?? MODELS.claude;
+    const { prompt } = await req.json();
+
     if (typeof prompt !== "string" || !prompt.trim()) {
       return new Response(JSON.stringify({ error: "Prompt is required." }), {
         status: 400,
@@ -103,77 +95,66 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: selectedModel,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: prompt },
-        ],
+        model: "claude-sonnet-4-6",
+        max_tokens: 4096,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: prompt }],
         tools: [ARTICLE_TOOL],
-        tool_choice: { type: "function", function: { name: "write_article" } },
+        tool_choice: { type: "tool", name: "write_article" },
       }),
     });
 
     if (resp.status === 429) {
       return new Response(
         JSON.stringify({ error: "Rate limit reached — please try again in a moment." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-    if (resp.status === 402) {
+    if (resp.status === 401) {
       return new Response(
-        JSON.stringify({
-          error: "AI credits exhausted. Add credits in Workspace → Usage to continue.",
-        }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "Invalid Anthropic API key. Check your ANTHROPIC_API_KEY secret." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     if (!resp.ok) {
       const text = await resp.text();
-      console.error("AI gateway error", resp.status, text);
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
+      console.error("Anthropic API error", resp.status, text);
+      return new Response(JSON.stringify({ error: "Anthropic API error" }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data = await resp.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    const argsRaw = toolCall?.function?.arguments;
-    if (!argsRaw) {
+    const toolUse = data.content?.find((block: { type: string }) => block.type === "tool_use");
+
+    if (!toolUse?.input) {
       return new Response(
         JSON.stringify({ error: "AI returned no structured output. Try again." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    let parsed: Record<string, unknown>;
-    try {
-      parsed = JSON.parse(argsRaw);
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "AI returned an unexpected format. Try again." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    return new Response(JSON.stringify(parsed), {
+    return new Response(JSON.stringify(toolUse.input), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (e) {
     console.error("generate-content error", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
