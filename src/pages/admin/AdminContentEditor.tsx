@@ -1091,6 +1091,56 @@ const Inner = () => {
               )}
             </div>
 
+            {/* Auto-suggest from title/summary */}
+            {(tagSuggestions.topic.length > 0 || tagSuggestions.audience.length > 0) && (
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-xs">
+                <p className="font-semibold text-slate-700 mb-2">
+                  ✨ Suggested tags
+                  <span className="ml-1 font-normal text-slate-500">
+                    based on title and summary
+                  </span>
+                </p>
+                {tagSuggestions.topic.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-slate-500 mb-1">Topic</p>
+                    <div className="flex flex-wrap gap-1">
+                      {tagSuggestions.topic.map(({ tag }) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() =>
+                            tagAnalysis.topicMatches.length > 0
+                              ? replaceTopicTag(tag)
+                              : addTag(tag)
+                          }
+                          className="px-2 py-0.5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-[11px]"
+                        >
+                          + {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {tagSuggestions.audience.length > 0 && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Audience</p>
+                    <div className="flex flex-wrap gap-1">
+                      {tagSuggestions.audience.map(({ tag }) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => addTag(tag)}
+                          className="px-2 py-0.5 rounded-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-[11px]"
+                        >
+                          + {tag.replace("audience:", "")}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
               <input
                 type="checkbox"
