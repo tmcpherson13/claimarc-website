@@ -18,9 +18,51 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { supabase } from "@/integrations/supabase/client";
+
+// Intelligence Center taxonomy — must stay in sync with the generate-content
+// edge function's SYSTEM_PROMPT.
+const TOPIC_TAGS = [
+  "payer-behavior",
+  "denial-prevention",
+  "prior-authorization",
+  "contract-intelligence",
+  "underpayment-recovery",
+  "compliance",
+  "forecasting",
+] as const;
+
+const AUDIENCE_TAGS = [
+  "audience:CFO",
+  "audience:RC Director",
+  "audience:RC Manager",
+  "audience:Billing Specialist",
+  "audience:Compliance Officer",
+] as const;
+
+const isTopicTag = (t: string) => (TOPIC_TAGS as readonly string[]).includes(t);
+const isAudienceTag = (t: string) => t.startsWith("audience:");
+
+// Generation settings shown in the sidebar so a user can reproduce outputs.
+const GEN_SETTINGS = {
+  model: "claude-sonnet-4-6",
+  maxTokens: 8192,
+  blogTarget: "600–900 words",
+  whitePaperTarget: "1,500–2,500 words",
+};
 
 interface FormState {
   contentType: ContentType;
