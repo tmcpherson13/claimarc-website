@@ -193,10 +193,16 @@ All colors MUST be HSL.
 @keyframes complianceGlow {
   0%, 66%, 100% {
     color: rgb(148 163 184); /* slate-400 — resting */
+    border-color: rgb(51 65 85); /* slate-700 */
+    box-shadow: none;
     text-shadow: none;
   }
   16%, 22% {
     color: rgb(255 255 255);
+    border-color: hsl(var(--emerald, 158 64% 52%) / 0.7);
+    box-shadow:
+      0 0 14px hsl(var(--emerald, 158 64% 52%) / 0.35),
+      inset 0 0 8px hsl(var(--emerald, 158 64% 52%) / 0.12);
     text-shadow:
       0 0 12px hsl(var(--emerald, 158 64% 52%) / 0.55),
       0 0 24px hsl(var(--emerald, 158 64% 52%) / 0.25);
@@ -207,7 +213,7 @@ All colors MUST be HSL.
   animation-name: complianceGlow;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  transition: color 200ms ease;
+  transition: color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -16,14 +16,14 @@ const ComplianceStrip = () => {
 
   return (
     <div
-      className="flex gap-8 text-slate-400 text-sm flex-wrap"
+      className="flex gap-4 flex-wrap text-sm"
       role="region"
       aria-label="Compliance certifications"
     >
       {CERTS.map((label, i) => (
         <span
           key={label}
-          className="compliance-glow"
+          className="compliance-glow inline-flex items-center rounded-md border border-slate-700 px-3 py-1.5 text-slate-400"
           style={{
             animationDuration: `${cycle}s`,
             animationDelay: `${i * 3}s`,
