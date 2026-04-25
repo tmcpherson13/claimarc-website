@@ -121,7 +121,7 @@ const Index = () => {
             THE PLATFORM
           </p>
           <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
-            Three Clusters. Nine Modules. One Platform.
+            Three Layers. Nine Modules. One Platform.
           </h2>
           <p className="text-slate-400 text-center mt-2 text-lg">
             ZDefense covers the full revenue cycle lifecycle — before, during,
