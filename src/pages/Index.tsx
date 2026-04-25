@@ -7,6 +7,7 @@ import HeroAccent from "@/components/HeroAccent";
 import HeroNetwork from "@/components/HeroNetwork";
 import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
+import { PHRASES } from "@/config/terminology";
 
 const Index = () => {
   return (
@@ -121,7 +122,7 @@ const Index = () => {
             THE PLATFORM
           </p>
           <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
-            Three Layers. Nine Modules. One Platform.
+            {PHRASES.threeLayersNineModules}
           </h2>
           <p className="text-slate-400 text-center mt-2 text-lg">
             ZDefense covers the full revenue cycle lifecycle — before, during,
