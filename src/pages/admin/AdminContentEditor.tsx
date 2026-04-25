@@ -121,6 +121,7 @@ const Inner = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [aiModel, setAiModel] = useState<"claude" | "gemini">("claude");
 
   const generateWithAI = async () => {
     if (!aiPrompt.trim()) return;
@@ -128,7 +129,7 @@ const Inner = () => {
     setAiError("");
     try {
       const { data, error } = await supabase.functions.invoke("generate-content", {
-        body: { prompt: aiPrompt },
+        body: { prompt: aiPrompt, model: aiModel },
       });
       if (error) throw new Error(error.message || "Generation failed.");
       const parsed = data as {
@@ -542,6 +543,25 @@ const Inner = () => {
             </div>
             {showAiPanel && (
               <div className="mt-4">
+                <div className="flex gap-2 mb-1">
+                  {(["claude", "gemini"] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setAiModel(m)}
+                      className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
+                        aiModel === m
+                          ? "bg-[var(--emerald)] text-white"
+                          : "bg-white/10 text-white/50 hover:bg-white/20 hover:text-white"
+                      }`}
+                    >
+                      {m === "claude" ? "✦ Claude" : "◆ Gemini"}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-white/30 text-[10px] mt-1 mb-3">
+                  Claude: consistent brand voice — Gemini: faster for bulk drafts
+                </p>
                 <textarea
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
