@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FileText, Image as ImageIcon, User } from "lucide-react";
+import { LayoutDashboard, FileText, FileEdit, Image as ImageIcon, User } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import AI3 from "@/components/AI3";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/content", label: "Content", icon: FileText, end: false },
+  { to: "/admin/about", label: "About Page", icon: FileEdit, end: false },
   { to: "/admin/assets", label: "Assets", icon: ImageIcon, end: false },
   { to: "/admin/profile", label: "My Profile", icon: User, end: false },
 ];

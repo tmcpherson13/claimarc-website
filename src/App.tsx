@@ -21,6 +21,8 @@ import AdminContentEditor from "./pages/admin/AdminContentEditor.tsx";
 import AdminAssets from "./pages/admin/AdminAssets.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminProfile from "./pages/admin/AdminProfile.tsx";
+import AdminAboutPage from "./pages/admin/AdminAboutPage.tsx";
+import AboutPage from "./pages/AboutPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,7 @@ const App = () => (
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/workflows" element={<WorkflowsPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<InsightsPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/white-papers" element={<Navigate to="/blog?type=white_paper" replace />} />
@@ -50,6 +53,7 @@ const App = () => (
           <Route path="/admin/content/:id" element={<AdminContentEditor />} />
           <Route path="/admin/assets" element={<AdminAssets />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
+          <Route path="/admin/about" element={<AdminAboutPage />} />
           {/* Legacy redirects */}
           <Route path="/admin/blog" element={<Navigate to="/admin/content" replace />} />
           <Route path="/admin/blog/new" element={<Navigate to="/admin/content/new?type=blog" replace />} />
