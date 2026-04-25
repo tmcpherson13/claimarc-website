@@ -69,8 +69,8 @@ const InsightsPage = () => {
         <div className="max-w-6xl mx-auto">
           <FilterBar items={items} showTypeFilter />
 
-          <div className="mt-6 -mx-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-            <div className="flex gap-2 px-2 min-w-max">
+          <div className="mt-6">
+            <div className="flex flex-wrap gap-2">
               {[
                 { label: "All", value: "" },
                 { label: "Payer Behavior", value: "payer-behavior" },
