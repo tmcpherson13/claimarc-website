@@ -1322,6 +1322,59 @@ const Inner = () => {
               Reuse the same prompt with these settings to reproduce a draft.
             </p>
           </Panel>
+
+          {/* Publish history (audit log) */}
+          {existing && (
+            <Panel title="Publish history">
+              {auditLoading ? (
+                <p className="text-xs text-slate-500">Loading…</p>
+              ) : auditEntries.length === 0 ? (
+                <p className="text-xs text-slate-500">No publish events yet.</p>
+              ) : (
+                <ul className="space-y-2 max-h-72 overflow-y-auto">
+                  {auditEntries.map((a) => (
+                    <li key={a.id} className="text-xs border border-slate-200 rounded px-2 py-1.5">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`font-semibold ${
+                            a.action === "publish"
+                              ? "text-emerald-700"
+                              : a.action === "unpublish"
+                                ? "text-amber-700"
+                                : "text-slate-600"
+                          }`}
+                        >
+                          {a.action.charAt(0).toUpperCase() + a.action.slice(1)}
+                        </span>
+                        <span className="text-slate-500">
+                          {new Date(a.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-slate-500">
+                        {a.from_status ?? "—"} → {a.to_status}
+                      </div>
+                      {a.action === "publish" && (
+                        <div className="mt-1 flex flex-wrap gap-1 text-[10px]">
+                          <span className={a.ack_preview ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_preview ? "✓" : "✗"} preview
+                          </span>
+                          <span className={a.ack_hero ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_hero ? "✓" : "✗"} hero
+                          </span>
+                          <span className={a.ack_seo ? "text-emerald-700" : "text-slate-400"}>
+                            {a.ack_seo ? "✓" : "✗"} SEO
+                          </span>
+                          {a.hero_override && (
+                            <span className="text-amber-700 font-semibold">⚠ hero override</span>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+          )}
         </aside>
       </main>
 
