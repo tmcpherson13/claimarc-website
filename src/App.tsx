@@ -22,6 +22,7 @@ import AdminAssets from "./pages/admin/AdminAssets.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminProfile from "./pages/admin/AdminProfile.tsx";
 import AdminAboutPage from "./pages/admin/AdminAboutPage.tsx";
+import AdminUsers from "./pages/admin/AdminUsers.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/admin/assets" element={<AdminAssets />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/admin/about" element={<AdminAboutPage />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
           {/* Legacy redirects */}
           <Route path="/admin/blog" element={<Navigate to="/admin/content" replace />} />
           <Route path="/admin/blog/new" element={<Navigate to="/admin/content/new?type=blog" replace />} />
