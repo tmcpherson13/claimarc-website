@@ -121,7 +121,7 @@ const Inner = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showAiPanel, setShowAiPanel] = useState(false);
-  const [aiModel, setAiModel] = useState<"claude" | "gemini">("claude");
+  const [imageRefreshPage, setImageRefreshPage] = useState(1);
 
   // Suggested hero images (Unsplash) — populated after AI generation
   type SuggestedPhoto = {
@@ -136,7 +136,7 @@ const Inner = () => {
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  const fetchSuggestedImages = async (title: string, tags: string[] = []) => {
+  const fetchSuggestedImages = async (title: string, tags: string[] = [], page = 1) => {
     const stopWords = new Set([
       "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
       "of", "with", "how", "why", "what", "when", "where", "your", "our",
@@ -155,7 +155,7 @@ const Inner = () => {
       "healthcare revenue cycle";
 
     const { data, error } = await supabase.functions.invoke("fetch-images", {
-      body: { query },
+      body: { query, page },
     });
 
     if (!error && data?.photos?.length) {
@@ -202,7 +202,7 @@ const Inner = () => {
     setAiError("");
     try {
       const { data, error } = await supabase.functions.invoke("generate-content", {
-        body: { prompt: aiPrompt, model: aiModel },
+        body: { prompt: aiPrompt, contentType: form.contentType },
       });
       if (error) throw new Error(error.message || "Generation failed.");
       const parsed = data as {
@@ -231,9 +231,10 @@ const Inner = () => {
         title: "Content generated",
         description: "Review the draft and publish when ready.",
       });
-      // Kick off image suggestions in the background
+      // Reset image page and kick off image suggestions in the background
+      setImageRefreshPage(1);
       if (parsed.title) {
-        fetchSuggestedImages(parsed.title, parsed.tags ?? []);
+        fetchSuggestedImages(parsed.title, parsed.tags ?? [], 1);
       }
     } catch (err) {
       setAiError(err instanceof Error ? err.message : "Generation failed. Try again.");
@@ -620,25 +621,6 @@ const Inner = () => {
             </div>
             {showAiPanel && (
               <div className="mt-4">
-                <div className="flex gap-2 mb-1">
-                  {(["claude", "gemini"] as const).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setAiModel(m)}
-                      className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
-                        aiModel === m
-                          ? "bg-[var(--emerald)] text-white"
-                          : "bg-white/10 text-white/50 hover:bg-white/20 hover:text-white"
-                      }`}
-                    >
-                      {m === "claude" ? "✦ Claude" : "◆ Gemini"}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-white/30 text-[10px] mt-1 mb-3">
-                  Claude: consistent brand voice — Gemini: faster for bulk drafts
-                </p>
                 <textarea
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
@@ -678,16 +660,29 @@ const Inner = () => {
                 <p className="text-slate-900 font-semibold text-sm">
                   Suggested Hero Images
                 </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSuggestedPhotos([]);
-                    setSelectedPhotoId(null);
-                  }}
-                  className="text-slate-400 hover:text-slate-600 text-xs"
-                >
-                  Dismiss
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextPage = imageRefreshPage + 1;
+                      setImageRefreshPage(nextPage);
+                      fetchSuggestedImages(form.title, form.tags, nextPage);
+                    }}
+                    className="text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    ↻ Refresh
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuggestedPhotos([]);
+                      setSelectedPhotoId(null);
+                    }}
+                    className="text-slate-400 hover:text-slate-600 text-xs"
+                  >
+                    Dismiss
+                  </button>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-3">
                 {suggestedPhotos.map((photo) => (
