@@ -45,53 +45,37 @@ const Navbar = () => {
               </Link>
             );
           })}
-        </div>
 
-        <div className="hidden lg:flex flex-col items-end gap-1.5">
-          {/* INTELLIGENCE CENTER — primary hero button */}
+          {/* Intelligence Center — inline with nav links, visually distinct */}
           <Link
             to="/blog"
-            className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-white overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25"
+            className="group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-semibold text-sm text-white overflow-hidden transition-all duration-300 hover:shadow-md hover:shadow-emerald-500/20"
             style={{
               background:
-                'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #10B981 100%)',
+                'linear-gradient(135deg, #1E3A5F 0%, #10B981 100%)',
             }}
           >
-            {/* Shimmer sweep animation */}
-            <span
-              className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
-              style={{
-                background:
-                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
-              }}
-            />
-            {/* Pulse ring */}
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--emerald)] opacity-60" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--emerald)]" />
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
             </span>
-            <span className="relative tracking-wide">Intelligence Center</span>
-            <span className="relative text-[var(--emerald)] group-hover:translate-x-0.5 transition-transform duration-200">
-              →
-            </span>
+            <span className="relative tracking-wide text-xs uppercase">Intelligence Center</span>
           </Link>
+        </div>
 
-          {/* Secondary CTAs — subtle, below the IC button */}
-          <div className="flex items-center gap-3 px-1">
-            <Link
-              to="/contact"
-              className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo text-white/50 text-xs hover:text-white transition-colors"
-            >
-              Book a Demo
-            </Link>
-            <span className="text-white/20 text-xs">·</span>
-            <Link
-              to="/contact?offer=trial"
-              className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial text-white/50 text-xs hover:text-white transition-colors"
-            >
-              30-Day Evaluation
-            </Link>
-          </div>
+        <div className="hidden lg:flex flex-col items-stretch gap-1.5 min-w-[160px]">
+          <Link
+            to="/contact"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-md text-center transition-colors"
+          >
+            Book a Demo
+          </Link>
+          <Link
+            to="/contact?offer=trial"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] hover:bg-emerald-500/10 text-xs font-semibold px-4 py-2 rounded-md text-center transition-colors"
+          >
+            30-Day Evaluation
+          </Link>
         </div>
 
         <button
@@ -132,28 +116,28 @@ const Navbar = () => {
             <Link
               to="/blog"
               onClick={closeMenu}
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm text-white"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-semibold text-xs text-white uppercase tracking-wide"
               style={{
                 background:
-                  'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #10B981 100%)',
+                  'linear-gradient(135deg, #1E3A5F 0%, #10B981 100%)',
               }}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald)] animate-ping" />
-              Intelligence Center →
+              <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+              Intelligence Center
             </Link>
             <Link
               to="/contact"
               onClick={closeMenu}
-              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2.5 rounded text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
+              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2.5 rounded-md text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
             >
               Book a Demo
             </Link>
             <Link
               to="/contact?offer=trial"
               onClick={closeMenu}
-              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial text-[var(--emerald)] text-sm underline text-center"
+              className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] text-sm font-semibold text-center px-4 py-2.5 rounded-md hover:bg-emerald-500/10 transition-colors"
             >
-              30-Day Evaluation →
+              30-Day Evaluation
             </Link>
           </div>
         </div>
