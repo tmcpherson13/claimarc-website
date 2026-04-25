@@ -4,6 +4,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import SeoHead from "@/components/SeoHead";
+import ComplianceStrip from "@/components/ComplianceStrip";
 
 const WhyZDefensePage = () => {
   return (
