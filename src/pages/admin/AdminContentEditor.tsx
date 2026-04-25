@@ -540,9 +540,9 @@ const Inner = () => {
   };
 
   const requestPublish = () => {
-    // Run publish-grade validation up front so the dialog only opens on
-    // an item that's structurally ready to publish.
-    if (!validate(true)) {
+    // Validate everything except the hero gate — the dialog handles the
+    // hero override flow in-context.
+    if (!validate(true, true)) {
       toast({
         title: "Cannot publish yet",
         description: "Fix the highlighted issues, then try again.",
@@ -553,12 +553,18 @@ const Inner = () => {
     setAckPreview(false);
     setAckHero(false);
     setAckSeo(false);
+    setHeroOverride(false);
     setPublishDialogOpen(true);
   };
 
   const confirmPublish = async () => {
     setPublishDialogOpen(false);
-    await save("published");
+    await save("published", {
+      ackPreview,
+      ackHero,
+      ackSeo,
+      heroOverride,
+    });
   };
 
   const allChecksAcked = ackPreview && ackHero && ackSeo;
