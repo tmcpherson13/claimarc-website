@@ -5,7 +5,7 @@ import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import RoleRoutingDiagram from "@/components/RoleRoutingDiagram";
 import SeoHead from "@/components/SeoHead";
-import TriageWarRoom from "@/components/TriageWarRoom";
+import SolutionFlowStream from "@/components/SolutionFlowStream";
 
 interface RoleContent {
   key: string;
@@ -44,6 +44,7 @@ const SolutionsPage = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
         <HeroAccent />
+        <SolutionFlowStream />
         <div className="relative max-w-7xl mx-auto">
           <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold max-w-3xl">
             Built for the Teams Who Live Inside the Revenue Cycle
@@ -125,19 +126,6 @@ const SolutionsPage = () => {
 
       <RoleRoutingDiagram />
 
-      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-2xl mb-10">
-            <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
-              Live Triage War Room
-            </h2>
-            <p className="mt-4 text-white/70">
-              Watch ZDefense AI³ route incoming claims into deny, appeal, and approve queues in real time — prioritized by recovery probability and dollar value.
-            </p>
-          </div>
-          <TriageWarRoom />
-        </div>
-      </section>
 
       <CTABand
         headline="Not Sure Where to Start?"
