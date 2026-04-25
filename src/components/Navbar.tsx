@@ -63,18 +63,18 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="hidden lg:flex flex-col items-stretch gap-1.5 min-w-[160px]">
+        <div className="hidden lg:flex items-center gap-2">
           <Link
             to="/contact"
-            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-md text-center transition-colors"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-md text-center transition-colors whitespace-nowrap"
           >
             Book a Demo
           </Link>
           <Link
             to="/contact?offer=trial"
-            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] hover:bg-emerald-500/10 text-xs font-semibold px-4 py-2 rounded-md text-center transition-colors"
+            className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=start_trial border border-[var(--emerald)] text-[var(--emerald)] hover:bg-emerald-500/10 text-xs font-semibold px-3 py-2 rounded-md text-center transition-colors whitespace-nowrap"
           >
-            30-Day Evaluation
+            30-Day Eval
           </Link>
         </div>
 
