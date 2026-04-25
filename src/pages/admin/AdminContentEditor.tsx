@@ -402,7 +402,15 @@ const Inner = () => {
     return Object.keys(e).length === 0;
   };
 
-  const save = async (status?: PostStatus) => {
+  const save = async (
+    status?: PostStatus,
+    audit?: {
+      ackPreview: boolean;
+      ackHero: boolean;
+      ackSeo: boolean;
+      heroOverride: boolean;
+    },
+  ) => {
     const targetStatus = status ?? form.status;
     if (!isAdmin && (targetStatus === "published" || targetStatus === "archived")) {
       toast({
@@ -412,7 +420,7 @@ const Inner = () => {
       });
       return;
     }
-    if (!validate(targetStatus === "published")) return;
+    if (!validate(targetStatus === "published", audit?.heroOverride ?? false)) return;
     setSaving(true);
     try {
       let publishedAt = fromLocal(form.publishedAt);
@@ -436,9 +444,45 @@ const Inner = () => {
         seoDescription: form.seoDescription.trim() || null,
         canonicalUrl: form.canonicalUrl.trim() || null,
       };
+      const previousStatus = existing?.status ?? null;
       const saved = isNew
         ? await contentApi.create(input)
         : await contentApi.update(id!, input);
+
+      // Write audit row for status transitions we care about. Drafts and
+      // scheduled saves are not audited — those go to the revisions log.
+      const auditAction =
+        targetStatus === "published"
+          ? "publish"
+          : targetStatus === "archived"
+            ? "archive"
+            : previousStatus === "published" && targetStatus === "draft"
+              ? "unpublish"
+              : null;
+
+      if (auditAction) {
+        try {
+          await contentApi.logPublishAudit({
+            contentId: saved.id,
+            action: auditAction,
+            fromStatus: previousStatus,
+            toStatus: targetStatus,
+            ackPreview: audit?.ackPreview ?? false,
+            ackHero: audit?.ackHero ?? false,
+            ackSeo: audit?.ackSeo ?? false,
+            heroOverride: audit?.heroOverride ?? false,
+          });
+          // Refresh the inline audit panel so the new row shows immediately.
+          contentApi.listAudit(saved.id).then(setAuditEntries).catch(() => {});
+        } catch {
+          // Audit failure should not block the save itself.
+          toast({
+            title: "Audit log warning",
+            description: "Action saved, but audit entry could not be written.",
+          });
+        }
+      }
+
       toast({ title: targetStatus === "published" ? "Published" : "Saved" });
       if (isNew) navigate(`/admin/content/${saved.id}`, { replace: true });
       else {
