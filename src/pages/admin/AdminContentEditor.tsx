@@ -909,13 +909,73 @@ const Inner = () => {
 
           {/* Taxonomy */}
           <Panel title="Taxonomy">
-            <Field label="Tags">
+            <Field label="Tags" error={errors.tags}>
               <TagInput
                 value={form.tags}
                 onChange={(tags) => set("tags", tags)}
                 placeholder="Type a tag and press Enter…"
               />
             </Field>
+
+            {/* Required-tag validation status with one-click fixes */}
+            <div
+              className={`rounded-md border p-3 text-xs ${
+                tagAnalysis.valid
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-amber-200 bg-amber-50 text-amber-900"
+              }`}
+            >
+              <p className="font-semibold mb-2">
+                {tagAnalysis.valid
+                  ? "✓ Required tags look good"
+                  : "Required tags missing"}
+              </p>
+
+              {/* Topic tag — exactly one */}
+              {(tagAnalysis.missingTopic || tagAnalysis.tooManyTopics) && (
+                <div className="mb-2">
+                  <p className="mb-1">
+                    {tagAnalysis.missingTopic
+                      ? "Pick one Intelligence Center topic tag:"
+                      : "Only one topic tag allowed — pick one to keep:"}
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {TOPIC_TAGS.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() =>
+                          tagAnalysis.tooManyTopics ? replaceTopicTag(t) : addTag(t)
+                        }
+                        className="px-2 py-0.5 rounded-full bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-[11px]"
+                      >
+                        + {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Audience tags — at least one */}
+              {tagAnalysis.missingAudience && (
+                <div>
+                  <p className="mb-1">Add at least one audience tag:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {AUDIENCE_TAGS.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => addTag(t)}
+                        className="px-2 py-0.5 rounded-full bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 text-[11px]"
+                      >
+                        + {t.replace("audience:", "")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <label className="flex items-center gap-2 text-sm text-[var(--navy)]">
               <input
                 type="checkbox"
