@@ -38,35 +38,31 @@ const WI_ROWS = [
   { name: "Aetna", wi: "1.7x", badge: "bg-slate-700 text-slate-300" },
 ];
 
-// Inline keyframes — scoped via a <style> tag rendered once with the component.
+// Inline keyframes — only the one-shot blip pulse remains; the sweep arm
+// is now driven by a React rAF loop, not CSS animation.
 const RADAR_STYLES = `
-@keyframes radarSweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 @keyframes radarBlipPulse {
   0%   { opacity: 0; }
   40%  { opacity: 0.8; }
   100% { opacity: 0; }
-}
-.radar-sweep-group {
-  transform-origin: 250px 250px;
-  animation: radarSweep 6.65s linear infinite;
 }
 .radar-blip-pulse-once {
   animation: radarBlipPulse 600ms ease-out forwards;
 }
 `;
 
-// Sweep duration must match the CSS animation above.
-const SWEEP_DURATION_MS = 6650;
-// Each blip's angle in SVG atan2 space (degrees), where 0° = +x (east)
-// and angles increase clockwise (since SVG y grows downward).
-// Range: (-180, 180].
+const DURATION = 6650;
+const TRAIL_WINDOW = 8; // degrees
+const CENTER_X = 250;
+const CENTER_Y = 250;
+
+// Angle in clockwise-from-north degrees (0 = up, increasing clockwise)
+// matching the inline rotate(armAngle) on the sweep arm group.
 const blipAngle = (x: number, y: number) => {
-  const dx = x - 250;
-  const dy = y - 250;
-  return (Math.atan2(dy, dx) * 180) / Math.PI;
+  return (
+    (((Math.atan2(y - CENTER_Y, x - CENTER_X) * 180) / Math.PI + 90 + 360) %
+      360)
+  );
 };
 const BLIP_ANGLES = BLIPS.map((b) => blipAngle(b.x, b.y));
 
@@ -77,6 +73,9 @@ const PayerThreatRadar = () => {
   const [activeMap, setActiveMap] = useState<boolean[]>(() => BLIPS.map(() => false));
   const pulseKeyRef = useRef<number[]>(BLIPS.map(() => 0));
   const [, forcePulseRender] = useState(0);
+  const [armAngle, setArmAngle] = useState(0);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -94,62 +93,43 @@ const PayerThreatRadar = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Track sweep arm angle and light blips up ONLY after the arm has just
-  // crossed them (trailing window). Turn off after a fade delay.
+  // Single rAF loop: drive arm rotation AND blip activation off the same angle.
   useEffect(() => {
-    const TRAIL_WINDOW = 5; // degrees past the blip
-    const OFF_DELAY_MS = 400;
     const wasActive = BLIPS.map(() => false);
-    const offTimers: Array<number | null> = BLIPS.map(() => null);
 
-    const id = window.setInterval(() => {
-      const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
-      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
-      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
-      const adjustedAngle = currentAngle - 90;
+    const animate = (timestamp: number) => {
+      if (startTimeRef.current === null) startTimeRef.current = timestamp;
+      const elapsed = timestamp - startTimeRef.current;
+      const angle = ((elapsed % DURATION) / DURATION) * 360;
+
+      setArmAngle(angle);
+
       let changed = false;
       let pulseChanged = false;
       const next = wasActive.slice();
-
       for (let i = 0; i < BLIPS.length; i++) {
-        const diff = (adjustedAngle - BLIP_ANGLES[i] + 720) % 360;
-        const inWindow = diff < TRAIL_WINDOW;
+        const diff = (angle - BLIP_ANGLES[i] + 360) % 360;
+        const inWindow = diff >= 0 && diff < TRAIL_WINDOW;
 
-        if (inWindow && !wasActive[i]) {
-          if (offTimers[i] !== null) {
-            window.clearTimeout(offTimers[i] as number);
-            offTimers[i] = null;
-          }
-          next[i] = true;
-          wasActive[i] = true;
+        if (inWindow !== wasActive[i]) {
+          next[i] = inWindow;
+          wasActive[i] = inWindow;
           changed = true;
-          pulseKeyRef.current[i] += 1;
-          pulseChanged = true;
-        } else if (!inWindow && wasActive[i] && offTimers[i] === null) {
-          const idx = i;
-          offTimers[idx] = window.setTimeout(() => {
-            wasActive[idx] = false;
-            offTimers[idx] = null;
-            setActiveMap((prev) => {
-              if (!prev[idx]) return prev;
-              const copy = prev.slice();
-              copy[idx] = false;
-              return copy;
-            });
-          }, OFF_DELAY_MS);
+          if (inWindow) {
+            pulseKeyRef.current[i] += 1;
+            pulseChanged = true;
+          }
         }
       }
       if (changed) setActiveMap(next);
       if (pulseChanged) forcePulseRender((n) => n + 1);
-    }, 50);
 
-    return () => {
-      window.clearInterval(id);
-      offTimers.forEach((t) => t !== null && window.clearTimeout(t));
+      rafRef.current = requestAnimationFrame(animate);
     };
-  }, []);
 
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
 
   return (
     <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 border-t border-b border-slate-800">
@@ -270,7 +250,13 @@ const PayerThreatRadar = () => {
             </text>
 
             {/* Sweep arm — clean line, rotates around radar center */}
-            <g className="radar-sweep-group">
+            <g
+              style={{
+                transform: `rotate(${armAngle}deg)`,
+                transformOrigin: `${CENTER_X}px ${CENTER_Y}px`,
+                transformBox: "view-box" as const,
+              }}
+            >
               <line
                 x1={250}
                 y1={250}

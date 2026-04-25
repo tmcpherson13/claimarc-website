@@ -2,114 +2,78 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * HeroNetwork — decorative radar background for the hero section.
- * A large emerald radar with a slow sweep, partially clipped at the right edge.
- * Sits behind hero text. pointer-events: none, z-index: 0.
+ * Single rAF loop drives both the sweep arm rotation and blip activation
+ * so they always reference the exact same angle value.
  */
 
 interface HeroNetworkProps {
   className?: string;
 }
 
-// SVG coordinate system. Radar center at 75% horizontal, 50% vertical.
 const VB_W = 1200;
 const VB_H = 600;
 const CX = VB_W * 0.75; // 900
 const CY = VB_H * 0.5;  // 300
-const RINGS = [120, 210, 310, 420]; // ring 1, 2, 3, outer
+const RINGS = [120, 210, 310, 420];
 const R_MAX = 420;
 
-// Sweep duration must match the CSS animation below.
-const SWEEP_DURATION_MS = 9200;
+const DURATION = 9200;
+const TRAIL_WINDOW = 8; // degrees
 
-
-// Blip definitions: ring index (0=innermost..3=outer) + angle in standard
-// math degrees (0 = +x axis, CCW positive — used directly with cos/sin).
+// Blip definitions: ring index + angle in clockwise-from-north degrees
+// (0 = up/north, increasing clockwise) — same convention as the sweep arm
+// at rotate(armAngle).
 const BLIP_DEFS = [
-  { ring: 3, angle: 35 },   // A — outer
-  { ring: 2, angle: 95 },   // B — ring 3
-  { ring: 1, angle: 155 },  // C — ring 2
-  { ring: 3, angle: 210 },  // D — outer
-  { ring: 2, angle: 270 },  // E — ring 3
-  { ring: 1, angle: 315 },  // F — ring 2
-  { ring: 0, angle: 60 },   // G — ring 1
-  { ring: 3, angle: 140 },  // H — outer
+  { ring: 3, angle: 35 },
+  { ring: 2, angle: 95 },
+  { ring: 1, angle: 155 },
+  { ring: 3, angle: 210 },
+  { ring: 2, angle: 270 },
+  { ring: 1, angle: 315 },
+  { ring: 0, angle: 60 },
+  { ring: 3, angle: 140 },
 ];
 
-// Precompute pixel positions and SVG-atan2 angle for sweep matching.
-// In SVG space, atan2(dy, dx) gives 0° = east, increasing clockwise
-// (because y grows downward). The sweep arm at rotate(0) points north,
-// which is -90° in this space, so adjustedAngle = currentAngle - 90.
-const BLIPS = BLIP_DEFS.map((b) => {
+// Convert clockwise-from-north angle to SVG x/y (north = -y).
+const blips = BLIP_DEFS.map((b) => {
   const r = RINGS[b.ring];
-  const rad = (b.angle * Math.PI) / 180;
-  const x = CX + r * Math.cos(rad);
-  const y = CY + r * Math.sin(rad);
-  const dx = x - CX;
-  const dy = y - CY;
-  const svgAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
-  return { x, y, svgAngle };
+  const theta = ((b.angle - 90) * Math.PI) / 180; // shift so 0° = north
+  return {
+    angle: b.angle,
+    x: CX + r * Math.cos(theta),
+    y: CY + r * Math.sin(theta),
+  };
 });
 
+const NUM_BLIPS = blips.length;
+
 const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
-  const [active, setActive] = useState<boolean[]>(() => BLIPS.map(() => false));
-  const pulseKeysRef = useRef<number[]>(BLIPS.map(() => 0));
-  const [, forcePulse] = useState(0);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
+  const [armAngle, setArmAngle] = useState(0);
+  const [activeBlips, setActiveBlips] = useState<boolean[]>(
+    () => Array(NUM_BLIPS).fill(false)
+  );
 
   useEffect(() => {
-    const TRAIL_WINDOW = 6; // degrees past the blip
-    const OFF_DELAY_MS = 500;
-    const wasActive = BLIPS.map(() => false);
-    const offTimers: Array<number | null> = BLIPS.map(() => null);
+    const animate = (timestamp: number) => {
+      if (startTimeRef.current === null) startTimeRef.current = timestamp;
+      const elapsed = timestamp - startTimeRef.current;
+      const angle = ((elapsed % DURATION) / DURATION) * 360;
 
-    const id = window.setInterval(() => {
-      const elapsed = performance.now() % SWEEP_DURATION_MS;
-      const currentAngle = (elapsed / SWEEP_DURATION_MS) * 360;
-      // SVG offset: rotate(0) points the arm "up" (north), which is -90°
-      // in atan2(dy, dx) space. Subtract 90 to compare in the same space.
-      const adjustedAngle = currentAngle - 90;
-      let changed = false;
-      let pulseChanged = false;
-      const next = wasActive.slice();
+      setArmAngle(angle);
+      setActiveBlips(
+        blips.map((blip) => {
+          const diff = (angle - blip.angle + 360) % 360;
+          return diff >= 0 && diff < TRAIL_WINDOW;
+        })
+      );
 
-      for (let i = 0; i < BLIPS.length; i++) {
-        // Trailing window: how far past the blip the arm has swept (0..360).
-        const diff = (adjustedAngle - BLIPS[i].svgAngle + 720) % 360;
-        const inWindow = diff < TRAIL_WINDOW;
-
-        if (inWindow && !wasActive[i]) {
-          // Rising edge: arm just reached the blip.
-          if (offTimers[i] !== null) {
-            window.clearTimeout(offTimers[i] as number);
-            offTimers[i] = null;
-          }
-          next[i] = true;
-          wasActive[i] = true;
-          changed = true;
-          pulseKeysRef.current[i] += 1;
-          pulseChanged = true;
-        } else if (!inWindow && wasActive[i] && offTimers[i] === null) {
-          // Falling edge: schedule turn-off after the fade delay.
-          const idx = i;
-          offTimers[idx] = window.setTimeout(() => {
-            wasActive[idx] = false;
-            offTimers[idx] = null;
-            setActive((prev) => {
-              if (!prev[idx]) return prev;
-              const copy = prev.slice();
-              copy[idx] = false;
-              return copy;
-            });
-          }, OFF_DELAY_MS);
-        }
-      }
-      if (changed) setActive(next);
-      if (pulseChanged) forcePulse((n) => n + 1);
-    }, 50);
-
-    return () => {
-      window.clearInterval(id);
-      offTimers.forEach((t) => t !== null && window.clearTimeout(t));
+      rafRef.current = requestAnimationFrame(animate);
     };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
   return (
@@ -122,8 +86,6 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
       focusable="false"
       style={{ overflow: "visible" }}
     >
-
-
       {/* Concentric rings */}
       <g>
         {RINGS.map((r, i) => (
@@ -162,45 +124,41 @@ const HeroNetwork = ({ className = "" }: HeroNetworkProps) => {
         />
       </g>
 
-      {/* Blip dots — dark by default, light up as sweep arm passes */}
+      {/* Blip dots — opacity-only fade driven by activeBlips */}
       <g>
-        {BLIPS.map((b, i) => {
-          const isActive = active[i];
-          const pulseKey = pulseKeysRef.current[i];
+        {blips.map((b, i) => {
+          const on = activeBlips[i];
           return (
             <g key={`blip-${i}`}>
-              {pulseKey > 0 && (
-                <circle
-                  key={`pulse-${pulseKey}`}
-                  cx={b.x}
-                  cy={b.y}
-                  r={8}
-                  fill="none"
-                  stroke="#10B981"
-                  strokeWidth={1}
-                  opacity={0}
-                  className="hero-radar-blip-pulse"
-                  style={{ transformOrigin: `${b.x}px ${b.y}px` }}
-                />
-              )}
               <circle
                 cx={b.x}
                 cy={b.y}
-                r={3}
+                r={9}
+                fill="none"
+                stroke="#10B981"
+                strokeWidth={1}
+                opacity={on ? 0.6 : 0}
+                style={{ transition: "opacity 200ms ease" }}
+              />
+              <circle
+                cx={b.x}
+                cy={b.y}
+                r={4}
                 fill="#10B981"
-                className="transition-opacity duration-500"
-                style={{ opacity: isActive ? 0.7 : 0 }}
+                opacity={on ? 1 : 0}
+                style={{ transition: "opacity 200ms ease" }}
               />
             </g>
           );
         })}
       </g>
 
-      {/* Sweep arm — clean line, rotates around radar center */}
+      {/* Sweep arm — rotated via inline transform from rAF state */}
       <g
         style={{
+          transform: `rotate(${armAngle}deg)`,
           transformOrigin: `${CX}px ${CY}px`,
-          animation: "heroRadarSweep 9.2s linear infinite",
+          transformBox: "view-box" as const,
         }}
       >
         <line
