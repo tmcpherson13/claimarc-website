@@ -250,7 +250,13 @@ const PayerThreatRadar = () => {
             </text>
 
             {/* Sweep arm — clean line, rotates around radar center */}
-            <g className="radar-sweep-group">
+            <g
+              style={{
+                transform: `rotate(${armAngle}deg)`,
+                transformOrigin: `${CENTER_X}px ${CENTER_Y}px`,
+                transformBox: "view-box" as const,
+              }}
+            >
               <line
                 x1={250}
                 y1={250}
