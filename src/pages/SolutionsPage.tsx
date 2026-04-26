@@ -80,7 +80,13 @@ const SolutionsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (hash) scrollToHash(hash);
+    if (hash) {
+      scrollToHash(hash);
+      const id = hash.replace(/^#/, "");
+      if (id && MODULES.some((m) => slugify(m.name) === id)) {
+        setExpandedModule(id);
+      }
+    }
   }, [hash, pathname, scrollToHash]);
 
   /** Scroll-spy: highlight the module section currently in view. */
