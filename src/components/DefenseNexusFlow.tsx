@@ -482,13 +482,26 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           opacity={nexusGlow}
         />
 
-        {/* Circuit-board nexus: concentric rings, radial traces, solder pads,
-            and small particles "buzzing" along the traces before exiting. */}
+        {/* Darker PCB substrate disc */}
+        <circle
+          cx={NEXUS_X}
+          cy={NEXUS_Y}
+          r={66}
+          fill="#020617"
+          stroke="#064E3B"
+          strokeWidth={1}
+          opacity={0.95}
+        />
+
+        {/* Circuit-board nexus: PCB traces with right-angle segments,
+            solder pads, vias, and chaotic particles "buzzing" around
+            before exiting outward to the modules. */}
         {(() => {
-          const RINGS = [28, 46, 64];
-          const TRACE_COUNT = 12;
+          const RINGS = [22, 40, 58];
+          const TRACE_COUNT = 16;
           const PAD_R = 2.4;
-          // Radial trace endpoints
+
+          // Outer pads + radial connection points
           const traces = Array.from({ length: TRACE_COUNT }, (_, i) => {
             const a = (i / TRACE_COUNT) * Math.PI * 2;
             return {
@@ -500,33 +513,88 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             };
           });
 
-          // Buzzing particles: each travels outward along a radial trace,
-          // pauses at the outer pad, then resets. Phase-staggered.
-          const BUZZ_COUNT = 18;
-          const BUZZ_PERIOD = 1800; // ms
+          // Traditional PCB-style traces: a mix of L-shaped (right-angle)
+          // jogs between rings and tangential arc segments. Built as SVG
+          // path strings using cartesian coords relative to the nexus center.
+          const pcbPaths: string[] = [];
+          for (let i = 0; i < TRACE_COUNT; i++) {
+            const a0 = (i / TRACE_COUNT) * Math.PI * 2;
+            const a1 = ((i + 1) / TRACE_COUNT) * Math.PI * 2;
+            // L-shaped jog from inner ring to mid ring
+            const ix = NEXUS_X + Math.cos(a0) * RINGS[0];
+            const iy = NEXUS_Y + Math.sin(a0) * RINGS[0];
+            const mx = NEXUS_X + Math.cos(a0) * RINGS[1];
+            const my = NEXUS_Y + Math.sin(a0) * RINGS[1];
+            // Right-angle elbow: go horizontally then vertically (or rotated by quadrant)
+            // For a more authentic PCB look use 45° diagonal jogs.
+            const dx = mx - ix;
+            const dy = my - iy;
+            const elbowX = ix + dx * 0.6;
+            const elbowY = iy;
+            pcbPaths.push(`M ${ix} ${iy} L ${elbowX} ${elbowY} L ${elbowX} ${elbowY + dy} L ${mx} ${my}`);
+
+            // Tangential arc segment along middle ring (every other trace)
+            if (i % 2 === 0) {
+              const ax0 = NEXUS_X + Math.cos(a0) * RINGS[1];
+              const ay0 = NEXUS_Y + Math.sin(a0) * RINGS[1];
+              const ax1 = NEXUS_X + Math.cos(a1) * RINGS[1];
+              const ay1 = NEXUS_Y + Math.sin(a1) * RINGS[1];
+              pcbPaths.push(`M ${ax0} ${ay0} A ${RINGS[1]} ${RINGS[1]} 0 0 1 ${ax1} ${ay1}`);
+            }
+
+            // Straight + diagonal trace from mid ring out to pad
+            const ox = NEXUS_X + Math.cos(a0) * RINGS[2];
+            const oy = NEXUS_Y + Math.sin(a0) * RINGS[2];
+            const midOutX = NEXUS_X + Math.cos(a0) * (RINGS[1] + 6);
+            const midOutY = NEXUS_Y + Math.sin(a0) * (RINGS[1] + 6);
+            // 45° jog: tangent offset before continuing radially
+            const tangent = a0 + Math.PI / 2;
+            const jogX = midOutX + Math.cos(tangent) * 4;
+            const jogY = midOutY + Math.sin(tangent) * 4;
+            pcbPaths.push(`M ${mx} ${my} L ${midOutX} ${midOutY} L ${jogX} ${jogY} L ${ox} ${oy}`);
+          }
+
+          // Chaotic interior particles — random walk inside the nexus disc.
+          // Use a deterministic pseudo-random per-particle but jitter position
+          // every frame so movement feels lively and non-uniform.
+          const CHAOS_COUNT = 22;
+          const chaos = Array.from({ length: CHAOS_COUNT }, (_, i) => {
+            const seed = i * 137.508;
+            // Multi-frequency oscillation gives non-circular, jittery motion
+            const t = elapsed / 1000;
+            const r =
+              10 +
+              22 *
+                (0.5 +
+                  0.5 *
+                    Math.sin(t * (0.7 + (i % 5) * 0.13) + seed));
+            const a =
+              seed +
+              t * (0.6 + (i % 7) * 0.21) +
+              Math.sin(t * 1.7 + seed) * 0.9;
+            const jitterX = Math.sin(t * 5.3 + seed * 1.7) * 3;
+            const jitterY = Math.cos(t * 4.1 + seed * 2.3) * 3;
+            return {
+              cx: NEXUS_X + Math.cos(a) * r + jitterX,
+              cy: NEXUS_Y + Math.sin(a) * r + jitterY,
+              opacity: 0.5 + 0.5 * Math.abs(Math.sin(t * 3 + seed)),
+              r: 1.1 + (i % 3) * 0.5,
+            };
+          });
+
+          // Buzzing particles that travel outward along radial traces and exit
+          const BUZZ_COUNT = 16;
+          const BUZZ_PERIOD = 1700;
           const buzzers = Array.from({ length: BUZZ_COUNT }, (_, i) => {
             const trace = traces[i % TRACE_COUNT];
             const phase = (i / BUZZ_COUNT) * BUZZ_PERIOD;
             const local = ((elapsed + phase) % BUZZ_PERIOD) / BUZZ_PERIOD;
-            // 0..0.85 travel outward, 0.85..1 idle at pad
             const k = local < 0.85 ? local / 0.85 : 1;
             const r = RINGS[0] + (RINGS[2] - RINGS[0]) * k;
             return {
               cx: NEXUS_X + Math.cos(trace.a) * r,
               cy: NEXUS_Y + Math.sin(trace.a) * r,
-              opacity: local < 0.85 ? 0.9 : 0.5 + 0.5 * Math.sin(local * 40),
-            };
-          });
-
-          // Orbiting particles around the inner ring
-          const ORBIT_COUNT = 6;
-          const ORBIT_PERIOD = 5200;
-          const orbiters = Array.from({ length: ORBIT_COUNT }, (_, i) => {
-            const base = (i / ORBIT_COUNT) * Math.PI * 2;
-            const a = base + (elapsed / ORBIT_PERIOD) * Math.PI * 2;
-            return {
-              cx: NEXUS_X + Math.cos(a) * RINGS[1],
-              cy: NEXUS_Y + Math.sin(a) * RINGS[1],
+              opacity: local < 0.85 ? 0.95 : 0.4 + 0.6 * Math.sin(local * 40),
             };
           });
 
@@ -541,79 +609,103 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                   r={r}
                   fill="none"
                   stroke="#10B981"
-                  strokeWidth={i === 1 ? 1 : 0.6}
-                  opacity={i === 1 ? 0.55 : 0.3}
+                  strokeWidth={i === 1 ? 0.9 : 0.5}
+                  opacity={i === 1 ? 0.5 : 0.28}
                   strokeDasharray={i === 2 ? "3 4" : undefined}
                 />
               ))}
 
-              {/* Radial traces */}
-              {traces.map((t, i) => (
-                <line
-                  key={`trace-${i}`}
-                  x1={t.x1}
-                  y1={t.y1}
-                  x2={t.x2}
-                  y2={t.y2}
+              {/* Traditional PCB traces (right-angle + tangential arcs) */}
+              {pcbPaths.map((d, i) => (
+                <path
+                  key={`pcb-${i}`}
+                  d={d}
+                  fill="none"
                   stroke="#10B981"
-                  strokeWidth={0.7}
-                  opacity={0.45}
+                  strokeWidth={0.8}
+                  opacity={0.55}
+                  strokeLinecap="square"
+                  strokeLinejoin="miter"
                 />
               ))}
 
+              {/* Vias (small filled dots at trace junctions on middle ring) */}
+              {traces.map((t, i) => {
+                const vx = NEXUS_X + Math.cos(t.a) * RINGS[1];
+                const vy = NEXUS_Y + Math.sin(t.a) * RINGS[1];
+                return (
+                  <circle
+                    key={`via-${i}`}
+                    cx={vx}
+                    cy={vy}
+                    r={1.1}
+                    fill="#10B981"
+                    opacity={0.7}
+                  />
+                );
+              })}
+
               {/* Solder pads at outer ring */}
               {traces.map((t, i) => (
-                <circle
-                  key={`pad-out-${i}`}
-                  cx={t.x2}
-                  cy={t.y2}
-                  r={PAD_R}
-                  fill="#0B1220"
-                  stroke="#10B981"
-                  strokeWidth={0.8}
-                  opacity={0.85}
-                />
+                <g key={`pad-out-${i}`}>
+                  <circle
+                    cx={t.x2}
+                    cy={t.y2}
+                    r={PAD_R}
+                    fill="#020617"
+                    stroke="#10B981"
+                    strokeWidth={0.9}
+                    opacity={0.9}
+                  />
+                  <circle
+                    cx={t.x2}
+                    cy={t.y2}
+                    r={0.8}
+                    fill="#10B981"
+                    opacity={0.6}
+                  />
+                </g>
               ))}
 
               {/* Inner core pad */}
               <circle
                 cx={NEXUS_X}
                 cy={NEXUS_Y}
-                r={10}
-                fill="#0B1220"
+                r={9}
+                fill="#020617"
                 stroke="#10B981"
                 strokeWidth={1}
-                opacity={0.9}
+                opacity={0.95}
               />
               <circle
                 cx={NEXUS_X}
                 cy={NEXUS_Y}
-                r={4}
+                r={3.5}
                 fill="#10B981"
                 opacity={0.7 + 0.3 * Math.sin(elapsed / 300)}
               />
 
-              {/* Buzzing particles traveling traces */}
+              {/* Chaotic interior particles */}
+              {chaos.map((c, i) => (
+                <circle
+                  key={`chaos-${i}`}
+                  cx={c.cx}
+                  cy={c.cy}
+                  r={c.r}
+                  fill="#6EE7B7"
+                  opacity={c.opacity}
+                />
+              ))}
+
+              {/* Buzzing particles traveling outward along traces */}
               {buzzers.map((b, i) => (
                 <circle
                   key={`buzz-${i}`}
                   cx={b.cx}
                   cy={b.cy}
-                  r={1.6}
-                  fill="#6EE7B7"
-                  opacity={b.opacity}
-                />
-              ))}
-
-              {/* Orbiters on middle ring */}
-              {orbiters.map((o, i) => (
-                <circle
-                  key={`orb-${i}`}
-                  cx={o.cx}
-                  cy={o.cy}
-                  r={1.4}
+                  r={1.7}
                   fill="#34D399"
-                  opacity={0.85}
+                  opacity={b.opacity}
                 />
               ))}
             </g>
@@ -742,7 +834,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         })}
 
         {(() => {
-          const LABEL_R = 74;
+          const LABEL_R = 92;
           // Top arc: left → right across the top (sweep 1)
           const topPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 1 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
           // Bottom arc: left → right across the bottom (sweep 0) so text reads upright
@@ -752,7 +844,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               fill="#10B981"
               fontSize={10}
               fontFamily="ui-monospace, SFMono-Regular, monospace"
-              opacity={0.7}
+              opacity={0.85}
               letterSpacing={3}
             >
               <defs>
