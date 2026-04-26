@@ -59,7 +59,7 @@ const InsightsPage = () => {
 
       <section className="relative overflow-hidden bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16 md:py-20">
         <HeroAccent />
-        <IntelligenceInstrumentPanel className="absolute inset-0 w-full h-full opacity-75" />
+        <IntelligenceInstrumentPanel className="absolute inset-0 w-full h-full opacity-50" />
         <div className="relative max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">Intelligence Center</h1>
           <p className="mt-4 text-lg text-white/80 max-w-2xl">
