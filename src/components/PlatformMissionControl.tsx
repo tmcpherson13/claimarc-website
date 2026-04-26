@@ -961,12 +961,14 @@ const RegulatoryFeed = ({
   cursorOn,
   livePulse,
   clipId,
+  onActivate,
 }: {
   t: number;
   entries: FeedEntry[];
   cursorOn: boolean;
   livePulse: number;
   clipId: string;
+  onActivate?: (m: string) => void;
 }) => {
   const innerX = 4;
   const innerY = 16;
