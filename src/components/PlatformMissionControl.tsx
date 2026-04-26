@@ -366,8 +366,23 @@ const CrucibleThroughput = ({
       {[0, 1, 2].map((i) => {
         const y = railTopY + i * railSpacing + railSpacing / 2;
         const railEndX = CELL_W - rightPad;
+        const mod = RAIL_MODULES[i];
         return (
-          <g key={i}>
+          <g
+            key={i}
+            onClick={onActivate && mod ? (e) => { e.stopPropagation(); onActivate(mod); } : undefined}
+            style={onActivate && mod ? { cursor: "pointer" } : undefined}
+          >
+            {/* invisible row hit-target */}
+            {onActivate && mod && (
+              <rect
+                x={2}
+                y={y - railSpacing / 2 + 1}
+                width={CELL_W - 4}
+                height={railSpacing - 2}
+                fill="transparent"
+              />
+            )}
             <text
               x={6}
               y={y + 2.5}
