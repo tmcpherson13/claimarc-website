@@ -4,6 +4,8 @@ import remarkGfm from "remark-gfm";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import CTABand from "@/components/CTABand";
+import HeroAccent from "@/components/HeroAccent";
+import SignalTower from "@/components/SignalTower";
 import { sitePageApi, SitePage } from "@/lib/sitePageApi";
 
 const certs = [
