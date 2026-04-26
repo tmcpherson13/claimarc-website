@@ -233,11 +233,7 @@ const WhyZDefensePage = () => {
           </div>
         </div>
       </section>
-      <section className="bg-white px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <TrialCallout />
-        </div>
-      </section>
+
 
       <CTABand
         headline="See the Difference for Yourself"
