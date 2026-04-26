@@ -112,7 +112,7 @@ interface Packet {
   start: number;
 }
 
-const DefenseNexusFlow = () => {
+const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
