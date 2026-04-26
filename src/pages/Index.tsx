@@ -56,7 +56,43 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 2: AI³ DEPLOYMENT */}
+      {/* SECTION 2: PREDICT / PROTECT / RECOVER */}
+      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
+            THE PLATFORM
+          </p>
+          <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
+            {PHRASES.threeLayersNineModules}
+          </h2>
+          <p className="text-slate-400 text-center mt-2 text-lg">
+            ZDefense covers the full revenue cycle lifecycle — before, during,
+            and after every claim.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+            {[
+              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
+              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
+              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
+            ].map((c) => (
+              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8 hover:border-emerald-800 transition-colors">
+                <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
+                <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
+                <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
+                <p className="text-slate-400 text-sm mt-3">{c.body}</p>
+                <div className="mt-6 pt-6 border-t border-slate-800 text-[var(--emerald)] text-sm font-bold mb-2">
+                  {c.proof}
+                </div>
+                <Link to={c.href} className="text-slate-300 text-sm mt-1 block hover:text-white hover:underline">
+                  {c.link}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: AI³ DEPLOYMENT */}
       <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
@@ -120,42 +156,6 @@ const Index = () => {
 
       {/* SECTION 3.5: PAYER THREAT RADAR */}
       <PayerThreatRadar />
-
-      {/* SECTION 4: PREDICT / PROTECT / RECOVER */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
-            THE PLATFORM
-          </p>
-          <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
-            {PHRASES.threeLayersNineModules}
-          </h2>
-          <p className="text-slate-400 text-center mt-2 text-lg">
-            ZDefense covers the full revenue cycle lifecycle — before, during,
-            and after every claim.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
-            {[
-              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
-              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
-              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
-            ].map((c) => (
-              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8 hover:border-emerald-800 transition-colors">
-                <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
-                <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
-                <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
-                <p className="text-slate-400 text-sm mt-3">{c.body}</p>
-                <div className="mt-6 pt-6 border-t border-slate-800 text-[var(--emerald)] text-sm font-bold mb-2">
-                  {c.proof}
-                </div>
-                <Link to={c.href} className="text-slate-300 text-sm mt-1 block hover:text-white hover:underline">
-                  {c.link}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* SECTION 5: DIFFERENTIATION */}
       <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
