@@ -263,6 +263,18 @@ const ContactPage = () => {
               </div>
             ) : (
               <div>
+                {formData.offerType && (
+                  <div className="inline-flex items-center gap-3 bg-[var(--emerald)]/10 border border-[var(--emerald)]/30 text-[var(--navy)] text-sm rounded-full px-4 py-2 mb-6">
+                    <span className="font-semibold">{bannerLabel}</span>
+                    <button
+                      type="button"
+                      onClick={scrollToOffers}
+                      className="text-[var(--emerald)] underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] rounded"
+                    >
+                      Change selection
+                    </button>
+                  </div>
+                )}
                 <h2 className="text-[var(--navy)] font-bold text-2xl mb-6">
                   Tell Us About Your Organization
                 </h2>
