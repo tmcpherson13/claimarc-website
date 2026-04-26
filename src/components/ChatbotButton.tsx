@@ -7,7 +7,7 @@ export default function ChatbotButton() {
   const [focused, setFocused] = useState(false);
 
   const visible = hover || focused;
-  const badgeLabel = messageCount > 0 ? String(messageCount) : "AI";
+  const badgeLabel = messageCount > 0 ? String(messageCount) : "Z";
   // Disable while a message is in flight to prevent re-opens / repeated triggers.
   const disabled = isLoading;
 
@@ -76,7 +76,7 @@ export default function ChatbotButton() {
             pointerEvents: "none",
           }}
         >
-          {disabled ? "Sending…" : "Ask ZDefense AI"}
+          {disabled ? "Sending…" : "Chat with Z"}
         </div>
 
         {/* Button */}
@@ -91,7 +91,7 @@ export default function ChatbotButton() {
           onMouseLeave={() => setHover(false)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          aria-label={disabled ? "ZDefense AI is responding" : "Ask ZDefense AI"}
+          aria-label={disabled ? "Z is responding" : "Chat with Z"}
           aria-describedby="zd-ai-button-tooltip"
           aria-busy={disabled || undefined}
           disabled={disabled}
