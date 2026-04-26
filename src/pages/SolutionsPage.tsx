@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
@@ -75,7 +75,8 @@ const moduleRoleMap: Record<string, string[]> = MODULES.reduce(
 const SolutionsPage = () => {
   const [activeRole, setActiveRole] = useState("cfo");
   const role = roles.find((r) => r.key === activeRole)!;
-  const { hash, pathname, search } = useLocation();
+  const { hash, pathname } = useLocation();
+  const [searchParams] = useSearchParams();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
@@ -107,12 +108,12 @@ const SolutionsPage = () => {
 
   /** Pick up ?role= query so deep links from the home page land on the right tab. */
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const r = params.get("role");
-    if (r && roles.some((role) => role.key === r)) {
-      setActiveRole(r);
+    const roleParam = searchParams.get("role");
+    if (roleParam && roles.some((r) => r.key === roleParam)) {
+      setActiveRole(roleParam);
     }
-  }, [search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Scroll-spy: highlight the module section currently in view. */
   useEffect(() => {
@@ -214,12 +215,6 @@ const SolutionsPage = () => {
               >
                 {role.ctaText}
               </Link>
-              <p className="text-slate-500 text-xs mt-3 max-w-md">
-                We'll tailor the demo to your role, workflow, payer mix, and biggest revenue challenge.
-              </p>
-              {role.ctaNote && (
-                <p className="text-slate-400 text-xs mt-2">{role.ctaNote}</p>
-              )}
             </div>
 
             <div className="md:col-span-2">
