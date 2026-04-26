@@ -941,13 +941,15 @@ const AppealThermometer = ({ t }: { t: number }) => {
 // ===========================================================================
 // 9. Regulatory Feed Monitor
 // ===========================================================================
-const FEED_TEMPLATES = REGULATORY_FEED.map(
-  (e) => `${e.source} · ${e.module.toUpperCase()}`,
-);
+const FEED_TEMPLATES = REGULATORY_FEED.map((e) => ({
+  text: `${e.source} · ${e.module.toUpperCase()}`,
+  module: e.module,
+}));
 
 interface FeedEntry {
   id: number;
   text: string;
+  module: string;
   spawnedAt: number;
 }
 
