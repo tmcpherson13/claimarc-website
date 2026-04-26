@@ -161,7 +161,11 @@ const ModuleStatusBoard = ({
         const opacity = 0.6 + 0.4 * (wave * 0.5 + 0.5); // 0.6..1.0
         const color = LAYER_LED_COLOR[m.layer];
         return (
-          <g key={m.name}>
+          <g
+            key={m.name}
+            onClick={onActivate ? (e) => { e.stopPropagation(); onActivate(m.name); } : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             {layerLabelByIndex[i] && (
               <text
                 x={6}
