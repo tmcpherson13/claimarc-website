@@ -122,11 +122,31 @@ export default function ChatbotPanel() {
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (!scrollRef.current) return;
+    const last = messages[messages.length - 1];
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    };
+    if (!last) {
+      scrollToBottom();
+      return;
     }
+    if (last.role === "assistant") {
+      const wordCount = last.content.split(" ").length;
+      if (wordCount > 80) {
+        const el = messageRefs.current.get(last.id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+      }
+    }
+    scrollToBottom();
   }, [messages, isLoading, isOpen]);
 
   useEffect(() => {
@@ -317,6 +337,10 @@ export default function ChatbotPanel() {
             m.role === "user" ? (
               <div
                 key={m.id}
+                ref={(el) => {
+                  if (el) messageRefs.current.set(m.id, el);
+                  else messageRefs.current.delete(m.id);
+                }}
                 style={{
                   alignSelf: "flex-end",
                   maxWidth: "80%",
@@ -332,7 +356,14 @@ export default function ChatbotPanel() {
                 {m.content}
               </div>
             ) : (
-              <div key={m.id} style={{ alignSelf: "flex-start", maxWidth: "85%" }}>
+              <div
+                key={m.id}
+                ref={(el) => {
+                  if (el) messageRefs.current.set(m.id, el);
+                  else messageRefs.current.delete(m.id);
+                }}
+                style={{ alignSelf: "flex-start", maxWidth: "85%" }}
+              >
                 <AssistantContent content={m.content} />
               </div>
             )
