@@ -96,17 +96,20 @@ const AboutPage = () => {
       {/* HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
-        <SignalTower className="absolute inset-0 w-full h-full opacity-75" />
-        <div className="relative max-w-3xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
-            OUR STORY
-          </p>
-          <h1 className="text-white text-5xl font-bold mt-2 leading-tight">
-            {page.headline}
-          </h1>
-          <p className="text-slate-300 text-xl mt-4 leading-relaxed">
-            {page.subheadline}
-          </p>
+        <SignalTower className="absolute inset-y-0 right-0 w-full md:w-1/2 h-full opacity-75" />
+        <div className="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+          <div className="max-w-xl">
+            <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
+              OUR STORY
+            </p>
+            <h1 className="text-white text-5xl font-bold mt-2 leading-tight">
+              {page.headline}
+            </h1>
+            <p className="text-slate-300 text-xl mt-4 leading-relaxed">
+              {page.subheadline}
+            </p>
+          </div>
+          <div aria-hidden="true" />
         </div>
       </section>
 
