@@ -375,8 +375,13 @@ const ContactPage = () => {
 
                 <div className="mb-4">
                   <label htmlFor="orgType" className={labelClass}>
-                    Organization Type <Req />
+                    Organization Type {!isInfo && <Req />}
                   </label>
+                  {isInfo && (
+                    <p className="text-slate-400 text-xs mb-1">
+                      (optional — helps us send more relevant resources)
+                    </p>
+                  )}
                   <select
                     id="orgType"
                     aria-required="true"
