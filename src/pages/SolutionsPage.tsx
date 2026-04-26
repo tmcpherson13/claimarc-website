@@ -294,7 +294,7 @@ const SolutionsPage = () => {
       </section>
 
       {/* SECTION 4: ALL 9 MODULES — sidebar + section content */}
-      <section className="bg-[var(--lgray)] py-16 px-6 md:px-12 lg:px-16">
+      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
             The Full Catalog
