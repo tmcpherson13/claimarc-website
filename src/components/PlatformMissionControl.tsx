@@ -1022,6 +1022,8 @@ const RegulatoryFeed = ({
               fill="#10B981"
               fontFamily="monospace"
               opacity={Math.max(0, Math.min(1, fade))}
+              onClick={onActivate ? (ev) => { ev.stopPropagation(); onActivate(e.module); } : undefined}
+              style={onActivate ? { cursor: "pointer" } : undefined}
             >
               {e.text}
             </text>
