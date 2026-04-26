@@ -76,7 +76,7 @@ export default function ChatbotButton() {
             pointerEvents: "none",
           }}
         >
-          {disabled ? "Sending…" : "Ask ZDefense AI"}
+          {disabled ? "Sending…" : "Chat with Z"}
         </div>
 
         {/* Button */}
