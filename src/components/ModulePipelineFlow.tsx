@@ -95,23 +95,23 @@ const ModulePipelineFlow = () => {
           strokeWidth="1"
           opacity="0.6"
         />
-        {/* Arrow heads at cluster gaps */}
+        {/* Long arrows spanning each cluster gap */}
         <line
-          x1="305"
+          x1="270"
           y1="110"
-          x2="318"
+          x2="345"
           y2="110"
           stroke="#64748B"
-          strokeWidth="1.5"
+          strokeWidth="2"
           markerEnd="url(#pipeline-arrow)"
         />
         <line
-          x1="605"
+          x1="570"
           y1="110"
-          x2="618"
+          x2="645"
           y2="110"
           stroke="#64748B"
-          strokeWidth="1.5"
+          strokeWidth="2"
           markerEnd="url(#pipeline-arrow)"
         />
 
