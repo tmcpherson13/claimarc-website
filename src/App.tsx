@@ -25,6 +25,7 @@ import AdminAboutPage from "./pages/admin/AdminAboutPage.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import { ChatbotProvider } from "./context/ChatbotContext";
+import ChatbotPanel from "./components/ChatbotPanel";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatbotPanel />
         </ChatbotProvider>
       </BrowserRouter>
     </TooltipProvider>
