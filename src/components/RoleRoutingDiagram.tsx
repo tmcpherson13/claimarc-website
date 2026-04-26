@@ -17,7 +17,7 @@ const CLUSTER_COLOR: Record<ClusterKey, string> = {
 
 const ROLES = [
   { key: "cfo", label: "CFO / Executive", target: "forecast" },
-  { key: "director", label: "RC Director", target: "ledger" },
+  { key: "director", label: "Rev Cycle Director", target: "ledger" },
   { key: "manager", label: "Revenue Cycle Manager", target: "shield" },
   { key: "billing", label: "Billing Specialist", target: "triage" },
   { key: "denial", label: "Denial Coordinator", target: "triage" },

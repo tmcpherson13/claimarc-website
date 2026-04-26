@@ -94,7 +94,7 @@ const PricingPage = () => {
                 internal capacity.
               </p>
               <span className="bg-[var(--lgray)] rounded px-3 py-1 text-xs text-slate-600 inline-block mt-4">
-                Best for: Tech-savvy RC teams
+                Best for: Tech-savvy Rev Cycle teams
               </span>
             </div>
 

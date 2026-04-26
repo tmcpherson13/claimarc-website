@@ -47,8 +47,8 @@ const TOPIC_TAGS = [
 
 const AUDIENCE_TAGS = [
   "audience:CFO",
-  "audience:RC Director",
-  "audience:RC Manager",
+  "audience:Rev Cycle Director",
+  "audience:Rev Cycle Manager",
   "audience:Billing Specialist",
   "audience:Compliance Officer",
 ] as const;
@@ -415,8 +415,8 @@ const Inner = () => {
 
     const AUDIENCE_KEYWORDS: Record<(typeof AUDIENCE_TAGS)[number], string[]> = {
       "audience:CFO": ["cfo", "finance", "revenue", "forecast", "executive"],
-      "audience:RC Director": ["director", "rc", "leadership", "vp"],
-      "audience:RC Manager": ["manager", "operations", "shield", "prevent"],
+      "audience:Rev Cycle Director": ["director", "rc", "leadership", "vp"],
+      "audience:Rev Cycle Manager": ["manager", "operations", "shield", "prevent"],
       "audience:Billing Specialist": ["billing", "specialist", "appeal", "triage", "evidence", "resolve"],
       "audience:Compliance Officer": ["compliance", "auditor", "audit", "officer", "ledger"],
     };
