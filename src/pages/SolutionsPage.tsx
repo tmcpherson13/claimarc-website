@@ -437,81 +437,111 @@ const SolutionsPage = () => {
                           {m.detail}
                         </p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Capabilities
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.capabilities.map((c) => (
-                                <li
-                                  key={c}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                  <span>{c}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Outcomes
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.outcomes.map((o) => (
-                                <li
-                                  key={o}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                  <span>{o}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              How it works
-                            </h4>
-                            <ol className="space-y-2">
-                              {m.howItWorks.map((step, i) => (
-                                <li
-                                  key={step}
-                                  className="flex items-start gap-3 text-sm text-slate-600"
-                                >
-                                  <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
-                                    {i + 1}
-                                  </span>
-                                  <span>{step}</span>
-                                </li>
-                              ))}
-                            </ol>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Data inputs
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.dataInputs.map((d) => (
-                                <li
-                                  key={d}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
-                                  <span>{d}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
+                        {(() => {
+                          const tabs: { key: string; label: string }[] = [
+                            { key: "capabilities", label: "Capabilities" },
+                            { key: "howItWorks", label: "How It Works" },
+                            { key: "outcomes", label: "Outcomes" },
+                            { key: "dataInputs", label: "Data Inputs" },
+                          ];
+                          const activeTab = activeModuleTab[slug] ?? "capabilities";
+                          return (
+                            <>
+                              <div className="flex gap-2 mt-6 flex-wrap">
+                                {tabs.map((t) => {
+                                  const isActive = t.key === activeTab;
+                                  return (
+                                    <button
+                                      key={t.key}
+                                      type="button"
+                                      onClick={() =>
+                                        setActiveModuleTab((prev) => ({
+                                          ...prev,
+                                          [slug]: t.key,
+                                        }))
+                                      }
+                                      className={
+                                        isActive
+                                          ? "bg-[var(--navy)] text-white px-4 py-1.5 rounded-full text-xs font-semibold"
+                                          : "bg-[var(--lgray)] text-slate-600 px-4 py-1.5 rounded-full text-xs hover:bg-slate-200 transition-colors cursor-pointer"
+                                      }
+                                    >
+                                      {t.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
 
-                        <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
-                          <p className="text-slate-400 text-xs uppercase tracking-widest">
-                            Integration & deployment
-                          </p>
-                          <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
-                        </div>
+                              <div className="mt-6">
+                                {activeTab === "capabilities" && (
+                                  <ul className="space-y-2">
+                                    {m.capabilities.map((c) => (
+                                      <li
+                                        key={c}
+                                        className="flex items-start gap-2 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                        <span>{c}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {activeTab === "howItWorks" && (
+                                  <ol className="space-y-2">
+                                    {m.howItWorks.map((step, i) => (
+                                      <li
+                                        key={step}
+                                        className="flex items-start gap-3 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
+                                          {i + 1}
+                                        </span>
+                                        <span>{step}</span>
+                                      </li>
+                                    ))}
+                                  </ol>
+                                )}
+
+                                {activeTab === "outcomes" && (
+                                  <ul className="space-y-2">
+                                    {m.outcomes.map((o) => (
+                                      <li
+                                        key={o}
+                                        className="flex items-start gap-2 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                        <span>{o}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {activeTab === "dataInputs" && (
+                                  <>
+                                    <ul className="space-y-2">
+                                      {m.dataInputs.map((d) => (
+                                        <li
+                                          key={d}
+                                          className="flex items-start gap-2 text-sm text-slate-600"
+                                        >
+                                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                                          <span>{d}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
+                                      <p className="text-slate-400 text-xs uppercase tracking-widest">
+                                        Integration & deployment
+                                      </p>
+                                      <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </>
+                          );
+                        })()}
 
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
                           <div>
