@@ -168,7 +168,20 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
           {
             id: generateId(),
             role: "assistant",
-            content: `I can see you're looking at ${nextModuleContext}. What would you like to know about it — how it works, what it costs, or whether you need a BAA?`,
+            content: `Hi, I'm Z, your revenue defense assistant. I can see you're looking at ${nextModuleContext}. What would you like to know — how it works, what it costs, or whether you need a BAA?`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    } else {
+      setMessages((prev) => {
+        if (prev.length > 0) return prev;
+        return [
+          {
+            id: generateId(),
+            role: "assistant",
+            content:
+              "Hi, I'm Z, your revenue defense assistant. Ask me anything about ZDefense — how the modules work, what requires a BAA, or why your denial rate is probably not as random as it looks.",
             timestamp: Date.now(),
           },
         ];
