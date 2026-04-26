@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
  * Pure SVG + React hooks. Decorative.
  */
 
-const CENTER_X = 600;
+const CENTER_X = 950;
 const CENTER_Y = 170;
 const RING_RY = 28;
 
