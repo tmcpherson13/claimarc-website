@@ -7,7 +7,7 @@ export default function ChatbotButton() {
   const [focused, setFocused] = useState(false);
 
   const visible = hover || focused;
-  const badgeLabel = messageCount > 0 ? String(messageCount) : "AI";
+  const badgeLabel = messageCount > 0 ? String(messageCount) : "Z";
   // Disable while a message is in flight to prevent re-opens / repeated triggers.
   const disabled = isLoading;
 
