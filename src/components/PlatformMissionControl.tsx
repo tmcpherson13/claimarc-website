@@ -336,16 +336,19 @@ interface Packet {
   x: number;
 }
 const RAIL_LABELS = CRUCIBLE_RAILS.map((r) => r.label);
+const RAIL_MODULES = CRUCIBLE_RAILS.map((r) => r.feedsModule);
 const CrucibleThroughput = ({
   t,
   packets,
   accumHeights,
   livePulse,
+  onActivate,
 }: {
   t: number;
   packets: Packet[];
   accumHeights: number[];
   livePulse: number;
+  onActivate?: (m: string) => void;
 }) => {
   const leftPad = 70;
   const rightPad = 14;
@@ -363,8 +366,23 @@ const CrucibleThroughput = ({
       {[0, 1, 2].map((i) => {
         const y = railTopY + i * railSpacing + railSpacing / 2;
         const railEndX = CELL_W - rightPad;
+        const mod = RAIL_MODULES[i];
         return (
-          <g key={i}>
+          <g
+            key={i}
+            onClick={onActivate && mod ? (e) => { e.stopPropagation(); onActivate(mod); } : undefined}
+            style={onActivate && mod ? { cursor: "pointer" } : undefined}
+          >
+            {/* invisible row hit-target */}
+            {onActivate && mod && (
+              <rect
+                x={2}
+                y={y - railSpacing / 2 + 1}
+                width={CELL_W - 4}
+                height={railSpacing - 2}
+                fill="transparent"
+              />
+            )}
             <text
               x={6}
               y={y + 2.5}
@@ -418,7 +436,13 @@ const CrucibleThroughput = ({
 // ===========================================================================
 // 4. Payer Coverage Grid
 // ===========================================================================
-const PayerCoverageGrid = ({ t }: { t: number }) => {
+const PayerCoverageGrid = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const topPad = 16;
   const bottomPad = 12;
   const colWidth = (CELL_W - 16) / SENTINEL_PAYERS.length;
@@ -442,7 +466,20 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
         const barX = colCx - barW / 2;
         const barY = topPad + 10 + (maxBarH - barH);
         return (
-          <g key={p.name}>
+          <g
+            key={p.name}
+            onClick={onActivate ? (e) => { e.stopPropagation(); onActivate("Sentinel"); } : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
+            {onActivate && (
+              <rect
+                x={x}
+                y={topPad}
+                width={colWidth}
+                height={CELL_H - topPad - 2}
+                fill="transparent"
+              />
+            )}
             <text
               x={colCx}
               y={topPad + 7}
@@ -904,13 +941,15 @@ const AppealThermometer = ({ t }: { t: number }) => {
 // ===========================================================================
 // 9. Regulatory Feed Monitor
 // ===========================================================================
-const FEED_TEMPLATES = REGULATORY_FEED.map(
-  (e) => `${e.source} · ${e.module.toUpperCase()}`,
-);
+const FEED_TEMPLATES = REGULATORY_FEED.map((e) => ({
+  text: `${e.source} · ${e.module.toUpperCase()}`,
+  module: e.module,
+}));
 
 interface FeedEntry {
   id: number;
   text: string;
+  module: string;
   spawnedAt: number;
 }
 
@@ -922,12 +961,14 @@ const RegulatoryFeed = ({
   cursorOn,
   livePulse,
   clipId,
+  onActivate,
 }: {
   t: number;
   entries: FeedEntry[];
   cursorOn: boolean;
   livePulse: number;
   clipId: string;
+  onActivate?: (m: string) => void;
 }) => {
   const innerX = 4;
   const innerY = 16;
@@ -981,6 +1022,8 @@ const RegulatoryFeed = ({
               fill="#10B981"
               fontFamily="monospace"
               opacity={Math.max(0, Math.min(1, fade))}
+              onClick={onActivate ? (ev) => { ev.stopPropagation(); onActivate(e.module); } : undefined}
+              style={onActivate ? { cursor: "pointer" } : undefined}
             >
               {e.text}
             </text>
@@ -1111,7 +1154,8 @@ const PlatformMissionControl = () => {
         feedTplIdxRef.current++;
         feedRef.current.push({
           id: ++feedIdRef.current,
-          text: `[${hh}:${mm}:${ss}] ${tpl}`,
+          text: `[${hh}:${mm}:${ss}] ${tpl.text}`,
+          module: tpl.module,
           spawnedAt: elapsedSec,
         });
       }
@@ -1175,6 +1219,7 @@ const PlatformMissionControl = () => {
             packets={packetsRef.current}
             accumHeights={accumRef.current}
             livePulse={livePulse}
+            onActivate={goToModule}
           />
         </Bezel>
 
@@ -1186,7 +1231,7 @@ const PlatformMissionControl = () => {
           module="Sentinel"
           onActivate={goToModule}
         >
-          <PayerCoverageGrid t={t} />
+          <PayerCoverageGrid t={t} onActivate={goToModule} />
         </Bezel>
         <Bezel
           col={1}
@@ -1197,12 +1242,24 @@ const PlatformMissionControl = () => {
         >
           <RecoveryOdometer t={t} />
         </Bezel>
-        <Bezel col={2} row={1} label="SYSTEM CLOCK">
+        <Bezel
+          col={2}
+          row={1}
+          label="SYSTEM CLOCK"
+          module="Forecast"
+          onActivate={goToModule}
+        >
           <SystemClock now={now} elapsedSec={t} />
         </Bezel>
 
         {/* Row 3 */}
-        <Bezel col={0} row={2} label="BAA SHIELD STATUS">
+        <Bezel
+          col={0}
+          row={2}
+          label="BAA SHIELD STATUS"
+          module="Shield"
+          onActivate={goToModule}
+        >
           <BaaStatus t={t} onActivate={goToModule} />
         </Bezel>
         <Bezel
@@ -1227,6 +1284,7 @@ const PlatformMissionControl = () => {
             cursorOn={cursorOn}
             livePulse={livePulse}
             clipId={clipId.current}
+            onActivate={goToModule}
           />
         </Bezel>
       </svg>
