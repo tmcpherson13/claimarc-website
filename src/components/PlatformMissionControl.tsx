@@ -137,7 +137,13 @@ const Bezel = ({ col, row, label, module, onActivate, children }: BezelProps) =>
 // ===========================================================================
 // 1. Module Status Board
 // ===========================================================================
-const ModuleStatusBoard = ({ t }: { t: number }) => {
+const ModuleStatusBoard = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const rowGap = (CELL_H - 22) / MODULES_LIST.length;
   const startY = 20;
   const layerLabelByIndex: Record<number, string> = {
