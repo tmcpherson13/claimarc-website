@@ -741,19 +741,37 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           );
         })}
 
-        <text
-          x={NEXUS_X}
-          y={NEXUS_Y}
-          textAnchor="middle"
-          fill="#10B981"
-          fontSize={10}
-          fontFamily="ui-monospace, SFMono-Regular, monospace"
-          opacity={0.6}
-          letterSpacing={3}
-          transform={`rotate(-90 ${NEXUS_X} ${NEXUS_Y})`}
-        >
-          DEFENSE NEXUS
-        </text>
+        {(() => {
+          const LABEL_R = 74;
+          // Top arc: left → right across the top (sweep 1)
+          const topPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 1 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
+          // Bottom arc: left → right across the bottom (sweep 0) so text reads upright
+          const bottomPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 0 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
+          return (
+            <g
+              fill="#10B981"
+              fontSize={10}
+              fontFamily="ui-monospace, SFMono-Regular, monospace"
+              opacity={0.7}
+              letterSpacing={3}
+            >
+              <defs>
+                <path id="nexus-label-top" d={topPath} />
+                <path id="nexus-label-bottom" d={bottomPath} />
+              </defs>
+              <text>
+                <textPath href="#nexus-label-top" startOffset="50%" textAnchor="middle">
+                  DEFENSE
+                </textPath>
+              </text>
+              <text>
+                <textPath href="#nexus-label-bottom" startOffset="50%" textAnchor="middle">
+                  NEXUS
+                </textPath>
+              </text>
+            </g>
+          );
+        })()}
 
         {packets.map((p, i) => {
           const tRaw = (elapsed - p.start) % cycleLen;
