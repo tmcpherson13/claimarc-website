@@ -362,7 +362,21 @@ export default function ChatbotPanel() {
           )}
         </div>
 
-        {offerDemo && !bannerDismissed && (
+        {offerDemo && !bannerDismissed && (() => {
+          const convo = messages.map((m) => m.content).join(" ").toLowerCase();
+          const roleRules: Array<[RegExp, string]> = [
+            [/\bcfo\b|forecast/, "cfo"],
+            [/\bdirector\b|ledger/, "director"],
+            [/\bmanager\b|shield/, "manager"],
+            [/\bspecialist\b|triage/, "specialist"],
+            [/\bcompliance\b|audit/, "compliance"],
+          ];
+          const detectedRole = roleRules.find(([re]) => re.test(convo))?.[1];
+          const params = new URLSearchParams({ offer: "demo" });
+          if (detectedRole) params.set("role", detectedRole);
+          if (moduleContext) params.set("module", moduleContext);
+          const demoHref = `/contact?${params.toString()}`;
+          return (
           <div
             style={{
               background: "#065F46",
@@ -379,7 +393,7 @@ export default function ChatbotPanel() {
             </span>
             <button
               type="button"
-              onClick={() => navigate("/contact?offer=demo")}
+              onClick={() => navigate(demoHref)}
               style={{
                 background: "#10B981",
                 color: "#0B1628",
@@ -410,7 +424,8 @@ export default function ChatbotPanel() {
               <X size={14} />
             </button>
           </div>
-        )}
+          );
+        })()}
 
         <div
           style={{
