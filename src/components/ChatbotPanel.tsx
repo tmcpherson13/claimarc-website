@@ -120,7 +120,6 @@ export default function ChatbotPanel() {
 
   const [input, setInput] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
-  const [moduleBadgeHidden, setModuleBadgeHidden] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -129,10 +128,6 @@ export default function ChatbotPanel() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isLoading, isOpen]);
-
-  useEffect(() => {
-    setModuleBadgeHidden(false);
-  }, [moduleContext]);
 
   useEffect(() => {
     const ta = textareaRef.current;
