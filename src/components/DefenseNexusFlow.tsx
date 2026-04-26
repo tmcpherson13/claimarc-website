@@ -620,7 +620,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
           // Chaotic interior particles — read live from the random-walk
           // simulation maintained in chaosRef (updated each animation frame).
-          const chaos = chaosRef.current.map((p, i) => ({
+          const chaos = chaosRef.current.map((p) => ({
             cx: NEXUS_X + p.x,
             cy: NEXUS_Y + p.y,
             opacity: 0.55 + 0.45 * Math.abs(Math.sin(elapsed / 400 + p.phase)),
