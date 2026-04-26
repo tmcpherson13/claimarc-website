@@ -113,6 +113,7 @@ export default function ChatbotPanel() {
     error,
     sendMessage,
     moduleContext,
+    clearModuleContext,
     offerDemo,
   } = useChatbot();
   const navigate = useNavigate();
