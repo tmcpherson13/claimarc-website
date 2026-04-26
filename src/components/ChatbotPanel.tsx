@@ -251,7 +251,7 @@ export default function ChatbotPanel() {
           </button>
         </div>
 
-        {moduleContext && !moduleBadgeHidden && (
+        {moduleContext && (
           <div style={{ padding: "8px 16px 0" }}>
             <span
               style={{
