@@ -35,7 +35,7 @@ for (let i = 0; i < 8; i++) {
 const waveY = (x: number, amplitude: number, wavelength: number, phase: number) =>
   160 + amplitude * Math.sin(x / wavelength + phase);
 
-const OpenChannel = () => {
+const OpenChannel = ({ className }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -130,7 +130,7 @@ const OpenChannel = () => {
       aria-hidden="true"
       className={`w-full transition-opacity duration-700 ease-out ${
         visible ? "opacity-100" : "opacity-0"
-      }`}
+      } ${className ?? ""}`}
     >
       <svg viewBox="0 0 1200 320" className="w-full h-auto" aria-hidden="true">
         {/* Soft radial glow behind waveform */}
