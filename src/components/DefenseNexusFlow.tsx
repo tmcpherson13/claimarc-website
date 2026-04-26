@@ -523,28 +523,38 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           <filter id="nexus-tooltip-shadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.5" />
           </filter>
+          <radialGradient id="nexus-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="55%" stopColor="#10B981" stopOpacity="0" />
+            <stop offset="80%" stopColor="#10B981" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="nexus-substrate" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#0F2A22" />
+            <stop offset="70%" stopColor="#0A1F1A" />
+            <stop offset="100%" stopColor="#06120F" />
+          </radialGradient>
         </defs>
 
         <rect x={VIEW_X} y={VIEW_Y} width={VIEW_W} height={VIEW_H} fill={CANVAS_FILL} />
 
-        {/* Soft outer glow */}
+        {/* Soft outer green glow */}
         <circle
           cx={NEXUS_X}
           cy={NEXUS_Y}
-          r={80}
-          fill="#10B981"
-          opacity={nexusGlow}
+          r={110}
+          fill="url(#nexus-glow)"
+          opacity={0.85 + nexusGlow * 2}
         />
 
-        {/* Darker PCB substrate disc */}
+        {/* Lighter PCB substrate disc (radial gradient) */}
         <circle
           cx={NEXUS_X}
           cy={NEXUS_Y}
           r={66}
-          fill="#020617"
-          stroke="#064E3B"
-          strokeWidth={1}
-          opacity={0.95}
+          fill="url(#nexus-substrate)"
+          stroke="#10B981"
+          strokeWidth={1.2}
+          opacity={1}
         />
 
         {/* Circuit-board nexus: PCB traces with right-angle segments,
