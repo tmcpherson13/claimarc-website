@@ -259,8 +259,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const nexusGlow =
     0.03 + (Math.sin((elapsed / 1000) * ((2 * Math.PI) / 4)) + 1) / 2 * 0.04;
 
-  const TOOLTIP_W = 220;
-  const TOOLTIP_H = 72;
+  const TOOLTIP_W = 293;
+  const TOOLTIP_H = 96;
 
   return (
     <div
