@@ -164,7 +164,7 @@ const Index = () => {
             WHY ZDEFENSE
           </p>
           <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
-            Denial management companies fight denials. ZDefense understands payers.
+            Denial management companies process denials. ZDefense understands payers.
           </h2>
           <p className="text-slate-600 max-w-xl mt-4 text-lg">
             Every denial management vendor works with data after it enters your
