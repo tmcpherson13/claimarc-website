@@ -73,7 +73,7 @@ const WhyZDefensePage = () => {
               { h: "Detection Lag Is Costly", b: "Traditional workflows detect payer behavioral shifts 60–90 days after they begin. ZDefense detects them in 7–14 days. That window is the difference between denial prevention and denial recovery." },
               { h: "Mid-Market Is Underserved", b: "Enterprise health systems have analytics teams. Smaller providers have spreadsheets. ZDefense gives community hospitals and multi-specialty groups the same intelligence advantage that payers already have." },
             ].map((c) => (
-              <div key={c.h} className="bg-[var(--lgray)] rounded-xl p-6">
+              <div key={c.h} className="bg-white border border-slate-200 rounded-xl p-6">
                 <h3 className="text-[var(--navy)] font-semibold text-lg">{c.h}</h3>
                 <p className="text-slate-600 text-sm mt-2">{c.b}</p>
               </div>
