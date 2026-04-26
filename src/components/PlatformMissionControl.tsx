@@ -480,7 +480,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
 // ===========================================================================
 const RecoveryOdometer = ({ t }: { t: number }) => {
   const wave = Math.sin((t / 20) * Math.PI * 2);
-  const value = 851500 + wave * 39500; // 812k..891k
+  const value = TRIAGE_RECOVERY_PIPELINE + wave * TRIAGE_RECOVERY_PIPELINE_JITTER;
   const cents = Math.round(value);
   const display =
     "$" +
@@ -492,7 +492,7 @@ const RecoveryOdometer = ({ t }: { t: number }) => {
   const barW = CELL_W * 0.6;
   const barX = (CELL_W - barW) / 2;
   const barY = cy + 12;
-  const fillRatio = Math.min(1, value / 1_000_000);
+  const fillRatio = Math.min(1, value / TRIAGE_RECOVERY_PIPELINE_CEILING);
   return (
     <g>
       <text
@@ -769,7 +769,7 @@ const BaaStatus = ({ t }: { t: number }) => {
 // ===========================================================================
 const AppealThermometer = ({ t }: { t: number }) => {
   const wave = Math.sin((t / 14) * Math.PI * 2);
-  const pct = 78 + wave * 5; // 73..83
+  const pct = RESOLVE_CONFIDENCE_CENTER + wave * RESOLVE_CONFIDENCE_JITTER;
   const trackH = 60;
   const trackW = 8;
   const trackX = CELL_W / 2 - 30;
