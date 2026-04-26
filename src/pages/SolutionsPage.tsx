@@ -6,6 +6,7 @@ import HeroAccent from "@/components/HeroAccent";
 import RoleRoutingDiagram from "@/components/RoleRoutingDiagram";
 import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
+import { MODULES, getModule } from "@/config/modules";
 
 interface RoleContent {
   key: string;
@@ -19,15 +20,19 @@ interface RoleContent {
   ctaNote?: string;
   moduleName: string;
   stats: string[];
+  /** Module names (matching MODULES catalog) shown in the role's module rail. */
+  relatedModules: string[];
 }
 
 const roles: RoleContent[] = [
-  { key: "cfo", tab: "CFO / Executive", headline: "Stop Forecasting from Spreadsheets.", body: "One 90-day revenue projection that pulls in denial trends, payer behavior, underpayment recovery, and contract risk — so you can model contract decisions before you negotiate them.", supporting: "Also recommended: Sentinel · ContractIntel", ctaText: "Book a CFO-Focused Demo", ctaHref: "/contact?role=cfo", moduleName: "Forecast", stats: ["$12.6M 90-day projection", "84% confidence score", "What-if contract modeler", "Six driver cards"] },
-  { key: "director", tab: "Rev Cycle Director", headline: "See Underpayments, Overpayments, and Compliance in One View.", body: "Ledger gives you claim-level financial oversight — underpayment detection, Medicare 60-day repayment compliance, and an immutable audit trail. Pair with Forecast for the full picture from claim to projection.", supporting: "Also recommended: Forecast · Sentinel", ctaText: "Book a Director-Focused Demo", ctaHref: "/contact?role=director", moduleName: "Ledger", stats: ["Contract variance tracked per claim", "Six-stage compliance workflow", "Immutable audit log", "Dual-approver write-offs"] },
-  { key: "manager", tab: "Rev Cycle Manager", headline: "Stop Denials Before They Leave Your System.", body: "Shield scans every outbound claim batch against live payer rules pre-submission — no BAA required. The Regulatory Intelligence Feed flags CMS and payer policy shifts 45 days ahead. Activate today with live data.", supporting: "Also recommended: Prevent · Triage", ctaText: "Start Your 30-Day Evaluation — No BAA Required", ctaHref: "/contact?offer=trial", ctaEmerald: true, ctaNote: "Shield and Prevent included. Live data. Activates immediately.", moduleName: "Shield", stats: ["89.4% clean claim rate", "45-day regulatory advance feed", "No BAA Required", "Activates in 30 minutes"] },
-  { key: "specialist", tab: "Billing Specialist", headline: "Work the Claims Most Likely to Pay. In That Order.", body: "Triage ranks your denial queue by recovery probability so you start with the cash that's actually recoverable. Every claim shows its score, rule driver, and AI insight — with one-click evidence assembly behind it.", supporting: "Also recommended: Evidence · Resolve", ctaText: "Book a Specialist-Focused Demo", ctaHref: "/contact?role=specialist", moduleName: "Triage", stats: ["$1.146M active recovery pipeline", "Recovery probability per claim", "Natural language search", "One-click evidence assembly"] },
-  { key: "compliance", tab: "Auditor/Compliance Officer", headline: "The Medicare 60-Day Rule Has No Margin for Error.", body: "Ledger enforces the 60-day voluntary repayment rule automatically — immutable audit log, dual-approver authorization on every write-off, six-stage workflow. If regulators knock, your documentation is already time-stamped.", supporting: "Also recommended: Shield", ctaText: "Book a Compliance-Focused Demo", ctaHref: "/contact?role=compliance", moduleName: "Ledger", stats: ["Medicare 60-day enforcement", "Dual-approver write-offs", "Immutable audit log", "Six-stage overpayment workflow"] },
+  { key: "cfo", tab: "CFO / Executive", headline: "Stop Forecasting from Spreadsheets.", body: "One 90-day revenue projection that pulls in denial trends, payer behavior, underpayment recovery, and contract risk — so you can model contract decisions before you negotiate them.", supporting: "Also recommended: Sentinel · ContractIntel", ctaText: "Book a CFO-Focused Demo", ctaHref: "/contact?role=cfo", moduleName: "Forecast", stats: ["$12.6M 90-day projection", "84% confidence score", "What-if contract modeler", "Six driver cards"], relatedModules: ["Forecast", "Sentinel", "ContractIntel"] },
+  { key: "director", tab: "Rev Cycle Director", headline: "See Underpayments, Overpayments, and Compliance in One View.", body: "Ledger gives you claim-level financial oversight — underpayment detection, Medicare 60-day repayment compliance, and an immutable audit trail. Pair with Forecast for the full picture from claim to projection.", supporting: "Also recommended: Forecast · Sentinel", ctaText: "Book a Director-Focused Demo", ctaHref: "/contact?role=director", moduleName: "Ledger", stats: ["Contract variance tracked per claim", "Six-stage compliance workflow", "Immutable audit log", "Dual-approver write-offs"], relatedModules: ["Ledger", "Prevent", "Forecast"] },
+  { key: "manager", tab: "Rev Cycle Manager", headline: "Stop Denials Before They Leave Your System.", body: "Shield scans every outbound claim batch against live payer rules pre-submission — no BAA required. The Regulatory Intelligence Feed flags CMS and payer policy shifts 45 days ahead. Activate today with live data.", supporting: "Also recommended: Prevent · Triage", ctaText: "Start Your 30-Day Evaluation — No BAA Required", ctaHref: "/contact?offer=trial", ctaEmerald: true, ctaNote: "Shield and Prevent included. Live data. Activates immediately.", moduleName: "Shield", stats: ["89.4% clean claim rate", "45-day regulatory advance feed", "No BAA Required", "Activates in 30 minutes"], relatedModules: ["Shield", "Prevent", "Triage"] },
+  { key: "specialist", tab: "Billing Specialist", headline: "Work the Claims Most Likely to Pay. In That Order.", body: "Triage ranks your denial queue by recovery probability so you start with the cash that's actually recoverable. Every claim shows its score, rule driver, and AI insight — with one-click evidence assembly behind it.", supporting: "Also recommended: Evidence · Resolve", ctaText: "Book a Specialist-Focused Demo", ctaHref: "/contact?role=specialist", moduleName: "Triage", stats: ["$1.146M active recovery pipeline", "Recovery probability per claim", "Natural language search", "One-click evidence assembly"], relatedModules: ["Triage", "Evidence", "Resolve"] },
+  { key: "compliance", tab: "Auditor/Compliance Officer", headline: "The Medicare 60-Day Rule Has No Margin for Error.", body: "Ledger enforces the 60-day voluntary repayment rule automatically — immutable audit log, dual-approver authorization on every write-off, six-stage workflow. If regulators knock, your documentation is already time-stamped.", supporting: "Also recommended: Shield", ctaText: "Book a Compliance-Focused Demo", ctaHref: "/contact?role=compliance", moduleName: "Ledger", stats: ["Medicare 60-day enforcement", "Dual-approver write-offs", "Immutable audit log", "Six-stage overpayment workflow"], relatedModules: ["Ledger", "Shield", "ContractIntel"] },
 ];
+
+const slugify = (n: string) => n.toLowerCase();
 
 const SolutionsPage = () => {
   const [activeRole, setActiveRole] = useState("cfo");
@@ -120,6 +125,89 @@ const SolutionsPage = () => {
                 </ul>
               </div>
             </div>
+          </div>
+
+          {/* Module rail for the active role */}
+          <div className="mt-16">
+            <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+              Modules for this role
+            </p>
+            <h3 className="text-[var(--navy)] font-bold text-2xl mt-1">
+              The {role.relatedModules.length} modules a {role.tab} touches most
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              {role.relatedModules.map((name) => {
+                const m = getModule(name);
+                if (!m) return null;
+                return (
+                  <Link
+                    key={m.name}
+                    to={`/platform#${slugify(m.name)}`}
+                    id={slugify(m.name)}
+                    className="block scroll-mt-32 bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
+                  >
+                    <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
+                      {m.layer}
+                    </p>
+                    <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
+                      {m.name}
+                    </h4>
+                    <p className="text-slate-500 text-xs font-medium mt-1">
+                      {m.tagline}
+                    </p>
+                    <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                      {m.body}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: ALL 9 MODULES (anchor targets) */}
+      <section className="bg-[var(--lgray)] py-20 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+            The Full Catalog
+          </p>
+          <h2 className="text-[var(--navy)] font-bold text-2xl md:text-3xl mt-2">
+            All Nine Modules
+          </h2>
+          <p className="text-slate-600 mt-3 max-w-2xl">
+            Every module in the ZDefense platform — across Predict, Protect, and Recover. Click any tile to jump into the platform and open the module's full detail.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+            {MODULES.map((m) => (
+              <Link
+                key={m.name}
+                to={`/platform#${slugify(m.name)}`}
+                id={`${slugify(m.name)}-full`}
+                className="block scroll-mt-32 bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
+                    {m.layer}
+                  </p>
+                  {m.required && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--navy)] bg-emerald-50 px-2 py-0.5 rounded">
+                      Core
+                    </span>
+                  )}
+                </div>
+                <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
+                  {m.name}
+                </h4>
+                <p className="text-slate-500 text-xs font-medium mt-1">
+                  {m.tagline}
+                </p>
+                <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                  {m.body}
+                </p>
+                <p className="text-slate-400 text-xs mt-3">Built for {m.audience}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
