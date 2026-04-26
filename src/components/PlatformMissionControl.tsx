@@ -878,16 +878,9 @@ const AppealThermometer = ({ t }: { t: number }) => {
 // ===========================================================================
 // 9. Regulatory Feed Monitor
 // ===========================================================================
-const FEED_TEMPLATES = [
-  "MAC-CR-1247 · SHIELD",
-  "NCD-UPDATE · PREVENT",
-  "NCCI-Q2-2026 · SHIELD",
-  "LCD-REVISION · PREVENT",
-  "TiC-MRF-REFRESH · CONTRACT",
-  "CARC-UPDATE · TRIAGE",
-  "CMS-PFS-DELTA · SHIELD",
-  "PAYER-POLICY-UHC · SENTINEL",
-];
+const FEED_TEMPLATES = REGULATORY_FEED.map(
+  (e) => `${e.source} · ${e.module.toUpperCase()}`,
+);
 
 interface FeedEntry {
   id: number;
