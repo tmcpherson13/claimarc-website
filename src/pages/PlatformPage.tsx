@@ -208,18 +208,18 @@ const PlatformPage = () => {
       </section>
 
       {/* SECTION 1.5: MODULE PIPELINE OVERVIEW — interactive */}
-      <section className="bg-[var(--navy-dk)] py-20 px-6 md:px-12 lg:px-16">
+      <section className="bg-white py-20 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className="text-white text-3xl md:text-4xl font-bold">
+            <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold">
               {PHRASES.nineModulesThreeLayers}
             </h2>
-            <p className="text-slate-400 mt-4">
+            <p className="text-slate-600 mt-4">
               Intelligence flows in one direction — forward. Every module
               feeds the next. Click any module to see what it does.
             </p>
             <p className="text-slate-500 text-sm text-center mt-2">
-              Click any module for a summary <span className="text-slate-600">→</span> Learn more for full detail <span className="text-slate-600">→</span> <span className="text-[var(--emerald)]">Ask Z</span> for a guided walkthrough.
+              Click any module for a summary <span className="text-slate-300">→</span> Learn more for full detail <span className="text-slate-300">→</span> <span className="text-[var(--emerald)]">Ask Z</span> for a guided walkthrough.
             </p>
           </div>
           <ModulePipelineFlow onSelect={setSelectedName} />
