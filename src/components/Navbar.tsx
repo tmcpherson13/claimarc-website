@@ -126,7 +126,7 @@ const Navbar = () => {
               Intelligence Center
             </Link>
             <Link
-              to="/contact"
+              to="/contact?offer=demo"
               onClick={closeMenu}
               className="plausible-event-name=CTA_Click plausible-event-location=navbar_mobile plausible-event-cta=book_demo bg-[var(--emerald)] text-white px-4 py-2.5 rounded-md text-sm font-semibold text-center hover:bg-emerald-600 transition-colors"
             >
