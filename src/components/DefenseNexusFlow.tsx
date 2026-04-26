@@ -248,6 +248,26 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const [isMobile, setIsMobile] = useState(false);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
+  const lastFrameRef = useRef<number | null>(null);
+
+  // Persistent chaotic random-walk state for interior nexus particles.
+  // Each particle keeps its own position + velocity and updates per frame
+  // with random direction kicks for genuinely chaotic, non-periodic motion.
+  const CHAOS_COUNT = 22;
+  const chaosRef = useRef(
+    Array.from({ length: CHAOS_COUNT }, (_, i) => {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random() * 24;
+      return {
+        x: Math.cos(a) * r,
+        y: Math.sin(a) * r,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6,
+        radius: 1.1 + (i % 3) * 0.5,
+        phase: Math.random() * Math.PI * 2,
+      };
+    })
+  );
 
   // Hover-delay timers — prevent flicker between rapid hovers
   const srcEnterTimer = useRef<number | null>(null);
@@ -363,6 +383,40 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         }
       });
 
+      // Update chaotic interior particles with random direction kicks.
+      const prev = lastFrameRef.current ?? timestamp;
+      const dt = Math.min(0.05, (timestamp - prev) / 1000); // seconds, clamped
+      lastFrameRef.current = timestamp;
+      const MAX_R = 24; // confine inside inner ring
+      const MAX_SPEED = 9;
+      const KICK = 22; // velocity change per second
+      const DAMP = 0.94;
+      for (const p of chaosRef.current) {
+        // Random impulse — direction can flip every frame
+        p.vx = p.vx * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
+        p.vy = p.vy * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
+        // Clamp speed so it stays slow + jittery
+        const sp = Math.hypot(p.vx, p.vy);
+        if (sp > MAX_SPEED) {
+          p.vx = (p.vx / sp) * MAX_SPEED;
+          p.vy = (p.vy / sp) * MAX_SPEED;
+        }
+        p.x += p.vx * dt * 18;
+        p.y += p.vy * dt * 18;
+        // Soft boundary — reflect inward when escaping the disc
+        const d = Math.hypot(p.x, p.y);
+        if (d > MAX_R) {
+          const nx = p.x / d;
+          const ny = p.y / d;
+          p.x = nx * MAX_R;
+          p.y = ny * MAX_R;
+          // reflect velocity
+          const dot = p.vx * nx + p.vy * ny;
+          p.vx -= 2 * dot * nx;
+          p.vy -= 2 * dot * ny;
+        }
+      }
+
       setTick((n) => (n + 1) % 1_000_000);
       rafRef.current = requestAnimationFrame(animate);
     };
@@ -469,28 +523,38 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           <filter id="nexus-tooltip-shadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.5" />
           </filter>
+          <radialGradient id="nexus-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="55%" stopColor="#10B981" stopOpacity="0" />
+            <stop offset="80%" stopColor="#10B981" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="nexus-substrate" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#0F2A22" />
+            <stop offset="70%" stopColor="#0A1F1A" />
+            <stop offset="100%" stopColor="#06120F" />
+          </radialGradient>
         </defs>
 
         <rect x={VIEW_X} y={VIEW_Y} width={VIEW_W} height={VIEW_H} fill={CANVAS_FILL} />
 
-        {/* Soft outer glow */}
+        {/* Soft outer green glow */}
         <circle
           cx={NEXUS_X}
           cy={NEXUS_Y}
-          r={80}
-          fill="#10B981"
-          opacity={nexusGlow}
+          r={110}
+          fill="url(#nexus-glow)"
+          opacity={0.85 + nexusGlow * 2}
         />
 
-        {/* Darker PCB substrate disc */}
+        {/* Lighter PCB substrate disc (radial gradient) */}
         <circle
           cx={NEXUS_X}
           cy={NEXUS_Y}
           r={66}
-          fill="#020617"
-          stroke="#064E3B"
-          strokeWidth={1}
-          opacity={0.95}
+          fill="url(#nexus-substrate)"
+          stroke="#10B981"
+          strokeWidth={1.2}
+          opacity={1}
         />
 
         {/* Circuit-board nexus: PCB traces with right-angle segments,
@@ -554,33 +618,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             pcbPaths.push(`M ${mx} ${my} L ${midOutX} ${midOutY} L ${jogX} ${jogY} L ${ox} ${oy}`);
           }
 
-          // Chaotic interior particles — random walk inside the nexus disc.
-          // Use a deterministic pseudo-random per-particle but jitter position
-          // every frame so movement feels lively and non-uniform.
-          const CHAOS_COUNT = 22;
-          const chaos = Array.from({ length: CHAOS_COUNT }, (_, i) => {
-            const seed = i * 137.508;
-            // Multi-frequency oscillation gives non-circular, jittery motion
-            const t = elapsed / 1000;
-            const r =
-              10 +
-              22 *
-                (0.5 +
-                  0.5 *
-                    Math.sin(t * (0.7 + (i % 5) * 0.13) + seed));
-            const a =
-              seed +
-              t * (0.6 + (i % 7) * 0.21) +
-              Math.sin(t * 1.7 + seed) * 0.9;
-            const jitterX = Math.sin(t * 5.3 + seed * 1.7) * 3;
-            const jitterY = Math.cos(t * 4.1 + seed * 2.3) * 3;
-            return {
-              cx: NEXUS_X + Math.cos(a) * r + jitterX,
-              cy: NEXUS_Y + Math.sin(a) * r + jitterY,
-              opacity: 0.5 + 0.5 * Math.abs(Math.sin(t * 3 + seed)),
-              r: 1.1 + (i % 3) * 0.5,
-            };
-          });
+          // Chaotic interior particles — read live from the random-walk
+          // simulation maintained in chaosRef (updated each animation frame).
+          const chaos = chaosRef.current.map((p) => ({
+            cx: NEXUS_X + p.x,
+            cy: NEXUS_Y + p.y,
+            opacity: 0.55 + 0.45 * Math.abs(Math.sin(elapsed / 400 + p.phase)),
+            r: p.radius,
+          }));
 
           // Buzzing particles that travel outward along radial traces and exit
           const BUZZ_COUNT = 16;
@@ -652,7 +697,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                     cx={t.x2}
                     cy={t.y2}
                     r={PAD_R}
-                    fill="#020617"
+                    fill="#0F2A22"
                     stroke="#10B981"
                     strokeWidth={0.9}
                     opacity={0.9}
@@ -672,7 +717,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 cx={NEXUS_X}
                 cy={NEXUS_Y}
                 r={9}
-                fill="#020617"
+                fill="#0F2A22"
                 stroke="#10B981"
                 strokeWidth={1}
                 opacity={0.95}
@@ -834,29 +879,50 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         })}
 
         {(() => {
-          const LABEL_R = 92;
-          // Top arc: left → right across the top (sweep 1)
+          const LABEL_R = 73; // hugs just outside the outer ring (r=58)
           const topPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 1 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
-          // Bottom arc: left → right across the bottom (sweep 0) so text reads upright
           const bottomPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 0 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
           return (
             <g
-              fill="#10B981"
-              fontSize={10}
+              fontSize={13}
               fontFamily="ui-monospace, SFMono-Regular, monospace"
-              opacity={0.85}
-              letterSpacing={3}
+              fontWeight={700}
+              letterSpacing={4}
             >
               <defs>
                 <path id="nexus-label-top" d={topPath} />
                 <path id="nexus-label-bottom" d={bottomPath} />
               </defs>
-              <text>
+              {/* Dark stroke halo for legibility against the green glow */}
+              <text
+                fill="none"
+                stroke="#020617"
+                strokeWidth={3}
+                strokeLinejoin="round"
+                opacity={0.85}
+              >
                 <textPath href="#nexus-label-top" startOffset="50%" textAnchor="middle">
                   DEFENSE
                 </textPath>
               </text>
-              <text>
+              <text
+                fill="none"
+                stroke="#020617"
+                strokeWidth={3}
+                strokeLinejoin="round"
+                opacity={0.85}
+              >
+                <textPath href="#nexus-label-bottom" startOffset="50%" textAnchor="middle">
+                  NEXUS
+                </textPath>
+              </text>
+              {/* Bright foreground text */}
+              <text fill="#A7F3D0" opacity={1}>
+                <textPath href="#nexus-label-top" startOffset="50%" textAnchor="middle">
+                  DEFENSE
+                </textPath>
+              </text>
+              <text fill="#A7F3D0" opacity={1}>
                 <textPath href="#nexus-label-bottom" startOffset="50%" textAnchor="middle">
                   NEXUS
                 </textPath>
