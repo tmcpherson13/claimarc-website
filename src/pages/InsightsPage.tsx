@@ -59,10 +59,19 @@ const InsightsPage = () => {
 
       <section className="relative overflow-hidden bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16 md:py-20">
         <HeroAccent />
-        <IntelligenceInstrumentPanel className="absolute inset-0 w-full h-full opacity-30" />
+        <IntelligenceInstrumentPanel className="absolute inset-0 w-full h-full opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--navy)]/85 via-[var(--navy)]/55 to-transparent pointer-events-none" />
         <div className="relative max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">Intelligence Center</h1>
-          <p className="mt-4 text-lg text-white/80 max-w-2xl">
+          <h1
+            className="text-4xl md:text-5xl font-semibold tracking-tight text-white"
+            style={{ textShadow: "0 2px 12px rgba(2,8,23,0.7)" }}
+          >
+            Intelligence Center
+          </h1>
+          <p
+            className="mt-4 text-lg text-white max-w-2xl"
+            style={{ textShadow: "0 1px 8px rgba(2,8,23,0.6)" }}
+          >
             Payer intelligence, denial strategy, and revenue cycle briefings —
             curated for healthcare finance leaders.
           </p>
