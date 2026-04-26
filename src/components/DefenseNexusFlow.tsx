@@ -250,24 +250,12 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const rafRef = useRef<number>(0);
   const lastFrameRef = useRef<number | null>(null);
 
-  // Persistent chaotic random-walk state for interior nexus particles.
-  // Each particle keeps its own position + velocity and updates per frame
-  // with random direction kicks for genuinely chaotic, non-periodic motion.
-  const CHAOS_COUNT = 22;
-  const chaosRef = useRef(
-    Array.from({ length: CHAOS_COUNT }, (_, i) => {
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.random() * 24;
-      return {
-        x: Math.cos(a) * r,
-        y: Math.sin(a) * r,
-        vx: (Math.random() - 0.5) * 6,
-        vy: (Math.random() - 0.5) * 6,
-        radius: 1.1 + (i % 3) * 0.5,
-        phase: Math.random() * Math.PI * 2,
-      };
-    })
-  );
+  // Persistent buzzer state — each particle is assigned a random PCB trace
+  // and progresses along it; on completion it picks a new random trace.
+  const buzzersRef = useRef<
+    { trace: number; progress: number; speed: number }[]
+  >([]);
+  const lastBuzzFrameRef = useRef<number | null>(null);
 
   // Hover-delay timers — prevent flicker between rapid hovers
   const srcEnterTimer = useRef<number | null>(null);
@@ -383,39 +371,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         }
       });
 
-      // Update chaotic interior particles with random direction kicks.
-      const prev = lastFrameRef.current ?? timestamp;
-      const dt = Math.min(0.05, (timestamp - prev) / 1000); // seconds, clamped
       lastFrameRef.current = timestamp;
-      const MAX_R = 24; // confine inside inner ring
-      const MAX_SPEED = 9;
-      const KICK = 22; // velocity change per second
-      const DAMP = 0.94;
-      for (const p of chaosRef.current) {
-        // Random impulse — direction can flip every frame
-        p.vx = p.vx * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
-        p.vy = p.vy * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
-        // Clamp speed so it stays slow + jittery
-        const sp = Math.hypot(p.vx, p.vy);
-        if (sp > MAX_SPEED) {
-          p.vx = (p.vx / sp) * MAX_SPEED;
-          p.vy = (p.vy / sp) * MAX_SPEED;
-        }
-        p.x += p.vx * dt * 18;
-        p.y += p.vy * dt * 18;
-        // Soft boundary — reflect inward when escaping the disc
-        const d = Math.hypot(p.x, p.y);
-        if (d > MAX_R) {
-          const nx = p.x / d;
-          const ny = p.y / d;
-          p.x = nx * MAX_R;
-          p.y = ny * MAX_R;
-          // reflect velocity
-          const dot = p.vx * nx + p.vy * ny;
-          p.vx -= 2 * dot * nx;
-          p.vy -= 2 * dot * ny;
-        }
-      }
 
       setTick((n) => (n + 1) % 1_000_000);
       rafRef.current = requestAnimationFrame(animate);
@@ -577,25 +533,49 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             };
           });
 
-          // Traditional PCB-style traces: a mix of L-shaped (right-angle)
-          // jogs between rings and tangential arc segments. Built as SVG
-          // path strings using cartesian coords relative to the nexus center.
+          // PCB-style traces represented BOTH as SVG path strings (for
+          // rendering) and as polyline point arrays (for particles to
+          // travel along). Mix of right-angle, tangential arc, and 45° jog.
           const pcbPaths: string[] = [];
+          const polylines: { x: number; y: number }[][] = [];
+
+          const arcPoints = (
+            cx: number,
+            cy: number,
+            r: number,
+            a0: number,
+            a1: number,
+            steps = 8
+          ) => {
+            const out: { x: number; y: number }[] = [];
+            for (let s = 0; s <= steps; s++) {
+              const a = a0 + ((a1 - a0) * s) / steps;
+              out.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+            }
+            return out;
+          };
+
           for (let i = 0; i < TRACE_COUNT; i++) {
             const a0 = (i / TRACE_COUNT) * Math.PI * 2;
             const a1 = ((i + 1) / TRACE_COUNT) * Math.PI * 2;
-            // L-shaped jog from inner ring to mid ring
+
             const ix = NEXUS_X + Math.cos(a0) * RINGS[0];
             const iy = NEXUS_Y + Math.sin(a0) * RINGS[0];
             const mx = NEXUS_X + Math.cos(a0) * RINGS[1];
             const my = NEXUS_Y + Math.sin(a0) * RINGS[1];
-            // Right-angle elbow: go horizontally then vertically (or rotated by quadrant)
-            // For a more authentic PCB look use 45° diagonal jogs.
+
+            // L-shaped jog from inner ring to mid ring
             const dx = mx - ix;
             const dy = my - iy;
             const elbowX = ix + dx * 0.6;
             const elbowY = iy;
             pcbPaths.push(`M ${ix} ${iy} L ${elbowX} ${elbowY} L ${elbowX} ${elbowY + dy} L ${mx} ${my}`);
+            polylines.push([
+              { x: ix, y: iy },
+              { x: elbowX, y: elbowY },
+              { x: elbowX, y: elbowY + dy },
+              { x: mx, y: my },
+            ]);
 
             // Tangential arc segment along middle ring (every other trace)
             if (i % 2 === 0) {
@@ -604,43 +584,81 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               const ax1 = NEXUS_X + Math.cos(a1) * RINGS[1];
               const ay1 = NEXUS_Y + Math.sin(a1) * RINGS[1];
               pcbPaths.push(`M ${ax0} ${ay0} A ${RINGS[1]} ${RINGS[1]} 0 0 1 ${ax1} ${ay1}`);
+              polylines.push(arcPoints(NEXUS_X, NEXUS_Y, RINGS[1], a0, a1));
             }
 
-            // Straight + diagonal trace from mid ring out to pad
+            // Mid ring → outer pad with 45° jog
             const ox = NEXUS_X + Math.cos(a0) * RINGS[2];
             const oy = NEXUS_Y + Math.sin(a0) * RINGS[2];
             const midOutX = NEXUS_X + Math.cos(a0) * (RINGS[1] + 6);
             const midOutY = NEXUS_Y + Math.sin(a0) * (RINGS[1] + 6);
-            // 45° jog: tangent offset before continuing radially
             const tangent = a0 + Math.PI / 2;
             const jogX = midOutX + Math.cos(tangent) * 4;
             const jogY = midOutY + Math.sin(tangent) * 4;
             pcbPaths.push(`M ${mx} ${my} L ${midOutX} ${midOutY} L ${jogX} ${jogY} L ${ox} ${oy}`);
+            polylines.push([
+              { x: mx, y: my },
+              { x: midOutX, y: midOutY },
+              { x: jogX, y: jogY },
+              { x: ox, y: oy },
+            ]);
           }
 
-          // Chaotic interior particles — read live from the random-walk
-          // simulation maintained in chaosRef (updated each animation frame).
-          const chaos = chaosRef.current.map((p) => ({
-            cx: NEXUS_X + p.x,
-            cy: NEXUS_Y + p.y,
-            opacity: 0.55 + 0.45 * Math.abs(Math.sin(elapsed / 400 + p.phase)),
-            r: p.radius,
-          }));
+          // Pre-compute polyline lengths for parametric traversal
+          const polyLengths = polylines.map((pts) => {
+            let total = 0;
+            const segs: number[] = [];
+            for (let s = 0; s < pts.length - 1; s++) {
+              const len = Math.hypot(pts[s + 1].x - pts[s].x, pts[s + 1].y - pts[s].y);
+              segs.push(len);
+              total += len;
+            }
+            return { total, segs };
+          });
 
-          // Buzzing particles that travel outward along radial traces and exit
-          const BUZZ_COUNT = 16;
-          const BUZZ_PERIOD = 1700;
-          const buzzers = Array.from({ length: BUZZ_COUNT }, (_, i) => {
-            const trace = traces[i % TRACE_COUNT];
-            const phase = (i / BUZZ_COUNT) * BUZZ_PERIOD;
-            const local = ((elapsed + phase) % BUZZ_PERIOD) / BUZZ_PERIOD;
-            const k = local < 0.85 ? local / 0.85 : 1;
-            const r = RINGS[0] + (RINGS[2] - RINGS[0]) * k;
-            return {
-              cx: NEXUS_X + Math.cos(trace.a) * r,
-              cy: NEXUS_Y + Math.sin(trace.a) * r,
-              opacity: local < 0.85 ? 0.95 : 0.4 + 0.6 * Math.sin(local * 40),
-            };
+          // Initialize per-particle trace assignment + progress lazily
+          if (buzzersRef.current.length === 0) {
+            for (let i = 0; i < 22; i++) {
+              buzzersRef.current.push({
+                trace: Math.floor(Math.random() * polylines.length),
+                progress: Math.random(),
+                speed: 0.18 + Math.random() * 0.35, // progress per second
+              });
+            }
+          }
+
+          // Advance progress; when a particle reaches the end of its trace,
+          // pick a new random trace to flow along next.
+          const dt = Math.min(0.05, (elapsed - (lastBuzzFrameRef.current ?? elapsed)) / 1000);
+          lastBuzzFrameRef.current = elapsed;
+          for (const b of buzzersRef.current) {
+            b.progress += b.speed * dt;
+            if (b.progress >= 1) {
+              b.progress = 0;
+              b.trace = Math.floor(Math.random() * polylines.length);
+              b.speed = 0.18 + Math.random() * 0.35;
+            }
+          }
+
+          // Map each particle to a position along its current polyline
+          const buzzers = buzzersRef.current.map((b) => {
+            const pts = polylines[b.trace];
+            const meta = polyLengths[b.trace];
+            const target = b.progress * meta.total;
+            let acc = 0;
+            for (let s = 0; s < meta.segs.length; s++) {
+              if (acc + meta.segs[s] >= target) {
+                const local = (target - acc) / (meta.segs[s] || 1);
+                return {
+                  cx: pts[s].x + (pts[s + 1].x - pts[s].x) * local,
+                  cy: pts[s].y + (pts[s + 1].y - pts[s].y) * local,
+                  opacity: 0.7 + 0.3 * Math.sin(elapsed / 200 + b.progress * 8),
+                };
+              }
+              acc += meta.segs[s];
+            }
+            const last = pts[pts.length - 1];
+            return { cx: last.x, cy: last.y, opacity: 0.9 };
           });
 
           return (
