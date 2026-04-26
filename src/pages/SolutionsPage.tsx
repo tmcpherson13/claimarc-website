@@ -108,12 +108,12 @@ const SolutionsPage = () => {
 
   /** Pick up ?role= query so deep links from the home page land on the right tab. */
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const r = params.get("role");
-    if (r && roles.some((role) => role.key === r)) {
-      setActiveRole(r);
+    const roleParam = searchParams.get("role");
+    if (roleParam && roles.some((r) => r.key === roleParam)) {
+      setActiveRole(roleParam);
     }
-  }, [search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Scroll-spy: highlight the module section currently in view. */
   useEffect(() => {
