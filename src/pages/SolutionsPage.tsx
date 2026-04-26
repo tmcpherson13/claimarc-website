@@ -215,12 +215,6 @@ const SolutionsPage = () => {
               >
                 {role.ctaText}
               </Link>
-              <p className="text-slate-500 text-xs mt-3 max-w-md">
-                We'll tailor the demo to your role, workflow, payer mix, and biggest revenue challenge.
-              </p>
-              {role.ctaNote && (
-                <p className="text-slate-400 text-xs mt-2">{role.ctaNote}</p>
-              )}
             </div>
 
             <div className="md:col-span-2">
