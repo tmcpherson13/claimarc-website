@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import WeaponizationCounterstrike from "@/components/WeaponizationCounterstrike";
 import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 
@@ -32,6 +33,7 @@ const WhyZDefensePage = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
+        <WeaponizationCounterstrike />
         <div className="relative max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
