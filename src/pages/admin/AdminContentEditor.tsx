@@ -163,6 +163,7 @@ const Inner = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [aiContentType, setAiContentType] = useState<ContentType>(initialType);
   const [imageRefreshPage, setImageRefreshPage] = useState(1);
 
   // Suggested hero images (Unsplash) — populated after AI generation
@@ -270,7 +271,7 @@ const Inner = () => {
     setAiError("");
     try {
       const { data, error } = await supabase.functions.invoke("generate-content", {
-        body: { prompt: aiPrompt, contentType: form.contentType },
+        body: { prompt: aiPrompt, contentType: aiContentType },
       });
       if (error) throw new Error(error.message || "Generation failed.");
       const parsed = data as {
@@ -290,6 +291,15 @@ const Inner = () => {
         summary: parsed.summary ?? prev.summary,
         tags: Array.isArray(parsed.tags) && parsed.tags.length ? parsed.tags : prev.tags,
         body: parsed.body ?? prev.body,
+        // Pre-fill SEO fields only when empty — never overwrite manual entries.
+        seoTitle:
+          prev.seoTitle.trim().length === 0 && parsed.title
+            ? parsed.title.slice(0, 60)
+            : prev.seoTitle,
+        seoDescription:
+          prev.seoDescription.trim().length === 0 && parsed.summary
+            ? parsed.summary.slice(0, 160)
+            : prev.seoDescription,
       }));
       // Mark slug as user-touched so it won't be re-derived from the title.
       if (parsed.slug) setSlugTouched(true);
@@ -314,6 +324,7 @@ const Inner = () => {
   useEffect(() => {
     if (isNew) {
       setForm(empty(initialType));
+      setAiContentType(initialType);
       setLoading(false);
       return;
     }
@@ -321,6 +332,7 @@ const Inner = () => {
       if (p) {
         setExisting(p);
         setForm(fromItem(p));
+        setAiContentType(p.contentType);
         setSlugTouched(true);
       }
       setLoading(false);
@@ -717,6 +729,31 @@ const Inner = () => {
                 Preview ↗
               </Button>
             )}
+            <button
+              type="button"
+              onClick={openPreview}
+              disabled={isNew}
+              title={isNew ? "Save first to preview" : undefined}
+              aria-label="Preview"
+              className="border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded text-sm font-medium transition-colors flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4"
+                aria-hidden="true"
+              >
+                <path d="M11 3h6v6" />
+                <path d="M17 3l-8 8" />
+                <path d="M15 11v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" />
+              </svg>
+              Preview
+            </button>
             <Button
               variant="outline"
               disabled={saving}
@@ -838,68 +875,17 @@ const Inner = () => {
               rows={20}
             />
           </div>
-        </section>
 
-        {/* Sidebar */}
-        <aside className="space-y-6">
-          {/* AI Generate panel */}
-          <div className="bg-gradient-to-br from-[var(--navy)] to-[var(--navy-dk)] rounded-xl p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white font-semibold text-sm">AI Generate</p>
-                <p className="text-white/50 text-xs mt-0.5">
-                  Describe what you want — we write it.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAiPanel(!showAiPanel)}
-                className="text-[var(--emerald)] text-xs hover:underline shrink-0"
-              >
-                {showAiPanel ? "Cancel" : "Open"}
-              </button>
-            </div>
-            {showAiPanel && (
-              <div className="mt-4">
-                <textarea
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder='e.g. "Write an article explaining how Ledger handles Medicare 60-day compliance for auditors and compliance officers"'
-                  rows={4}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--emerald)] focus:ring-1 focus:ring-[var(--emerald)] resize-none"
-                />
-                {aiError && <p className="text-red-400 text-xs mt-2">{aiError}</p>}
-                <div className="flex items-center justify-between mt-3">
-                  <p className="text-white/30 text-[10px] leading-tight max-w-[140px]">
-                    Overwrites title, summary, body, and tags. Slug auto-generated.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={generateWithAI}
-                    disabled={aiLoading || !aiPrompt.trim()}
-                    className="bg-[var(--emerald)] hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shrink-0"
-                  >
-                    {aiLoading ? (
-                      <>
-                        <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Writing…
-                      </>
-                    ) : (
-                      "✦ Generate"
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Suggested hero images (Unsplash) */}
+          {/* Suggested hero images (Unsplash) — promoted to main column */}
           {suggestedPhotos.length > 0 && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <p className="text-slate-900 font-semibold text-sm">
-                  Suggested Hero Images
-                </p>
+            <div className="bg-[var(--navy)] border border-[var(--emerald)]/30 rounded-xl p-5">
+              <div className="flex items-start justify-between gap-2 flex-wrap mb-3">
+                <div>
+                  <p className="text-white font-semibold text-sm">Choose a Hero Image</p>
+                  <p className="text-white/50 text-xs mt-0.5">
+                    Healthcare and finance-biased results from Unsplash
+                  </p>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -909,14 +895,14 @@ const Inner = () => {
                       setImageRefreshPage(prev);
                       fetchSuggestedImages(form.title, form.tags, prev);
                     }}
-                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="text-xs px-2 py-1 rounded border border-white/20 text-white/70 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     ← Prev
                   </button>
-                  <span className="text-[11px] text-slate-500 tabular-nums min-w-[44px] text-center">
+                  <span className="text-[11px] text-white/60 tabular-nums min-w-[44px] text-center">
                     {photosLoading ? (
                       <span className="inline-flex items-center gap-1">
-                        <span className="inline-block w-3 h-3 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                        <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       </span>
                     ) : (
                       `Page ${imageRefreshPage}`
@@ -930,7 +916,7 @@ const Inner = () => {
                       setImageRefreshPage(next);
                       fetchSuggestedImages(form.title, form.tags, next);
                     }}
-                    className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="text-xs px-2 py-1 rounded border border-white/20 text-white/70 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     Next →
                   </button>
@@ -942,23 +928,23 @@ const Inner = () => {
                       setImageRefreshPage(1);
                       setHasMorePhotos(true);
                     }}
-                    className="text-slate-400 hover:text-slate-600 text-xs ml-1"
+                    className="text-white/40 hover:text-white/80 text-xs ml-1"
                   >
                     Dismiss
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-3">
+              <div className="grid grid-cols-4 gap-2 mt-3">
                 {suggestedPhotos.map((photo) => (
                   <button
                     key={photo.id}
                     type="button"
                     onClick={() => selectAndUploadPhoto(photo)}
                     disabled={uploadingPhoto}
-                    className={`relative group rounded-lg overflow-hidden aspect-[16/9] ring-2 transition-all duration-200 ${
+                    className={`relative group rounded-lg overflow-hidden aspect-[4/3] ring-2 transition-all duration-200 ${
                       selectedPhotoId === photo.id
                         ? "ring-[var(--emerald)] scale-[0.98]"
-                        : "ring-transparent hover:ring-slate-300"
+                        : "ring-transparent hover:ring-white/40"
                     } ${uploadingPhoto ? "cursor-wait" : "cursor-pointer"}`}
                   >
                     <img
@@ -985,12 +971,96 @@ const Inner = () => {
                   </button>
                 ))}
               </div>
-              <p className="text-slate-500 text-xs mt-3 leading-relaxed">
+              <p className="text-white/50 text-xs mt-3 leading-relaxed">
                 Click a photo to set as hero image. Photos auto-upload to your
                 asset library.
               </p>
             </div>
           )}
+        </section>
+
+        {/* Sidebar */}
+        <aside className="space-y-6">
+          {/* AI Generate panel */}
+          <div className="bg-gradient-to-br from-[var(--navy)] to-[var(--navy-dk)] rounded-xl p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white font-semibold text-sm">Generate with Z</p>
+                <p className="text-white/50 text-xs mt-0.5">
+                  Describe what you want — Z writes it.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAiPanel(!showAiPanel)}
+                className="text-[var(--emerald)] text-xs hover:underline shrink-0"
+              >
+                {showAiPanel ? "Cancel" : "Open"}
+              </button>
+            </div>
+            {showAiPanel && (
+              <div className="mt-4">
+                <p className="text-white/50 text-xs mb-2">What are you creating?</p>
+                <div className="flex gap-2 mb-3">
+                  {(
+                    [
+                      { value: "blog" as ContentType, label: "Blog Post" },
+                      { value: "white_paper" as ContentType, label: "White Paper" },
+                    ]
+                  ).map((opt) => {
+                    const selected = aiContentType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setAiContentType(opt.value);
+                          set("contentType", opt.value);
+                        }}
+                        className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-colors ${
+                          selected
+                            ? "bg-[var(--emerald)] text-white border-[var(--emerald)]"
+                            : "bg-white/10 text-white/60 border-white/20 hover:bg-white/20"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <textarea
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder='e.g. "Write an article explaining how Ledger handles Medicare 60-day compliance for auditors and compliance officers"'
+                  rows={4}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--emerald)] focus:ring-1 focus:ring-[var(--emerald)] resize-none"
+                />
+                {aiError && <p className="text-red-400 text-xs mt-2">{aiError}</p>}
+                <div className="flex items-center justify-between mt-3">
+                  <p className="text-white/30 text-[10px] leading-tight max-w-[140px]">
+                    Overwrites title, summary, body, and tags. Slug auto-generated.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={generateWithAI}
+                    disabled={aiLoading || !aiPrompt.trim()}
+                    className="bg-[var(--emerald)] hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shrink-0"
+                  >
+                    {aiLoading ? (
+                      <>
+                        <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Z is writing…
+                      </>
+                    ) : (
+                      "✦ Ask Z"
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+
 
           {/* Status panel */}
           <Panel title="Status">
