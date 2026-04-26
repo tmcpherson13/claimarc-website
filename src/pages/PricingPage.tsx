@@ -90,12 +90,8 @@ const PricingPage = () => {
               <p className="text-slate-600 text-sm mt-3">
                 Self-serve dashboards, alerts, and analytics. Your team uses
                 ZDefense and acts on the intelligence. Full visibility, full
-                control. Best for tech-savvy revenue cycle teams with strong
-                internal capacity.
+                control.
               </p>
-              <span className="bg-[var(--lgray)] rounded px-3 py-1 text-xs text-slate-600 inline-block mt-4">
-                Best for: Tech-savvy Rev Cycle teams
-              </span>
             </div>
 
             <div className="rounded-xl p-8 border-2 border-[var(--emerald)]">
@@ -107,12 +103,8 @@ const PricingPage = () => {
               <p className="text-slate-600 text-sm mt-3">
                 A ZTech specialist works alongside your team — completing
                 individual workflows 10x faster because AI handles volume and
-                surfaces exceptions that need human judgment. Best for mid-size
-                hospitals wanting guidance without full outsourcing.
+                surfaces exceptions that need human judgment.
               </p>
-              <span className="bg-[var(--lgray)] rounded px-3 py-1 text-xs text-slate-600 inline-block mt-4">
-                Best for: Mid-size hospitals seeking guidance
-              </span>
             </div>
 
             <div className="rounded-xl p-8 border-2 border-[var(--lgray)]">
@@ -120,12 +112,8 @@ const PricingPage = () => {
               <h3 className="text-[var(--navy)] font-bold text-xl mt-2">Fire and Forget.</h3>
               <p className="text-slate-600 text-sm mt-3">
                 ZTech runs everything end-to-end. You see recovered revenue. Not
-                managed services — automated intelligence. Best for
-                organizations outsourcing RCM functions.
+                managed services — automated intelligence.
               </p>
-              <span className="bg-[var(--lgray)] rounded px-3 py-1 text-xs text-slate-600 inline-block mt-4">
-                Best for: Organizations outsourcing RCM
-              </span>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 
 import CTABand from "@/components/CTABand";
-import TrialCallout from "@/components/TrialCallout";
+
 import HeroAccent from "@/components/HeroAccent";
 import HeroNetwork from "@/components/HeroNetwork";
 import PayerThreatRadar from "@/components/PayerThreatRadar";
@@ -277,13 +277,6 @@ const Index = () => {
           <Link to="/solutions" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
             See all roles →
           </Link>
-        </div>
-      </section>
-
-      {/* SECTION 8: TRIAL CALLOUT */}
-      <section className="px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <TrialCallout />
         </div>
       </section>
 

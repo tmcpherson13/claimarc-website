@@ -20,9 +20,7 @@ const ROLES = [
   { key: "director", label: "Rev Cycle Director", target: "ledger" },
   { key: "manager", label: "Revenue Cycle Manager", target: "shield" },
   { key: "billing", label: "Billing Specialist", target: "triage" },
-  { key: "denial", label: "Denial Coordinator", target: "triage" },
   { key: "compliance", label: "Auditor/Compliance Officer", target: "ledger" },
-  { key: "audit", label: "Internal Audit", target: "ledger" },
 ] as const;
 
 const MODULES: { key: string; label: string; cluster: ClusterKey }[] = [
