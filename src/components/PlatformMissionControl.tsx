@@ -153,7 +153,7 @@ const ModuleStatusBoard = ({ t }: { t: number }) => {
         const phase = (i * Math.PI) / 3;
         const wave = Math.sin((t / period) * Math.PI * 2 + phase);
         const opacity = 0.6 + 0.4 * (wave * 0.5 + 0.5); // 0.6..1.0
-        const color = LAYER_COLOR[m.layer];
+        const color = LAYER_LED_COLOR[m.layer];
         return (
           <g key={m.name}>
             {layerLabelByIndex[i] && (
@@ -677,8 +677,7 @@ const Padlock = ({
   </g>
 );
 
-const BAA_REQUIRED = ["Sentinel", "Forecast", "Ledger", "Triage", "Evidence", "Resolve"];
-const BAA_NONE = ["ContractIntel", "Shield", "Prevent"];
+// (BAA_REQUIRED + BAA_NONE are derived from the shared MODULES catalog at top)
 
 const BaaStatus = ({ t }: { t: number }) => {
   const headerY = 22;
