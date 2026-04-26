@@ -1119,18 +1119,88 @@ const PlatformMissionControl = () => {
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Row 1 */}
-        <Bezel col={0} row={0} label="MODULE STATUS">
-          <ModuleStatusBoard t={t} />
+        <Bezel
+          col={0}
+          row={0}
+          label="MODULE STATUS"
+          module="Sentinel"
+          onActivate={goToModule}
+        >
+          <ModuleStatusBoard t={t} onActivate={goToModule} />
         </Bezel>
-        <Bezel col={1} row={0} label="SHIELD PERFORMANCE">
+        <Bezel
+          col={1}
+          row={0}
+          label="SHIELD PERFORMANCE"
+          module="Shield"
+          onActivate={goToModule}
+        >
           <ClaimRateGauge t={t} />
         </Bezel>
-        <Bezel col={2} row={0} label="CRUCIBLE INGEST">
+        <Bezel
+          col={2}
+          row={0}
+          label="CRUCIBLE INGEST"
+          module="ContractIntel"
+          onActivate={goToModule}
+        >
           <CrucibleThroughput
             t={t}
             packets={packetsRef.current}
             accumHeights={accumRef.current}
             livePulse={livePulse}
+          />
+        </Bezel>
+
+        {/* Row 2 */}
+        <Bezel
+          col={0}
+          row={1}
+          label="PAYER COVERAGE"
+          module="Sentinel"
+          onActivate={goToModule}
+        >
+          <PayerCoverageGrid t={t} />
+        </Bezel>
+        <Bezel
+          col={1}
+          row={1}
+          label="RECOVERY VALUE"
+          module="Triage"
+          onActivate={goToModule}
+        >
+          <RecoveryOdometer t={t} />
+        </Bezel>
+        <Bezel col={2} row={1} label="SYSTEM CLOCK">
+          <SystemClock now={now} elapsedSec={t} />
+        </Bezel>
+
+        {/* Row 3 */}
+        <Bezel col={0} row={2} label="BAA SHIELD STATUS">
+          <BaaStatus t={t} onActivate={goToModule} />
+        </Bezel>
+        <Bezel
+          col={1}
+          row={2}
+          label="APPEAL CONFIDENCE"
+          module="Resolve"
+          onActivate={goToModule}
+        >
+          <AppealThermometer t={t} />
+        </Bezel>
+        <Bezel
+          col={2}
+          row={2}
+          label="REGULATORY FEED"
+          module="Shield"
+          onActivate={goToModule}
+        >
+          <RegulatoryFeed
+            t={t}
+            entries={feedRef.current}
+            cursorOn={cursorOn}
+            livePulse={livePulse}
+            clipId={clipId.current}
           />
         </Bezel>
 
