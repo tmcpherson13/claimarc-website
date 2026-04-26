@@ -1,33 +1,38 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * WeaponizationCounterstrike — full-width animated SVG background for the
- * Why ZDefense hero. Visualizes payer aggression (red threats + WI numbers)
- * being intercepted at a cyan defense barrier, producing emerald victory
- * particles. Pure SVG + React hooks; decorative.
+ * WeaponizationCounterstrike — active defense visualization. Incoming
+ * payer threat vectors travel right→left; the ZDefense barrier intercepts
+ * most, firing a cyan counter-beam and a burst of victory particles.
+ * Pure SVG + React hooks. Decorative.
  */
 
-const DEFENSE_X = 500;
-const SHIELD_PERIOD_MS = 5000;
+const VIEW_W = 1200;
+const VIEW_H = 360;
+const BARRIER_X = 500;
 
-interface Threat {
-  id: number;
-  startY: number;
-  endY: number;
-  speed: number; // 1 / duration in ms
-  offset: number; // phase 0..1
-  intercepted: boolean;
-  lap: number; // increments each loop
-}
+const THREAT_COUNT = 6;
+const THREAT_LEN = 120;
+const THREAT_DY = 18; // total downward drift across full width
+const THREAT_TOP = 60;
+const THREAT_BOT = 300;
+// Fixed durations per threat (seconds to cross full width)
+const THREAT_DURATIONS = [2.7, 3.4, 2.5, 3.8, 3.1, 4.0];
+const THREAT_OFFSETS = [0, 0.6, 1.2, 1.9, 2.4, 3.0]; // seconds
+// Stable intercept pattern: 70% intercepted (4/6), 30% pass (2/6)
+const THREAT_INTERCEPTED = [true, true, false, true, true, false];
 
-interface WiLabel {
+const BARRIER_PULSE_MS = 3000;
+
+interface Beam {
   id: number;
-  text: string;
   x: number;
   y: number;
+  angle: number; // radians
   born: number;
-  strikethrough: boolean;
 }
+const BEAM_LIFETIME_MS = 250;
+const BEAM_LEN = 120;
 
 interface Particle {
   id: number;
@@ -35,58 +40,89 @@ interface Particle {
   y: number;
   vx: number;
   vy: number;
-  r: number;
   born: number;
 }
+const PARTICLE_LIFETIME_MS = 600;
+const PARTICLE_SPEED = 70; // px/sec
 
-interface Beam {
+const WI_TEXTS = ["WI 1.8x", "WI 2.1x", "WI 2.4x"];
+interface WiLabel {
   id: number;
-  y1: number;
-  y2: number;
+  x: number;
+  y: number;
+  text: string;
   born: number;
+  strike: boolean; // true = strikethrough+fade, false = fade out only
 }
+const WI_FADE_IN_MS = 300;
+const WI_HOLD_MS = 900;
+const WI_STRIKE_MS = 350;
+const WI_FADE_OUT_MS = 300;
+const WI_TOTAL_MS = WI_FADE_IN_MS + WI_HOLD_MS + WI_STRIKE_MS + WI_FADE_OUT_MS;
+const WI_SPAWN_INTERVAL_MS = 2500;
 
-const WI_VALUES = ["1.8x", "2.1x", "2.4x"];
+// Hexagonal grid (flat-top), side length 28
+const HEX_SIDE = 28;
+const HEX_W = 2 * HEX_SIDE; // 56 (flat-top width)
+const HEX_H = Math.sqrt(3) * HEX_SIDE; // ~48.5
+const hexPolygon = (cx: number, cy: number) => {
+  const pts: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 3) * i; // flat-top: 0, 60, 120...
+    pts.push(`${cx + HEX_SIDE * Math.cos(a)},${cy + HEX_SIDE * Math.sin(a)}`);
+  }
+  return pts.join(" ");
+};
 
-const rand = (a: number, b: number) => a + Math.random() * (b - a);
-
-const initialThreats = (): Threat[] =>
-  Array.from({ length: 6 }, (_, i) => {
-    const startY = rand(40, 320);
-    return {
-      id: i,
-      startY,
-      endY: Math.min(340, startY + rand(40, 100)),
-      speed: 1 / rand(2500, 4000),
-      offset: Math.random(),
-      intercepted: Math.random() < 0.7,
-      lap: 0,
-    };
-  });
-
-const WI_SPAWN_MS = 2500;
-const WI_FADE_IN = 400;
-const WI_HOLD = 1000;
-const WI_FADE_OUT = 400;
-const WI_STRIKE_MS = 300;
-const WI_TOTAL = WI_FADE_IN + WI_HOLD + WI_FADE_OUT;
-
-const PARTICLE_LIFE = 600;
-const BEAM_LIFE = 200;
+// Threat geometry helpers
+const threatY0 = (i: number) =>
+  THREAT_TOP + ((THREAT_BOT - THREAT_TOP) / (THREAT_COUNT - 1)) * i;
+// Travel from x=1250 → x=0 with downward drift of THREAT_DY across full pass
+const threatPos = (i: number, t: number) => {
+  // t in [0,1] along the trajectory
+  const x = 1250 - t * 1250;
+  const y = threatY0(i) + t * THREAT_DY;
+  return { x, y };
+};
+const threatAngle = () => Math.atan2(THREAT_DY, -1250); // radians; vector dir of travel
 
 const WeaponizationCounterstrike = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
+
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
 
-  const threatsRef = useRef<Threat[]>(initialThreats());
-  const wiRef = useRef<WiLabel[]>([]);
-  const particlesRef = useRef<Particle[]>([]);
   const beamsRef = useRef<Beam[]>([]);
-  const lastWiSpawnRef = useRef<number>(0);
-  const idCounterRef = useRef<number>(1000);
+  const particlesRef = useRef<Particle[]>([]);
+  const wiLabelsRef = useRef<WiLabel[]>([]);
+  const idRef = useRef(0);
+
+  // Per-threat per-cycle: have we fired the intercept this pass yet?
+  const lastCycleRef = useRef<number[]>(
+    Array.from({ length: THREAT_COUNT }, () => -1)
+  );
+
+  // Last WI spawn time
+  const lastWiSpawnRef = useRef<number>(-Infinity);
+
+  // Hex grid points (memoized)
+  const hexPoints = useMemo(() => {
+    const pts: { cx: number; cy: number }[] = [];
+    const colSpacing = HEX_W * 0.75; // flat-top horizontal spacing = 1.5 * side
+    const rowSpacing = HEX_H;
+    const cols = Math.ceil(VIEW_W / colSpacing) + 2;
+    const rows = Math.ceil(VIEW_H / rowSpacing) + 2;
+    for (let c = -1; c < cols; c++) {
+      for (let r = -1; r < rows; r++) {
+        const cx = c * colSpacing;
+        const cy = r * rowSpacing + (c % 2 === 0 ? 0 : rowSpacing / 2);
+        pts.push({ cx, cy });
+      }
+    }
+    return pts;
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -106,287 +142,287 @@ const WeaponizationCounterstrike = () => {
 
   useEffect(() => {
     if (!visible) return;
-
-    const spawnParticles = (x: number, y: number, now: number) => {
-      const count = 5 + Math.floor(Math.random() * 3);
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = rand(0.04, 0.12);
-        particlesRef.current.push({
-          id: idCounterRef.current++,
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: rand(2, 4),
-          born: now,
-        });
-      }
-    };
-
-    const spawnBeam = (y: number, now: number) => {
-      beamsRef.current.push({
-        id: idCounterRef.current++,
-        y1: y,
-        y2: y,
-        born: now,
-      });
-    };
+    const angle = threatAngle();
 
     const animate = (timestamp: number) => {
       if (startRef.current === null) startRef.current = timestamp;
       const elapsed = timestamp - startRef.current;
+      const elapsedSec = elapsed / 1000;
 
-      // Threats: detect interception transitions per lap
-      threatsRef.current = threatsRef.current.map((th) => {
-        const phase = ((elapsed * th.speed) + th.offset) % 1;
-        const lap = Math.floor((elapsed * th.speed) + th.offset);
-        if (lap !== th.lap) {
-          // Reset for new lap: pick new params
-          const startY = rand(40, 320);
-          return {
-            ...th,
-            startY,
-            endY: Math.min(340, startY + rand(40, 100)),
-            speed: 1 / rand(2500, 4000),
-            intercepted: Math.random() < 0.7,
-            lap,
-          };
+      // Detect threat intercepts (when crossing barrier this cycle)
+      for (let i = 0; i < THREAT_COUNT; i++) {
+        if (!THREAT_INTERCEPTED[i]) continue;
+        const dur = THREAT_DURATIONS[i];
+        const offset = THREAT_OFFSETS[i];
+        const localSec = elapsedSec - offset;
+        if (localSec < 0) continue;
+        const cycle = Math.floor(localSec / dur);
+        const tInCycle = (localSec % dur) / dur;
+        // x at front of segment crosses BARRIER_X when:
+        // 1250 - tInCycle*1250 = BARRIER_X → tInCycle = (1250-500)/1250 = 0.6
+        const interceptT = (1250 - BARRIER_X) / 1250;
+        if (
+          tInCycle >= interceptT &&
+          lastCycleRef.current[i] !== cycle
+        ) {
+          lastCycleRef.current[i] = cycle;
+          const pos = threatPos(i, interceptT);
+          // Spawn beam (extends to the right along the travel-back direction).
+          // Threat travels right→left, so counter-beam fires right.
+          beamsRef.current.push({
+            id: ++idRef.current,
+            x: BARRIER_X,
+            y: pos.y,
+            angle: -angle, // mirror: outbound to the right with slight upward
+            born: elapsed,
+          });
+          // Spawn 6 victory particles
+          for (let k = 0; k < 6; k++) {
+            const a = (Math.PI * 2 * k) / 6;
+            particlesRef.current.push({
+              id: ++idRef.current,
+              x: BARRIER_X,
+              y: pos.y,
+              vx: Math.cos(a) * PARTICLE_SPEED,
+              vy: Math.sin(a) * PARTICLE_SPEED,
+              born: elapsed,
+            });
+          }
         }
-        // Detect crossing the defense line this frame
-        const x = 1250 - phase * 1370;
-        // Compute previous x using small step
-        const prevPhase = phase - 0.0001;
-        const prevX = 1250 - prevPhase * 1370;
-        if (th.intercepted && prevX > DEFENSE_X && x <= DEFENSE_X) {
-          const t = (1250 - DEFENSE_X) / 1370;
-          const y = th.startY + (th.endY - th.startY) * t;
-          spawnParticles(DEFENSE_X, y, elapsed);
-          spawnBeam(y, elapsed);
-        }
-        return th;
-      });
+      }
 
-      // WI labels lifecycle
-      if (elapsed - lastWiSpawnRef.current > WI_SPAWN_MS) {
+      // Cull expired beams + particles
+      beamsRef.current = beamsRef.current.filter(
+        (b) => elapsed - b.born < BEAM_LIFETIME_MS
+      );
+      particlesRef.current = particlesRef.current.filter(
+        (p) => elapsed - p.born < PARTICLE_LIFETIME_MS
+      );
+
+      // Spawn WI labels
+      if (elapsed - lastWiSpawnRef.current >= WI_SPAWN_INTERVAL_MS) {
         lastWiSpawnRef.current = elapsed;
-        wiRef.current.push({
-          id: idCounterRef.current++,
-          text: WI_VALUES[Math.floor(Math.random() * WI_VALUES.length)],
-          x: rand(650, 1100),
-          y: rand(60, 300),
+        const seed = idRef.current + 1;
+        const rx = 650 + ((seed * 97) % 451); // 650-1100
+        const ry = 60 + ((seed * 53) % 241); // 60-300
+        const text = WI_TEXTS[seed % WI_TEXTS.length];
+        const strike = (seed * 7) % 10 < 7; // 70%
+        wiLabelsRef.current.push({
+          id: ++idRef.current,
+          x: rx,
+          y: ry,
+          text,
           born: elapsed,
-          strikethrough: Math.random() < 0.7,
+          strike,
         });
       }
-      wiRef.current = wiRef.current.filter((w) => elapsed - w.born < WI_TOTAL);
-
-      // Particles
-      particlesRef.current = particlesRef.current.filter(
-        (p) => elapsed - p.born < PARTICLE_LIFE
+      // Cull expired WI labels
+      wiLabelsRef.current = wiLabelsRef.current.filter(
+        (w) => elapsed - w.born < WI_TOTAL_MS
       );
 
-      // Beams
-      beamsRef.current = beamsRef.current.filter(
-        (b) => elapsed - b.born < BEAM_LIFE
-      );
-
-      setTick((n) => (n + 1) % 1000000);
+      setTick((n) => (n + 1) % 1_000_000);
       rafRef.current = requestAnimationFrame(animate);
     };
-
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
   }, [visible]);
 
   const elapsed =
     startRef.current === null ? 0 : performance.now() - startRef.current;
-  const shieldPulse =
+  const elapsedSec = elapsed / 1000;
+
+  // Barrier glow opacity
+  const barrierGlow =
     0.03 +
-    ((Math.sin((elapsed / 1000) * ((2 * Math.PI) / (SHIELD_PERIOD_MS / 1000))) + 1) /
+    ((Math.sin(elapsedSec * ((2 * Math.PI) / (BARRIER_PULSE_MS / 1000))) + 1) /
       2) *
       0.05;
+
+  const angle = threatAngle();
+  const dirX = Math.cos(angle);
+  const dirY = Math.sin(angle);
 
   return (
     <div
       ref={ref}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.85 }}
+      aria-hidden="true"
+      className={`w-full transition-opacity duration-700 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
     >
       <svg
-        viewBox="0 0 1200 360"
-        className="w-full h-full"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
+        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+        className="w-full h-auto"
+        preserveAspectRatio="xMidYMid meet"
       >
-        <rect x={0} y={0} width={1200} height={360} fill="#0B1628" />
+        <rect x={0} y={0} width={VIEW_W} height={VIEW_H} fill="#0B1628" />
 
-        {/* Left zone — provider glow */}
-        <defs>
-          <radialGradient id="providerGlow" cx="0%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity={0.05} />
-            <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
-          </radialGradient>
-          <radialGradient id="shieldGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#06B6D4" stopOpacity={shieldPulse} />
-            <stop offset="100%" stopColor="#06B6D4" stopOpacity={0} />
-          </radialGradient>
-        </defs>
-        <rect x={0} y={0} width={300} height={360} fill="url(#providerGlow)" />
-
-        {/* Left zone labels */}
-        <text
-          x={30}
-          y={30}
-          fill="#10B981"
-          fontSize={9}
-          opacity={0.4}
-          letterSpacing={2}
-          fontFamily="ui-monospace, SFMono-Regular, monospace"
-        >
-          PROVIDER
-        </text>
-        <text
-          x={30}
-          y={44}
-          fill="#06B6D4"
-          fontSize={8}
-          opacity={0.5}
-          letterSpacing={1.5}
-          fontFamily="ui-monospace, SFMono-Regular, monospace"
-        >
-          ZDEFENSE ACTIVE
-        </text>
-
-        {/* Right zone label */}
-        <text
-          x={950}
-          y={30}
-          fill="#EF4444"
-          fontSize={9}
-          opacity={0.4}
-          letterSpacing={2}
-          fontFamily="ui-monospace, SFMono-Regular, monospace"
-        >
-          PAYER NETWORK
-        </text>
-
-        {/* Defense shield glow */}
-        <circle cx={DEFENSE_X} cy={180} r={180} fill="url(#shieldGlow)" />
-
-        {/* Threats */}
-        {threatsRef.current.map((th) => {
-          const phase = ((elapsed * th.speed) + th.offset) % 1;
-          const x = 1250 - phase * 1370;
-          const t = phase;
-          const y = th.startY + (th.endY - th.startY) * t;
-          const dx = (th.endY - th.startY) / 1370;
-          // segment endpoint
-          const x2 = x + 120;
-          const y2 = y - 120 * dx;
-          const intercepted = th.intercepted && x <= DEFENSE_X;
-          if (intercepted) return null;
-          const passedThrough = !th.intercepted && x < DEFENSE_X;
-          const opacity = passedThrough ? 0.18 : 0.5;
-          return (
-            <line
-              key={`th-${th.id}-${th.lap}`}
-              x1={x}
-              y1={y}
-              x2={x2}
-              y2={y2}
-              stroke="#EF4444"
-              strokeWidth={1.5}
-              opacity={opacity}
-              strokeLinecap="round"
+        {/* Hex grid overlay */}
+        <g>
+          {hexPoints.map((p, i) => (
+            <polygon
+              key={`hex-${i}`}
+              points={hexPolygon(p.cx, p.cy)}
+              fill="none"
+              stroke="#1E3A5F"
+              strokeWidth={0.5}
+              opacity={0.12}
             />
-          );
-        })}
+          ))}
+        </g>
+
+        {/* Barrier glow */}
+        <circle
+          cx={BARRIER_X}
+          cy={180}
+          r={180}
+          fill="#06B6D4"
+          opacity={barrierGlow}
+        />
 
         {/* Defense barrier */}
         <line
-          x1={DEFENSE_X}
+          x1={BARRIER_X}
           y1={20}
-          x2={DEFENSE_X}
+          x2={BARRIER_X}
           y2={340}
           stroke="#06B6D4"
           strokeWidth={2}
           opacity={0.7}
         />
 
+        {/* Threat vectors */}
+        {Array.from({ length: THREAT_COUNT }).map((_, i) => {
+          const dur = THREAT_DURATIONS[i];
+          const offset = THREAT_OFFSETS[i];
+          const localSec = elapsedSec - offset;
+          if (localSec < 0) return null;
+          const tInCycle = (localSec % dur) / dur;
+          const head = threatPos(i, tInCycle);
+          // Tail is THREAT_LEN behind, along reversed travel direction.
+          // Travel dir vector (from x=1250 to x=0): (-1, +THREAT_DY/1250); normalized.
+          const travelLen = Math.sqrt(1250 * 1250 + THREAT_DY * THREAT_DY);
+          const tx = -1250 / travelLen;
+          const ty = THREAT_DY / travelLen;
+          const tail = {
+            x: head.x - tx * THREAT_LEN,
+            y: head.y - ty * THREAT_LEN,
+          };
+          // Intercept logic: if intercepted, hide once head crosses barrier.
+          const intercepted = THREAT_INTERCEPTED[i];
+          let opacity = 0.55;
+          if (intercepted && head.x <= BARRIER_X) return null;
+          if (!intercepted && head.x <= BARRIER_X) opacity = 0.2;
+          return (
+            <line
+              key={`threat-${i}`}
+              x1={tail.x}
+              y1={tail.y}
+              x2={head.x}
+              y2={head.y}
+              stroke="#EF4444"
+              strokeWidth={1.5}
+              opacity={opacity}
+            />
+          );
+        })}
+
         {/* Counter beams */}
         {beamsRef.current.map((b) => {
           const age = elapsed - b.born;
-          const progress = Math.min(1, age / BEAM_LIFE);
-          const length = 200 * progress;
-          const opacity = 0.8 * (1 - progress);
+          const t = age / BEAM_LIFETIME_MS;
+          const op = 0.85 * (1 - t);
+          // Beam fires to the right; direction is mirrored travel angle
+          const dx = -dirX; // outbound right (positive x)
+          const dy = -dirY;
           return (
             <line
-              key={`bm-${b.id}`}
-              x1={DEFENSE_X}
-              y1={b.y1}
-              x2={DEFENSE_X + length}
-              y2={b.y1}
+              key={`beam-${b.id}`}
+              x1={b.x}
+              y1={b.y}
+              x2={b.x + dx * BEAM_LEN}
+              y2={b.y + dy * BEAM_LEN}
               stroke="#06B6D4"
               strokeWidth={1.5}
-              opacity={opacity}
-              strokeLinecap="round"
+              opacity={op}
             />
           );
         })}
 
         {/* Victory particles */}
         {particlesRef.current.map((p) => {
+          const ageSec = (elapsed - p.born) / 1000;
           const age = elapsed - p.born;
-          const progress = Math.min(1, age / PARTICLE_LIFE);
-          const x = p.x + p.vx * age;
-          const y = p.y + p.vy * age;
-          const opacity = 0.9 * (1 - progress);
+          const t = age / PARTICLE_LIFETIME_MS;
+          const op = 0.9 * (1 - t);
+          const x = p.x + p.vx * ageSec;
+          const y = p.y + p.vy * ageSec;
           return (
             <circle
-              key={`pt-${p.id}`}
+              key={`p-${p.id}`}
               cx={x}
               cy={y}
-              r={p.r * (1 - progress * 0.4)}
+              r={2.5}
               fill="#10B981"
-              opacity={opacity}
+              opacity={op}
             />
           );
         })}
 
         {/* WI labels */}
-        {wiRef.current.map((w) => {
+        {wiLabelsRef.current.map((w) => {
           const age = elapsed - w.born;
           let opacity = 0;
-          if (age < WI_FADE_IN) opacity = age / WI_FADE_IN;
-          else if (age < WI_FADE_IN + WI_HOLD) opacity = 1;
-          else opacity = Math.max(0, 1 - (age - WI_FADE_IN - WI_HOLD) / WI_FADE_OUT);
-
-          // strikethrough fires near end of hold
-          const strikeStart = WI_FADE_IN + WI_HOLD - WI_STRIKE_MS;
-          const strikeProgress = w.strikethrough
-            ? Math.max(0, Math.min(1, (age - strikeStart) / WI_STRIKE_MS))
-            : 0;
-
-          // approx text width
-          const textW = w.text.length * 7;
+          if (age < WI_FADE_IN_MS) {
+            opacity = age / WI_FADE_IN_MS;
+          } else if (age < WI_FADE_IN_MS + WI_HOLD_MS) {
+            opacity = 1;
+          } else if (
+            age <
+            WI_FADE_IN_MS + WI_HOLD_MS + WI_STRIKE_MS
+          ) {
+            opacity = 1;
+          } else {
+            const t =
+              (age - WI_FADE_IN_MS - WI_HOLD_MS - WI_STRIKE_MS) /
+              WI_FADE_OUT_MS;
+            opacity = Math.max(0, 1 - t);
+          }
+          // Strike progress
+          let strikeProg = 0;
+          if (
+            w.strike &&
+            age >= WI_FADE_IN_MS + WI_HOLD_MS &&
+            age < WI_FADE_IN_MS + WI_HOLD_MS + WI_STRIKE_MS
+          ) {
+            strikeProg =
+              (age - WI_FADE_IN_MS - WI_HOLD_MS) / WI_STRIKE_MS;
+          } else if (
+            w.strike &&
+            age >= WI_FADE_IN_MS + WI_HOLD_MS + WI_STRIKE_MS
+          ) {
+            strikeProg = 1;
+          }
+          // Approx text width for strikethrough
+          const textWidth = w.text.length * 6.5;
           return (
             <g key={`wi-${w.id}`} opacity={opacity}>
               <text
                 x={w.x}
                 y={w.y}
                 fill="#EF4444"
-                fontSize={11}
+                fontSize={10}
                 fontFamily="ui-monospace, SFMono-Regular, monospace"
               >
                 {w.text}
               </text>
-              {w.strikethrough && strikeProgress > 0 && (
+              {w.strike && strikeProg > 0 && (
                 <line
-                  x1={w.x - 2}
-                  y1={w.y - 4}
-                  x2={w.x - 2 + (textW + 4) * strikeProgress}
-                  y2={w.y - 4}
+                  x1={w.x}
+                  y1={w.y - 3}
+                  x2={w.x + textWidth * strikeProg}
+                  y2={w.y - 3}
                   stroke="#06B6D4"
                   strokeWidth={1.5}
                   opacity={0.9}
@@ -395,6 +431,41 @@ const WeaponizationCounterstrike = () => {
             </g>
           );
         })}
+
+        {/* Static zone labels */}
+        <text
+          x={30}
+          y={24}
+          fill="#10B981"
+          fontSize={8}
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          opacity={0.45}
+          letterSpacing={2}
+        >
+          PROVIDER
+        </text>
+        <text
+          x={30}
+          y={38}
+          fill="#06B6D4"
+          fontSize={8}
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          opacity={0.5}
+          letterSpacing={2}
+        >
+          ZDEFENSE ACTIVE
+        </text>
+        <text
+          x={960}
+          y={24}
+          fill="#EF4444"
+          fontSize={8}
+          fontFamily="ui-monospace, SFMono-Regular, monospace"
+          opacity={0.45}
+          letterSpacing={2}
+        >
+          PAYER NETWORK
+        </text>
       </svg>
     </div>
   );
