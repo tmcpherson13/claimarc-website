@@ -742,7 +742,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         })}
 
         {(() => {
-          const LABEL_R = 74;
+          const LABEL_R = 92;
           // Top arc: left → right across the top (sweep 1)
           const topPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 1 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
           // Bottom arc: left → right across the bottom (sweep 0) so text reads upright
@@ -752,7 +752,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               fill="#10B981"
               fontSize={10}
               fontFamily="ui-monospace, SFMono-Regular, monospace"
-              opacity={0.7}
+              opacity={0.85}
               letterSpacing={3}
             >
               <defs>
