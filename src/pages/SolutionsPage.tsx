@@ -234,65 +234,61 @@ const SolutionsPage = () => {
       </section>
 
       {/* SECTION 3: 9 → 5 ROLLUP MAPPING */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16 border-t border-slate-100">
+      <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
             How the Pieces Fit
           </p>
-          <h2 className="text-[var(--navy)] font-bold text-2xl md:text-3xl mt-2">
+          <h2 className="text-white font-bold text-2xl md:text-3xl mt-2">
             How the 9 Modules Roll Up Into the 5 Roles
           </h2>
-          <p className="text-slate-600 mt-3 max-w-2xl">
+          <p className="text-slate-400 mt-3 max-w-2xl">
             Every module reports up to one or more of the five roles it serves.
             Use this as the quick map between what each module does and who
             owns the outcome.
           </p>
-          <div className="mt-8 overflow-x-auto rounded-lg border border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="bg-[var(--lgray)] text-[var(--navy)]">
-                <tr>
-                  <th className="text-left p-3 font-semibold">Module</th>
-                  <th className="text-left p-3 font-semibold">Layer</th>
-                  <th className="text-left p-3 font-semibold">Primary Role(s)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MODULES.map((m, i) => (
-                  <tr
-                    key={m.name}
-                    className={i % 2 === 0 ? "bg-white" : "bg-slate-50/60"}
-                  >
-                    <td className="p-3">
-                      <a
-                        href={`#${slugify(m.name)}`}
-                        onClick={(e) => handleSidebarClick(e, slugify(m.name))}
-                        className="font-semibold text-[var(--navy)] hover:text-[var(--emerald)]"
-                      >
-                        {m.name}
-                      </a>
-                      <p className="text-slate-500 text-xs">{m.tagline}</p>
-                    </td>
-                    <td className="p-3 align-top">
-                      <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[var(--emerald)]">
-                        {LAYER_LABEL[m.layer]}
-                      </span>
-                    </td>
-                    <td className="p-3 align-top">
-                      <div className="flex flex-wrap gap-1.5">
-                        {(moduleRoleMap[m.name] ?? []).map((r) => (
-                          <span
-                            key={r}
-                            className="inline-block bg-emerald-50 text-[var(--navy)] text-xs px-2 py-0.5 rounded-full"
-                          >
-                            {r}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(["predict", "protect", "recover"] as const).map((layer) => {
+              const layerModules = MODULES.filter((m) => m.layer === layer);
+              return (
+                <div
+                  key={layer}
+                  className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6"
+                >
+                  <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+                    {LAYER_LABEL[layer]}
+                  </p>
+                  <p className="text-slate-400 text-sm mt-1">
+                    {LAYER_DESCRIPTION[layer]}
+                  </p>
+                  <ul className="mt-5 space-y-4">
+                    {layerModules.map((m) => {
+                      const primaryRole = (moduleRoleMap[m.name] ?? [])[0];
+                      const abbrev = primaryRole ? ROLE_ABBREV[primaryRole] ?? primaryRole : null;
+                      return (
+                        <li key={m.name} className="flex items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <a
+                              href={`#${slugify(m.name)}`}
+                              onClick={(e) => handleSidebarClick(e, slugify(m.name))}
+                              className="text-white font-semibold text-sm hover:text-[var(--emerald)] transition-colors"
+                            >
+                              {m.name}
+                            </a>
+                            <p className="text-slate-500 text-xs mt-0.5">{m.tagline}</p>
+                          </div>
+                          {abbrev && (
+                            <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full shrink-0 mt-0.5">
+                              {abbrev}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
