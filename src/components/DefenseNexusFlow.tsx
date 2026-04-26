@@ -522,6 +522,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             );
           })()}
       </svg>
+      </div>
     </div>
   );
 };
