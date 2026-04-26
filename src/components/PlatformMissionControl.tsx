@@ -1,12 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { MODULES, NO_BAA_MODULES, moduleSlug } from "@/config/modules";
+import {
+  SHIELD_CLEAN_CLAIM_RATE,
+  SHIELD_CLEAN_CLAIM_JITTER,
+  TRIAGE_RECOVERY_PIPELINE,
+  TRIAGE_RECOVERY_PIPELINE_JITTER,
+  TRIAGE_RECOVERY_PIPELINE_CEILING,
+  RESOLVE_CONFIDENCE_CENTER,
+  RESOLVE_CONFIDENCE_JITTER,
+  SENTINEL_PAYERS,
+  CRUCIBLE_RAILS,
+  REGULATORY_FEED,
+  LAYER_LED_COLOR,
+} from "@/config/platformMetrics";
 
 /**
  * PlatformMissionControl — full-width, mission-control style decorative SVG
  * for the /platform hero. Nine independent instruments arranged in a 3x3
  * grid, all driven by a single requestAnimationFrame loop. Pure SVG +
  * React hooks. Animation kicks in only when the component enters the
- * viewport via IntersectionObserver. Every readout is meant to look like
- * it is measuring something real about the ZDefense platform itself.
+ * viewport via IntersectionObserver.
+ *
+ * Every readout is wired to a real value from src/config/platformMetrics.ts
+ * (or src/config/modules.ts) and oscillates within a narrow band around the
+ * canonical value — the visualization is alive, but the headline numbers
+ * always agree with the rest of the marketing site.
+ *
+ * Each cell is also a click target — clicking any instrument navigates to
+ * the matching module section on /solutions, using a fixed-header offset
+ * so the heading clears the sticky navbar (matches Solutions' own
+ * scroll-spy behavior).
  */
 
 // ---------- Layout constants ----------
@@ -20,29 +44,19 @@ const CELL_H = (VB_H - GAP * (ROWS + 1)) / ROWS; // ~95
 const cellX = (col: number) => GAP + col * (CELL_W + GAP);
 const cellY = (row: number) => GAP + row * (CELL_H + GAP);
 
-// ---------- Module catalog (must match the rest of the platform) ----------
-type Layer = "predict" | "protect" | "recover";
-interface ModuleSpec {
-  name: string;
-  layer: Layer;
-  baa: boolean; // true => BAA required
-}
-const MODULES_LIST: ModuleSpec[] = [
-  { name: "Sentinel", layer: "predict", baa: true },
-  { name: "ContractIntel", layer: "predict", baa: false },
-  { name: "Forecast", layer: "predict", baa: true },
-  { name: "Shield", layer: "protect", baa: false },
-  { name: "Prevent", layer: "protect", baa: false },
-  { name: "Ledger", layer: "protect", baa: true },
-  { name: "Triage", layer: "recover", baa: true },
-  { name: "Evidence", layer: "recover", baa: true },
-  { name: "Resolve", layer: "recover", baa: true },
-];
-const LAYER_COLOR: Record<Layer, string> = {
-  predict: "#06B6D4",
-  protect: "#10B981",
-  recover: "#8B5CF6",
-};
+/** Header (64px) + sticky tab bar (~64px) + breathing room. Mirrors the
+ * SCROLL_OFFSET_PX in SolutionsPage so anchor landings line up. */
+const SCROLL_OFFSET_PX = 160;
+
+// ---------- Module list (re-derived from the shared catalog) ----------
+const MODULES_LIST = MODULES.map((m) => ({
+  name: m.name,
+  layer: m.layer,
+  baa: !NO_BAA_MODULES.includes(m.name),
+}));
+
+const BAA_REQUIRED = MODULES_LIST.filter((m) => m.baa).map((m) => m.name);
+const BAA_NONE = MODULES_LIST.filter((m) => !m.baa).map((m) => m.name);
 
 // ---------- Shared helpers ----------
 const polarX = (cx: number, cy: number, r: number, angDeg: number) =>
@@ -50,32 +64,46 @@ const polarX = (cx: number, cy: number, r: number, angDeg: number) =>
 const polarY = (cx: number, cy: number, r: number, angDeg: number) =>
   cy + r * Math.sin(((angDeg - 90) * Math.PI) / 180);
 
-/** SVG arc path between two angles (deg, 0=top, clockwise). */
-const arcPath = (
-  cx: number,
-  cy: number,
-  r: number,
-  startDeg: number,
-  endDeg: number,
-) => {
-  const start = { x: polarX(cx, cy, r, endDeg), y: polarY(cx, cy, r, endDeg) };
-  const end = { x: polarX(cx, cy, r, startDeg), y: polarY(cx, cy, r, startDeg) };
-  const largeArc = endDeg - startDeg <= 180 ? 0 : 1;
-  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
-};
-
 // ---------- Bezel ----------
 interface BezelProps {
   col: number;
   row: number;
   label: string;
+  /** Module name to navigate to on click (matches MODULES catalog). */
+  module?: string;
+  onActivate?: (moduleName: string) => void;
   children: React.ReactNode;
 }
-const Bezel = ({ col, row, label, children }: BezelProps) => {
+
+/** Stable id factory for per-cell clip paths. */
+const cellClipId = (col: number, row: number, instance: string) =>
+  `pmc-clip-${instance}-${col}-${row}`;
+
+const Bezel = ({ col, row, label, module, onActivate, children }: BezelProps) => {
   const x = cellX(col);
   const y = cellY(row);
+  const interactive = !!module;
+  const handleClick = () => {
+    if (module && onActivate) onActivate(module);
+  };
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (!module || !onActivate) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onActivate(module);
+    }
+  };
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g
+      transform={`translate(${x} ${y})`}
+      role={interactive ? "link" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? `Open ${module} on Solutions` : undefined}
+      onClick={interactive ? handleClick : undefined}
+      onKeyDown={interactive ? handleKey : undefined}
+      style={interactive ? { cursor: "pointer" } : undefined}
+      className={interactive ? "pmc-cell pmc-cell-interactive" : "pmc-cell"}
+    >
       <rect
         width={CELL_W}
         height={CELL_H}
@@ -87,7 +115,21 @@ const Bezel = ({ col, row, label, children }: BezelProps) => {
       <text x={8} y={11} fontSize={7} fill="#475569" fontFamily="monospace">
         {label}
       </text>
-      {children}
+      {/* Per-cell clip ensures animated content can never bleed past the
+       * bezel rectangle — important on small screens where individual
+       * instruments compress. */}
+      <defs>
+        <clipPath id={cellClipId(col, row, "bezel")}>
+          <rect
+            x={1}
+            y={1}
+            width={CELL_W - 2}
+            height={CELL_H - 2}
+            rx={7}
+          />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${cellClipId(col, row, "bezel")})`}>{children}</g>
     </g>
   );
 };
@@ -95,7 +137,13 @@ const Bezel = ({ col, row, label, children }: BezelProps) => {
 // ===========================================================================
 // 1. Module Status Board
 // ===========================================================================
-const ModuleStatusBoard = ({ t }: { t: number }) => {
+const ModuleStatusBoard = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const rowGap = (CELL_H - 22) / MODULES_LIST.length;
   const startY = 20;
   const layerLabelByIndex: Record<number, string> = {
@@ -111,9 +159,13 @@ const ModuleStatusBoard = ({ t }: { t: number }) => {
         const phase = (i * Math.PI) / 3;
         const wave = Math.sin((t / period) * Math.PI * 2 + phase);
         const opacity = 0.6 + 0.4 * (wave * 0.5 + 0.5); // 0.6..1.0
-        const color = LAYER_COLOR[m.layer];
+        const color = LAYER_LED_COLOR[m.layer];
         return (
-          <g key={m.name}>
+          <g
+            key={m.name}
+            onClick={onActivate ? (e) => { e.stopPropagation(); onActivate(m.name); } : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             {layerLabelByIndex[i] && (
               <text
                 x={6}
@@ -169,7 +221,8 @@ const ClaimRateGauge = ({ t }: { t: number }) => {
   const totalSpan = 240;
 
   const wave = Math.sin((t / 18) * Math.PI * 2);
-  const pct = 89.4 + wave * 1.3; // 88.1..90.7
+  // Centered on the canonical Shield clean-claim rate, with a narrow live jitter band.
+  const pct = SHIELD_CLEAN_CLAIM_RATE + wave * SHIELD_CLEAN_CLAIM_JITTER;
   const fillSpan = (pct / 100) * totalSpan;
   // From angle 210 going clockwise (i.e. up over the top) by fillSpan:
   // We treat angle going "up over top" as decreasing the angle (mod 360).
@@ -282,7 +335,7 @@ interface Packet {
   speed: number; // px/s
   x: number;
 }
-const RAIL_LABELS = ["HPT MRFs", "TiC MRFs", "MAC Bulletins"];
+const RAIL_LABELS = CRUCIBLE_RAILS.map((r) => r.label);
 const CrucibleThroughput = ({
   t,
   packets,
@@ -365,28 +418,31 @@ const CrucibleThroughput = ({
 // ===========================================================================
 // 4. Payer Coverage Grid
 // ===========================================================================
-const PAYERS = ["UHC", "BCBS", "Aetna", "Cigna", "Humana", "Molina", "Centene"];
 const PayerCoverageGrid = ({ t }: { t: number }) => {
   const topPad = 16;
   const bottomPad = 12;
-  const colWidth = (CELL_W - 16) / PAYERS.length;
+  const colWidth = (CELL_W - 16) / SENTINEL_PAYERS.length;
   const maxBarH = CELL_H - topPad - bottomPad - 12;
+  // Bar height represents the payer's WI relative to a 2.4x ceiling (the
+  // top of the current Sentinel scale), with a small live wobble so the
+  // panel reads as "actively monitoring" rather than static.
+  const WI_CEILING = 2.4;
   return (
     <g>
-      {PAYERS.map((p, i) => {
+      {SENTINEL_PAYERS.map((p, i) => {
         const period = 6 + (i % 4) * 1.5; // 6..10.5
         const wave = Math.sin((t / period) * Math.PI * 2 + i);
-        const norm = wave * 0.5 + 0.5; // 0..1
-        const ratio = 0.4 + norm * 0.55; // 0.4..0.95
+        const wobble = wave * 0.04; // ±0.04x — small live jitter
+        const liveWi = Math.max(0.8, p.wi + wobble);
+        const ratio = Math.min(0.95, Math.max(0.4, liveWi / WI_CEILING));
         const barH = ratio * maxBarH;
-        const wi = (1.1 + norm * 1.3).toFixed(1); // 1.1..2.4
         const x = 8 + i * colWidth;
         const colCx = x + colWidth / 2;
         const barW = colWidth * 0.55;
         const barX = colCx - barW / 2;
         const barY = topPad + 10 + (maxBarH - barH);
         return (
-          <g key={p}>
+          <g key={p.name}>
             <text
               x={colCx}
               y={topPad + 7}
@@ -395,7 +451,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
               fontFamily="monospace"
               textAnchor="middle"
             >
-              {wi}x
+              {liveWi.toFixed(1)}x
             </text>
             <defs>
               <linearGradient id={`pcg-${i}`} x1="0" y1="0" x2="0" y2="1">
@@ -420,7 +476,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
               fontFamily="monospace"
               textAnchor="middle"
             >
-              {p}
+              {p.name}
             </text>
           </g>
         );
@@ -434,7 +490,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
 // ===========================================================================
 const RecoveryOdometer = ({ t }: { t: number }) => {
   const wave = Math.sin((t / 20) * Math.PI * 2);
-  const value = 851500 + wave * 39500; // 812k..891k
+  const value = TRIAGE_RECOVERY_PIPELINE + wave * TRIAGE_RECOVERY_PIPELINE_JITTER;
   const cents = Math.round(value);
   const display =
     "$" +
@@ -446,7 +502,7 @@ const RecoveryOdometer = ({ t }: { t: number }) => {
   const barW = CELL_W * 0.6;
   const barX = (CELL_W - barW) / 2;
   const barY = cy + 12;
-  const fillRatio = Math.min(1, value / 1_000_000);
+  const fillRatio = Math.min(1, value / TRIAGE_RECOVERY_PIPELINE_CEILING);
   return (
     <g>
       <text
@@ -635,10 +691,15 @@ const Padlock = ({
   </g>
 );
 
-const BAA_REQUIRED = ["Sentinel", "Forecast", "Ledger", "Triage", "Evidence", "Resolve"];
-const BAA_NONE = ["ContractIntel", "Shield", "Prevent"];
+// (BAA_REQUIRED + BAA_NONE are derived from the shared MODULES catalog at top)
 
-const BaaStatus = ({ t }: { t: number }) => {
+const BaaStatus = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const headerY = 22;
   const colW = CELL_W / 2;
   const reqRowH = (CELL_H - headerY - 6) / BAA_REQUIRED.length;
@@ -673,7 +734,12 @@ const BaaStatus = ({ t }: { t: number }) => {
         const ry = headerY + 6 + i * reqRowH + reqRowH / 2;
         const hi = rowHighlight(ry);
         return (
-          <g key={n} opacity={0.6 + 0.4 * hi}>
+          <g
+            key={n}
+            opacity={0.6 + 0.4 * hi}
+            onClick={onActivate ? () => onActivate(n) : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             <Padlock x={8} y={ry - 4} open={false} color="#F59E0B" />
             <text
               x={22}
@@ -691,7 +757,12 @@ const BaaStatus = ({ t }: { t: number }) => {
         const ry = headerY + 6 + i * noneRowH + noneRowH / 2;
         const hi = rowHighlight(ry);
         return (
-          <g key={n} opacity={0.6 + 0.4 * hi}>
+          <g
+            key={n}
+            opacity={0.6 + 0.4 * hi}
+            onClick={onActivate ? () => onActivate(n) : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             <Padlock x={colW + 4} y={ry - 4} open={true} color="#10B981" />
             <text
               x={colW + 18}
@@ -724,7 +795,7 @@ const BaaStatus = ({ t }: { t: number }) => {
 // ===========================================================================
 const AppealThermometer = ({ t }: { t: number }) => {
   const wave = Math.sin((t / 14) * Math.PI * 2);
-  const pct = 78 + wave * 5; // 73..83
+  const pct = RESOLVE_CONFIDENCE_CENTER + wave * RESOLVE_CONFIDENCE_JITTER;
   const trackH = 60;
   const trackW = 8;
   const trackX = CELL_W / 2 - 30;
@@ -833,16 +904,9 @@ const AppealThermometer = ({ t }: { t: number }) => {
 // ===========================================================================
 // 9. Regulatory Feed Monitor
 // ===========================================================================
-const FEED_TEMPLATES = [
-  "MAC-CR-1247 · SHIELD",
-  "NCD-UPDATE · PREVENT",
-  "NCCI-Q2-2026 · SHIELD",
-  "LCD-REVISION · PREVENT",
-  "TiC-MRF-REFRESH · CONTRACT",
-  "CARC-UPDATE · TRIAGE",
-  "CMS-PFS-DELTA · SHIELD",
-  "PAYER-POLICY-UHC · SENTINEL",
-];
+const FEED_TEMPLATES = REGULATORY_FEED.map(
+  (e) => `${e.source} · ${e.module.toUpperCase()}`,
+);
 
 interface FeedEntry {
   id: number;
@@ -944,9 +1008,21 @@ const RegulatoryFeed = ({
 // ===========================================================================
 const PlatformMissionControl = () => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [t, setT] = useState(0); // elapsed seconds
   const [now, setNow] = useState<Date>(() => new Date());
+
+  /** Navigate to /solutions#<slug> with a fixed-header offset so the section
+   * heading clears the sticky navbar (mirrors SolutionsPage's own scroll
+   * handling). */
+  const goToModule = useCallback(
+    (moduleName: string) => {
+      const slug = moduleSlug(moduleName);
+      navigate(`/solutions#${slug}`);
+    },
+    [navigate],
+  );
 
   // Crucible packet state (mutable, lives in a ref)
   const packetsRef = useRef<Packet[]>([]);
@@ -1069,13 +1145,31 @@ const PlatformMissionControl = () => {
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Row 1 */}
-        <Bezel col={0} row={0} label="MODULE STATUS">
-          <ModuleStatusBoard t={t} />
+        <Bezel
+          col={0}
+          row={0}
+          label="MODULE STATUS"
+          module="Sentinel"
+          onActivate={goToModule}
+        >
+          <ModuleStatusBoard t={t} onActivate={goToModule} />
         </Bezel>
-        <Bezel col={1} row={0} label="SHIELD PERFORMANCE">
+        <Bezel
+          col={1}
+          row={0}
+          label="SHIELD PERFORMANCE"
+          module="Shield"
+          onActivate={goToModule}
+        >
           <ClaimRateGauge t={t} />
         </Bezel>
-        <Bezel col={2} row={0} label="CRUCIBLE INGEST">
+        <Bezel
+          col={2}
+          row={0}
+          label="CRUCIBLE INGEST"
+          module="ContractIntel"
+          onActivate={goToModule}
+        >
           <CrucibleThroughput
             t={t}
             packets={packetsRef.current}
@@ -1085,10 +1179,22 @@ const PlatformMissionControl = () => {
         </Bezel>
 
         {/* Row 2 */}
-        <Bezel col={0} row={1} label="PAYER COVERAGE">
+        <Bezel
+          col={0}
+          row={1}
+          label="PAYER COVERAGE"
+          module="Sentinel"
+          onActivate={goToModule}
+        >
           <PayerCoverageGrid t={t} />
         </Bezel>
-        <Bezel col={1} row={1} label="RECOVERY VALUE">
+        <Bezel
+          col={1}
+          row={1}
+          label="RECOVERY VALUE"
+          module="Triage"
+          onActivate={goToModule}
+        >
           <RecoveryOdometer t={t} />
         </Bezel>
         <Bezel col={2} row={1} label="SYSTEM CLOCK">
@@ -1097,12 +1203,24 @@ const PlatformMissionControl = () => {
 
         {/* Row 3 */}
         <Bezel col={0} row={2} label="BAA SHIELD STATUS">
-          <BaaStatus t={t} />
+          <BaaStatus t={t} onActivate={goToModule} />
         </Bezel>
-        <Bezel col={1} row={2} label="APPEAL CONFIDENCE">
+        <Bezel
+          col={1}
+          row={2}
+          label="APPEAL CONFIDENCE"
+          module="Resolve"
+          onActivate={goToModule}
+        >
           <AppealThermometer t={t} />
         </Bezel>
-        <Bezel col={2} row={2} label="REGULATORY FEED">
+        <Bezel
+          col={2}
+          row={2}
+          label="REGULATORY FEED"
+          module="Shield"
+          onActivate={goToModule}
+        >
           <RegulatoryFeed
             t={t}
             entries={feedRef.current}
