@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
+import HeroAccent from "@/components/HeroAccent";
+import OpenChannel from "@/components/OpenChannel";
 
 const payerList = [
   "UHC (United Health Care)",
@@ -158,7 +160,9 @@ const ContactPage = () => {
       />
 
       {/* SECTION 1: HERO */}
-      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
+      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16 relative overflow-hidden">
+        <HeroAccent />
+        <OpenChannel className="absolute inset-0 w-full h-full opacity-80" />
         <div className="max-w-7xl mx-auto">
           <h1 className="text-white text-3xl md:text-4xl font-bold max-w-3xl">
             See ZDefense Through the Lens of Your Team, Your Workflow, and Your
