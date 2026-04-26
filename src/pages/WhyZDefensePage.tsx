@@ -5,6 +5,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import WeaponizationCounterstrike from "@/components/WeaponizationCounterstrike";
+import WeaponizationCounterstrike from "@/components/WeaponizationCounterstrike";
 import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 
