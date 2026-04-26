@@ -168,8 +168,16 @@ const MOD_X = 730;
 const MOD_W = 170;
 const MOD_H = 32;
 
-const VIEW_W = 1400;
+// Tightened viewBox wraps content snugly so the parent flex centers it
+// inside the dark section instead of leaving empty space on the right.
+const VIEW_X = 150;
+const VIEW_Y = 0;
+const VIEW_W = 800;
 const VIEW_H = 525;
+const VIEW_RIGHT = VIEW_X + VIEW_W;
+
+const TOOLTIP_HOVER_DELAY_MS = 120;
+const TOOLTIP_LEAVE_DELAY_MS = 80;
 
 const sourceY = (i: number) => {
   const top = 37.5;
@@ -229,18 +237,78 @@ function wrapText(text: string, maxChars: number, maxLines: number): string[] {
   return lines;
 }
 
+type TooltipState = { index: number; x: number; y: number } | null;
+
 const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
-  const [tooltip, setTooltip] = useState<
-    { index: number; x: number; y: number } | null
-  >(null);
-  const [moduleTooltip, setModuleTooltip] = useState<
-    { index: number; x: number; y: number } | null
-  >(null);
+  const [tooltip, setTooltip] = useState<TooltipState>(null);
+  const [moduleTooltip, setModuleTooltip] = useState<TooltipState>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
+
+  // Hover-delay timers — prevent flicker between rapid hovers
+  const srcEnterTimer = useRef<number | null>(null);
+  const srcLeaveTimer = useRef<number | null>(null);
+  const modEnterTimer = useRef<number | null>(null);
+  const modLeaveTimer = useRef<number | null>(null);
+
+  const clearTimer = (t: React.MutableRefObject<number | null>) => {
+    if (t.current !== null) {
+      window.clearTimeout(t.current);
+      t.current = null;
+    }
+  };
+
+  const showSrc = (next: NonNullable<TooltipState>) => {
+    clearTimer(srcLeaveTimer);
+    // If a tooltip is already visible, switch immediately (no flicker delay)
+    if (tooltip !== null) {
+      setTooltip(next);
+      return;
+    }
+    clearTimer(srcEnterTimer);
+    srcEnterTimer.current = window.setTimeout(() => {
+      setTooltip(next);
+    }, TOOLTIP_HOVER_DELAY_MS);
+  };
+  const hideSrc = () => {
+    clearTimer(srcEnterTimer);
+    clearTimer(srcLeaveTimer);
+    srcLeaveTimer.current = window.setTimeout(() => {
+      setTooltip(null);
+    }, TOOLTIP_LEAVE_DELAY_MS);
+  };
+
+  const showMod = (next: NonNullable<TooltipState>) => {
+    clearTimer(modLeaveTimer);
+    if (moduleTooltip !== null) {
+      setModuleTooltip(next);
+      return;
+    }
+    clearTimer(modEnterTimer);
+    modEnterTimer.current = window.setTimeout(() => {
+      setModuleTooltip(next);
+    }, TOOLTIP_HOVER_DELAY_MS);
+  };
+  const hideMod = () => {
+    clearTimer(modEnterTimer);
+    clearTimer(modLeaveTimer);
+    modLeaveTimer.current = window.setTimeout(() => {
+      setModuleTooltip(null);
+    }, TOOLTIP_LEAVE_DELAY_MS);
+  };
+
+  // Detect small viewports for mobile tooltip placement
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const packets = useMemo<Packet[]>(() => {
     const list: Packet[] = [];
@@ -302,14 +370,75 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
     return () => cancelAnimationFrame(rafRef.current);
   }, [visible, packets, cycleLen]);
 
+  // Cleanup hover timers on unmount
+  useEffect(() => {
+    return () => {
+      clearTimer(srcEnterTimer);
+      clearTimer(srcLeaveTimer);
+      clearTimer(modEnterTimer);
+      clearTimer(modLeaveTimer);
+    };
+  }, []);
+
   const elapsed =
     startRef.current === null ? 0 : performance.now() - startRef.current;
 
   const nexusGlow =
     0.03 + (Math.sin((elapsed / 1000) * ((2 * Math.PI) / 4)) + 1) / 2 * 0.04;
 
-  const TOOLTIP_W = 293;
-  const TOOLTIP_H = 96;
+  const TOOLTIP_W = isMobile ? 260 : 293;
+  const TOOLTIP_H_MIN = 96;
+  const LINE_H = 14;
+  const TOOLTIP_PAD_TOP = 22;
+  const TOOLTIP_HEADER_GAP = 20;
+  const TOOLTIP_PAD_BOTTOM = 12;
+
+  // Theme-aware fills via CSS variables defined in index.css.
+  // The component lives inside a forced-dark section (PlatformPage) so the
+  // canvas stays dark, but tooltip + text use semantic tokens so they remain
+  // legible if the wrapper ever changes theme.
+  const CANVAS_FILL = "hsl(var(--card))";
+  const TOOLTIP_BG = "hsl(var(--card))";
+  const TOOLTIP_BORDER = "hsl(var(--border))";
+  const TOOLTIP_TITLE = "hsl(var(--foreground))";
+  const TOOLTIP_BODY = "hsl(var(--muted-foreground))";
+
+  const computeTooltipLayout = (
+    src: { description: string },
+    anchorX: number,
+    anchorY: number,
+    side: "right" | "left"
+  ) => {
+    const lines = wrapText(src.description, isMobile ? 32 : 38, 8);
+    const height = Math.max(
+      TOOLTIP_H_MIN,
+      TOOLTIP_PAD_TOP + TOOLTIP_HEADER_GAP + lines.length * LINE_H + TOOLTIP_PAD_BOTTOM
+    );
+
+    let tx: number;
+    if (isMobile) {
+      // Center horizontally inside viewBox, sit near the top to avoid overlap
+      tx = VIEW_X + (VIEW_W - TOOLTIP_W) / 2;
+    } else if (side === "right") {
+      const want = anchorX + 8;
+      tx = want + TOOLTIP_W > VIEW_RIGHT - 4
+        ? Math.max(VIEW_X + 4, anchorX - SRC_W - TOOLTIP_W - 10)
+        : want;
+    } else {
+      tx = anchorX - TOOLTIP_W - 8;
+      if (tx < VIEW_X + 4) {
+        // flip to right of element if can't fit on left
+        const right = anchorX + MOD_W + 8;
+        tx = right + TOOLTIP_W > VIEW_RIGHT - 4 ? VIEW_X + 4 : right;
+      }
+    }
+
+    const ty = isMobile
+      ? VIEW_Y + 8
+      : Math.max(VIEW_Y + 4, Math.min(VIEW_Y + VIEW_H - height - 4, anchorY - 8));
+
+    return { tx, ty, lines, height };
+  };
 
   return (
     <div
@@ -319,10 +448,21 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         visible ? "opacity-100" : "opacity-0"
       } ${className}`}
     >
+      <style>{`
+        @keyframes nexusTooltipIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .nexus-tooltip {
+          animation: nexusTooltipIn 180ms ease-out both;
+          transform-box: fill-box;
+          transform-origin: center;
+        }
+      `}</style>
       <div className="flex justify-center w-full">
       <svg
-        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-        className="w-full max-w-6xl h-auto"
+        viewBox={`${VIEW_X} ${VIEW_Y} ${VIEW_W} ${VIEW_H}`}
+        className="w-full max-w-5xl h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -331,7 +471,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           </filter>
         </defs>
 
-        <rect x={0} y={0} width={VIEW_W} height={VIEW_H} fill="#0B1628" />
+        <rect x={VIEW_X} y={VIEW_Y} width={VIEW_W} height={VIEW_H} fill={CANVAS_FILL} />
 
         <circle
           cx={NEXUS_X}
@@ -375,13 +515,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
         {SOURCES.map((s, i) => {
           const y = sourceY(i) - SRC_H / 2;
+          const handleEnter = () => showSrc({ index: i, x: SRC_RIGHT, y });
           return (
             <g
               key={`src-${i}`}
-              onMouseEnter={() =>
-                setTooltip({ index: i, x: SRC_RIGHT, y: y })
-              }
-              onMouseLeave={() => setTooltip(null)}
+              onMouseEnter={handleEnter}
+              onMouseLeave={hideSrc}
+              onTouchStart={handleEnter}
+              onClick={handleEnter}
               style={{ cursor: "default" }}
             >
               {/* inner glow */}
@@ -427,13 +568,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           const t = flashing ? since / FLASH_MS : 1;
           const strokeWidth = flashing ? 2 + (1 - t) * 1.5 : 1.25;
           const strokeOpacity = flashing ? 1 : 0.75;
+          const handleEnter = () => showMod({ index: i, x: MOD_X, y });
           return (
             <g
               key={`mod-${i}`}
-              onMouseEnter={() =>
-                setModuleTooltip({ index: i, x: MOD_X, y: y })
-              }
-              onMouseLeave={() => setModuleTooltip(null)}
+              onMouseEnter={handleEnter}
+              onMouseLeave={hideMod}
+              onTouchStart={handleEnter}
+              onClick={handleEnter}
               style={{ cursor: "default" }}
             >
               <rect
@@ -532,30 +674,33 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         {tooltip !== null &&
           (() => {
             const src = SOURCES[tooltip.index];
-            const wantRightX = tooltip.x + 8;
-            const flipLeft = wantRightX + TOOLTIP_W > VIEW_W;
-            const tx = flipLeft ? tooltip.x - SRC_W - TOOLTIP_W - 10 : wantRightX;
-            const ty = Math.max(
-              4,
-              Math.min(VIEW_H - TOOLTIP_H - 4, tooltip.y - 8)
+            const { tx, ty, lines, height } = computeTooltipLayout(
+              src,
+              tooltip.x,
+              tooltip.y,
+              "right"
             );
-            const lines = wrapText(src.description, 38, 4);
             return (
-              <g filter="url(#nexus-tooltip-shadow)" style={{ pointerEvents: "none" }}>
+              <g
+                key={`src-tt-${tooltip.index}`}
+                className="nexus-tooltip"
+                filter="url(#nexus-tooltip-shadow)"
+                style={{ pointerEvents: "none" }}
+              >
                 <rect
                   x={tx}
                   y={ty}
                   width={TOOLTIP_W}
-                  height={Math.max(TOOLTIP_H, 36 + lines.length * 14)}
+                  height={height}
                   rx={6}
-                  fill="#0F172A"
-                  stroke="#2D4F7A"
+                  fill={TOOLTIP_BG}
+                  stroke={TOOLTIP_BORDER}
                   strokeWidth={1}
                 />
                 <text
                   x={tx + 14}
-                  y={ty + 22}
-                  fill="#CBD5E1"
+                  y={ty + TOOLTIP_PAD_TOP}
+                  fill={TOOLTIP_TITLE}
                   fontSize={12}
                   fontWeight="bold"
                   fontFamily="ui-monospace, SFMono-Regular, monospace"
@@ -566,8 +711,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                   <text
                     key={`tt-line-${li}`}
                     x={tx + 14}
-                    y={ty + 42 + li * 14}
-                    fill="#64748B"
+                    y={ty + TOOLTIP_PAD_TOP + TOOLTIP_HEADER_GAP + li * LINE_H}
+                    fill={TOOLTIP_BODY}
                     fontSize={11}
                     fontFamily="ui-monospace, SFMono-Regular, monospace"
                   >
@@ -581,31 +726,33 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         {moduleTooltip !== null &&
           (() => {
             const mod = MODULES[moduleTooltip.index];
-            // Render to the LEFT of module: offset x-301 (TOOLTIP_W + 8 gap)
-            let tx = moduleTooltip.x - TOOLTIP_W - 8;
-            // Clamp to left edge
-            if (tx < 4) tx = 4;
-            const ty = Math.max(
-              4,
-              Math.min(VIEW_H - TOOLTIP_H - 4, moduleTooltip.y - 8)
+            const { tx, ty, lines, height } = computeTooltipLayout(
+              mod,
+              moduleTooltip.x,
+              moduleTooltip.y,
+              "left"
             );
-            const lines = wrapText(mod.description, 38, 5);
             return (
-              <g filter="url(#nexus-tooltip-shadow)" style={{ pointerEvents: "none" }}>
+              <g
+                key={`mod-tt-${moduleTooltip.index}`}
+                className="nexus-tooltip"
+                filter="url(#nexus-tooltip-shadow)"
+                style={{ pointerEvents: "none" }}
+              >
                 <rect
                   x={tx}
                   y={ty}
                   width={TOOLTIP_W}
-                  height={Math.max(TOOLTIP_H, 36 + lines.length * 14)}
+                  height={height}
                   rx={6}
-                  fill="#0F172A"
+                  fill={TOOLTIP_BG}
                   stroke={LAYER_COLOR[mod.layer]}
                   strokeWidth={1}
                 />
                 <text
                   x={tx + 14}
-                  y={ty + 22}
-                  fill="#CBD5E1"
+                  y={ty + TOOLTIP_PAD_TOP}
+                  fill={TOOLTIP_TITLE}
                   fontSize={12}
                   fontWeight="bold"
                   fontFamily="ui-monospace, SFMono-Regular, monospace"
@@ -616,8 +763,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                   <text
                     key={`mtt-line-${li}`}
                     x={tx + 14}
-                    y={ty + 42 + li * 14}
-                    fill="#64748B"
+                    y={ty + TOOLTIP_PAD_TOP + TOOLTIP_HEADER_GAP + li * LINE_H}
+                    fill={TOOLTIP_BODY}
                     fontSize={11}
                     fontFamily="ui-monospace, SFMono-Regular, monospace"
                   >
