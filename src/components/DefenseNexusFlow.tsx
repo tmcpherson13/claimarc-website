@@ -80,18 +80,64 @@ const SOURCES: Source[] = [
 interface ModuleDef {
   name: string;
   layer: Layer;
+  description: string;
 }
 
 const MODULES: ModuleDef[] = [
-  { name: "Sentinel", layer: "predict" },
-  { name: "ContractIntel", layer: "predict" },
-  { name: "Forecast", layer: "predict" },
-  { name: "Shield", layer: "protect" },
-  { name: "Prevent", layer: "protect" },
-  { name: "Ledger", layer: "protect" },
-  { name: "Triage", layer: "recover" },
-  { name: "Evidence", layer: "recover" },
-  { name: "Resolve", layer: "recover" },
+  {
+    name: "Sentinel",
+    layer: "predict",
+    description:
+      "Monitors payer behavioral shifts in real time using the Payer Weaponization Index. Detects systematic denial strategy changes 7–14 days before your billing team sees them in volume.",
+  },
+  {
+    name: "ContractIntel",
+    layer: "predict",
+    description:
+      "Benchmarks your contracted rates against TiC MRF data from 7 major payers. Surfaces underpayment gaps and flags contract renewal windows before negotiations open.",
+  },
+  {
+    name: "Forecast",
+    layer: "predict",
+    description:
+      "Synthesizes all 9 modules into a single 90-day revenue projection. $12.6M projected at 84% confidence in the current demo build.",
+  },
+  {
+    name: "Shield",
+    layer: "protect",
+    description:
+      "Scans every outbound claim against live payer rules and NCCI edits before submission. 89.4% clean claim rate in demo. No BAA required.",
+  },
+  {
+    name: "Prevent",
+    layer: "protect",
+    description:
+      "Detects prior authorization requirement changes an average of 11 days before formal payer notice. No BAA required.",
+  },
+  {
+    name: "Ledger",
+    layer: "protect",
+    description:
+      "Underpayment detection, plus Overpayment discovery with Medicare 60-day countdown tracker for enforcement compliance. Immutable audit log with configurable dual-approver authorization on every write-off.",
+  },
+  {
+    name: "Triage",
+    layer: "recover",
+    description:
+      "AI-powered denial queue ranked by recovery probability. Using a CARC/RARC classification model, to streamline the denials workflow. Gives the Rev Cycle team to view all denials in the queue and decide where to focus their efforts based on the Recovery Probability Score.",
+  },
+  {
+    name: "Evidence",
+    layer: "recover",
+    description:
+      "Assembles the full appeal documentation package automatically before a specialist opens the file — clinical notes, modifiers, authorizations, and coverage rules.",
+  },
+  {
+    name: "Resolve",
+    layer: "recover",
+    description:
+      "Generates bulk payer-specific appeal letters. 10 letters in 8 seconds. Outcome tracking feeds back into the recovery model so accuracy improves with every appeal.",
+  },
 ];
 
 // Source-index → list of consuming module names.
@@ -109,18 +155,21 @@ const SOURCE_TO_MODULES: Record<number, string[]> = {
   10: ["Triage", "Evidence"],
 };
 
-// Layout constants
-const SRC_X = 40;
-const SRC_W = 160;
-const SRC_H = 22;
+// Layout constants — all x shifted by +150 to center within wider viewBox
+const SRC_X = 190;
+const SRC_W = 190;
+const SRC_H = 28;
 const SRC_RIGHT = SRC_X + SRC_W;
-const NEXUS_IN_X = 410;
-const NEXUS_OUT_X = 430;
-const NEXUS_X = 420;
+const NEXUS_IN_X = 560;
+const NEXUS_OUT_X = 580;
+const NEXUS_X = 570;
 const NEXUS_Y = 262.5;
-const MOD_X = 580;
-const MOD_W = 140;
-const MOD_H = 26;
+const MOD_X = 730;
+const MOD_W = 170;
+const MOD_H = 32;
+
+const VIEW_W = 1400;
+const VIEW_H = 525;
 
 const sourceY = (i: number) => {
   const top = 37.5;
@@ -158,8 +207,6 @@ interface Packet {
   start: number;
 }
 
-// Simple word-wrap helper: split a string into N lines that fit roughly within
-// `maxChars` characters per line.
 function wrapText(text: string, maxChars: number, maxLines: number): string[] {
   const words = text.split(/\s+/);
   const lines: string[] = [];
@@ -175,7 +222,6 @@ function wrapText(text: string, maxChars: number, maxLines: number): string[] {
     }
   }
   if (current && lines.length < maxLines) lines.push(current);
-  // If text remains beyond maxLines, append ellipsis to last line.
   const consumed = lines.join(" ").length;
   if (consumed < text.length && lines.length === maxLines) {
     lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + "…";
@@ -188,6 +234,9 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
   const [tooltip, setTooltip] = useState<
+    { index: number; x: number; y: number } | null
+  >(null);
+  const [moduleTooltip, setModuleTooltip] = useState<
     { index: number; x: number; y: number } | null
   >(null);
   const startRef = useRef<number | null>(null);
@@ -272,8 +321,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
     >
       <div className="flex justify-center w-full">
       <svg
-        viewBox="0 0 1100 525"
-        className="w-full max-w-5xl h-auto"
+        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+        className="w-full max-w-6xl h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -282,7 +331,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           </filter>
         </defs>
 
-        <rect x={0} y={0} width={1100} height={525} fill="#0B1628" />
+        <rect x={0} y={0} width={VIEW_W} height={VIEW_H} fill="#0B1628" />
 
         <circle
           cx={NEXUS_X}
@@ -357,10 +406,10 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               />
               <text
                 x={SRC_X + SRC_W / 2}
-                y={y + SRC_H / 2 + 3}
+                y={y + SRC_H / 2 + 4}
                 textAnchor="middle"
                 fill="#CBD5E1"
-                fontSize={9}
+                fontSize={11}
                 fontFamily="ui-monospace, SFMono-Regular, monospace"
               >
                 {s.name}
@@ -379,7 +428,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           const strokeWidth = flashing ? 2 + (1 - t) * 1.5 : 1.25;
           const strokeOpacity = flashing ? 1 : 0.75;
           return (
-            <g key={`mod-${i}`}>
+            <g
+              key={`mod-${i}`}
+              onMouseEnter={() =>
+                setModuleTooltip({ index: i, x: MOD_X, y: y })
+              }
+              onMouseLeave={() => setModuleTooltip(null)}
+              style={{ cursor: "default" }}
+            >
               <rect
                 x={MOD_X}
                 y={y}
@@ -393,10 +449,10 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               />
               <text
                 x={MOD_X + MOD_W / 2}
-                y={y + MOD_H / 2 + 3}
+                y={y + MOD_H / 2 + 4}
                 textAnchor="middle"
                 fill="#CBD5E1"
-                fontSize={8}
+                fontSize={11}
               >
                 {m.name}
               </text>
@@ -409,7 +465,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           y={NEXUS_Y}
           textAnchor="middle"
           fill="#10B981"
-          fontSize={9}
+          fontSize={10}
           fontFamily="ui-monospace, SFMono-Regular, monospace"
           opacity={0.6}
           letterSpacing={3}
@@ -451,9 +507,9 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
         <g>
           <rect
-            x={420 - 80}
+            x={570 - 100}
             y={505 - 10}
-            width={160}
+            width={200}
             height={20}
             rx={10}
             fill="#021A0F"
@@ -461,11 +517,11 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             strokeWidth={1}
           />
           <text
-            x={420}
-            y={505 + 3}
+            x={570}
+            y={505 + 4}
             textAnchor="middle"
             fill="#10B981"
-            fontSize={7}
+            fontSize={10}
             fontFamily="ui-monospace, SFMono-Regular, monospace"
             letterSpacing={1}
           >
@@ -476,12 +532,12 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         {tooltip !== null &&
           (() => {
             const src = SOURCES[tooltip.index];
-            const wantRightX = tooltip.x + 168;
-            const flipLeft = wantRightX + TOOLTIP_W > 1100;
+            const wantRightX = tooltip.x + 8;
+            const flipLeft = wantRightX + TOOLTIP_W > VIEW_W;
             const tx = flipLeft ? tooltip.x - SRC_W - TOOLTIP_W - 10 : wantRightX;
             const ty = Math.max(
               4,
-              Math.min(525 - TOOLTIP_H - 4, tooltip.y - 8)
+              Math.min(VIEW_H - TOOLTIP_H - 4, tooltip.y - 8)
             );
             const lines = wrapText(src.description, 38, 4);
             return (
@@ -509,6 +565,56 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 {lines.map((line, li) => (
                   <text
                     key={`tt-line-${li}`}
+                    x={tx + 14}
+                    y={ty + 42 + li * 14}
+                    fill="#64748B"
+                    fontSize={11}
+                    fontFamily="ui-monospace, SFMono-Regular, monospace"
+                  >
+                    {line}
+                  </text>
+                ))}
+              </g>
+            );
+          })()}
+
+        {moduleTooltip !== null &&
+          (() => {
+            const mod = MODULES[moduleTooltip.index];
+            // Render to the LEFT of module: offset x-301 (TOOLTIP_W + 8 gap)
+            let tx = moduleTooltip.x - TOOLTIP_W - 8;
+            // Clamp to left edge
+            if (tx < 4) tx = 4;
+            const ty = Math.max(
+              4,
+              Math.min(VIEW_H - TOOLTIP_H - 4, moduleTooltip.y - 8)
+            );
+            const lines = wrapText(mod.description, 38, 5);
+            return (
+              <g filter="url(#nexus-tooltip-shadow)" style={{ pointerEvents: "none" }}>
+                <rect
+                  x={tx}
+                  y={ty}
+                  width={TOOLTIP_W}
+                  height={Math.max(TOOLTIP_H, 36 + lines.length * 14)}
+                  rx={6}
+                  fill="#0F172A"
+                  stroke={LAYER_COLOR[mod.layer]}
+                  strokeWidth={1}
+                />
+                <text
+                  x={tx + 14}
+                  y={ty + 22}
+                  fill="#CBD5E1"
+                  fontSize={12}
+                  fontWeight="bold"
+                  fontFamily="ui-monospace, SFMono-Regular, monospace"
+                >
+                  {mod.name}
+                </text>
+                {lines.map((line, li) => (
+                  <text
+                    key={`mtt-line-${li}`}
                     x={tx + 14}
                     y={ty + 42 + li * 14}
                     fill="#64748B"
