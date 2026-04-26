@@ -1150,7 +1150,8 @@ const PlatformMissionControl = () => {
         feedTplIdxRef.current++;
         feedRef.current.push({
           id: ++feedIdRef.current,
-          text: `[${hh}:${mm}:${ss}] ${tpl}`,
+          text: `[${hh}:${mm}:${ss}] ${tpl.text}`,
+          module: tpl.module,
           spawnedAt: elapsedSec,
         });
       }
