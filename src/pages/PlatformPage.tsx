@@ -247,32 +247,6 @@ const PlatformPage = () => {
         </div>
       </section>
 
-      {/* SECTION 6: AI³ DEPLOYMENT */}
-      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
-          <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
-            AI³ = three ways to deploy the intelligence — not three different products.
-          </h2>
-          <p className="text-slate-400 text-lg mt-3 max-w-2xl">
-            Same platform. Same nine modules. Three delivery models: Actionable AI¹, Augmented AI², Automated AI³ — choose the one that fits your team's capacity and oversight preference.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            {[
-              { tag: "Actionable AI¹", title: "Your team, our platform", body: "ZDefense surfaces the intelligence and prioritized actions. Your team executes inside their existing workflow." },
-              { tag: "Augmented AI²", title: "ZTech co-pilot", body: "ZDefense plus a ZTech analyst working alongside your team — reviewing signals, prepping appeals, and accelerating recovery." },
-              { tag: "Automated AI³", title: "Fire and forget", body: "ZDefense and ZTech operate the recovery and protection workflows end-to-end. Your team receives outcomes, not work queues." },
-            ].map((c) => (
-              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6">
-                <div className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">{c.tag}</div>
-                <div className="text-white font-semibold text-lg mt-2">{c.title}</div>
-                <p className="text-slate-400 text-sm mt-2">{c.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* SECTION 7: CTA */}
       <section className="px-6 md:px-12 lg:px-16 bg-white">
         <div className="max-w-7xl mx-auto">
