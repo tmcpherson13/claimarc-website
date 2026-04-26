@@ -191,7 +191,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
       aria-hidden="true"
       className={`w-full transition-opacity duration-700 ${
         visible ? "opacity-100" : "opacity-0"
-      }`}
+      } ${className}`}
     >
       <svg
         viewBox="0 0 1100 420"
