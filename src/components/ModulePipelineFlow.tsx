@@ -33,10 +33,12 @@ const ClusterBox = ({
   label,
   color,
   modules,
+  onSelect,
 }: {
   label: string;
   color: string;
   modules: string[];
+  onSelect?: (name: string) => void;
 }) => (
   <div
     className="rounded-xl border-2 bg-[var(--navy)] p-6 flex-1 flex flex-col items-center text-center"
@@ -50,18 +52,32 @@ const ClusterBox = ({
     </p>
     <ul className="flex flex-col gap-2 items-center w-full">
       {modules.map((m) => (
-        <li
-          key={m}
-          className="text-base font-semibold bg-slate-800 text-slate-200 px-4 py-1.5 rounded-full text-center"
-        >
-          {m}
+        <li key={m} className="w-full flex justify-center">
+          <button
+            type="button"
+            onClick={() => onSelect?.(m)}
+            className="text-base font-semibold bg-slate-800 text-slate-200 px-4 py-1.5 rounded-full text-center transition-all hover:bg-slate-700 hover:text-white hover:scale-105 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] cursor-pointer"
+            style={{
+              boxShadow: `inset 0 0 0 1px ${color}33`,
+            }}
+            aria-label={`Open ${m} module details`}
+          >
+            {m}
+          </button>
         </li>
       ))}
     </ul>
+    <p className="text-slate-500 text-[10px] mt-4 uppercase tracking-widest">
+      Click a module
+    </p>
   </div>
 );
 
-const ModulePipelineFlow = () => {
+const ModulePipelineFlow = ({
+  onSelect,
+}: {
+  onSelect?: (name: string) => void;
+}) => {
   return (
     <div className="bg-[var(--navy-dk)] rounded-2xl p-8 relative overflow-hidden">
       {/* Desktop: SVG arrow + particle overlay (md+) */}
@@ -141,6 +157,7 @@ const ModulePipelineFlow = () => {
               label={c.label}
               color={c.color}
               modules={c.modules}
+              onSelect={onSelect}
             />
             {/* Mobile-only down-arrow between clusters */}
             {i < CLUSTERS.length - 1 && (
