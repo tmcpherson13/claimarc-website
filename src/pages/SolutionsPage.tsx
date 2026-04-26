@@ -9,6 +9,7 @@ import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
 import BADBadge from "@/components/BADBadge";
 import { MODULES, getModule } from "@/config/modules";
+import { useChatbot } from "@/context/ChatbotContext";
 
 interface RoleContent {
   key: string;
