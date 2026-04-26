@@ -325,7 +325,7 @@ interface Packet {
   speed: number; // px/s
   x: number;
 }
-const RAIL_LABELS = ["HPT MRFs", "TiC MRFs", "MAC Bulletins"];
+const RAIL_LABELS = CRUCIBLE_RAILS.map((r) => r.label);
 const CrucibleThroughput = ({
   t,
   packets,
