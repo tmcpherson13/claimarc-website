@@ -1,12 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { MODULES, NO_BAA_MODULES, moduleSlug } from "@/config/modules";
+import {
+  SHIELD_CLEAN_CLAIM_RATE,
+  SHIELD_CLEAN_CLAIM_JITTER,
+  TRIAGE_RECOVERY_PIPELINE,
+  TRIAGE_RECOVERY_PIPELINE_JITTER,
+  TRIAGE_RECOVERY_PIPELINE_CEILING,
+  RESOLVE_CONFIDENCE_CENTER,
+  RESOLVE_CONFIDENCE_JITTER,
+  SENTINEL_PAYERS,
+  CRUCIBLE_RAILS,
+  REGULATORY_FEED,
+  LAYER_LED_COLOR,
+} from "@/config/platformMetrics";
 
 /**
  * PlatformMissionControl — full-width, mission-control style decorative SVG
  * for the /platform hero. Nine independent instruments arranged in a 3x3
  * grid, all driven by a single requestAnimationFrame loop. Pure SVG +
  * React hooks. Animation kicks in only when the component enters the
- * viewport via IntersectionObserver. Every readout is meant to look like
- * it is measuring something real about the ZDefense platform itself.
+ * viewport via IntersectionObserver.
+ *
+ * Every readout is wired to a real value from src/config/platformMetrics.ts
+ * (or src/config/modules.ts) and oscillates within a narrow band around the
+ * canonical value — the visualization is alive, but the headline numbers
+ * always agree with the rest of the marketing site.
+ *
+ * Each cell is also a click target — clicking any instrument navigates to
+ * the matching module section on /solutions, using a fixed-header offset
+ * so the heading clears the sticky navbar (matches Solutions' own
+ * scroll-spy behavior).
  */
 
 // ---------- Layout constants ----------
@@ -20,29 +44,19 @@ const CELL_H = (VB_H - GAP * (ROWS + 1)) / ROWS; // ~95
 const cellX = (col: number) => GAP + col * (CELL_W + GAP);
 const cellY = (row: number) => GAP + row * (CELL_H + GAP);
 
-// ---------- Module catalog (must match the rest of the platform) ----------
-type Layer = "predict" | "protect" | "recover";
-interface ModuleSpec {
-  name: string;
-  layer: Layer;
-  baa: boolean; // true => BAA required
-}
-const MODULES_LIST: ModuleSpec[] = [
-  { name: "Sentinel", layer: "predict", baa: true },
-  { name: "ContractIntel", layer: "predict", baa: false },
-  { name: "Forecast", layer: "predict", baa: true },
-  { name: "Shield", layer: "protect", baa: false },
-  { name: "Prevent", layer: "protect", baa: false },
-  { name: "Ledger", layer: "protect", baa: true },
-  { name: "Triage", layer: "recover", baa: true },
-  { name: "Evidence", layer: "recover", baa: true },
-  { name: "Resolve", layer: "recover", baa: true },
-];
-const LAYER_COLOR: Record<Layer, string> = {
-  predict: "#06B6D4",
-  protect: "#10B981",
-  recover: "#8B5CF6",
-};
+/** Header (64px) + sticky tab bar (~64px) + breathing room. Mirrors the
+ * SCROLL_OFFSET_PX in SolutionsPage so anchor landings line up. */
+const SCROLL_OFFSET_PX = 160;
+
+// ---------- Module list (re-derived from the shared catalog) ----------
+const MODULES_LIST = MODULES.map((m) => ({
+  name: m.name,
+  layer: m.layer,
+  baa: !NO_BAA_MODULES.includes(m.name),
+}));
+
+const BAA_REQUIRED = MODULES_LIST.filter((m) => m.baa).map((m) => m.name);
+const BAA_NONE = MODULES_LIST.filter((m) => !m.baa).map((m) => m.name);
 
 // ---------- Shared helpers ----------
 const polarX = (cx: number, cy: number, r: number, angDeg: number) =>
@@ -50,32 +64,46 @@ const polarX = (cx: number, cy: number, r: number, angDeg: number) =>
 const polarY = (cx: number, cy: number, r: number, angDeg: number) =>
   cy + r * Math.sin(((angDeg - 90) * Math.PI) / 180);
 
-/** SVG arc path between two angles (deg, 0=top, clockwise). */
-const arcPath = (
-  cx: number,
-  cy: number,
-  r: number,
-  startDeg: number,
-  endDeg: number,
-) => {
-  const start = { x: polarX(cx, cy, r, endDeg), y: polarY(cx, cy, r, endDeg) };
-  const end = { x: polarX(cx, cy, r, startDeg), y: polarY(cx, cy, r, startDeg) };
-  const largeArc = endDeg - startDeg <= 180 ? 0 : 1;
-  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
-};
-
 // ---------- Bezel ----------
 interface BezelProps {
   col: number;
   row: number;
   label: string;
+  /** Module name to navigate to on click (matches MODULES catalog). */
+  module?: string;
+  onActivate?: (moduleName: string) => void;
   children: React.ReactNode;
 }
-const Bezel = ({ col, row, label, children }: BezelProps) => {
+
+/** Stable id factory for per-cell clip paths. */
+const cellClipId = (col: number, row: number, instance: string) =>
+  `pmc-clip-${instance}-${col}-${row}`;
+
+const Bezel = ({ col, row, label, module, onActivate, children }: BezelProps) => {
   const x = cellX(col);
   const y = cellY(row);
+  const interactive = !!module;
+  const handleClick = () => {
+    if (module && onActivate) onActivate(module);
+  };
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (!module || !onActivate) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onActivate(module);
+    }
+  };
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g
+      transform={`translate(${x} ${y})`}
+      role={interactive ? "link" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? `Open ${module} on Solutions` : undefined}
+      onClick={interactive ? handleClick : undefined}
+      onKeyDown={interactive ? handleKey : undefined}
+      style={interactive ? { cursor: "pointer" } : undefined}
+      className={interactive ? "pmc-cell pmc-cell-interactive" : "pmc-cell"}
+    >
       <rect
         width={CELL_W}
         height={CELL_H}
@@ -87,7 +115,21 @@ const Bezel = ({ col, row, label, children }: BezelProps) => {
       <text x={8} y={11} fontSize={7} fill="#475569" fontFamily="monospace">
         {label}
       </text>
-      {children}
+      {/* Per-cell clip ensures animated content can never bleed past the
+       * bezel rectangle — important on small screens where individual
+       * instruments compress. */}
+      <defs>
+        <clipPath id={cellClipId(col, row, "bezel")}>
+          <rect
+            x={1}
+            y={1}
+            width={CELL_W - 2}
+            height={CELL_H - 2}
+            rx={7}
+          />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${cellClipId(col, row, "bezel")})`}>{children}</g>
     </g>
   );
 };
