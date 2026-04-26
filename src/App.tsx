@@ -24,6 +24,7 @@ import AdminProfile from "./pages/admin/AdminProfile.tsx";
 import AdminAboutPage from "./pages/admin/AdminAboutPage.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
+import { ChatbotProvider } from "./context/ChatbotContext";
 
 const queryClient = new QueryClient();
 
