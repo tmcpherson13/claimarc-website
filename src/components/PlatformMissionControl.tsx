@@ -336,16 +336,19 @@ interface Packet {
   x: number;
 }
 const RAIL_LABELS = CRUCIBLE_RAILS.map((r) => r.label);
+const RAIL_MODULES = CRUCIBLE_RAILS.map((r) => r.feedsModule);
 const CrucibleThroughput = ({
   t,
   packets,
   accumHeights,
   livePulse,
+  onActivate,
 }: {
   t: number;
   packets: Packet[];
   accumHeights: number[];
   livePulse: number;
+  onActivate?: (m: string) => void;
 }) => {
   const leftPad = 70;
   const rightPad = 14;
