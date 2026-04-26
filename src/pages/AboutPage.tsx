@@ -96,7 +96,7 @@ const AboutPage = () => {
       {/* HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
-        <SignalTower className="absolute inset-y-0 right-0 w-full md:w-1/2 h-full opacity-75" />
+        <SignalTower className="absolute inset-0 w-full h-full opacity-75" />
         <div className="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           <div className="max-w-xl">
             <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
