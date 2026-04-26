@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
