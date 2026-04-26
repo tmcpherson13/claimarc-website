@@ -194,6 +194,11 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const clearModuleContext = useCallback(() => {
+    setModuleContext(null);
+    writePersistedModuleContext(null);
+  }, []);
+
   const sendMessage = useCallback(
     async (content: string) => {
       const trimmed = content.trim();
