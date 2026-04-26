@@ -308,7 +308,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           y={210}
           textAnchor="middle"
           fill="#10B981"
-          fontSize={9}
+          fontSize={14}
           fontFamily="ui-monospace, SFMono-Regular, monospace"
           opacity={0.6}
           letterSpacing={3}
