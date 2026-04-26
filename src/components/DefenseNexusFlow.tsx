@@ -371,39 +371,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         }
       });
 
-      // Update chaotic interior particles with random direction kicks.
-      const prev = lastFrameRef.current ?? timestamp;
-      const dt = Math.min(0.05, (timestamp - prev) / 1000); // seconds, clamped
       lastFrameRef.current = timestamp;
-      const MAX_R = 24; // confine inside inner ring
-      const MAX_SPEED = 9;
-      const KICK = 22; // velocity change per second
-      const DAMP = 0.94;
-      for (const p of chaosRef.current) {
-        // Random impulse — direction can flip every frame
-        p.vx = p.vx * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
-        p.vy = p.vy * DAMP + (Math.random() - 0.5) * KICK * dt * 60;
-        // Clamp speed so it stays slow + jittery
-        const sp = Math.hypot(p.vx, p.vy);
-        if (sp > MAX_SPEED) {
-          p.vx = (p.vx / sp) * MAX_SPEED;
-          p.vy = (p.vy / sp) * MAX_SPEED;
-        }
-        p.x += p.vx * dt * 18;
-        p.y += p.vy * dt * 18;
-        // Soft boundary — reflect inward when escaping the disc
-        const d = Math.hypot(p.x, p.y);
-        if (d > MAX_R) {
-          const nx = p.x / d;
-          const ny = p.y / d;
-          p.x = nx * MAX_R;
-          p.y = ny * MAX_R;
-          // reflect velocity
-          const dot = p.vx * nx + p.vy * ny;
-          p.vx -= 2 * dot * nx;
-          p.vy -= 2 * dot * ny;
-        }
-      }
 
       setTick((n) => (n + 1) % 1_000_000);
       rafRef.current = requestAnimationFrame(animate);
