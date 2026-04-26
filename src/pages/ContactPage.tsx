@@ -88,7 +88,8 @@ const ContactPage = () => {
   };
 
   const allSelected = formData.selectedPayers.length === payerList.length;
-  const showPayers = formData.offerType === "trial" || formData.interestedInTrial;
+  const isInfo = formData.offerType === "info";
+  const showPayers = !isInfo && (formData.offerType === "trial" || formData.interestedInTrial);
 
   const emailValid = EMAIL_RE.test(formData.email.trim());
   const emailInvalid = emailTouched && !emailValid;
@@ -99,8 +100,7 @@ const ContactPage = () => {
     emailValid &&
     formData.organization.trim() &&
     formData.role &&
-    formData.orgType &&
-    formData.claimVolume;
+    (isInfo || (formData.orgType && formData.claimVolume));
 
   const handleSubmit = () => {
     setEmailTouched(true);
@@ -108,10 +108,30 @@ const ContactPage = () => {
     setSubmitted(true);
   };
 
-  const scrollToForm = (offer: "demo" | "trial") => {
+  const scrollToForm = (offer: "demo" | "trial" | "info") => {
     setFormData((prev) => ({ ...prev, offerType: offer }));
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const scrollToOffers = () => {
+    offersRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const submitLabel =
+    formData.offerType === "trial"
+      ? "Start My 30-Day Evaluation — We'll Be in Touch Within One Business Day"
+      : formData.offerType === "info"
+      ? "Send My Request — We'll Respond Within One Business Day"
+      : "Request My Demo — We'll Be in Touch Within One Business Day";
+
+  const bannerLabel =
+    formData.offerType === "demo"
+      ? "You are requesting a personalized demo"
+      : formData.offerType === "trial"
+      ? "You are starting your 30-day evaluation"
+      : formData.offerType === "info"
+      ? "You are requesting more information"
+      : "";
 
   return (
     <Layout>
