@@ -86,7 +86,7 @@ const threatPos = (i: number, t: number) => {
 };
 const threatAngle = () => Math.atan2(THREAT_DY, -1250); // radians; vector dir of travel
 
-const WeaponizationCounterstrike = () => {
+const WeaponizationCounterstrike = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
