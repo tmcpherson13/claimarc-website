@@ -875,6 +875,108 @@ const Inner = () => {
               rows={20}
             />
           </div>
+
+          {/* Suggested hero images (Unsplash) — promoted to main column */}
+          {suggestedPhotos.length > 0 && (
+            <div className="bg-[var(--navy)] border border-[var(--emerald)]/30 rounded-xl p-5">
+              <div className="flex items-start justify-between gap-2 flex-wrap mb-3">
+                <div>
+                  <p className="text-white font-semibold text-sm">Choose a Hero Image</p>
+                  <p className="text-white/50 text-xs mt-0.5">
+                    Healthcare and finance-biased results from Unsplash
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={photosLoading || imageRefreshPage <= 1}
+                    onClick={() => {
+                      const prev = imageRefreshPage - 1;
+                      setImageRefreshPage(prev);
+                      fetchSuggestedImages(form.title, form.tags, prev);
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-white/20 text-white/70 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    ← Prev
+                  </button>
+                  <span className="text-[11px] text-white/60 tabular-nums min-w-[44px] text-center">
+                    {photosLoading ? (
+                      <span className="inline-flex items-center gap-1">
+                        <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      </span>
+                    ) : (
+                      `Page ${imageRefreshPage}`
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={photosLoading || !hasMorePhotos}
+                    onClick={() => {
+                      const next = imageRefreshPage + 1;
+                      setImageRefreshPage(next);
+                      fetchSuggestedImages(form.title, form.tags, next);
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-white/20 text-white/70 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Next →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuggestedPhotos([]);
+                      setSelectedPhotoId(null);
+                      setImageRefreshPage(1);
+                      setHasMorePhotos(true);
+                    }}
+                    className="text-white/40 hover:text-white/80 text-xs ml-1"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-2 mt-3">
+                {suggestedPhotos.map((photo) => (
+                  <button
+                    key={photo.id}
+                    type="button"
+                    onClick={() => selectAndUploadPhoto(photo)}
+                    disabled={uploadingPhoto}
+                    className={`relative group rounded-lg overflow-hidden aspect-[4/3] ring-2 transition-all duration-200 ${
+                      selectedPhotoId === photo.id
+                        ? "ring-[var(--emerald)] scale-[0.98]"
+                        : "ring-transparent hover:ring-white/40"
+                    } ${uploadingPhoto ? "cursor-wait" : "cursor-pointer"}`}
+                  >
+                    <img
+                      src={photo.thumb}
+                      alt={photo.alt}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    {uploadingPhoto && selectedPhotoId === photo.id && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      </div>
+                    )}
+                    {selectedPhotoId === photo.id && !uploadingPhoto && (
+                      <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[var(--emerald)] text-white text-xs flex items-center justify-center font-bold">
+                        ✓
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-white text-[10px] truncate">
+                        {photo.credit.name} · Unsplash
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <p className="text-white/50 text-xs mt-3 leading-relaxed">
+                Click a photo to set as hero image. Photos auto-upload to your
+                asset library.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Sidebar */}
