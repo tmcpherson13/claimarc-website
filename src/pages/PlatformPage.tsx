@@ -59,98 +59,58 @@ const ModuleDetailDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <p className="text-slate-700 text-sm leading-relaxed">{module.detail}</p>
+        <ul className="space-y-2 mt-2">
+          {module.outcomes.slice(0, 3).map((o) => (
+            <li key={o} className="flex items-start gap-2">
+              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+              <span className="text-slate-700 text-sm">{o}</span>
+            </li>
+          ))}
+        </ul>
 
-        <section>
-          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-            Capabilities
-          </h4>
-          <ul className="space-y-2">
-            {module.capabilities.map((c) => (
-              <li key={c} className="flex items-start gap-2 text-sm text-slate-600">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                <span>{c}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-            How it works
-          </h4>
-          <ol className="space-y-2">
-            {module.howItWorks.map((step, i) => (
-              <li key={step} className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
-                  {i + 1}
-                </span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section>
-          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-            Outcomes
-          </h4>
-          <ul className="space-y-2">
-            {module.outcomes.map((o) => (
-              <li key={o} className="flex items-start gap-2 text-sm text-slate-600">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                <span>{o}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-            Data inputs
-          </h4>
-          <ul className="space-y-2">
-            {module.dataInputs.map((d) => (
-              <li key={d} className="flex items-start gap-2 text-sm text-slate-600">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
-                <span>{d}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <div className="rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
-          <p className="text-slate-400 text-xs uppercase tracking-widest">
-            Integration & deployment
-          </p>
-          <p className="text-slate-700 text-sm mt-1">{module.integration}</p>
+        <div className="grid grid-cols-2 gap-6 mt-2">
+          <div>
+            <p className="text-slate-400 text-xs uppercase tracking-wider">
+              Data sharing
+            </p>
+            <p
+              className={
+                module.required
+                  ? "text-amber-600 text-sm font-medium mt-1"
+                  : "text-[var(--emerald)] text-sm font-medium mt-1"
+              }
+            >
+              {module.required ? "BAA required" : "No BAA required"}
+            </p>
+          </div>
+          <div>
+            <p className="text-slate-400 text-xs uppercase tracking-wider">
+              Built for
+            </p>
+            <p className="text-slate-700 text-sm mt-1">{module.audience}</p>
+          </div>
         </div>
 
-        <div className="border-t border-[var(--lgray)] pt-4">
-          <p className="text-slate-400 text-xs uppercase tracking-widest">
-            Built for
-          </p>
-          <p className="text-slate-700 text-sm mt-1">{module.audience}</p>
+        <div className="border-t border-[var(--lgray)] pt-4 mt-2 space-y-2">
+          <Link
+            to={module.learnMoreHref}
+            onClick={() => onOpenChange(false)}
+            className="bg-[var(--navy)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[var(--navy-dk)] transition-colors flex items-center justify-between w-full"
+          >
+            <span>Explore {module.name} in depth</span>
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              onOpenChange(false);
+              openChatbot(module.name);
+            }}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--navy)] bg-[var(--emerald)]/10 hover:bg-[var(--emerald)]/20 border border-[var(--emerald)]/30 rounded-lg px-4 py-2 transition-colors mt-2"
+          >
+            Ask Z about {module.name}
+          </button>
         </div>
-
-        <Link
-          to={module.learnMoreHref}
-          onClick={() => onOpenChange(false)}
-          className="mt-2 inline-flex items-center gap-1 text-[var(--emerald)] font-semibold text-sm hover:gap-2 transition-all"
-        >
-          Learn more about {module.name}
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
-        <button
-          type="button"
-          onClick={() => {
-            onOpenChange(false);
-            openChatbot(module.name);
-          }}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--navy)] bg-[var(--emerald)]/10 hover:bg-[var(--emerald)]/20 border border-[var(--emerald)]/30 rounded-lg px-4 py-2 transition-colors mt-2"
-        >
-          Ask Z about {module.name}
-        </button>
       </DialogContent>
     </Dialog>
   );
