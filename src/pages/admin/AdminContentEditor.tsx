@@ -324,6 +324,7 @@ const Inner = () => {
   useEffect(() => {
     if (isNew) {
       setForm(empty(initialType));
+      setAiContentType(initialType);
       setLoading(false);
       return;
     }
@@ -331,6 +332,7 @@ const Inner = () => {
       if (p) {
         setExisting(p);
         setForm(fromItem(p));
+        setAiContentType(p.contentType);
         setSlugTouched(true);
       }
       setLoading(false);
