@@ -9,8 +9,10 @@ import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 import { PHRASES } from "@/config/terminology";
+import { useChatbot } from "@/context/ChatbotContext";
 
 const Index = () => {
+  const { open: openChatbot } = useChatbot();
   return (
     <Layout>
       <SeoHead
@@ -50,6 +52,14 @@ const Index = () => {
               30-Day Evaluation
             </Link>
           </div>
+          <button
+            type="button"
+            onClick={() => openChatbot()}
+            className="text-white/50 text-xs hover:text-white/80 transition-colors flex items-center gap-1.5 mt-3"
+          >
+            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
+            Have a question? Ask Z
+          </button>
           <div className="mt-14 pt-6 border-t border-slate-800">
             <ComplianceStrip />
           </div>

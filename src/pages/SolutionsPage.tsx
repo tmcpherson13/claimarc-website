@@ -506,18 +506,6 @@ const SolutionsPage = () => {
                         <p className="text-slate-700 text-sm">{m.audience}</p>
                       </div>
                       <div className="flex flex-wrap items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => openChatbot(m.name)}
-                          className="inline-flex items-center rounded-md border px-[14px] py-[6px] text-xs transition-colors hover:bg-[#0F172A]/5"
-                          style={{
-                            borderColor: "#1E3A5F",
-                            color: "#06B6D4",
-                            background: "transparent",
-                          }}
-                        >
-                          Ask AI about {m.name}
-                        </button>
                         <Link
                           to="/contact"
                           className="text-[var(--emerald)] font-semibold text-sm hover:underline"
@@ -525,6 +513,18 @@ const SolutionsPage = () => {
                           Talk to us about {m.name} →
                         </Link>
                       </div>
+                    </div>
+
+                    <div className="border-t border-slate-100 mt-6 pt-4 flex items-center justify-between">
+                      <div />
+                      <button
+                        type="button"
+                        onClick={() => openChatbot(m.name)}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
+                      >
+                        <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
+                        Ask Z about this
+                      </button>
                     </div>
                   </section>
                 );

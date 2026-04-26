@@ -20,6 +20,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { getModule, MODULES, type ModuleDefinition } from "@/config/modules";
+import { useChatbot } from "@/context/ChatbotContext";
 
 const MODULES_LOOKUP = MODULES.map((m) => m.name);
 
@@ -38,6 +39,7 @@ const ModuleDetailDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
+  const { open: openChatbot } = useChatbot();
   if (!module) return null;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -139,6 +141,16 @@ const ModuleDetailDialog = ({
           Learn more about {module.name}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
+        <button
+          type="button"
+          onClick={() => {
+            onOpenChange(false);
+            openChatbot(module.name);
+          }}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--navy)] bg-[var(--emerald)]/10 hover:bg-[var(--emerald)]/20 border border-[var(--emerald)]/30 rounded-lg px-4 py-2 transition-colors mt-2"
+        >
+          Ask Z about {module.name}
+        </button>
       </DialogContent>
     </Dialog>
   );
@@ -205,6 +217,9 @@ const PlatformPage = () => {
             <p className="text-slate-400 mt-4">
               Intelligence flows in one direction — forward. Every module
               feeds the next. Click any module to see what it does.
+            </p>
+            <p className="text-slate-500 text-sm text-center mt-2">
+              Click any module for a summary <span className="text-slate-600">→</span> Learn more for full detail <span className="text-slate-600">→</span> <span className="text-[var(--emerald)]">Ask Z</span> for a guided walkthrough.
             </p>
           </div>
           <ModulePipelineFlow onSelect={setSelectedName} />
