@@ -436,7 +436,13 @@ const CrucibleThroughput = ({
 // ===========================================================================
 // 4. Payer Coverage Grid
 // ===========================================================================
-const PayerCoverageGrid = ({ t }: { t: number }) => {
+const PayerCoverageGrid = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const topPad = 16;
   const bottomPad = 12;
   const colWidth = (CELL_W - 16) / SENTINEL_PAYERS.length;
