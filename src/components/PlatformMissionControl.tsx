@@ -993,16 +993,12 @@ const PlatformMissionControl = () => {
       const elapsedSec = elapsedMs / 1000;
 
       // --- Crucible packets ---
-      // Spawn rate per rail varies. Packet x advances by speed * dt.
-      // We approximate dt by re-deriving each frame from current x and a
-      // per-packet speed. Simpler: store spawnedAt and compute x from age.
       const railSpan = (CELL_W - 70 - 14) - 20; // travel distance
-      // Spawn cadence per rail
       const spawnInterval = [1.6, 2.0, 2.6];
       for (let r = 0; r < 3; r++) {
         if (elapsedSec - lastPacketSpawnRef.current[r] >= spawnInterval[r]) {
           lastPacketSpawnRef.current[r] = elapsedSec;
-          const speed = railSpan / (1.5 + (r * 0.5)); // per second
+          const speed = railSpan / (1.5 + r * 0.5); // px/s
           packetsRef.current.push({
             id: ++packetIdRef.current,
             rail: r,
@@ -1011,34 +1007,19 @@ const PlatformMissionControl = () => {
           });
         }
       }
-      // Advance packets and reap arrivals
-      const stillAlive: Packet[] = [];
-      for (const p of packetsRef.current) {
-        // We'll recompute x from elapsedSec using a stored "spawnedAt"-style
-        // approach: instead, we just integrate using a fixed dt of 1/60.
-        // For simplicity, advance by speed * (1/60) * frameSkip estimate.
-        // Better: derive x from speed and a stored start time. Refactor:
-      }
-      // Refactor — recompute using a per-packet startTime stored in id
-      // (simpler: track a startTime field).
-      // Drop this dead-loop and replace with one that uses startTime.
-      stillAlive.length = 0;
-
-      // ---- Re-implement properly ----
-      // Walk packetsRef and advance using each packet's effective start.
+      // Advance packets at ~1/60s per frame; reap on arrival and pulse the
+      // matching accumulator at the right end of the rail.
       const advanced: Packet[] = [];
       for (const p of packetsRef.current) {
-        // Treat speed as px/s. We approximate dt as 1/60.
         p.x += p.speed * (1 / 60);
         if (p.x >= railSpan) {
-          // Pulse the accumulator
           accumRef.current[p.rail] = Math.min(28, accumRef.current[p.rail] + 4);
         } else {
           advanced.push(p);
         }
       }
       packetsRef.current = advanced;
-      // Slowly decay accumulators
+      // Slow decay
       for (let r = 0; r < 3; r++) {
         accumRef.current[r] = Math.max(6, accumRef.current[r] - 0.15);
       }
