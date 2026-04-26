@@ -17,6 +17,14 @@ export interface ModuleDefinition {
   detail: string;
   /** 3–4 short capability bullets. */
   capabilities: string[];
+  /** Step-by-step explanation of how the module operates. */
+  howItWorks: string[];
+  /** Concrete outcomes / KPIs the module delivers. */
+  outcomes: string[];
+  /** Data sources or inputs the module relies on. */
+  dataInputs: string[];
+  /** Integration / deployment notes (BAA posture, systems touched, etc.). */
+  integration: string;
   /** Where the "Learn more" action routes to. */
   learnMoreHref: string;
 }
