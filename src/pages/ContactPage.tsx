@@ -36,6 +36,7 @@ const Req = () => (
 const ContactPage = () => {
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLDivElement>(null);
+  const offersRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -64,6 +65,8 @@ const ContactPage = () => {
     setFormData((prev) => {
       const next = { ...prev };
       if (offer === "trial") next.offerType = "trial";
+      if (offer === "demo") next.offerType = "demo";
+      if (offer === "info") next.offerType = "info";
       if (role === "cfo") next.role = "CFO / Executive";
       if (role === "director") next.role = "Revenue Cycle Director";
       if (role === "manager") next.role = "Revenue Cycle Manager";
@@ -85,7 +88,8 @@ const ContactPage = () => {
   };
 
   const allSelected = formData.selectedPayers.length === payerList.length;
-  const showPayers = formData.offerType === "trial" || formData.interestedInTrial;
+  const isInfo = formData.offerType === "info";
+  const showPayers = !isInfo && (formData.offerType === "trial" || formData.interestedInTrial);
 
   const emailValid = EMAIL_RE.test(formData.email.trim());
   const emailInvalid = emailTouched && !emailValid;
@@ -96,8 +100,7 @@ const ContactPage = () => {
     emailValid &&
     formData.organization.trim() &&
     formData.role &&
-    formData.orgType &&
-    formData.claimVolume;
+    (isInfo || (formData.orgType && formData.claimVolume));
 
   const handleSubmit = () => {
     setEmailTouched(true);
@@ -105,10 +108,30 @@ const ContactPage = () => {
     setSubmitted(true);
   };
 
-  const scrollToForm = (offer: "demo" | "trial") => {
+  const scrollToForm = (offer: "demo" | "trial" | "info") => {
     setFormData((prev) => ({ ...prev, offerType: offer }));
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const scrollToOffers = () => {
+    offersRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const submitLabel =
+    formData.offerType === "trial"
+      ? "Start My 30-Day Evaluation — We'll Be in Touch Within One Business Day"
+      : formData.offerType === "info"
+      ? "Send My Request — We'll Respond Within One Business Day"
+      : "Request My Demo — We'll Be in Touch Within One Business Day";
+
+  const bannerLabel =
+    formData.offerType === "demo"
+      ? "You are requesting a personalized demo"
+      : formData.offerType === "trial"
+      ? "You are starting your 30-day evaluation"
+      : formData.offerType === "info"
+      ? "You are requesting more information"
+      : "";
 
   return (
     <Layout>
@@ -137,8 +160,8 @@ const ContactPage = () => {
       </section>
 
       {/* SECTION 2: TWO-OFFER CARDS */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <section ref={offersRef} className="bg-white py-16 px-6 md:px-12 lg:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-[var(--lgray)] border-2 border-[var(--navy)] rounded-xl p-8 flex flex-col">
             <h2 className="text-[var(--navy)] font-bold text-2xl">
               Book a Personalized Demo
@@ -186,6 +209,30 @@ const ContactPage = () => {
               Start Your 30-Day Evaluation — No BAA Required
             </button>
           </div>
+
+          <div className="bg-[var(--lgray)] border-2 border-slate-300 rounded-xl p-8 flex flex-col">
+            <h2 className="text-[var(--navy)] font-bold text-2xl">
+              Request More Information
+            </h2>
+            <p className="text-slate-600 mt-3">
+              Not ready for a demo? Send us a question and we will get back
+              to you within one business day. No call required.
+            </p>
+            <ul className="mt-4 space-y-2 text-slate-700 text-sm">
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> No commitment</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> No call required</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> Response within one business day</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> We will send relevant resources for your role</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => scrollToForm("info")}
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=request_info bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-auto pt-3 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              style={{ marginTop: "auto" }}
+            >
+              Send Me More Information
+            </button>
+          </div>
         </div>
       </section>
 
@@ -216,6 +263,18 @@ const ContactPage = () => {
               </div>
             ) : (
               <div>
+                {formData.offerType && (
+                  <div className="inline-flex items-center gap-3 bg-[var(--emerald)]/10 border border-[var(--emerald)]/30 text-[var(--navy)] text-sm rounded-full px-4 py-2 mb-6">
+                    <span className="font-semibold">{bannerLabel}</span>
+                    <button
+                      type="button"
+                      onClick={scrollToOffers}
+                      className="text-[var(--emerald)] underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] rounded"
+                    >
+                      Change selection
+                    </button>
+                  </div>
+                )}
                 <h2 className="text-[var(--navy)] font-bold text-2xl mb-6">
                   Tell Us About Your Organization
                 </h2>
@@ -316,11 +375,16 @@ const ContactPage = () => {
 
                 <div className="mb-4">
                   <label htmlFor="orgType" className={labelClass}>
-                    Organization Type <Req />
+                    Organization Type {!isInfo && <Req />}
                   </label>
+                  {isInfo && (
+                    <p className="text-slate-400 text-xs mb-1">
+                      (optional — helps us send more relevant resources)
+                    </p>
+                  )}
                   <select
                     id="orgType"
-                    aria-required="true"
+                    aria-required={!isInfo}
                     className={fieldClass}
                     value={formData.orgType}
                     onChange={(e) => setFormData({ ...formData, orgType: e.target.value })}
@@ -337,11 +401,16 @@ const ContactPage = () => {
 
                 <div className="mb-4">
                   <label htmlFor="claimVolume" className={labelClass}>
-                    Monthly Claim Volume <Req />
+                    Monthly Claim Volume {!isInfo && <Req />}
                   </label>
+                  {isInfo && (
+                    <p className="text-slate-400 text-xs mb-1">
+                      (optional — helps us send more relevant resources)
+                    </p>
+                  )}
                   <select
                     id="claimVolume"
-                    aria-required="true"
+                    aria-required={!isInfo}
                     className={fieldClass}
                     value={formData.claimVolume}
                     onChange={(e) => setFormData({ ...formData, claimVolume: e.target.value })}
@@ -434,25 +503,27 @@ const ContactPage = () => {
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 mt-4">
-                  <input
-                    id="interestedInTrial"
-                    type="checkbox"
-                    className="accent-[var(--emerald)] w-4 h-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)]"
-                    checked={formData.interestedInTrial}
-                    onChange={() =>
-                      setFormData({
-                        ...formData,
-                        interestedInTrial: !formData.interestedInTrial,
-                      })
-                    }
-                  />
-                  <label htmlFor="interestedInTrial" className="text-slate-700 text-sm cursor-pointer">
-                    Yes, I am interested in the 30-day no-obligation
-                    evaluation (ContractIntel, Shield, Prevent — live data, no
-                    BAA required)
-                  </label>
-                </div>
+                {!isInfo && (
+                  <div className="flex items-center gap-2 mt-4">
+                    <input
+                      id="interestedInTrial"
+                      type="checkbox"
+                      className="accent-[var(--emerald)] w-4 h-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)]"
+                      checked={formData.interestedInTrial}
+                      onChange={() =>
+                        setFormData({
+                          ...formData,
+                          interestedInTrial: !formData.interestedInTrial,
+                        })
+                      }
+                    />
+                    <label htmlFor="interestedInTrial" className="text-slate-700 text-sm cursor-pointer">
+                      Yes, I am interested in the 30-day no-obligation
+                      evaluation (ContractIntel, Shield, Prevent — live data, no
+                      BAA required)
+                    </label>
+                  </div>
+                )}
 
                 <div className="mt-4">
                   <label htmlFor="message" className={labelClass}>Additional context</label>
@@ -476,7 +547,7 @@ const ContactPage = () => {
                     !requiredValid ? "opacity-50 cursor-not-allowed" : "hover:bg-emerald-600"
                   }`}
                 >
-                  Request My Demo — We'll Be in Touch Within One Business Day
+                  {submitLabel}
                 </button>
               </div>
             )}
