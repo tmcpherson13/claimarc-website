@@ -174,6 +174,16 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
             <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
+              <h3 className="text-[var(--navy)] font-semibold text-lg">We aren't your generic AI Start-up</h3>
+              <p className="text-slate-600 text-sm mt-2">
+                ZTech has processed Explanation of Benefits documents at scale
+                for nearly a decade. ZDefense reflects codified institutional
+                knowledge — not generic AI trained on generic data. The 50-rule
+                CARC model reflects real denial patterns from real providers
+                across every major payer.
+              </p>
+            </div>
+            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
               <h3 className="text-[var(--navy)] font-semibold text-lg">No-BAA Entry Path</h3>
               <p className="text-slate-600 text-sm mt-2">
                 Three modules activate immediately with zero data sharing.
@@ -184,16 +194,6 @@ const Index = () => {
               <Link to="/contact?offer=trial" className="text-slate-500 text-sm mt-3 inline-block hover:text-[var(--navy)] hover:underline">
                 Start your no-BAA evaluation →
               </Link>
-            </div>
-            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-semibold text-lg">Eight Years of EOB Heritage</h3>
-              <p className="text-slate-600 text-sm mt-2">
-                ZTech has processed Explanation of Benefits documents at scale
-                for nearly a decade. ZDefense reflects codified institutional
-                knowledge — not generic AI trained on generic data. The 50-rule
-                CARC model reflects real denial patterns from real providers
-                across every major payer.
-              </p>
             </div>
           </div>
           <Link to="/why-zdefense" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
