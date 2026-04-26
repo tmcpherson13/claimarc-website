@@ -28,7 +28,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "predict",
     tagline: "Payer Weaponization Index",
     body: "See payer behavioral shifts 7–14 days before formal policy notice — so leadership can react before revenue is at risk.",
-    audience: "RC Director",
+    audience: "Rev Cycle Director",
     required: true,
     detail:
       "Sentinel monitors commercial and Medicare payer behavior continuously, detecting systematic denial-strategy shifts before they show up in your billing volume. Leadership gets a forward-looking risk signal — not a lagging report.",
@@ -44,7 +44,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "predict",
     tagline: "Rate Benchmarking & Contract Intelligence",
     body: "Benchmark contracted rates against public Transparency in Coverage data. $2.8M annual contract gap surfaced in demo. Public data only.",
-    audience: "CFO · RC Director",
+    audience: "CFO · Rev Cycle Director",
     required: false,
     detail:
       "ContractIntel benchmarks your negotiated rates against TiC and HPT data from 5,400+ hospitals and 7 major payers. Surfaces underpayment gaps and flags contract renewal windows before negotiations open.",
@@ -78,7 +78,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "protect",
     tagline: "Pre-Submission Claim Interception",
     body: "89.4% clean claim rate in demo. Surfaces CMS, MAC, and commercial payer rule changes 45 days before they affect claims. Public data only.",
-    audience: "RC Manager · Billing Specialist",
+    audience: "Rev Cycle Manager · Billing Specialist",
     required: false,
     detail:
       "Shield scans every outbound claim against live payer rules, NCCI edits, and coverage policies before submission — catching the issues that drive the bulk of preventable denials. Includes a 45-day Regulatory Intelligence Feed.",
@@ -94,7 +94,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "protect",
     tagline: "Prior Authorization Defense",
     body: "Detects new prior authorization requirements 11 days in advance on average. $284K protected in demo. No patient data required.",
-    audience: "RC Manager · RC Director",
+    audience: "Rev Cycle Manager · Rev Cycle Director",
     required: false,
     detail:
       "Prevent watches commercial and Medicare PA policy feeds and surfaces newly required authorizations an average of 11 days before formal notice — closing the window where revenue typically leaks.",
@@ -110,7 +110,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "protect",
     tagline: "Underpayment Detection & Compliance Tracking",
     body: "Underpayment detection plus a Medicare 60-day compliance audit trail with dual-approver authorization on every write-off.",
-    audience: "RC Director · Auditor/Compliance Officer",
+    audience: "Rev Cycle Director · Auditor/Compliance Officer",
     required: true,
     detail:
       "Ledger detects underpayments at the line-item level, surfaces overpayments with a Medicare 60-day countdown, and produces an immutable audit trail with configurable dual-approver authorization on every write-off.",
@@ -128,7 +128,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "recover",
     tagline: "AI-Powered Denial Queue",
     body: "Denial queue auto-classified and ranked by recovery probability. $1.146M active recovery pipeline in current live build.",
-    audience: "Billing Specialist · RC Manager",
+    audience: "Billing Specialist · Rev Cycle Manager",
     required: true,
     detail:
       "Triage classifies every denial against the CARC/RARC taxonomy and ranks the queue by recovery probability — so specialists work the highest-yield denials first instead of working chronologically.",
@@ -160,7 +160,7 @@ export const MODULES: ModuleDefinition[] = [
     layer: "recover",
     tagline: "Bulk Appeal Generation",
     body: "Payer-specific appeal letters at bulk scale. Outcome tracking feeds back into the recovery model — accuracy improves with every appeal.",
-    audience: "Billing Specialist · RC Director",
+    audience: "Billing Specialist · Rev Cycle Director",
     required: true,
     detail:
       "Resolve generates payer-specific appeal letters in bulk — 10 letters in 8 seconds in demo — and tracks outcomes back into the recovery model so accuracy compounds with every cycle.",

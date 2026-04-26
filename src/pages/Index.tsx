@@ -246,7 +246,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
             {[
               { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling" },
-              { role: "RC Director", module: "Ledger", desc: "Underpayment detection and compliance oversight" },
+              { role: "Rev Cycle Director", module: "Ledger", desc: "Underpayment detection and compliance oversight" },
               { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability" },
               { role: "Auditor/Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail" },
             ].map((r) => (
