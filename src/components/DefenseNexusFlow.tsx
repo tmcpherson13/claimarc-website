@@ -473,6 +473,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
         <rect x={VIEW_X} y={VIEW_Y} width={VIEW_W} height={VIEW_H} fill={CANVAS_FILL} />
 
+        {/* Soft outer glow */}
         <circle
           cx={NEXUS_X}
           cy={NEXUS_Y}
@@ -480,6 +481,144 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           fill="#10B981"
           opacity={nexusGlow}
         />
+
+        {/* Circuit-board nexus: concentric rings, radial traces, solder pads,
+            and small particles "buzzing" along the traces before exiting. */}
+        {(() => {
+          const RINGS = [28, 46, 64];
+          const TRACE_COUNT = 12;
+          const PAD_R = 2.4;
+          // Radial trace endpoints
+          const traces = Array.from({ length: TRACE_COUNT }, (_, i) => {
+            const a = (i / TRACE_COUNT) * Math.PI * 2;
+            return {
+              a,
+              x1: NEXUS_X + Math.cos(a) * RINGS[0],
+              y1: NEXUS_Y + Math.sin(a) * RINGS[0],
+              x2: NEXUS_X + Math.cos(a) * RINGS[2],
+              y2: NEXUS_Y + Math.sin(a) * RINGS[2],
+            };
+          });
+
+          // Buzzing particles: each travels outward along a radial trace,
+          // pauses at the outer pad, then resets. Phase-staggered.
+          const BUZZ_COUNT = 18;
+          const BUZZ_PERIOD = 1800; // ms
+          const buzzers = Array.from({ length: BUZZ_COUNT }, (_, i) => {
+            const trace = traces[i % TRACE_COUNT];
+            const phase = (i / BUZZ_COUNT) * BUZZ_PERIOD;
+            const local = ((elapsed + phase) % BUZZ_PERIOD) / BUZZ_PERIOD;
+            // 0..0.85 travel outward, 0.85..1 idle at pad
+            const k = local < 0.85 ? local / 0.85 : 1;
+            const r = RINGS[0] + (RINGS[2] - RINGS[0]) * k;
+            return {
+              cx: NEXUS_X + Math.cos(trace.a) * r,
+              cy: NEXUS_Y + Math.sin(trace.a) * r,
+              opacity: local < 0.85 ? 0.9 : 0.5 + 0.5 * Math.sin(local * 40),
+            };
+          });
+
+          // Orbiting particles around the inner ring
+          const ORBIT_COUNT = 6;
+          const ORBIT_PERIOD = 5200;
+          const orbiters = Array.from({ length: ORBIT_COUNT }, (_, i) => {
+            const base = (i / ORBIT_COUNT) * Math.PI * 2;
+            const a = base + (elapsed / ORBIT_PERIOD) * Math.PI * 2;
+            return {
+              cx: NEXUS_X + Math.cos(a) * RINGS[1],
+              cy: NEXUS_Y + Math.sin(a) * RINGS[1],
+            };
+          });
+
+          return (
+            <g>
+              {/* Concentric rings (PCB silkscreen) */}
+              {RINGS.map((r, i) => (
+                <circle
+                  key={`ring-${i}`}
+                  cx={NEXUS_X}
+                  cy={NEXUS_Y}
+                  r={r}
+                  fill="none"
+                  stroke="#10B981"
+                  strokeWidth={i === 1 ? 1 : 0.6}
+                  opacity={i === 1 ? 0.55 : 0.3}
+                  strokeDasharray={i === 2 ? "3 4" : undefined}
+                />
+              ))}
+
+              {/* Radial traces */}
+              {traces.map((t, i) => (
+                <line
+                  key={`trace-${i}`}
+                  x1={t.x1}
+                  y1={t.y1}
+                  x2={t.x2}
+                  y2={t.y2}
+                  stroke="#10B981"
+                  strokeWidth={0.7}
+                  opacity={0.45}
+                />
+              ))}
+
+              {/* Solder pads at outer ring */}
+              {traces.map((t, i) => (
+                <circle
+                  key={`pad-out-${i}`}
+                  cx={t.x2}
+                  cy={t.y2}
+                  r={PAD_R}
+                  fill="#0B1220"
+                  stroke="#10B981"
+                  strokeWidth={0.8}
+                  opacity={0.85}
+                />
+              ))}
+
+              {/* Inner core pad */}
+              <circle
+                cx={NEXUS_X}
+                cy={NEXUS_Y}
+                r={10}
+                fill="#0B1220"
+                stroke="#10B981"
+                strokeWidth={1}
+                opacity={0.9}
+              />
+              <circle
+                cx={NEXUS_X}
+                cy={NEXUS_Y}
+                r={4}
+                fill="#10B981"
+                opacity={0.7 + 0.3 * Math.sin(elapsed / 300)}
+              />
+
+              {/* Buzzing particles traveling traces */}
+              {buzzers.map((b, i) => (
+                <circle
+                  key={`buzz-${i}`}
+                  cx={b.cx}
+                  cy={b.cy}
+                  r={1.6}
+                  fill="#6EE7B7"
+                  opacity={b.opacity}
+                />
+              ))}
+
+              {/* Orbiters on middle ring */}
+              {orbiters.map((o, i) => (
+                <circle
+                  key={`orb-${i}`}
+                  cx={o.cx}
+                  cy={o.cy}
+                  r={1.4}
+                  fill="#34D399"
+                  opacity={0.85}
+                />
+              ))}
+            </g>
+          );
+        })()}
 
         {SOURCES.map((_, i) => {
           const y = sourceY(i);
