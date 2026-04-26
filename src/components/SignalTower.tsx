@@ -197,13 +197,13 @@ const SignalTower = ({ className = "" }: { className?: string }) => {
 
         {/* Tower — broadcast signal tower centered at x=600 */}
         {(() => {
-          const TX = 600;
+          const TX = CENTER_X;
           const baseY = 310;
           const apexY = 100;
-          const baseLeftX = 520;
-          const baseRightX = 680;
-          const apexLeftX = 594;
-          const apexRightX = 606;
+          const baseLeftX = TX - 80;
+          const baseRightX = TX + 80;
+          const apexLeftX = TX - 6;
+          const apexRightX = TX + 6;
           const interp = (y: number) => {
             const t = (y - apexY) / (baseY - apexY);
             return {
