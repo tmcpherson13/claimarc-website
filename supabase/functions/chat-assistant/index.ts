@@ -1,4 +1,4 @@
-// ZDefense AI tutor chatbot.
+// Z — the ZDefense revenue defense assistant.
 // Calls the Anthropic API directly using claude-haiku-4-5.
 // Includes simple in-memory per-session rate limiting.
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
