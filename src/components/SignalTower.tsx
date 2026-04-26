@@ -50,7 +50,7 @@ const DOTS: Dot[] = [
   { x: 230, y: 180 },
 ];
 
-const SignalTower = () => {
+const SignalTower = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
@@ -130,7 +130,7 @@ const SignalTower = () => {
       aria-hidden="true"
       className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${
         visible ? "opacity-100" : "opacity-0"
-      }`}
+      } ${className}`}
     >
       <svg
         viewBox="0 0 1200 340"

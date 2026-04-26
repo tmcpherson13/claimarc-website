@@ -4,6 +4,8 @@ import remarkGfm from "remark-gfm";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import CTABand from "@/components/CTABand";
+import HeroAccent from "@/components/HeroAccent";
+import SignalTower from "@/components/SignalTower";
 import { sitePageApi, SitePage } from "@/lib/sitePageApi";
 
 const certs = [
@@ -92,8 +94,10 @@ const AboutPage = () => {
       />
 
       {/* HERO */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
-        <div className="max-w-3xl mx-auto">
+      <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
+        <HeroAccent />
+        <SignalTower className="absolute inset-0 w-full h-full opacity-75" />
+        <div className="relative max-w-3xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
             OUR STORY
           </p>
