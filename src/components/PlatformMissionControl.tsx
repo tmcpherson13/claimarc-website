@@ -1219,6 +1219,7 @@ const PlatformMissionControl = () => {
             packets={packetsRef.current}
             accumHeights={accumRef.current}
             livePulse={livePulse}
+            onActivate={goToModule}
           />
         </Bezel>
 
