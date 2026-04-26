@@ -209,6 +209,30 @@ const ContactPage = () => {
               Start Your 30-Day Evaluation — No BAA Required
             </button>
           </div>
+
+          <div className="bg-[var(--lgray)] border-2 border-slate-300 rounded-xl p-8 flex flex-col">
+            <h2 className="text-[var(--navy)] font-bold text-2xl">
+              Request More Information
+            </h2>
+            <p className="text-slate-600 mt-3">
+              Not ready for a demo? Send us a question and we will get back
+              to you within one business day. No call required.
+            </p>
+            <ul className="mt-4 space-y-2 text-slate-700 text-sm">
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> No commitment</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> No call required</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> Response within one business day</li>
+              <li className="flex gap-2"><span className="text-[var(--emerald)] font-bold" aria-hidden="true">✓</span> We will send relevant resources for your role</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => scrollToForm("info")}
+              className="plausible-event-name=CTA_Click plausible-event-location=contact_offer_card plausible-event-cta=request_info bg-[var(--navy)] text-white w-full py-3 rounded font-semibold mt-auto pt-3 hover:bg-[var(--navy-dk)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navy)] focus-visible:ring-offset-2"
+              style={{ marginTop: "auto" }}
+            >
+              Send Me More Information
+            </button>
+          </div>
         </div>
       </section>
 
