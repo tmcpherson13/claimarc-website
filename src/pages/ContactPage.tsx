@@ -401,8 +401,13 @@ const ContactPage = () => {
 
                 <div className="mb-4">
                   <label htmlFor="claimVolume" className={labelClass}>
-                    Monthly Claim Volume <Req />
+                    Monthly Claim Volume {!isInfo && <Req />}
                   </label>
+                  {isInfo && (
+                    <p className="text-slate-400 text-xs mb-1">
+                      (optional — helps us send more relevant resources)
+                    </p>
+                  )}
                   <select
                     id="claimVolume"
                     aria-required="true"
