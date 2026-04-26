@@ -75,7 +75,7 @@ const moduleRoleMap: Record<string, string[]> = MODULES.reduce(
 const SolutionsPage = () => {
   const [activeRole, setActiveRole] = useState("cfo");
   const role = roles.find((r) => r.key === activeRole)!;
-  const { hash, pathname } = useLocation();
+  const { hash, pathname, search } = useLocation();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
@@ -104,6 +104,15 @@ const SolutionsPage = () => {
       }
     }
   }, [hash, pathname, scrollToHash]);
+
+  /** Pick up ?role= query so deep links from the home page land on the right tab. */
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const r = params.get("role");
+    if (r && roles.some((role) => role.key === r)) {
+      setActiveRole(r);
+    }
+  }, [search]);
 
   /** Scroll-spy: highlight the module section currently in view. */
   useEffect(() => {
