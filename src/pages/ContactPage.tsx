@@ -65,6 +65,8 @@ const ContactPage = () => {
     setFormData((prev) => {
       const next = { ...prev };
       if (offer === "trial") next.offerType = "trial";
+      if (offer === "demo") next.offerType = "demo";
+      if (offer === "info") next.offerType = "info";
       if (role === "cfo") next.role = "CFO / Executive";
       if (role === "director") next.role = "Revenue Cycle Director";
       if (role === "manager") next.role = "Revenue Cycle Manager";
