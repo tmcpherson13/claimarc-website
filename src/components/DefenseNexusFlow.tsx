@@ -168,8 +168,16 @@ const MOD_X = 730;
 const MOD_W = 170;
 const MOD_H = 32;
 
-const VIEW_W = 1400;
+// Tightened viewBox wraps content snugly so the parent flex centers it
+// inside the dark section instead of leaving empty space on the right.
+const VIEW_X = 150;
+const VIEW_Y = 0;
+const VIEW_W = 800;
 const VIEW_H = 525;
+const VIEW_RIGHT = VIEW_X + VIEW_W;
+
+const TOOLTIP_HOVER_DELAY_MS = 120;
+const TOOLTIP_LEAVE_DELAY_MS = 80;
 
 const sourceY = (i: number) => {
   const top = 37.5;
