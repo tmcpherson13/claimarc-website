@@ -130,7 +130,7 @@ const SignalTower = ({ className = "" }: { className?: string }) => {
       aria-hidden="true"
       className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${
         visible ? "opacity-100" : "opacity-0"
-      }`}
+      } ${className}`}
     >
       <svg
         viewBox="0 0 1200 340"
