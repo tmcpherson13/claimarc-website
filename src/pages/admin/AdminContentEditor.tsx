@@ -271,7 +271,7 @@ const Inner = () => {
     setAiError("");
     try {
       const { data, error } = await supabase.functions.invoke("generate-content", {
-        body: { prompt: aiPrompt, contentType: form.contentType },
+        body: { prompt: aiPrompt, contentType: aiContentType },
       });
       if (error) throw new Error(error.message || "Generation failed.");
       const parsed = data as {
@@ -291,6 +291,15 @@ const Inner = () => {
         summary: parsed.summary ?? prev.summary,
         tags: Array.isArray(parsed.tags) && parsed.tags.length ? parsed.tags : prev.tags,
         body: parsed.body ?? prev.body,
+        // Pre-fill SEO fields only when empty — never overwrite manual entries.
+        seoTitle:
+          prev.seoTitle.trim().length === 0 && parsed.title
+            ? parsed.title.slice(0, 60)
+            : prev.seoTitle,
+        seoDescription:
+          prev.seoDescription.trim().length === 0 && parsed.summary
+            ? parsed.summary.slice(0, 160)
+            : prev.seoDescription,
       }));
       // Mark slug as user-touched so it won't be re-derived from the title.
       if (parsed.slug) setSlugTouched(true);
