@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
@@ -63,6 +63,7 @@ const SolutionsPage = () => {
   const { hash, pathname } = useLocation();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const { open: openChatbot } = useChatbot();
 
   /** Smooth-scroll to the hash with header offset, on mount + hash changes. */
@@ -79,7 +80,13 @@ const SolutionsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (hash) scrollToHash(hash);
+    if (hash) {
+      scrollToHash(hash);
+      const id = hash.replace(/^#/, "");
+      if (id && MODULES.some((m) => slugify(m.name) === id)) {
+        setExpandedModule(id);
+      }
+    }
   }, [hash, pathname, scrollToHash]);
 
   /** Scroll-spy: highlight the module section currently in view. */
@@ -399,132 +406,166 @@ const SolutionsPage = () => {
             <div className="flex-1 min-w-0 space-y-6">
               {MODULES.map((m) => {
                 const slug = slugify(m.name);
+                const isExpanded = expandedModule === slug;
+                const teaser = m.detail.split(".")[0] + ".";
                 return (
                   <section
                     key={m.name}
                     id={slug}
                     style={{ scrollMarginTop: `${SCROLL_OFFSET_PX}px` }}
-                    className="bg-white border border-slate-200 rounded-lg p-6 md:p-8"
+                    className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-[var(--emerald)] transition-colors duration-200"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-                        {LAYER_LABEL[m.layer]}
-                      </span>
-                      <BADBadge required={m.required} />
-                    </div>
-                    <h3 className="text-[var(--navy)] font-bold text-2xl mt-2">
-                      {m.name}
-                    </h3>
-                    <p className="text-[var(--emerald)] font-medium text-sm mt-1">
-                      {m.tagline}
-                    </p>
-                    <p className="text-slate-700 text-sm leading-relaxed mt-4">
-                      {m.detail}
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                      <div>
-                        <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                          Capabilities
-                        </h4>
-                        <ul className="space-y-2">
-                          {m.capabilities.map((c) => (
-                            <li
-                              key={c}
-                              className="flex items-start gap-2 text-sm text-slate-600"
-                            >
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                              <span>{c}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                          Outcomes
-                        </h4>
-                        <ul className="space-y-2">
-                          {m.outcomes.map((o) => (
-                            <li
-                              key={o}
-                              className="flex items-start gap-2 text-sm text-slate-600"
-                            >
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                              <span>{o}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                          How it works
-                        </h4>
-                        <ol className="space-y-2">
-                          {m.howItWorks.map((step, i) => (
-                            <li
-                              key={step}
-                              className="flex items-start gap-3 text-sm text-slate-600"
-                            >
-                              <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
-                                {i + 1}
-                              </span>
-                              <span>{step}</span>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                      <div>
-                        <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                          Data inputs
-                        </h4>
-                        <ul className="space-y-2">
-                          {m.dataInputs.map((d) => (
-                            <li
-                              key={d}
-                              className="flex items-start gap-2 text-sm text-slate-600"
-                            >
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
-                              <span>{d}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
-                      <p className="text-slate-400 text-xs uppercase tracking-widest">
-                        Integration & deployment
-                      </p>
-                      <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                      <div>
-                        <p className="text-slate-400 text-[11px] uppercase tracking-widest">
-                          Built for
+                    {/* Collapsed header — always visible, clickable */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedModule((prev) => (prev === slug ? null : slug))
+                      }
+                      aria-expanded={isExpanded}
+                      className="w-full text-left cursor-pointer py-4 px-6 flex items-center gap-4"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+                            {LAYER_LABEL[m.layer]}
+                          </span>
+                          <BADBadge required={m.required} />
+                        </div>
+                        <h3 className="text-[var(--navy)] font-bold text-2xl mt-2">
+                          {m.name}
+                        </h3>
+                        <p className="text-[var(--emerald)] font-medium text-sm mt-1">
+                          {m.tagline}
                         </p>
-                        <p className="text-slate-700 text-sm">{m.audience}</p>
+                        {!isExpanded && (
+                          <p className="text-slate-600 text-sm mt-2 line-clamp-1">
+                            {teaser}
+                          </p>
+                        )}
                       </div>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Link
-                          to="/contact"
-                          className="text-[var(--emerald)] font-semibold text-sm hover:underline"
-                        >
-                          Talk to us about {m.name} →
-                        </Link>
-                      </div>
-                    </div>
+                      <ChevronDown
+                        className={`h-5 w-5 text-slate-400 shrink-0 transition-transform duration-200 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
 
-                    <div className="border-t border-slate-100 mt-6 pt-4 flex items-center justify-between">
-                      <div />
-                      <button
-                        type="button"
-                        onClick={() => openChatbot(m.name)}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
-                      >
-                        <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
-                        Ask Z about this
-                      </button>
+                    {/* Expanded content — animated max-height */}
+                    <div
+                      className="overflow-hidden transition-[max-height] duration-300 ease-out"
+                      style={{ maxHeight: isExpanded ? "2000px" : "0px" }}
+                      aria-hidden={!isExpanded}
+                    >
+                      <div className="px-6 md:px-8 pb-8">
+                        <p className="text-slate-700 text-sm leading-relaxed mt-2">
+                          {m.detail}
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                          <div>
+                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+                              Capabilities
+                            </h4>
+                            <ul className="space-y-2">
+                              {m.capabilities.map((c) => (
+                                <li
+                                  key={c}
+                                  className="flex items-start gap-2 text-sm text-slate-600"
+                                >
+                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                  <span>{c}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+                              Outcomes
+                            </h4>
+                            <ul className="space-y-2">
+                              {m.outcomes.map((o) => (
+                                <li
+                                  key={o}
+                                  className="flex items-start gap-2 text-sm text-slate-600"
+                                >
+                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                  <span>{o}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+                              How it works
+                            </h4>
+                            <ol className="space-y-2">
+                              {m.howItWorks.map((step, i) => (
+                                <li
+                                  key={step}
+                                  className="flex items-start gap-3 text-sm text-slate-600"
+                                >
+                                  <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
+                                    {i + 1}
+                                  </span>
+                                  <span>{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+                          <div>
+                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+                              Data inputs
+                            </h4>
+                            <ul className="space-y-2">
+                              {m.dataInputs.map((d) => (
+                                <li
+                                  key={d}
+                                  className="flex items-start gap-2 text-sm text-slate-600"
+                                >
+                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                                  <span>{d}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
+                          <p className="text-slate-400 text-xs uppercase tracking-widest">
+                            Integration & deployment
+                          </p>
+                          <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                          <div>
+                            <p className="text-slate-400 text-[11px] uppercase tracking-widest">
+                              Built for
+                            </p>
+                            <p className="text-slate-700 text-sm">{m.audience}</p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3">
+                            <Link
+                              to="/contact"
+                              className="text-[var(--emerald)] font-semibold text-sm hover:underline"
+                            >
+                              Talk to us about {m.name} →
+                            </Link>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-slate-100 mt-6 pt-4 flex items-center justify-between">
+                          <div />
+                          <button
+                            type="button"
+                            onClick={() => openChatbot(m.name)}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
+                          >
+                            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
+                            Ask Z about this
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </section>
                 );
