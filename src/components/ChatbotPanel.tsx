@@ -113,13 +113,13 @@ export default function ChatbotPanel() {
     error,
     sendMessage,
     moduleContext,
+    clearModuleContext,
     offerDemo,
   } = useChatbot();
   const navigate = useNavigate();
 
   const [input, setInput] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
-  const [moduleBadgeHidden, setModuleBadgeHidden] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -128,10 +128,6 @@ export default function ChatbotPanel() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isLoading, isOpen]);
-
-  useEffect(() => {
-    setModuleBadgeHidden(false);
-  }, [moduleContext]);
 
   useEffect(() => {
     const ta = textareaRef.current;
@@ -250,7 +246,7 @@ export default function ChatbotPanel() {
           </button>
         </div>
 
-        {moduleContext && !moduleBadgeHidden && (
+        {moduleContext && (
           <div style={{ padding: "8px 16px 0" }}>
             <span
               style={{
@@ -268,7 +264,7 @@ export default function ChatbotPanel() {
               <button
                 type="button"
                 aria-label="Clear context"
-                onClick={() => setModuleBadgeHidden(true)}
+                onClick={clearModuleContext}
                 style={{
                   background: "transparent",
                   border: "none",
