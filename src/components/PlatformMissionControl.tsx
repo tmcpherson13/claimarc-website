@@ -689,7 +689,13 @@ const Padlock = ({
 
 // (BAA_REQUIRED + BAA_NONE are derived from the shared MODULES catalog at top)
 
-const BaaStatus = ({ t }: { t: number }) => {
+const BaaStatus = ({
+  t,
+  onActivate,
+}: {
+  t: number;
+  onActivate?: (m: string) => void;
+}) => {
   const headerY = 22;
   const colW = CELL_W / 2;
   const reqRowH = (CELL_H - headerY - 6) / BAA_REQUIRED.length;
