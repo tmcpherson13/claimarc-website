@@ -1242,7 +1242,13 @@ const PlatformMissionControl = () => {
         >
           <RecoveryOdometer t={t} />
         </Bezel>
-        <Bezel col={2} row={1} label="SYSTEM CLOCK">
+        <Bezel
+          col={2}
+          row={1}
+          label="SYSTEM CLOCK"
+          module="Forecast"
+          onActivate={goToModule}
+        >
           <SystemClock now={now} elapsedSec={t} />
         </Bezel>
 
