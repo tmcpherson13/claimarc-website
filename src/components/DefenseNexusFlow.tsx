@@ -112,7 +112,7 @@ interface Packet {
   start: number;
 }
 
-const DefenseNexusFlow = () => {
+const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
@@ -191,7 +191,7 @@ const DefenseNexusFlow = () => {
       aria-hidden="true"
       className={`w-full transition-opacity duration-700 ${
         visible ? "opacity-100" : "opacity-0"
-      }`}
+      } ${className}`}
     >
       <svg
         viewBox="0 0 1100 420"

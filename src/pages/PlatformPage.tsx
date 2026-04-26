@@ -6,6 +6,7 @@ import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
 import PlatformCommandCenter from "@/components/PlatformCommandCenter";
 import ModulePipelineFlow from "@/components/ModulePipelineFlow";
+import DefenseNexusFlow from "@/components/DefenseNexusFlow";
 import SeoHead from "@/components/SeoHead";
 import { PHRASES } from "@/config/terminology";
 
@@ -95,6 +96,22 @@ const PlatformPage = () => {
             </p>
           </div>
           <ModulePipelineFlow />
+        </div>
+      </section>
+
+      {/* DATA FOUNDATION */}
+      <section className="bg-[var(--navy-dk)] py-20 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-[var(--emerald)] text-xs font-semibold uppercase tracking-widest text-center">
+            THE DATA FOUNDATION
+          </p>
+          <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2 max-w-3xl mx-auto">
+            The Data Foundation Behind Every ZDefense Decision
+          </h2>
+          <p className="text-slate-400 text-lg text-center max-w-3xl mx-auto mt-4">
+            Crucible ingests 11 public data sources continuously — the same data your payers use to set rates and write rules. Few platforms in this space are built on a foundation like this, and none currently combine it with cross-portfolio remittance intelligence.
+          </p>
+          <DefenseNexusFlow className="mt-12" />
         </div>
       </section>
 
