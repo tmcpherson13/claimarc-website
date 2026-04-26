@@ -170,7 +170,7 @@ export default function ChatbotPanel() {
 
       <aside
         role="dialog"
-        aria-label="ZDefense AI Tutor"
+        aria-label="Z — your revenue defense assistant"
         aria-hidden={!isOpen}
         style={{
           position: "fixed",
