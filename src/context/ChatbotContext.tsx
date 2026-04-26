@@ -29,6 +29,7 @@ export type ChatbotContextValue = {
   offerDemo: boolean;
   sendMessage: (content: string) => Promise<void>;
   moduleContext: string | null;
+  clearModuleContext: () => void;
   pageContext: string | null;
   clearSession: () => void;
 };
