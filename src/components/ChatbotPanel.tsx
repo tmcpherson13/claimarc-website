@@ -221,8 +221,10 @@ export default function ChatbotPanel() {
                 }}
               />
             </span>
-            <span style={{ color: "#FFFFFF", fontSize: 14, fontWeight: 500 }}>ZDefense AI</span>
-            <span style={{ color: "#10B981", fontSize: 14 }}>Tutor</span>
+            <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+              <span style={{ color: "#FFFFFF", fontSize: 16, fontWeight: 600 }}>Z</span>
+              <span style={{ color: "#64748B", fontSize: 11 }}>your revenue defense assistant</span>
+            </div>
           </div>
           <button
             type="button"
