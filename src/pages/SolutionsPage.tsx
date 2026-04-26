@@ -126,6 +126,89 @@ const SolutionsPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Module rail for the active role */}
+          <div className="mt-16">
+            <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+              Modules for this role
+            </p>
+            <h3 className="text-[var(--navy)] font-bold text-2xl mt-1">
+              The {role.relatedModules.length} modules a {role.tab} touches most
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              {role.relatedModules.map((name) => {
+                const m = getModule(name);
+                if (!m) return null;
+                return (
+                  <Link
+                    key={m.name}
+                    to={`/platform#${slugify(m.name)}`}
+                    id={slugify(m.name)}
+                    className="block scroll-mt-32 bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
+                  >
+                    <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
+                      {m.layer}
+                    </p>
+                    <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
+                      {m.name}
+                    </h4>
+                    <p className="text-slate-500 text-xs font-medium mt-1">
+                      {m.tagline}
+                    </p>
+                    <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                      {m.body}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: ALL 9 MODULES (anchor targets) */}
+      <section className="bg-[var(--lgray)] py-20 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+            The Full Catalog
+          </p>
+          <h2 className="text-[var(--navy)] font-bold text-2xl md:text-3xl mt-2">
+            All Nine Modules
+          </h2>
+          <p className="text-slate-600 mt-3 max-w-2xl">
+            Every module in the ZDefense platform — across Predict, Protect, and Recover. Click any tile to jump into the platform and open the module's full detail.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+            {MODULES.map((m) => (
+              <Link
+                key={m.name}
+                to={`/platform#${slugify(m.name)}`}
+                id={`${slugify(m.name)}-full`}
+                className="block scroll-mt-32 bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
+                    {m.layer}
+                  </p>
+                  {m.required && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--navy)] bg-emerald-50 px-2 py-0.5 rounded">
+                      Core
+                    </span>
+                  )}
+                </div>
+                <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
+                  {m.name}
+                </h4>
+                <p className="text-slate-500 text-xs font-medium mt-1">
+                  {m.tagline}
+                </p>
+                <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                  {m.body}
+                </p>
+                <p className="text-slate-400 text-xs mt-3">Built for {m.audience}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
