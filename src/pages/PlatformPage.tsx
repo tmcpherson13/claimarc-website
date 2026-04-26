@@ -145,6 +145,15 @@ const ModuleDetailDialog = ({
 const PlatformPage = () => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const selectedModule = selectedName ? getModule(selectedName) ?? null : null;
+  const { hash } = useLocation();
+
+  // If we land on /platform#<modulename>, open that module's dialog.
+  useEffect(() => {
+    if (!hash) return;
+    const slug = hash.replace(/^#/, "").toLowerCase();
+    const match = MODULES_LOOKUP.find((m) => m.toLowerCase() === slug);
+    if (match) setSelectedName(match);
+  }, [hash]);
 
   return (
     <Layout>
