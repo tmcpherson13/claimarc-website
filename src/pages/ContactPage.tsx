@@ -34,7 +34,7 @@ const Req = () => (
 );
 
 const ContactPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const formRef = useRef<HTMLDivElement>(null);
   const offersRef = useRef<HTMLDivElement>(null);
 
