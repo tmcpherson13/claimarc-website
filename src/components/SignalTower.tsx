@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const CENTER_X = 950;
-const CENTER_Y = 170;
+const CENTER_Y = 70;
 const RING_RY = 28;
 
 interface RingDef {
