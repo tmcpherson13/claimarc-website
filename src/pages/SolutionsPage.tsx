@@ -79,6 +79,7 @@ const SolutionsPage = () => {
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
+  const [activeModuleTab, setActiveModuleTab] = useState<Record<string, string>>({});
   const { open: openChatbot } = useChatbot();
 
   /** Smooth-scroll to the hash with header offset, on mount + hash changes. */
