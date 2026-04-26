@@ -39,6 +39,7 @@ const ModuleDetailDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
+  const { open: openChatbot } = useChatbot();
   if (!module) return null;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
