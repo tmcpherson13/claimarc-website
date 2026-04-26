@@ -269,7 +269,7 @@ export default function ChatbotPanel() {
               <button
                 type="button"
                 aria-label="Clear context"
-                onClick={() => setModuleBadgeHidden(true)}
+                onClick={clearModuleContext}
                 style={{
                   background: "transparent",
                   border: "none",
