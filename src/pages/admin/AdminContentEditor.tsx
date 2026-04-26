@@ -163,6 +163,7 @@ const Inner = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showAiPanel, setShowAiPanel] = useState(false);
+  const [aiContentType, setAiContentType] = useState<ContentType>(initialType);
   const [imageRefreshPage, setImageRefreshPage] = useState(1);
 
   // Suggested hero images (Unsplash) — populated after AI generation
