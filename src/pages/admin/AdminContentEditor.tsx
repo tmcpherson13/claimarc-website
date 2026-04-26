@@ -729,6 +729,31 @@ const Inner = () => {
                 Preview ↗
               </Button>
             )}
+            <button
+              type="button"
+              onClick={openPreview}
+              disabled={isNew}
+              title={isNew ? "Save first to preview" : undefined}
+              aria-label="Preview"
+              className="border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded text-sm font-medium transition-colors flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4"
+                aria-hidden="true"
+              >
+                <path d="M11 3h6v6" />
+                <path d="M17 3l-8 8" />
+                <path d="M15 11v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" />
+              </svg>
+              Preview
+            </button>
             <Button
               variant="outline"
               disabled={saving}
