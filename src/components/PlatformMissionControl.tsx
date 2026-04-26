@@ -1253,7 +1253,13 @@ const PlatformMissionControl = () => {
         </Bezel>
 
         {/* Row 3 */}
-        <Bezel col={0} row={2} label="BAA SHIELD STATUS">
+        <Bezel
+          col={0}
+          row={2}
+          label="BAA SHIELD STATUS"
+          module="Shield"
+          onActivate={goToModule}
+        >
           <BaaStatus t={t} onActivate={goToModule} />
         </Bezel>
         <Bezel
