@@ -466,7 +466,20 @@ const PayerCoverageGrid = ({
         const barX = colCx - barW / 2;
         const barY = topPad + 10 + (maxBarH - barH);
         return (
-          <g key={p.name}>
+          <g
+            key={p.name}
+            onClick={onActivate ? (e) => { e.stopPropagation(); onActivate("Sentinel"); } : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
+            {onActivate && (
+              <rect
+                x={x}
+                y={topPad}
+                width={colWidth}
+                height={CELL_H - topPad - 2}
+                fill="transparent"
+              />
+            )}
             <text
               x={colCx}
               y={topPad + 7}
