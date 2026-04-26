@@ -6,6 +6,8 @@ import { contentApi, ContentItem } from "@/lib/contentApi";
 import FilterBar, { matchesFilters } from "@/components/public/FilterBar";
 import FeaturedHero from "@/components/public/FeaturedHero";
 import ContentCard from "@/components/public/ContentCard";
+import HeroAccent from "@/components/HeroAccent";
+import IntelligenceInstrumentPanel from "@/components/IntelligenceInstrumentPanel";
 
 const InsightsPage = () => {
   const [items, setItems] = useState<ContentItem[]>([]);
