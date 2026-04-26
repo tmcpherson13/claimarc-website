@@ -9,6 +9,7 @@ import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
 import ComplianceStrip from "@/components/ComplianceStrip";
 import { PHRASES } from "@/config/terminology";
+import { useChatbot } from "@/context/ChatbotContext";
 
 const Index = () => {
   return (
