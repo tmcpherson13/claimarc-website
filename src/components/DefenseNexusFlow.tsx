@@ -730,17 +730,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 opacity={0.7 + 0.3 * Math.sin(elapsed / 300)}
               />
 
-              {/* Chaotic interior particles */}
-              {chaos.map((c, i) => (
-                <circle
-                  key={`chaos-${i}`}
-                  cx={c.cx}
-                  cy={c.cy}
-                  r={c.r}
-                  fill="#6EE7B7"
-                  opacity={c.opacity}
-                />
-              ))}
+              {/* Interior chaotic particles removed per request */}
 
               {/* Buzzing particles traveling outward along traces */}
               {buzzers.map((b, i) => (
@@ -878,58 +868,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           );
         })}
 
-        {(() => {
-          const LABEL_R = 73; // hugs just outside the outer ring (r=58)
-          const topPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 1 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
-          const bottomPath = `M ${NEXUS_X - LABEL_R} ${NEXUS_Y} A ${LABEL_R} ${LABEL_R} 0 0 0 ${NEXUS_X + LABEL_R} ${NEXUS_Y}`;
-          return (
-            <g
-              fontSize={13}
-              fontFamily="ui-monospace, SFMono-Regular, monospace"
-              fontWeight={700}
-              letterSpacing={4}
-            >
-              <defs>
-                <path id="nexus-label-top" d={topPath} />
-                <path id="nexus-label-bottom" d={bottomPath} />
-              </defs>
-              {/* Dark stroke halo for legibility against the green glow */}
-              <text
-                fill="none"
-                stroke="#020617"
-                strokeWidth={3}
-                strokeLinejoin="round"
-                opacity={0.85}
-              >
-                <textPath href="#nexus-label-top" startOffset="50%" textAnchor="middle">
-                  DEFENSE
-                </textPath>
-              </text>
-              <text
-                fill="none"
-                stroke="#020617"
-                strokeWidth={3}
-                strokeLinejoin="round"
-                opacity={0.85}
-              >
-                <textPath href="#nexus-label-bottom" startOffset="50%" textAnchor="middle">
-                  NEXUS
-                </textPath>
-              </text>
-              {/* Bright foreground text */}
-              <text fill="#A7F3D0" opacity={1}>
-                <textPath href="#nexus-label-top" startOffset="50%" textAnchor="middle">
-                  DEFENSE
-                </textPath>
-              </text>
-              <text fill="#A7F3D0" opacity={1}>
-                <textPath href="#nexus-label-bottom" startOffset="50%" textAnchor="middle">
-                  NEXUS
-                </textPath>
-              </text>
-            </g>
-          );
-        })()}
+        {/* DEFENSE NEXUS label removed per request */}
 
         {packets.map((p, i) => {
           const tRaw = (elapsed - p.start) % cycleLen;
