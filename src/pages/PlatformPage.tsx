@@ -7,7 +7,7 @@ import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
-import PlatformCommandCenter from "@/components/PlatformCommandCenter";
+import PlatformMissionControl from "@/components/PlatformMissionControl";
 import ModulePipelineFlow from "@/components/ModulePipelineFlow";
 import DefenseNexusFlow from "@/components/DefenseNexusFlow";
 import SeoHead from "@/components/SeoHead";
@@ -168,7 +168,7 @@ const PlatformPage = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
-        <PlatformCommandCenter />
+        <PlatformMissionControl />
         <div className="relative max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">
             HOW IT WORKS
