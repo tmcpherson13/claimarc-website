@@ -6,6 +6,7 @@ import BADBadge from "@/components/BADBadge";
 import HeroAccent from "@/components/HeroAccent";
 import PlatformCommandCenter from "@/components/PlatformCommandCenter";
 import ModulePipelineFlow from "@/components/ModulePipelineFlow";
+import DefenseNexusFlow from "@/components/DefenseNexusFlow";
 import SeoHead from "@/components/SeoHead";
 import { PHRASES } from "@/config/terminology";
 
