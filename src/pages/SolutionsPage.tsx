@@ -230,42 +230,6 @@ const SolutionsPage = () => {
             </div>
           </div>
 
-          {/* Module rail for the active role */}
-          <div className="mt-16">
-            <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-              Modules for this role
-            </p>
-            <h3 className="text-[var(--navy)] font-bold text-2xl mt-1">
-              The {role.relatedModules.length} modules a {role.tab} touches most
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              {role.relatedModules.map((name) => {
-                const m = getModule(name);
-                if (!m) return null;
-                return (
-                  <a
-                    key={m.name}
-                    href={`#${slugify(m.name)}`}
-                    onClick={(e) => handleSidebarClick(e, slugify(m.name))}
-                    className="block bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
-                  >
-                    <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
-                      {LAYER_LABEL[m.layer]}
-                    </p>
-                    <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
-                      {m.name}
-                    </h4>
-                    <p className="text-slate-500 text-xs font-medium mt-1">
-                      {m.tagline}
-                    </p>
-                    <p className="text-slate-600 text-sm mt-3 leading-relaxed">
-                      {m.body}
-                    </p>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </section>
 
