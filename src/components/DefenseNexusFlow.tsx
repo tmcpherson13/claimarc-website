@@ -608,33 +608,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             pcbPaths.push(`M ${mx} ${my} L ${midOutX} ${midOutY} L ${jogX} ${jogY} L ${ox} ${oy}`);
           }
 
-          // Chaotic interior particles — random walk inside the nexus disc.
-          // Use a deterministic pseudo-random per-particle but jitter position
-          // every frame so movement feels lively and non-uniform.
-          const CHAOS_COUNT = 22;
-          const chaos = Array.from({ length: CHAOS_COUNT }, (_, i) => {
-            const seed = i * 137.508;
-            // Multi-frequency oscillation gives non-circular, jittery motion
-            const t = elapsed / 1000;
-            const r =
-              10 +
-              22 *
-                (0.5 +
-                  0.5 *
-                    Math.sin(t * (0.7 + (i % 5) * 0.13) + seed));
-            const a =
-              seed +
-              t * (0.6 + (i % 7) * 0.21) +
-              Math.sin(t * 1.7 + seed) * 0.9;
-            const jitterX = Math.sin(t * 5.3 + seed * 1.7) * 3;
-            const jitterY = Math.cos(t * 4.1 + seed * 2.3) * 3;
-            return {
-              cx: NEXUS_X + Math.cos(a) * r + jitterX,
-              cy: NEXUS_Y + Math.sin(a) * r + jitterY,
-              opacity: 0.5 + 0.5 * Math.abs(Math.sin(t * 3 + seed)),
-              r: 1.1 + (i % 3) * 0.5,
-            };
-          });
+          // Chaotic interior particles — read live from the random-walk
+          // simulation maintained in chaosRef (updated each animation frame).
+          const chaos = chaosRef.current.map((p, i) => ({
+            cx: NEXUS_X + p.x,
+            cy: NEXUS_Y + p.y,
+            opacity: 0.55 + 0.45 * Math.abs(Math.sin(elapsed / 400 + p.phase)),
+            r: p.radius,
+          }));
 
           // Buzzing particles that travel outward along radial traces and exit
           const BUZZ_COUNT = 16;
