@@ -83,15 +83,15 @@ const WhyZDefensePage = () => {
       </section>
 
       {/* SECTION 3: SIX DIFFERENTIATORS */}
-      <section className="bg-[var(--lgray)] py-24 px-6 md:px-12 lg:px-16">
+      <section className="bg-[var(--navy-dk)] py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold text-center">
+          <h2 className="text-white text-3xl md:text-4xl font-bold text-center">
             Six Reasons ZDefense Is Different
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14">
-            <div className="bg-white rounded-xl p-7 border border-[var(--lgray)] hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-bold text-lg">No-BAA Entry Path</h3>
-              <p className="text-slate-600 text-sm mt-2">
+            <div className="bg-white/5 border border-slate-700 rounded-xl p-7 hover:border-[var(--emerald)]/40 transition-colors">
+              <h3 className="text-white font-bold text-lg">No-BAA Entry Path</h3>
+              <p className="text-slate-400 text-sm mt-2">
                 The single most important differentiator. Three modules activate
                 immediately with zero data sharing. ContractIntel, Shield, and
                 Prevent run on public data only. Start your 30-day evaluation
@@ -109,9 +109,9 @@ const WhyZDefensePage = () => {
               { h: "AI³ Delivery Flexibility", b: "AI³ = three ways to deploy the intelligence — not three different products. Same platform. Same nine modules. Three delivery models: Actionable AI¹ (your team, our platform), Augmented AI² (ZTech co-pilot), Automated AI³ (fire and forget)." },
               { h: "Compliance-First Architecture", b: "SOC 2 Type II certified. ISO/IEC 27001:2022 certified. HIPAA-aligned from day one. Built to pass health system security reviews without a six-month procurement cycle." },
             ].map((c) => (
-              <div key={c.h} className="bg-white rounded-xl p-7 border border-[var(--lgray)] hover:border-emerald-200 transition-colors">
-                <h3 className="text-[var(--navy)] font-bold text-lg">{c.h}</h3>
-                <p className="text-slate-600 text-sm mt-2">{c.b}</p>
+              <div key={c.h} className="bg-white/5 border border-slate-700 rounded-xl p-7 hover:border-[var(--emerald)]/40 transition-colors">
+                <h3 className="text-white font-bold text-lg">{c.h}</h3>
+                <p className="text-slate-400 text-sm mt-2">{c.b}</p>
               </div>
             ))}
           </div>
