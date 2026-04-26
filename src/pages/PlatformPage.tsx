@@ -218,6 +218,9 @@ const PlatformPage = () => {
               Intelligence flows in one direction — forward. Every module
               feeds the next. Click any module to see what it does.
             </p>
+            <p className="text-slate-500 text-sm text-center mt-2">
+              Click any module for a summary <span className="text-slate-600">→</span> Learn more for full detail <span className="text-slate-600">→</span> <span className="text-[var(--emerald)]">Ask Z</span> for a guided walkthrough.
+            </p>
           </div>
           <ModulePipelineFlow onSelect={setSelectedName} />
         </div>
