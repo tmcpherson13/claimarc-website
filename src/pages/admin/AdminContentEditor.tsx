@@ -883,9 +883,9 @@ const Inner = () => {
           <div className="bg-gradient-to-br from-[var(--navy)] to-[var(--navy-dk)] rounded-xl p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold text-sm">AI Generate</p>
+                <p className="text-white font-semibold text-sm">Generate with Z</p>
                 <p className="text-white/50 text-xs mt-0.5">
-                  Describe what you want — we write it.
+                  Describe what you want — Z writes it.
                 </p>
               </div>
               <button
@@ -898,6 +898,34 @@ const Inner = () => {
             </div>
             {showAiPanel && (
               <div className="mt-4">
+                <p className="text-white/50 text-xs mb-2">What are you creating?</p>
+                <div className="flex gap-2 mb-3">
+                  {(
+                    [
+                      { value: "blog" as ContentType, label: "Blog Post" },
+                      { value: "white_paper" as ContentType, label: "White Paper" },
+                    ]
+                  ).map((opt) => {
+                    const selected = aiContentType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setAiContentType(opt.value);
+                          set("contentType", opt.value);
+                        }}
+                        className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-colors ${
+                          selected
+                            ? "bg-[var(--emerald)] text-white border-[var(--emerald)]"
+                            : "bg-white/10 text-white/60 border-white/20 hover:bg-white/20"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
                 <textarea
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
@@ -919,10 +947,10 @@ const Inner = () => {
                     {aiLoading ? (
                       <>
                         <span className="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Writing…
+                        Z is writing…
                       </>
                     ) : (
-                      "✦ Generate"
+                      "✦ Ask Z"
                     )}
                   </button>
                 </div>
