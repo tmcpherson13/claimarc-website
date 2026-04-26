@@ -160,8 +160,8 @@ const ContactPage = () => {
       </section>
 
       {/* SECTION 2: TWO-OFFER CARDS */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <section ref={offersRef} className="bg-white py-16 px-6 md:px-12 lg:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-[var(--lgray)] border-2 border-[var(--navy)] rounded-xl p-8 flex flex-col">
             <h2 className="text-[var(--navy)] font-bold text-2xl">
               Book a Personalized Demo
