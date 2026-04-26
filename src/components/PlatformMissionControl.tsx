@@ -1231,7 +1231,7 @@ const PlatformMissionControl = () => {
           module="Sentinel"
           onActivate={goToModule}
         >
-          <PayerCoverageGrid t={t} />
+          <PayerCoverageGrid t={t} onActivate={goToModule} />
         </Bezel>
         <Bezel
           col={1}
