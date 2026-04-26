@@ -91,7 +91,7 @@ export default function ChatbotButton() {
           onMouseLeave={() => setHover(false)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          aria-label={disabled ? "ZDefense AI is responding" : "Ask ZDefense AI"}
+          aria-label={disabled ? "Z is responding" : "Chat with Z"}
           aria-describedby="zd-ai-button-tooltip"
           aria-busy={disabled || undefined}
           disabled={disabled}
