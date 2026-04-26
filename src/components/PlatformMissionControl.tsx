@@ -211,7 +211,8 @@ const ClaimRateGauge = ({ t }: { t: number }) => {
   const totalSpan = 240;
 
   const wave = Math.sin((t / 18) * Math.PI * 2);
-  const pct = 89.4 + wave * 1.3; // 88.1..90.7
+  // Centered on the canonical Shield clean-claim rate, with a narrow live jitter band.
+  const pct = SHIELD_CLEAN_CLAIM_RATE + wave * SHIELD_CLEAN_CLAIM_JITTER;
   const fillSpan = (pct / 100) * totalSpan;
   // From angle 210 going clockwise (i.e. up over the top) by fillSpan:
   // We treat angle going "up over top" as decreasing the angle (mod 360).
