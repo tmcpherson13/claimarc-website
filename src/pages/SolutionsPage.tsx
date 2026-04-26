@@ -505,12 +505,26 @@ const SolutionsPage = () => {
                         </p>
                         <p className="text-slate-700 text-sm">{m.audience}</p>
                       </div>
-                      <Link
-                        to="/contact"
-                        className="text-[var(--emerald)] font-semibold text-sm hover:underline"
-                      >
-                        Talk to us about {m.name} →
-                      </Link>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => openChatbot(m.name)}
+                          className="inline-flex items-center rounded-md border px-[14px] py-[6px] text-xs transition-colors hover:bg-[#0F172A]/5"
+                          style={{
+                            borderColor: "#1E3A5F",
+                            color: "#06B6D4",
+                            background: "transparent",
+                          }}
+                        >
+                          Ask AI about {m.name}
+                        </button>
+                        <Link
+                          to="/contact"
+                          className="text-[var(--emerald)] font-semibold text-sm hover:underline"
+                        >
+                          Talk to us about {m.name} →
+                        </Link>
+                      </div>
                     </div>
                   </section>
                 );
