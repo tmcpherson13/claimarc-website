@@ -39,20 +39,20 @@ const ClusterBox = ({
   modules: string[];
 }) => (
   <div
-    className="rounded-xl border-2 bg-[var(--navy)] p-6 flex-1"
+    className="rounded-xl border-2 bg-[var(--navy)] p-6 flex-1 flex flex-col items-center text-center"
     style={{ borderColor: color }}
   >
     <p
-      className="text-xs font-bold tracking-[0.2em] mb-4"
+      className="text-sm font-bold tracking-[0.2em] mb-4"
       style={{ color }}
     >
       {label}
     </p>
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-2 items-center w-full">
       {modules.map((m) => (
         <li
           key={m}
-          className="text-xs font-semibold bg-slate-800 text-slate-300 px-3 py-1 rounded-full w-fit"
+          className="text-base font-semibold bg-slate-800 text-slate-200 px-4 py-1.5 rounded-full text-center"
         >
           {m}
         </li>
