@@ -50,7 +50,7 @@ const DOTS: Dot[] = [
   { x: 230, y: 180 },
 ];
 
-const SignalTower = () => {
+const SignalTower = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
