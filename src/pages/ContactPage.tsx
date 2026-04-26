@@ -410,7 +410,7 @@ const ContactPage = () => {
                   )}
                   <select
                     id="claimVolume"
-                    aria-required="true"
+                    aria-required={!isInfo}
                     className={fieldClass}
                     value={formData.claimVolume}
                     onChange={(e) => setFormData({ ...formData, claimVolume: e.target.value })}
