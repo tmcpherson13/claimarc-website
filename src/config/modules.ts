@@ -336,3 +336,20 @@ export const MODULES: ModuleDefinition[] = [
 
 export const getModule = (name: string) =>
   MODULES.find((m) => m.name === name);
+
+/**
+ * Modules that can run with NO BAA (public-data only). Source of truth used
+ * by the platform hero readouts, the BAA shield panel, and any other place
+ * we need to differentiate public-data vs. PHI-bearing modules.
+ */
+export const NO_BAA_MODULES: ReadonlyArray<string> = [
+  "ContractIntel",
+  "Shield",
+  "Prevent",
+];
+
+export const isBaaRequired = (name: string) =>
+  !NO_BAA_MODULES.includes(name);
+
+/** URL-safe slug for anchor navigation (matches Solutions section IDs). */
+export const moduleSlug = (name: string) => name.toLowerCase();
