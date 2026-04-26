@@ -36,6 +36,7 @@ const Req = () => (
 const ContactPage = () => {
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLDivElement>(null);
+  const offersRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
