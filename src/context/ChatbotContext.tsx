@@ -36,8 +36,44 @@ export type ChatbotContextValue = {
 const ChatbotContext = createContext<ChatbotContextValue | null>(null);
 
 const SESSION_KEY = "zdefense_chat_session";
+const MODULE_CONTEXT_KEY = "zdefense_chat_module_context";
 const MAX_MESSAGE_CHARS = 500;
 const CONTEXT_WINDOW = 12;
+
+/**
+ * DEVELOPER NOTE — Module slug ↔ moduleContext mapping
+ * -----------------------------------------------------
+ * Every value passed to `useChatbot().open(moduleContext)` MUST match the
+ * `name` field of a module defined in `src/config/modules.ts` exactly
+ * (capitalized, no abbreviations). The chatbot's system prompt and tutor
+ * behavior reference these names verbatim ("Sentinel", "ContractIntel",
+ * "Forecast", "Shield", "Prevent", "Ledger", "Triage", "Evidence", "Resolve").
+ *
+ * SolutionsPage URL hash slugs are the lowercase form of the module name
+ * (see `slugify` in src/pages/SolutionsPage.tsx — `name.toLowerCase()`),
+ * which yields:
+ *
+ *   URL hash slug      ↔   moduleContext string
+ *   ----------------       --------------------
+ *   #sentinel          ↔   "Sentinel"
+ *   #contractintel     ↔   "ContractIntel"
+ *   #forecast          ↔   "Forecast"
+ *   #shield            ↔   "Shield"
+ *   #prevent           ↔   "Prevent"
+ *   #ledger            ↔   "Ledger"
+ *   #triage            ↔   "Triage"
+ *   #evidence          ↔   "Evidence"
+ *   #resolve           ↔   "Resolve"
+ *
+ * When opening the chatbot from a module section button on /solutions,
+ * always pass `m.name` (NOT the slug) — the slug exists only for URL routing.
+ *
+ * The selected moduleContext is persisted in sessionStorage under
+ * `MODULE_CONTEXT_KEY` so reopening the chatbot on any subsequent page
+ * (or after a hard reload within the same browser tab) restores the same
+ * context until `clearSession()` is called or the user clears the badge
+ * inside the panel.
+ */
 
 const PAGE_MAP: Record<string, string> = {
   "/": "home",
