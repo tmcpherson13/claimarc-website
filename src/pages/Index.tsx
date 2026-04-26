@@ -12,6 +12,7 @@ import { PHRASES } from "@/config/terminology";
 import { useChatbot } from "@/context/ChatbotContext";
 
 const Index = () => {
+  const { open: openChatbot } = useChatbot();
   return (
     <Layout>
       <SeoHead
