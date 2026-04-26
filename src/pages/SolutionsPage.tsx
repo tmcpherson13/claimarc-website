@@ -46,6 +46,21 @@ const LAYER_LABEL: Record<string, string> = {
   recover: "RECOVER",
 };
 
+const LAYER_DESCRIPTION: Record<string, string> = {
+  predict: "See risk before it becomes a denial.",
+  protect: "Stop problems before payers or regulators find them.",
+  recover: "Turn denied claims into recovered cash.",
+};
+
+/** Short abbreviations for role tabs, used in compact badges. */
+const ROLE_ABBREV: Record<string, string> = {
+  "CFO / Executive": "CFO",
+  "Rev Cycle Director": "RC Director",
+  "Rev Cycle Manager": "RC Manager",
+  "Billing Specialist": "Billing Specialist",
+  "Auditor/Compliance Officer": "Compliance",
+};
+
 /** Role membership per module — drives the rollup mapping table. */
 const moduleRoleMap: Record<string, string[]> = MODULES.reduce(
   (acc, m) => {
