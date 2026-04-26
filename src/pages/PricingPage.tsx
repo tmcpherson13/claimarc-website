@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import TrialCallout from "@/components/TrialCallout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
+import TieredIntelligenceLevels from "@/components/TieredIntelligenceLevels";
 import SeoHead from "@/components/SeoHead";
 
 interface Tier {
@@ -37,6 +38,7 @@ const PricingPage = () => {
       {/* SECTION 1: HERO */}
       <section className="relative overflow-hidden bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <HeroAccent />
+        <TieredIntelligenceLevels />
         <div className="relative max-w-7xl mx-auto">
           <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold">
             We Only Earn When You Win
