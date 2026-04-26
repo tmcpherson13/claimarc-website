@@ -63,6 +63,7 @@ const SolutionsPage = () => {
   const { hash, pathname } = useLocation();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { open: openChatbot } = useChatbot();
 
   /** Smooth-scroll to the hash with header offset, on mount + hash changes. */
   const scrollToHash = useCallback((rawHash: string) => {
