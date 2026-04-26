@@ -143,7 +143,9 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState(0);
   const [offerDemo, setOfferDemo] = useState(false);
-  const [moduleContext, setModuleContext] = useState<string | null>(null);
+  const [moduleContext, setModuleContext] = useState<string | null>(() =>
+    readPersistedModuleContext()
+  );
   const [pageContext, setPageContext] = useState<string | null>(
     detectPageContext(typeof window !== "undefined" ? window.location.pathname : "/")
   );
