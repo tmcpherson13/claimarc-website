@@ -38,7 +38,7 @@ const ModuleDetailDialog = ({
   if (!module) return null;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between gap-3">
             <span className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
@@ -56,19 +56,72 @@ const ModuleDetailDialog = ({
 
         <p className="text-slate-700 text-sm leading-relaxed">{module.detail}</p>
 
-        <ul className="mt-1 space-y-2">
-          {module.capabilities.map((c) => (
-            <li
-              key={c}
-              className="flex items-start gap-2 text-sm text-slate-600"
-            >
-              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-              <span>{c}</span>
-            </li>
-          ))}
-        </ul>
+        <section>
+          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+            Capabilities
+          </h4>
+          <ul className="space-y-2">
+            {module.capabilities.map((c) => (
+              <li key={c} className="flex items-start gap-2 text-sm text-slate-600">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                <span>{c}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-        <div className="border-t border-[var(--lgray)] pt-4 mt-2">
+        <section>
+          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+            How it works
+          </h4>
+          <ol className="space-y-2">
+            {module.howItWorks.map((step, i) => (
+              <li key={step} className="flex items-start gap-3 text-sm text-slate-600">
+                <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
+                  {i + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section>
+          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+            Outcomes
+          </h4>
+          <ul className="space-y-2">
+            {module.outcomes.map((o) => (
+              <li key={o} className="flex items-start gap-2 text-sm text-slate-600">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                <span>{o}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
+            Data inputs
+          </h4>
+          <ul className="space-y-2">
+            {module.dataInputs.map((d) => (
+              <li key={d} className="flex items-start gap-2 text-sm text-slate-600">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <div className="rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
+          <p className="text-slate-400 text-xs uppercase tracking-widest">
+            Integration & deployment
+          </p>
+          <p className="text-slate-700 text-sm mt-1">{module.integration}</p>
+        </div>
+
+        <div className="border-t border-[var(--lgray)] pt-4">
           <p className="text-slate-400 text-xs uppercase tracking-widest">
             Built for
           </p>
