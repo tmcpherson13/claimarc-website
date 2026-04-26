@@ -503,25 +503,27 @@ const ContactPage = () => {
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 mt-4">
-                  <input
-                    id="interestedInTrial"
-                    type="checkbox"
-                    className="accent-[var(--emerald)] w-4 h-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)]"
-                    checked={formData.interestedInTrial}
-                    onChange={() =>
-                      setFormData({
-                        ...formData,
-                        interestedInTrial: !formData.interestedInTrial,
-                      })
-                    }
-                  />
-                  <label htmlFor="interestedInTrial" className="text-slate-700 text-sm cursor-pointer">
-                    Yes, I am interested in the 30-day no-obligation
-                    evaluation (ContractIntel, Shield, Prevent — live data, no
-                    BAA required)
-                  </label>
-                </div>
+                {!isInfo && (
+                  <div className="flex items-center gap-2 mt-4">
+                    <input
+                      id="interestedInTrial"
+                      type="checkbox"
+                      className="accent-[var(--emerald)] w-4 h-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)]"
+                      checked={formData.interestedInTrial}
+                      onChange={() =>
+                        setFormData({
+                          ...formData,
+                          interestedInTrial: !formData.interestedInTrial,
+                        })
+                      }
+                    />
+                    <label htmlFor="interestedInTrial" className="text-slate-700 text-sm cursor-pointer">
+                      Yes, I am interested in the 30-day no-obligation
+                      evaluation (ContractIntel, Shield, Prevent — live data, no
+                      BAA required)
+                    </label>
+                  </div>
+                )}
 
                 <div className="mt-4">
                   <label htmlFor="message" className={labelClass}>Additional context</label>
