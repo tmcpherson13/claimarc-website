@@ -141,6 +141,16 @@ const ModuleDetailDialog = ({
           Learn more about {module.name}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
+        <button
+          type="button"
+          onClick={() => {
+            onOpenChange(false);
+            openChatbot(module.name);
+          }}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--navy)] bg-[var(--emerald)]/10 hover:bg-[var(--emerald)]/20 border border-[var(--emerald)]/30 rounded-lg px-4 py-2 transition-colors mt-2"
+        >
+          Ask Z about {module.name}
+        </button>
       </DialogContent>
     </Dialog>
   );
