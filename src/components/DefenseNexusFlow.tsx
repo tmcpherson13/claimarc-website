@@ -16,20 +16,65 @@ const LAYER_COLOR: Record<Layer, string> = {
 
 interface Source {
   name: string;
+  description: string;
 }
 
 const SOURCES: Source[] = [
-  { name: "HPT MRFs (5,400+ hospitals)" },
-  { name: "TiC MRFs (7 payers)" },
-  { name: "CMS Physician Fee Schedule" },
-  { name: "CMS OPPS" },
-  { name: "CMS Bulk / NPI Registry" },
-  { name: "NCCI Edits" },
-  { name: "CARC/RARC Codes" },
-  { name: "NCD/LCD Policies" },
-  { name: "MAC CR Bulletins" },
-  { name: "Commercial Payer Policies" },
-  { name: "ICD-10 Code Reference" },
+  {
+    name: "HPT MRFs (5,400+ hospitals)",
+    description:
+      "5,400+ hospitals publish their negotiated rates publicly. ZDefense uses this to benchmark what your payers actually pay others for the same procedures.",
+  },
+  {
+    name: "TiC MRFs (7 payers)",
+    description:
+      "7 major payers publish rate files under the Transparency in Coverage rule. This is the market rate intelligence behind ContractIntel.",
+  },
+  {
+    name: "CMS Physician Fee Schedule",
+    description:
+      "Medicare's published allowed amounts by CPT code and geography. The baseline reference for every rate comparison ZDefense makes.",
+  },
+  {
+    name: "CMS OPPS",
+    description:
+      "Outpatient Prospective Payment System rates and APC packaging rules. Feeds Shield's pre-submission bundling checks.",
+  },
+  {
+    name: "CMS Bulk / NPI Registry",
+    description:
+      "The national provider registry. ZDefense uses it to route denials and benchmark by specialty and taxonomy.",
+  },
+  {
+    name: "NCCI Edits",
+    description:
+      "CMS bundling and modifier rules updated quarterly. The core engine behind Shield's 89.4% clean claim rate.",
+  },
+  {
+    name: "CARC/RARC Codes",
+    description:
+      "The standardized denial reason codes published by X12. Every denial in Triage and Evidence is classified against this reference.",
+  },
+  {
+    name: "NCD/LCD Policies",
+    description:
+      "National and local coverage determinations from CMS. Defines what is medically necessary — and what Shield flags before submission.",
+  },
+  {
+    name: "MAC CR Bulletins",
+    description:
+      "Local Medicare contractor rule changes monitored continuously. Shield's Regulatory Intelligence Feed fires 45 days before these affect your claims.",
+  },
+  {
+    name: "Commercial Payer Policies",
+    description:
+      "UHC, Aetna, Cigna, Anthem, Humana policy updates. The behavioral baseline Sentinel uses to detect strategy shifts before your team sees denials.",
+  },
+  {
+    name: "ICD-10 Code Reference",
+    description:
+      "Annual CMS diagnosis code updates. Used by Triage to validate denial reasons and by Evidence to assemble accurate appeal packages.",
+  },
 ];
 
 interface ModuleDef {
@@ -72,18 +117,19 @@ const SRC_RIGHT = SRC_X + SRC_W;
 const NEXUS_IN_X = 410;
 const NEXUS_OUT_X = 430;
 const NEXUS_X = 420;
+const NEXUS_Y = 262.5;
 const MOD_X = 580;
 const MOD_W = 140;
 const MOD_H = 26;
 
 const sourceY = (i: number) => {
-  const top = 30;
-  const bot = 390;
+  const top = 37.5;
+  const bot = 487.5;
   return top + ((bot - top) / (SOURCES.length - 1)) * i + SRC_H / 2;
 };
 const moduleY = (i: number) => {
-  const top = 42;
-  const bot = 378;
+  const top = 52.5;
+  const bot = 472.5;
   return top + ((bot - top) / (MODULES.length - 1)) * i + MOD_H / 2;
 };
 
@@ -112,10 +158,38 @@ interface Packet {
   start: number;
 }
 
+// Simple word-wrap helper: split a string into N lines that fit roughly within
+// `maxChars` characters per line.
+function wrapText(text: string, maxChars: number, maxLines: number): string[] {
+  const words = text.split(/\s+/);
+  const lines: string[] = [];
+  let current = "";
+  for (const w of words) {
+    const candidate = current ? `${current} ${w}` : w;
+    if (candidate.length > maxChars && current) {
+      lines.push(current);
+      current = w;
+      if (lines.length === maxLines - 1) break;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current && lines.length < maxLines) lines.push(current);
+  // If text remains beyond maxLines, append ellipsis to last line.
+  const consumed = lines.join(" ").length;
+  if (consumed < text.length && lines.length === maxLines) {
+    lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + "…";
+  }
+  return lines;
+}
+
 const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [, setTick] = useState(0);
+  const [tooltip, setTooltip] = useState<
+    { index: number; x: number; y: number } | null
+  >(null);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
 
@@ -185,6 +259,9 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const nexusGlow =
     0.03 + (Math.sin((elapsed / 1000) * ((2 * Math.PI) / 4)) + 1) / 2 * 0.04;
 
+  const TOOLTIP_W = 220;
+  const TOOLTIP_H = 72;
+
   return (
     <div
       ref={ref}
@@ -194,15 +271,21 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
       } ${className}`}
     >
       <svg
-        viewBox="0 0 1100 420"
+        viewBox="0 0 1100 525"
         className="w-full h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
-        <rect x={0} y={0} width={1100} height={420} fill="#0B1628" />
+        <defs>
+          <filter id="nexus-tooltip-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.5" />
+          </filter>
+        </defs>
+
+        <rect x={0} y={0} width={1100} height={525} fill="#0B1628" />
 
         <circle
           cx={NEXUS_X}
-          cy={210}
+          cy={NEXUS_Y}
           r={80}
           fill="#10B981"
           opacity={nexusGlow}
@@ -216,7 +299,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
               x1={SRC_RIGHT}
               y1={y}
               x2={NEXUS_IN_X}
-              y2={210}
+              y2={NEXUS_Y}
               stroke="#1E3A5F"
               strokeWidth={1}
               opacity={0.4}
@@ -230,7 +313,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             <line
               key={`edge-line-${i}`}
               x1={NEXUS_OUT_X}
-              y1={210}
+              y1={NEXUS_Y}
               x2={MOD_X}
               y2={my}
               stroke="#1E3A5F"
@@ -243,7 +326,24 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         {SOURCES.map((s, i) => {
           const y = sourceY(i) - SRC_H / 2;
           return (
-            <g key={`src-${i}`}>
+            <g
+              key={`src-${i}`}
+              onMouseEnter={() =>
+                setTooltip({ index: i, x: SRC_RIGHT, y: y })
+              }
+              onMouseLeave={() => setTooltip(null)}
+              style={{ cursor: "default" }}
+            >
+              {/* inner glow */}
+              <rect
+                x={SRC_X}
+                y={y}
+                width={SRC_W}
+                height={SRC_H}
+                rx={4}
+                fill="#10B981"
+                opacity={0.04}
+              />
               <rect
                 x={SRC_X}
                 y={y}
@@ -251,15 +351,15 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 height={SRC_H}
                 rx={4}
                 fill="#0F172A"
-                stroke="#1E3A5F"
-                strokeWidth={1}
+                stroke="#2D4F7A"
+                strokeWidth={1.5}
               />
               <text
                 x={SRC_X + SRC_W / 2}
-                y={y + SRC_H / 2 + 2.5}
+                y={y + SRC_H / 2 + 3}
                 textAnchor="middle"
-                fill="#64748B"
-                fontSize={7}
+                fill="#CBD5E1"
+                fontSize={9}
                 fontFamily="ui-monospace, SFMono-Regular, monospace"
               >
                 {s.name}
@@ -305,14 +405,14 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
         <text
           x={NEXUS_X}
-          y={210}
+          y={NEXUS_Y}
           textAnchor="middle"
           fill="#10B981"
           fontSize={9}
           fontFamily="ui-monospace, SFMono-Regular, monospace"
           opacity={0.6}
           letterSpacing={3}
-          transform={`rotate(-90 ${NEXUS_X} 210)`}
+          transform={`rotate(-90 ${NEXUS_X} ${NEXUS_Y})`}
         >
           DEFENSE NEXUS
         </text>
@@ -329,11 +429,11 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           if (t < 0.5) {
             const k = t / 0.5;
             x = SRC_RIGHT + (NEXUS_X - SRC_RIGHT) * k;
-            y = sy + (210 - sy) * k;
+            y = sy + (NEXUS_Y - sy) * k;
           } else {
             const k = (t - 0.5) / 0.5;
             x = NEXUS_X + (MOD_X - NEXUS_X) * k;
-            y = 210 + (my - 210) * k;
+            y = NEXUS_Y + (my - NEXUS_Y) * k;
           }
           const color = LAYER_COLOR[MODULES[edge.moduleIdx].layer];
           return (
@@ -350,8 +450,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
 
         <g>
           <rect
-            x={550 - 80}
-            y={400 - 10}
+            x={420 - 80}
+            y={505 - 10}
             width={160}
             height={20}
             rx={10}
@@ -360,8 +460,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             strokeWidth={1}
           />
           <text
-            x={550}
-            y={400 + 3}
+            x={420}
+            y={505 + 3}
             textAnchor="middle"
             fill="#10B981"
             fontSize={7}
@@ -371,6 +471,55 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             NO PHI · PUBLIC DATA ONLY
           </text>
         </g>
+
+        {tooltip !== null &&
+          (() => {
+            const src = SOURCES[tooltip.index];
+            const wantRightX = tooltip.x + 170;
+            const flipLeft = wantRightX + TOOLTIP_W > 1100;
+            const tx = flipLeft ? tooltip.x - SRC_W - TOOLTIP_W - 10 : wantRightX;
+            const ty = Math.max(
+              4,
+              Math.min(525 - TOOLTIP_H - 4, tooltip.y - 10)
+            );
+            const lines = wrapText(src.description, 38, 4);
+            return (
+              <g filter="url(#nexus-tooltip-shadow)" style={{ pointerEvents: "none" }}>
+                <rect
+                  x={tx}
+                  y={ty}
+                  width={TOOLTIP_W}
+                  height={Math.max(TOOLTIP_H, 28 + lines.length * 11)}
+                  rx={6}
+                  fill="#0F172A"
+                  stroke="#2D4F7A"
+                  strokeWidth={1}
+                />
+                <text
+                  x={tx + 10}
+                  y={ty + 16}
+                  fill="#CBD5E1"
+                  fontSize={9}
+                  fontWeight="bold"
+                  fontFamily="ui-monospace, SFMono-Regular, monospace"
+                >
+                  {src.name}
+                </text>
+                {lines.map((line, li) => (
+                  <text
+                    key={`tt-line-${li}`}
+                    x={tx + 10}
+                    y={ty + 32 + li * 11}
+                    fill="#64748B"
+                    fontSize={8}
+                    fontFamily="ui-monospace, SFMono-Regular, monospace"
+                  >
+                    {line}
+                  </text>
+                ))}
+              </g>
+            );
+          })()}
       </svg>
     </div>
   );
