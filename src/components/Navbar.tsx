@@ -65,7 +65,7 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-2">
           <Link
-            to="/contact"
+            to="/contact?offer=demo"
             className="plausible-event-name=CTA_Click plausible-event-location=navbar plausible-event-cta=book_demo bg-[var(--emerald)] hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-md text-center transition-colors whitespace-nowrap"
           >
             Book a Demo
