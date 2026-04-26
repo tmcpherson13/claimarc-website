@@ -105,6 +105,15 @@ const SolutionsPage = () => {
     }
   }, [hash, pathname, scrollToHash]);
 
+  /** Pick up ?role= query so deep links from the home page land on the right tab. */
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const r = params.get("role");
+    if (r && roles.some((role) => role.key === r)) {
+      setActiveRole(r);
+    }
+  }, [search]);
+
   /** Scroll-spy: highlight the module section currently in view. */
   useEffect(() => {
     const sections = MODULES.map((m) =>
