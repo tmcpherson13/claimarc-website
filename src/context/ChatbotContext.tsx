@@ -115,6 +115,25 @@ function getOrCreateSessionId(): string {
   }
 }
 
+function readPersistedModuleContext(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.sessionStorage.getItem(MODULE_CONTEXT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writePersistedModuleContext(value: string | null) {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.sessionStorage.setItem(MODULE_CONTEXT_KEY, value);
+    else window.sessionStorage.removeItem(MODULE_CONTEXT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 export function ChatbotProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
 
