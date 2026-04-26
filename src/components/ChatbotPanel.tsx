@@ -337,6 +337,10 @@ export default function ChatbotPanel() {
             m.role === "user" ? (
               <div
                 key={m.id}
+                ref={(el) => {
+                  if (el) messageRefs.current.set(m.id, el);
+                  else messageRefs.current.delete(m.id);
+                }}
                 style={{
                   alignSelf: "flex-end",
                   maxWidth: "80%",
@@ -352,7 +356,14 @@ export default function ChatbotPanel() {
                 {m.content}
               </div>
             ) : (
-              <div key={m.id} style={{ alignSelf: "flex-start", maxWidth: "85%" }}>
+              <div
+                key={m.id}
+                ref={(el) => {
+                  if (el) messageRefs.current.set(m.id, el);
+                  else messageRefs.current.delete(m.id);
+                }}
+                style={{ alignSelf: "flex-start", maxWidth: "85%" }}
+              >
                 <AssistantContent content={m.content} />
               </div>
             )
