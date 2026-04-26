@@ -122,11 +122,31 @@ export default function ChatbotPanel() {
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (!scrollRef.current) return;
+    const last = messages[messages.length - 1];
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    };
+    if (!last) {
+      scrollToBottom();
+      return;
     }
+    if (last.role === "assistant") {
+      const wordCount = last.content.split(" ").length;
+      if (wordCount > 80) {
+        const el = messageRefs.current.get(last.id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+      }
+    }
+    scrollToBottom();
   }, [messages, isLoading, isOpen]);
 
   useEffect(() => {
