@@ -366,6 +366,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       offerDemo,
       sendMessage,
       moduleContext,
+      clearModuleContext,
       pageContext,
       clearSession,
     ]
