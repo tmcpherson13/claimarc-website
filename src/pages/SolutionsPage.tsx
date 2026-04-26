@@ -46,6 +46,21 @@ const LAYER_LABEL: Record<string, string> = {
   recover: "RECOVER",
 };
 
+const LAYER_DESCRIPTION: Record<string, string> = {
+  predict: "See risk before it becomes a denial.",
+  protect: "Stop problems before payers or regulators find them.",
+  recover: "Turn denied claims into recovered cash.",
+};
+
+/** Short abbreviations for role tabs, used in compact badges. */
+const ROLE_ABBREV: Record<string, string> = {
+  "CFO / Executive": "CFO",
+  "Rev Cycle Director": "RC Director",
+  "Rev Cycle Manager": "RC Manager",
+  "Billing Specialist": "Billing Specialist",
+  "Auditor/Compliance Officer": "Compliance",
+};
+
 /** Role membership per module — drives the rollup mapping table. */
 const moduleRoleMap: Record<string, string[]> = MODULES.reduce(
   (acc, m) => {
@@ -64,6 +79,7 @@ const SolutionsPage = () => {
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
+  const [activeModuleTab, setActiveModuleTab] = useState<Record<string, string>>({});
   const { open: openChatbot } = useChatbot();
 
   /** Smooth-scroll to the hash with header offset, on mount + hash changes. */
@@ -214,111 +230,71 @@ const SolutionsPage = () => {
             </div>
           </div>
 
-          {/* Module rail for the active role */}
-          <div className="mt-16">
-            <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-              Modules for this role
-            </p>
-            <h3 className="text-[var(--navy)] font-bold text-2xl mt-1">
-              The {role.relatedModules.length} modules a {role.tab} touches most
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              {role.relatedModules.map((name) => {
-                const m = getModule(name);
-                if (!m) return null;
-                return (
-                  <a
-                    key={m.name}
-                    href={`#${slugify(m.name)}`}
-                    onClick={(e) => handleSidebarClick(e, slugify(m.name))}
-                    className="block bg-white border border-slate-200 rounded-lg p-5 hover:border-[var(--emerald)] hover:shadow-md transition-all"
-                  >
-                    <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
-                      {LAYER_LABEL[m.layer]}
-                    </p>
-                    <h4 className="text-[var(--navy)] font-bold text-lg mt-1">
-                      {m.name}
-                    </h4>
-                    <p className="text-slate-500 text-xs font-medium mt-1">
-                      {m.tagline}
-                    </p>
-                    <p className="text-slate-600 text-sm mt-3 leading-relaxed">
-                      {m.body}
-                    </p>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </section>
 
       {/* SECTION 3: 9 → 5 ROLLUP MAPPING */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16 border-t border-slate-100">
+      <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
             How the Pieces Fit
           </p>
-          <h2 className="text-[var(--navy)] font-bold text-2xl md:text-3xl mt-2">
+          <h2 className="text-white font-bold text-2xl md:text-3xl mt-2">
             How the 9 Modules Roll Up Into the 5 Roles
           </h2>
-          <p className="text-slate-600 mt-3 max-w-2xl">
+          <p className="text-slate-400 mt-3 max-w-2xl">
             Every module reports up to one or more of the five roles it serves.
             Use this as the quick map between what each module does and who
             owns the outcome.
           </p>
-          <div className="mt-8 overflow-x-auto rounded-lg border border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="bg-[var(--lgray)] text-[var(--navy)]">
-                <tr>
-                  <th className="text-left p-3 font-semibold">Module</th>
-                  <th className="text-left p-3 font-semibold">Layer</th>
-                  <th className="text-left p-3 font-semibold">Primary Role(s)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MODULES.map((m, i) => (
-                  <tr
-                    key={m.name}
-                    className={i % 2 === 0 ? "bg-white" : "bg-slate-50/60"}
-                  >
-                    <td className="p-3">
-                      <a
-                        href={`#${slugify(m.name)}`}
-                        onClick={(e) => handleSidebarClick(e, slugify(m.name))}
-                        className="font-semibold text-[var(--navy)] hover:text-[var(--emerald)]"
-                      >
-                        {m.name}
-                      </a>
-                      <p className="text-slate-500 text-xs">{m.tagline}</p>
-                    </td>
-                    <td className="p-3 align-top">
-                      <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[var(--emerald)]">
-                        {LAYER_LABEL[m.layer]}
-                      </span>
-                    </td>
-                    <td className="p-3 align-top">
-                      <div className="flex flex-wrap gap-1.5">
-                        {(moduleRoleMap[m.name] ?? []).map((r) => (
-                          <span
-                            key={r}
-                            className="inline-block bg-emerald-50 text-[var(--navy)] text-xs px-2 py-0.5 rounded-full"
-                          >
-                            {r}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(["predict", "protect", "recover"] as const).map((layer) => {
+              const layerModules = MODULES.filter((m) => m.layer === layer);
+              return (
+                <div
+                  key={layer}
+                  className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6"
+                >
+                  <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+                    {LAYER_LABEL[layer]}
+                  </p>
+                  <p className="text-slate-400 text-sm mt-1">
+                    {LAYER_DESCRIPTION[layer]}
+                  </p>
+                  <ul className="mt-5 space-y-4">
+                    {layerModules.map((m) => {
+                      const primaryRole = (moduleRoleMap[m.name] ?? [])[0];
+                      const abbrev = primaryRole ? ROLE_ABBREV[primaryRole] ?? primaryRole : null;
+                      return (
+                        <li key={m.name} className="flex items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <a
+                              href={`#${slugify(m.name)}`}
+                              onClick={(e) => handleSidebarClick(e, slugify(m.name))}
+                              className="text-white font-semibold text-sm hover:text-[var(--emerald)] transition-colors"
+                            >
+                              {m.name}
+                            </a>
+                            <p className="text-slate-500 text-xs mt-0.5">{m.tagline}</p>
+                          </div>
+                          {abbrev && (
+                            <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full shrink-0 mt-0.5">
+                              {abbrev}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* SECTION 4: ALL 9 MODULES — sidebar + section content */}
-      <section className="bg-[var(--lgray)] py-16 px-6 md:px-12 lg:px-16">
+      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
             The Full Catalog
@@ -461,81 +437,111 @@ const SolutionsPage = () => {
                           {m.detail}
                         </p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Capabilities
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.capabilities.map((c) => (
-                                <li
-                                  key={c}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                  <span>{c}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Outcomes
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.outcomes.map((o) => (
-                                <li
-                                  key={o}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                  <span>{o}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              How it works
-                            </h4>
-                            <ol className="space-y-2">
-                              {m.howItWorks.map((step, i) => (
-                                <li
-                                  key={step}
-                                  className="flex items-start gap-3 text-sm text-slate-600"
-                                >
-                                  <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
-                                    {i + 1}
-                                  </span>
-                                  <span>{step}</span>
-                                </li>
-                              ))}
-                            </ol>
-                          </div>
-                          <div>
-                            <h4 className="text-[var(--navy)] text-xs font-bold uppercase tracking-widest mb-2">
-                              Data inputs
-                            </h4>
-                            <ul className="space-y-2">
-                              {m.dataInputs.map((d) => (
-                                <li
-                                  key={d}
-                                  className="flex items-start gap-2 text-sm text-slate-600"
-                                >
-                                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
-                                  <span>{d}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
+                        {(() => {
+                          const tabs: { key: string; label: string }[] = [
+                            { key: "capabilities", label: "Capabilities" },
+                            { key: "howItWorks", label: "How It Works" },
+                            { key: "outcomes", label: "Outcomes" },
+                            { key: "dataInputs", label: "Data Inputs" },
+                          ];
+                          const activeTab = activeModuleTab[slug] ?? "capabilities";
+                          return (
+                            <>
+                              <div className="flex gap-2 mt-6 flex-wrap">
+                                {tabs.map((t) => {
+                                  const isActive = t.key === activeTab;
+                                  return (
+                                    <button
+                                      key={t.key}
+                                      type="button"
+                                      onClick={() =>
+                                        setActiveModuleTab((prev) => ({
+                                          ...prev,
+                                          [slug]: t.key,
+                                        }))
+                                      }
+                                      className={
+                                        isActive
+                                          ? "bg-[var(--navy)] text-white px-4 py-1.5 rounded-full text-xs font-semibold"
+                                          : "bg-[var(--lgray)] text-slate-600 px-4 py-1.5 rounded-full text-xs hover:bg-slate-200 transition-colors cursor-pointer"
+                                      }
+                                    >
+                                      {t.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
 
-                        <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
-                          <p className="text-slate-400 text-xs uppercase tracking-widest">
-                            Integration & deployment
-                          </p>
-                          <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
-                        </div>
+                              <div className="mt-6">
+                                {activeTab === "capabilities" && (
+                                  <ul className="space-y-2">
+                                    {m.capabilities.map((c) => (
+                                      <li
+                                        key={c}
+                                        className="flex items-start gap-2 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                        <span>{c}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {activeTab === "howItWorks" && (
+                                  <ol className="space-y-2">
+                                    {m.howItWorks.map((step, i) => (
+                                      <li
+                                        key={step}
+                                        className="flex items-start gap-3 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
+                                          {i + 1}
+                                        </span>
+                                        <span>{step}</span>
+                                      </li>
+                                    ))}
+                                  </ol>
+                                )}
+
+                                {activeTab === "outcomes" && (
+                                  <ul className="space-y-2">
+                                    {m.outcomes.map((o) => (
+                                      <li
+                                        key={o}
+                                        className="flex items-start gap-2 text-sm text-slate-600"
+                                      >
+                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                        <span>{o}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {activeTab === "dataInputs" && (
+                                  <>
+                                    <ul className="space-y-2">
+                                      {m.dataInputs.map((d) => (
+                                        <li
+                                          key={d}
+                                          className="flex items-start gap-2 text-sm text-slate-600"
+                                        >
+                                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                                          <span>{d}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
+                                      <p className="text-slate-400 text-xs uppercase tracking-widest">
+                                        Integration & deployment
+                                      </p>
+                                      <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </>
+                          );
+                        })()}
 
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
                           <div>
