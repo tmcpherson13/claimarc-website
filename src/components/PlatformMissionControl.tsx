@@ -982,9 +982,21 @@ const RegulatoryFeed = ({
 // ===========================================================================
 const PlatformMissionControl = () => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [t, setT] = useState(0); // elapsed seconds
   const [now, setNow] = useState<Date>(() => new Date());
+
+  /** Navigate to /solutions#<slug> with a fixed-header offset so the section
+   * heading clears the sticky navbar (mirrors SolutionsPage's own scroll
+   * handling). */
+  const goToModule = useCallback(
+    (moduleName: string) => {
+      const slug = moduleSlug(moduleName);
+      navigate(`/solutions#${slug}`);
+    },
+    [navigate],
+  );
 
   // Crucible packet state (mutable, lives in a ref)
   const packetsRef = useRef<Packet[]>([]);
