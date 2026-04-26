@@ -34,7 +34,7 @@ const Req = () => (
 );
 
 const ContactPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const formRef = useRef<HTMLDivElement>(null);
   const offersRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +77,22 @@ const ContactPage = () => {
       return next;
     });
   }, [searchParams]);
+
+  // Sync offerType -> ?offer= URL param when user changes selection
+  useEffect(() => {
+    const current = searchParams.get("offer") ?? "";
+    const next = formData.offerType;
+    if (next && next !== current) {
+      const params = new URLSearchParams(searchParams);
+      params.set("offer", next);
+      setSearchParams(params, { replace: true });
+    } else if (!next && current) {
+      const params = new URLSearchParams(searchParams);
+      params.delete("offer");
+      setSearchParams(params, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.offerType]);
 
   const togglePayer = (p: string) => {
     setFormData((prev) => ({
