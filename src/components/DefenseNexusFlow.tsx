@@ -270,9 +270,10 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         visible ? "opacity-100" : "opacity-0"
       } ${className}`}
     >
+      <div className="flex justify-center w-full">
       <svg
         viewBox="0 0 1100 525"
-        className="w-full h-auto"
+        className="w-full max-w-5xl h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
