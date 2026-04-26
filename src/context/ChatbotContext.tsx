@@ -160,6 +160,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     setIsOpen(true);
     if (nextModuleContext) {
       setModuleContext(nextModuleContext);
+      writePersistedModuleContext(nextModuleContext);
       setMessages((prev) => {
         if (prev.length > 0) return prev;
         return [
@@ -182,6 +183,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     setOfferDemo(false);
     setError(null);
     setModuleContext(null);
+    writePersistedModuleContext(null);
     const fresh = generateId();
     sessionIdRef.current = fresh;
     try {
