@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
  * Pure SVG + React hooks. Decorative.
  */
 
-const CENTER_X = 600;
+const CENTER_X = 950;
 const CENTER_Y = 170;
 const RING_RY = 28;
 
@@ -36,18 +36,18 @@ interface Dot {
 }
 
 const DOTS: Dot[] = [
-  { x: 170, y: 100 },
-  { x: 280, y: 230 },
-  { x: 360, y: 130 },
-  { x: 440, y: 210 },
-  { x: 510, y: 90 },
-  { x: 720, y: 240 },
-  { x: 790, y: 110 },
-  { x: 860, y: 200 },
-  { x: 940, y: 140 },
-  { x: 1010, y: 220 },
-  { x: 1080, y: 100 },
-  { x: 230, y: 180 },
+  { x: 620, y: 100 },
+  { x: 680, y: 230 },
+  { x: 740, y: 130 },
+  { x: 800, y: 210 },
+  { x: 860, y: 90 },
+  { x: 900, y: 250 },
+  { x: 1000, y: 110 },
+  { x: 1040, y: 200 },
+  { x: 1080, y: 140 },
+  { x: 1130, y: 220 },
+  { x: 1160, y: 100 },
+  { x: 760, y: 180 },
 ];
 
 const SignalTower = ({ className = "" }: { className?: string }) => {
