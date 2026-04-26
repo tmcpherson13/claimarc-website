@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * IntelligenceInstrumentPanel — Bloomberg-terminal-meets-flight-deck
- * decorative SVG panel of six live "instruments". Pure SVG + a single
- * requestAnimationFrame loop. IntersectionObserver gates the animation
- * until the component is on screen.
+ * decorative SVG panel of nine module-specific "instruments". Pure SVG +
+ * a single requestAnimationFrame loop. IntersectionObserver gates the
+ * animation until the component is on screen.
  *
- * Vibe: amber + cyan instrument lighting on deep navy. Every element
- * looks like it's measuring something real.
+ * One instrument per ZDefense module, laid out in a 3x3 grid.
  */
 
 const TAU = Math.PI * 2;
@@ -23,14 +22,20 @@ const AMBER = "#F59E0B";
 const RED = "#EF4444";
 const CYAN = "#06B6D4";
 const GREEN = "#10B981";
+const TEXT_DIM = "#64748B";
 
-// ----- ticker text -----
-const TICKER_ENTRY =
-  "CO-50 · $1,240 · MEDICAL NECESSITY ·· CO-16 · $3,410 · MISSING INFO ·· CO-97 · $890 · BUNDLED ·· PR-1 · $2,180 · DEDUCTIBLE ·· CO-4 · $740 · MODIFIER ·· CO-22 · $1,660 · COB ·· ";
-const TICKER_TEXT = TICKER_ENTRY + TICKER_ENTRY;
-const TICKER_SPEED_PX_PER_S = 40;
-// Approx pixel width per char at fontSize=8 monospace ≈ 4.8px
-const TICKER_WIDTH_PX = TICKER_ENTRY.length * 4.8;
+const MONO = "ui-monospace, SFMono-Regular, monospace";
+
+// ----- 3x3 grid layout in 1200x380 viewBox -----
+const PAD_X = 10;
+const PAD_Y = 10;
+const GAP = 8;
+const CELL_W = (1200 - PAD_X * 2 - GAP * 2) / 3; // ~388
+const CELL_H = (380 - PAD_Y * 2 - GAP * 2) / 3; // ~118
+const cellPos = (col: number, row: number) => ({
+  x: PAD_X + col * (CELL_W + GAP),
+  y: PAD_Y + row * (CELL_H + GAP),
+});
 
 // ----- Bezel helper -----
 const Bezel = ({
@@ -56,7 +61,7 @@ const Bezel = ({
   />
 );
 
-// Build an SVG arc path between two angles (radians, 0 = +x, clockwise positive in screen coords)
+// Build an SVG arc path between two angles (radians)
 function arcPath(
   cx: number,
   cy: number,
@@ -74,14 +79,19 @@ function arcPath(
   return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} ${sweep} ${x2} ${y2}`;
 }
 
-// Spectrum bar config — fixed periods/phases per bar so the animation
-// is deterministic and harmonically interesting.
-const BAR_COUNT = 16;
-const BARS = Array.from({ length: BAR_COUNT }, (_, i) => ({
-  periodMs: 6000 + ((i * 547) % 8000), // 6–14s
-  phase: (i * 0.83) % TAU,
-  baseFreqOffset: i * 0.41,
-}));
+// Module label header (top-left of each cell)
+const CellLabel = ({ x, y, text }: { x: number; y: number; text: string }) => (
+  <text
+    x={x + 10}
+    y={y + 13}
+    fontSize={7}
+    fontFamily={MONO}
+    fill={LABEL}
+    letterSpacing={1}
+  >
+    {text}
+  </text>
+);
 
 const IntelligenceInstrumentPanel = ({
   className = "",
@@ -123,124 +133,200 @@ const IntelligenceInstrumentPanel = ({
 
   const elapsed =
     startRef.current === null ? 0 : performance.now() - startRef.current;
-  const elapsedS = elapsed / 1000;
+  const t = elapsed / 1000;
 
-  // ---- Denial Rate Gauge values ----
-  const denialPct = 11 + Math.sin((elapsedS / 12) * TAU) * 3; // 8–14%
-  // Map 8% → 210°, 18% → 330°. Active arc spans 210→330 (120° total).
-  const startDeg = 210;
-  const endDeg = 330;
-  // Map denialPct in [8, 18] → fraction in [0, 1]
-  const denialFrac = Math.max(0, Math.min(1, (denialPct - 8) / 10));
-  const fillEndDeg = startDeg + (endDeg - startDeg) * denialFrac;
-  const denialColor = denialPct < 10 ? AMBER : RED;
-  const gaugeCx = 120;
-  const gaugeCy = 140;
-  const gaugeR = 80;
-  const trackPath = arcPath(
-    gaugeCx,
-    gaugeCy,
-    gaugeR,
-    startDeg * DEG,
-    endDeg * DEG
-  );
-  const fillPath = arcPath(
-    gaugeCx,
-    gaugeCy,
-    gaugeR,
-    startDeg * DEG,
-    fillEndDeg * DEG
-  );
-  const needleRad = fillEndDeg * DEG;
-  const needleX = gaugeCx + gaugeR * Math.cos(needleRad);
-  const needleY = gaugeCy + gaugeR * Math.sin(needleRad);
+  // ============================================================
+  // INSTRUMENT 1 — SENTINEL · PAYER WEAPONIZATION INDEX (radial gauge)
+  // ============================================================
+  const s1 = cellPos(0, 0);
+  const wiVal = 2.0 + Math.sin((t / 14) * TAU) * 0.6; // 1.4–2.6
+  const wiZone =
+    wiVal < 1.5 ? "MODERATE" : wiVal < 2.0 ? "ELEVATED" : "CRITICAL";
+  const wiZoneColor = wiVal < 1.5 ? GREEN : wiVal < 2.0 ? AMBER : RED;
+  const wiCx = s1.x + CELL_W / 2;
+  const wiCy = s1.y + 68;
+  const wiR = 38;
+  const wiStartDeg = 150;
+  const wiEndDeg = 30; // arc goes 150° → 390° (i.e. 30°), 240° span
+  const wiSpan = 240;
+  // Zones in WI value space: 1.0–1.5 green, 1.5–2.0 amber, 2.0–3.0 red
+  const wiValToDeg = (v: number) =>
+    wiStartDeg + ((v - 1.0) / 2.0) * wiSpan;
+  const wiZ1End = wiValToDeg(1.5);
+  const wiZ2End = wiValToDeg(2.0);
+  const wiZ3End = wiValToDeg(3.0);
+  const wiNeedleDeg = wiValToDeg(Math.max(1.0, Math.min(3.0, wiVal)));
+  const wiNeedleRad = wiNeedleDeg * DEG;
+  const wiNx = wiCx + (wiR - 4) * Math.cos(wiNeedleRad);
+  const wiNy = wiCy + (wiR - 4) * Math.sin(wiNeedleRad);
 
-  // ---- Payer Activity EKG ----
-  const ekgX = 230;
-  const ekgY = 50;
-  const ekgW = 220;
-  const ekgH = 180;
-  const ekgInnerPadX = 10;
-  const ekgInnerPadY = 24;
-  const ekgPlotX = ekgX + ekgInnerPadX;
-  const ekgPlotY = ekgY + ekgInnerPadY;
-  const ekgPlotW = ekgW - ekgInnerPadX * 2;
-  const ekgPlotH = ekgH - ekgInnerPadY - ekgInnerPadX;
-  const ekgBaseline = ekgPlotY + ekgPlotH / 2;
-  const ekgAmplitude = 35;
-  // Phase advances 0.012 per frame at ~60fps → 0.72/s
-  const ekgPhase = elapsedS * 0.72;
-  const ekgPoints = useMemo(() => Array.from({ length: 90 }), []);
-  const ekgPolyline = ekgPoints
-    .map((_, i) => {
-      const x = ekgPlotX + (i / 89) * ekgPlotW;
-      const y =
-        ekgBaseline +
-        ekgAmplitude *
-          Math.sin(i * 0.18 + ekgPhase) *
-          // Layer a subtle secondary wave for organic feel
-          (0.85 + 0.15 * Math.sin(i * 0.07 + ekgPhase * 0.6));
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    })
-    .join(" ");
-  const ekgScanX = ekgPlotX + ekgPlotW;
+  // ============================================================
+  // INSTRUMENT 2 — CONTRACTINTEL · RATE POSITION (horizontal bars)
+  // ============================================================
+  const s2 = cellPos(1, 0);
+  const payers = ["UHC", "BCBS", "AETNA", "CIGNA", "HUMANA", "MOLINA", "CENTENE"];
+  const ciPlotX = s2.x + 60;
+  const ciPlotY = s2.y + 22;
+  const ciPlotW = CELL_W - 70;
+  const ciPlotH = CELL_H - 30;
+  const ciRowH = ciPlotH / payers.length;
+  const ciBarH = ciRowH - 3;
+  // 50th percentile marker
+  const ciMarkerX = ciPlotX + ciPlotW * 0.5;
 
-  // ---- Spectrum bars ----
-  const specX = 470;
-  const specY = 50;
-  const specW = 160;
-  const specH = 180;
-  const specInnerPadX = 10;
-  const specInnerPadTop = 22;
-  const specInnerPadBot = 14;
-  const specPlotX = specX + specInnerPadX;
-  const specPlotY = specY + specInnerPadTop;
-  const specPlotW = specW - specInnerPadX * 2;
-  const specPlotH = specH - specInnerPadTop - specInnerPadBot;
-  const specBaselineY = specPlotY + specPlotH;
-  const specBarGap = 2;
-  const specBarW = (specPlotW - specBarGap * (BAR_COUNT - 1)) / BAR_COUNT;
+  // ============================================================
+  // INSTRUMENT 3 — FORECAST · 90-DAY PROJECTION (curve)
+  // ============================================================
+  const s3 = cellPos(2, 0);
+  const fxPlotX = s3.x + 14;
+  const fxPlotY = s3.y + 24;
+  const fxPlotW = CELL_W - 110; // leave room for value
+  const fxPlotH = CELL_H - 36;
+  const fxN = 60;
+  const fxPoints: { x: number; y: number; yU: number; yL: number }[] = [];
+  for (let i = 0; i < fxN; i++) {
+    const x = fxPlotX + (i / (fxN - 1)) * fxPlotW;
+    // Trend: y declines (upward visually) over time. Add gentle sine.
+    const trend = 1 - i / (fxN - 1); // 1 → 0
+    const wobble = Math.sin(i * 0.42 + t * 0.6) * 0.06;
+    const v = trend * 0.7 + wobble + 0.15; // 0.15..0.91
+    const y = fxPlotY + v * fxPlotH;
+    const band = 6 + (i / fxN) * 8;
+    fxPoints.push({ x, y, yU: y - band, yL: y + band });
+  }
+  const fxLine = fxPoints.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const fxBand =
+    `M ${fxPoints[0].x.toFixed(1)} ${fxPoints[0].yU.toFixed(1)} ` +
+    fxPoints
+      .slice(1)
+      .map((p) => `L ${p.x.toFixed(1)} ${p.yU.toFixed(1)}`)
+      .join(" ") +
+    " " +
+    fxPoints
+      .slice()
+      .reverse()
+      .map((p) => `L ${p.x.toFixed(1)} ${p.yL.toFixed(1)}`)
+      .join(" ") +
+    " Z";
+  // Day 45 = i index 45/90 * (fxN-1)
+  const fxTodayIdx = Math.round((45 / 90) * (fxN - 1));
+  const fxTodayX = fxPoints[fxTodayIdx].x;
 
-  // ---- Compliance Countdown ----
-  const dialCx = 720;
-  const dialCy = 140;
-  const dialR = 75;
-  const cyclePeriodS = 15;
-  const cycleT = (elapsedS % cyclePeriodS) / cyclePeriodS; // 0→1
-  const daysRemainingFloat = 60 * (1 - cycleT);
-  const daysRemaining = Math.max(0, Math.ceil(daysRemainingFloat));
-  let dialColor = GREEN;
-  if (daysRemaining <= 10) dialColor = RED;
-  else if (daysRemaining <= 20) dialColor = AMBER;
-  // Arc from top (12 o'clock = -90°) clockwise representing days remaining.
-  // Full = 360° at 60 days, 0° at 0 days.
-  const dialArcDeg = (daysRemainingFloat / 60) * 360;
-  const dialStart = -90 * DEG;
-  const dialEnd = (-90 + dialArcDeg) * DEG;
-  // Avoid degenerate full circle (arcPath can't draw a 360° arc as a single A)
-  const dialArcEnd = dialArcDeg >= 359.9 ? (-90 + 359.9) * DEG : dialEnd;
-  const dialArcPath =
-    dialArcDeg <= 0.1
+  // ============================================================
+  // INSTRUMENT 4 — SHIELD · INTERCEPTION RATE (flow meter)
+  // ============================================================
+  const s4 = cellPos(0, 1);
+  const shInX = s4.x + 50;
+  const shOutX = s4.x + CELL_W - 70;
+  const shTop = s4.y + 24;
+  const shBot = s4.y + CELL_H - 12;
+  const shH = shBot - shTop;
+  const shRectW = 18;
+  const shRectH = 6;
+  const shGap = 8;
+  const shStep = shRectH + shGap;
+  // Animate downward
+  const shInOffset = (t * 28) % shStep;
+  const shOutOffset = (t * 22) % shStep;
+  const shCount = Math.floor(shH / shStep) + 2;
+  const shPulse = 0.85 + Math.sin(t * 1.5) * 0.15;
+
+  // ============================================================
+  // INSTRUMENT 5 — PREVENT · PA LEAD TIME (countdown ring)
+  // ============================================================
+  const s5 = cellPos(1, 1);
+  const pvCx = s5.x + CELL_W / 2;
+  const pvCy = s5.y + 60;
+  const pvR = 32;
+  const pvCycle = (t % 8) / 8; // 0→1 over 8s
+  const pvFrac = 1 - pvCycle; // ring depletes
+  const pvColor = pvFrac < 0.25 ? AMBER : GREEN;
+  const pvArcDeg = pvFrac * 359.9;
+  const pvArc =
+    pvArcDeg <= 0.1
       ? ""
-      : arcPath(dialCx, dialCy, dialR - 8, dialStart, dialArcEnd);
+      : arcPath(pvCx, pvCy, pvR, -90 * DEG, (-90 + pvArcDeg) * DEG);
 
-  // ---- Weaponization Index Signal Meter ----
-  const wiCx = 890;
-  const wiCy = 140;
-  const wiW = 120;
-  const wiH = 180;
-  const wiBezelX = wiCx - wiW / 2;
-  const wiBezelY = wiCy - wiH / 2;
-  const wiValue = 1.9 + Math.sin((elapsedS / 10) * TAU) * 0.7; // 1.2–2.6
-  // Map 1.2→0 bars, 2.6→8 bars
-  const wiBarsLitFloat = ((wiValue - 1.2) / (2.6 - 1.2)) * 8;
-  const wiBarsLit = Math.max(0, Math.min(8, Math.round(wiBarsLitFloat)));
+  // ============================================================
+  // INSTRUMENT 6 — LEDGER · UNDERPAYMENT TRACKER
+  // ============================================================
+  const s6 = cellPos(2, 1);
+  const ldOwed = 284 + Math.sin(t * 0.6) * 8; // K
+  const ldRecov = 218 + Math.sin(t * 0.5 + 1) * 10; // K
+  const ldRecovFrac = ldRecov / ldOwed;
+  const ldColLX = s6.x + CELL_W * 0.28;
+  const ldColRX = s6.x + CELL_W * 0.72;
+  const ldBarY = s6.y + 78;
+  const ldBarW = CELL_W * 0.32;
+  const ldGapPulse = 0.5 + Math.sin(t * 0.8) * 0.25;
 
-  // ---- Ticker ----
-  const tickerY = 240;
-  const tickerH = 28;
-  const tickerScrollX =
-    -((elapsedS * TICKER_SPEED_PX_PER_S) % TICKER_WIDTH_PX);
+  // ============================================================
+  // INSTRUMENT 7 — TRIAGE · DENIAL QUEUE
+  // ============================================================
+  const s7 = cellPos(0, 2);
+  const trEntries = [
+    { code: "CO-50", amt: "$1,240", prob: 0.86 },
+    { code: "CO-16", amt: "$3,410", prob: 0.72 },
+    { code: "CO-97", amt: "$890", prob: 0.58 },
+    { code: "PR-1", amt: "$2,180", prob: 0.41 },
+    { code: "CO-4", amt: "$740", prob: 0.91 },
+    { code: "CO-22", amt: "$1,660", prob: 0.66 },
+    { code: "CO-11", amt: "$520", prob: 0.34 },
+  ];
+  const trCycleS = 2.5;
+  const trShiftIdx = Math.floor(t / trCycleS) % trEntries.length;
+  const trProgress = (t % trCycleS) / trCycleS; // 0→1
+  const trVisible = 5;
+  const trRowH = 14;
+  const trListX = s7.x + 10;
+  const trListY = s7.y + 22;
+
+  // ============================================================
+  // INSTRUMENT 8 — EVIDENCE · ASSEMBLY STATUS
+  // ============================================================
+  const s8 = cellPos(1, 2);
+  const evRows = [
+    { label: "CLINICAL NOTES", dur: 2.4 },
+    { label: "AUTHORIZATION", dur: 3.1 },
+    { label: "MODIFIER HISTORY", dur: 2.8 },
+    { label: "COVERAGE RULE", dur: 3.6 },
+  ];
+  // One full cycle: max(dur) + 0.8 hold + 0.8 ready flash + small reset
+  const evMaxDur = Math.max(...evRows.map((r) => r.dur));
+  const evCycleDur = evMaxDur + 1.6;
+  const evCycleT = t % evCycleDur;
+  const evReady = evCycleT > evMaxDur && evCycleT < evMaxDur + 0.8;
+  const evRowFill = (dur: number) => Math.min(1, evCycleT / dur);
+  const evLabelX = s8.x + 12;
+  const evBarX = s8.x + 130;
+  const evBarW = CELL_W - 145;
+  const evBarH = 6;
+  const evRowGap = 4;
+  const evStartY = s8.y + 26;
+
+  // ============================================================
+  // INSTRUMENT 9 — RESOLVE · APPEAL OUTPUT (counter)
+  // ============================================================
+  const s9 = cellPos(2, 2);
+  // Cycle: 1.5s count up, 1s hold "10 LETTERS", 1s show "8 SECONDS", reset.
+  const rsCycle = 3.5;
+  const rsT = t % rsCycle;
+  let rsCount = 0;
+  let rsLine2 = "10 LETTERS";
+  if (rsT < 1.5) {
+    rsCount = Math.min(10, Math.floor((rsT / 1.5) * 10));
+    rsLine2 = "GENERATING";
+  } else if (rsT < 2.5) {
+    rsCount = 10;
+    rsLine2 = "10 LETTERS";
+  } else {
+    rsCount = 10;
+    rsLine2 = "8 SECONDS";
+  }
+  const rsCx = s9.x + CELL_W / 2;
+  const rsConfX = s9.x + 30;
+  const rsConfW = CELL_W - 60;
+  const rsConfY = s9.y + CELL_H - 18;
 
   return (
     <div
@@ -251,421 +337,682 @@ const IntelligenceInstrumentPanel = ({
       } ${className}`}
     >
       <svg
-        viewBox="0 0 1200 280"
+        viewBox="0 0 1200 380"
         className="w-full h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
-        <defs>
-          <clipPath id="iip-ticker-clip">
-            <rect x={70} y={tickerY + 1} width={1200 - 70 - 4} height={tickerH - 2} />
-          </clipPath>
-        </defs>
-
-        {/* ============== DENIAL RATE GAUGE ============== */}
+        {/* ============================================================
+            INSTRUMENT 1 — SENTINEL · PAYER WI
+           ============================================================ */}
         <g>
-          <Bezel x={gaugeCx - 90} y={gaugeCy - 90} width={180} height={180} />
-          <circle
-            cx={gaugeCx}
-            cy={gaugeCy}
-            r={gaugeR}
-            fill={PANEL_FILL}
-            stroke={GRID}
-            strokeWidth={1}
-          />
-          {/* track */}
+          <Bezel x={s1.x} y={s1.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s1.x} y={s1.y} text="SENTINEL · PAYER WI" />
+          {/* zone arcs */}
           <path
-            d={trackPath}
-            stroke={GRID}
-            strokeWidth={6}
+            d={arcPath(wiCx, wiCy, wiR, wiStartDeg * DEG, wiZ1End * DEG)}
+            stroke={GREEN}
+            strokeWidth={5}
             fill="none"
-            opacity={0.4}
-            strokeLinecap="round"
+            opacity={0.55}
+            strokeLinecap="butt"
           />
-          {/* fill */}
           <path
-            d={fillPath}
-            stroke={denialColor}
-            strokeWidth={6}
+            d={arcPath(wiCx, wiCy, wiR, wiZ1End * DEG, wiZ2End * DEG)}
+            stroke={AMBER}
+            strokeWidth={5}
             fill="none"
-            strokeLinecap="round"
+            opacity={0.55}
+            strokeLinecap="butt"
+          />
+          <path
+            d={arcPath(wiCx, wiCy, wiR, wiZ2End * DEG, wiZ3End * DEG)}
+            stroke={RED}
+            strokeWidth={5}
+            fill="none"
+            opacity={0.55}
+            strokeLinecap="butt"
           />
           {/* needle */}
           <line
-            x1={gaugeCx}
-            y1={gaugeCy}
-            x2={needleX}
-            y2={needleY}
-            stroke={AMBER}
+            x1={wiCx}
+            y1={wiCy}
+            x2={wiNx}
+            y2={wiNy}
+            stroke={wiZoneColor}
             strokeWidth={1.5}
           />
-          <circle cx={gaugeCx} cy={gaugeCy} r={3} fill={AMBER} />
+          <circle cx={wiCx} cy={wiCy} r={2.5} fill={wiZoneColor} />
           {/* value */}
           <text
-            x={gaugeCx}
-            y={gaugeCy + 6}
+            x={wiCx}
+            y={wiCy + 22}
             textAnchor="middle"
-            fontSize={14}
+            fontSize={16}
             fontWeight="bold"
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={AMBER}
+            fontFamily={MONO}
+            fill={wiZoneColor}
           >
-            {denialPct.toFixed(1)}%
+            {wiVal.toFixed(2)}x
           </text>
           <text
-            x={gaugeCx}
-            y={gaugeCy + 22}
+            x={wiCx}
+            y={s1.y + CELL_H - 10}
             textAnchor="middle"
             fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={LABEL}
+            fontFamily={MONO}
+            fill={wiZoneColor}
             letterSpacing={1}
           >
-            DENIAL RATE
+            THREAT LEVEL: {wiZone}
           </text>
         </g>
 
-        {/* ============== PAYER ACTIVITY EKG ============== */}
+        {/* ============================================================
+            INSTRUMENT 2 — CONTRACTINTEL · RATE POSITION
+           ============================================================ */}
         <g>
-          <Bezel x={ekgX} y={ekgY} width={ekgW} height={ekgH} />
-          <rect
-            x={ekgPlotX}
-            y={ekgPlotY}
-            width={ekgPlotW}
-            height={ekgPlotH}
-            fill={PANEL_FILL}
-          />
-          {/* x-axis ticks every 20px */}
-          {Array.from({ length: Math.floor(ekgPlotW / 20) + 1 }).map((_, i) => {
-            const x = ekgPlotX + i * 20;
+          <Bezel x={s2.x} y={s2.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s2.x} y={s2.y} text="CONTRACTINTEL · RATE POSITION" />
+          {payers.map((p, i) => {
+            // independent sine; range 45..85 percentile
+            const phase = i * 0.9;
+            const period = 9 + i * 1.3;
+            const pct = 65 + Math.sin((t / period) * TAU + phase) * 18; // 47..83
+            const frac = pct / 100;
+            const rowY = ciPlotY + i * ciRowH;
+            const w = ciPlotW * frac;
+            const fill = pct < 50 ? AMBER : pct > 60 ? GREEN : CYAN;
             return (
-              <line
-                key={`ekg-tick-${i}`}
-                x1={x}
-                y1={ekgPlotY + ekgPlotH - 2}
-                x2={x}
-                y2={ekgPlotY + ekgPlotH + 2}
-                stroke={GRID}
-                strokeWidth={1}
-              />
+              <g key={`ci-${p}`}>
+                <text
+                  x={s2.x + 8}
+                  y={rowY + ciBarH / 2 + 3}
+                  fontSize={7}
+                  fontFamily={MONO}
+                  fill={LABEL}
+                  letterSpacing={0.5}
+                >
+                  {p}
+                </text>
+                <rect
+                  x={ciPlotX}
+                  y={rowY}
+                  width={ciPlotW}
+                  height={ciBarH}
+                  fill={PANEL_FILL}
+                  stroke={GRID}
+                  strokeWidth={0.5}
+                />
+                <rect
+                  x={ciPlotX}
+                  y={rowY}
+                  width={w}
+                  height={ciBarH}
+                  fill={fill}
+                  opacity={0.85}
+                />
+              </g>
             );
           })}
-          {/* baseline */}
+          {/* market 50th percentile line */}
           <line
-            x1={ekgPlotX}
-            y1={ekgBaseline}
-            x2={ekgPlotX + ekgPlotW}
-            y2={ekgBaseline}
-            stroke={GRID}
-            strokeWidth={0.5}
-            opacity={0.5}
+            x1={ciMarkerX}
+            y1={ciPlotY - 2}
+            x2={ciMarkerX}
+            y2={ciPlotY + ciPlotH}
+            stroke={LABEL}
+            strokeWidth={0.8}
+            strokeDasharray="2 2"
           />
+        </g>
+
+        {/* ============================================================
+            INSTRUMENT 3 — FORECAST · 90-DAY PROJECTION
+           ============================================================ */}
+        <g>
+          <Bezel x={s3.x} y={s3.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s3.x} y={s3.y} text="FORECAST · 90-DAY PROJECTION" />
+          {/* confidence band */}
+          <path d={fxBand} fill={GREEN} opacity={0.08} />
+          {/* line */}
           <polyline
-            points={ekgPolyline}
+            points={fxLine}
             fill="none"
-            stroke={CYAN}
+            stroke={GREEN}
             strokeWidth={1.5}
-            opacity={0.9}
             strokeLinejoin="round"
             strokeLinecap="round"
           />
-          {/* scan line */}
+          {/* TODAY marker */}
           <line
-            x1={ekgScanX}
-            y1={ekgPlotY}
-            x2={ekgScanX}
-            y2={ekgPlotY + ekgPlotH}
-            stroke={CYAN}
-            strokeWidth={1}
-            opacity={0.5}
+            x1={fxTodayX}
+            y1={fxPlotY}
+            x2={fxTodayX}
+            y2={fxPlotY + fxPlotH}
+            stroke={LABEL}
+            strokeWidth={0.8}
+            strokeDasharray="2 2"
           />
           <text
-            x={ekgX + 8}
-            y={ekgY + 14}
-            fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
+            x={fxTodayX + 3}
+            y={fxPlotY + 9}
+            fontSize={6}
+            fontFamily={MONO}
             fill={LABEL}
-            letterSpacing={1}
+            letterSpacing={0.5}
           >
-            PAYER ACTIVITY — 90 DAY
+            TODAY
           </text>
+          {/* terminal value */}
           <text
-            x={ekgScanX - 4}
-            y={ekgPlotY + 9}
-            fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={CYAN}
+            x={s3.x + CELL_W - 12}
+            y={s3.y + 50}
             textAnchor="end"
-            letterSpacing={1}
+            fontSize={16}
+            fontWeight="bold"
+            fontFamily={MONO}
+            fill={GREEN}
           >
-            NOW
+            $12.6M
           </text>
-        </g>
-
-        {/* ============== CLAIM VOLUME SPECTRUM ============== */}
-        <g>
-          <Bezel x={specX} y={specY} width={specW} height={specH} />
-          <rect
-            x={specPlotX}
-            y={specPlotY}
-            width={specPlotW}
-            height={specPlotH}
-            fill={PANEL_FILL}
-          />
-          {BARS.map((b, i) => {
-            const phase = (elapsedS / (b.periodMs / 1000)) * TAU + b.phase;
-            const norm = (Math.sin(phase) + 1) / 2; // 0–1
-            const h = 20 + norm * 100; // 20–120
-            const x = specPlotX + i * (specBarW + specBarGap);
-            const y = specBaselineY - h;
-            let fill = GRID;
-            let opacity = 1;
-            if (h > 80) {
-              fill = CYAN;
-              opacity = 0.9;
-            } else if (h > 50) {
-              fill = CYAN;
-              opacity = 0.6;
-            } else {
-              fill = GRID;
-              opacity = 1;
-            }
-            return (
-              <rect
-                key={`spec-${i}`}
-                x={x}
-                y={y}
-                width={specBarW}
-                height={h}
-                fill={fill}
-                opacity={opacity}
-                rx={1}
-              />
-            );
-          })}
-          {/* baseline */}
-          <line
-            x1={specPlotX}
-            y1={specBaselineY}
-            x2={specPlotX + specPlotW}
-            y2={specBaselineY}
-            stroke={GRID}
-            strokeWidth={1}
-          />
           <text
-            x={specX + 8}
-            y={specY + 14}
+            x={s3.x + CELL_W - 12}
+            y={s3.y + 64}
+            textAnchor="end"
             fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
+            fontFamily={MONO}
             fill={LABEL}
             letterSpacing={1}
           >
-            CLAIM VOLUME DISTRIBUTION
+            84% CONFIDENCE
           </text>
         </g>
 
-        {/* ============== COMPLIANCE COUNTDOWN DIAL ============== */}
+        {/* ============================================================
+            INSTRUMENT 4 — SHIELD · INTERCEPTION RATE
+           ============================================================ */}
         <g>
-          <Bezel
-            x={dialCx - 87.5}
-            y={dialCy - 87.5}
-            width={175}
-            height={175}
+          <Bezel x={s4.x} y={s4.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s4.x} y={s4.y} text="SHIELD · INTERCEPTION RATE" />
+          <defs>
+            <clipPath id={`sh-clip-in-${0}`}>
+              <rect x={shInX - shRectW / 2} y={shTop} width={shRectW} height={shH} />
+            </clipPath>
+            <clipPath id={`sh-clip-out-${0}`}>
+              <rect
+                x={shOutX - shRectW / 2}
+                y={shTop}
+                width={shRectW}
+                height={shH}
+              />
+            </clipPath>
+          </defs>
+          {/* INBOUND column */}
+          <text
+            x={shInX}
+            y={shTop - 4}
+            textAnchor="middle"
+            fontSize={6}
+            fontFamily={MONO}
+            fill={AMBER}
+            letterSpacing={1}
+          >
+            INBOUND
+          </text>
+          <g clipPath={`url(#sh-clip-in-${0})`}>
+            {Array.from({ length: shCount }).map((_, i) => {
+              const y = shTop + i * shStep + shInOffset - shStep;
+              return (
+                <rect
+                  key={`sh-in-${i}`}
+                  x={shInX - shRectW / 2}
+                  y={y}
+                  width={shRectW}
+                  height={shRectH}
+                  fill={AMBER}
+                  opacity={0.6}
+                  rx={1}
+                />
+              );
+            })}
+          </g>
+          {/* CLEAN column */}
+          <text
+            x={shOutX}
+            y={shTop - 4}
+            textAnchor="middle"
+            fontSize={6}
+            fontFamily={MONO}
+            fill={GREEN}
+            letterSpacing={1}
+          >
+            CLEAN
+          </text>
+          <g clipPath={`url(#sh-clip-out-${0})`}>
+            {Array.from({ length: shCount }).map((_, i) => {
+              const y = shTop + i * shStep + shOutOffset - shStep;
+              return (
+                <rect
+                  key={`sh-out-${i}`}
+                  x={shOutX - shRectW / 2}
+                  y={y}
+                  width={shRectW}
+                  height={shRectH}
+                  fill={GREEN}
+                  opacity={0.85}
+                  rx={1}
+                />
+              );
+            })}
+          </g>
+          {/* interception line */}
+          <line
+            x1={shInX + shRectW / 2 + 2}
+            y1={s4.y + CELL_H / 2 + 4}
+            x2={shOutX - shRectW / 2 - 6}
+            y2={s4.y + CELL_H / 2 + 4}
+            stroke={CYAN}
+            strokeWidth={0.8}
+            opacity={0.7}
           />
+          <polygon
+            points={`${shOutX - shRectW / 2 - 6},${s4.y + CELL_H / 2 + 4} ${shOutX - shRectW / 2 - 10},${s4.y + CELL_H / 2 + 1} ${shOutX - shRectW / 2 - 10},${s4.y + CELL_H / 2 + 7}`}
+            fill={CYAN}
+            opacity={0.8}
+          />
+          {/* central readout */}
+          <text
+            x={s4.x + CELL_W / 2}
+            y={s4.y + CELL_H / 2 - 6}
+            textAnchor="middle"
+            fontSize={18}
+            fontWeight="bold"
+            fontFamily={MONO}
+            fill={GREEN}
+            opacity={shPulse}
+          >
+            89.4%
+          </text>
+          <text
+            x={s4.x + CELL_W / 2}
+            y={s4.y + CELL_H - 8}
+            textAnchor="middle"
+            fontSize={7}
+            fontFamily={MONO}
+            fill={LABEL}
+            letterSpacing={1}
+          >
+            CLEAN CLAIM RATE
+          </text>
+        </g>
+
+        {/* ============================================================
+            INSTRUMENT 5 — PREVENT · PA LEAD TIME
+           ============================================================ */}
+        <g>
+          <Bezel x={s5.x} y={s5.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s5.x} y={s5.y} text="PREVENT · PA LEAD TIME" />
+          {/* base ring */}
           <circle
-            cx={dialCx}
-            cy={dialCy}
-            r={dialR}
+            cx={pvCx}
+            cy={pvCy}
+            r={pvR}
             fill={PANEL_FILL}
             stroke={GRID}
             strokeWidth={1}
           />
-          {/* 60 tick marks */}
-          {Array.from({ length: 60 }).map((_, i) => {
-            const a = (i / 60) * TAU - Math.PI / 2;
-            const isMajor = i % 5 === 0;
-            const inner = dialR - (isMajor ? 8 : 4);
-            const outer = dialR - 1;
-            const x1 = dialCx + inner * Math.cos(a);
-            const y1 = dialCy + inner * Math.sin(a);
-            const x2 = dialCx + outer * Math.cos(a);
-            const y2 = dialCy + outer * Math.sin(a);
-            return (
-              <line
-                key={`dial-tick-${i}`}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                stroke={GRID}
-                strokeWidth={1}
-                opacity={isMajor ? 0.9 : 0.5}
-              />
-            );
-          })}
-          {dialArcPath && (
+          {/* depleting arc */}
+          {pvArc && (
             <path
-              d={dialArcPath}
-              stroke={dialColor}
-              strokeWidth={5}
+              d={pvArc}
+              stroke={pvColor}
+              strokeWidth={4}
               fill="none"
               strokeLinecap="round"
             />
           )}
+          {/* big number */}
           <text
-            x={dialCx}
-            y={dialCy + 4}
+            x={pvCx}
+            y={pvCy + 6}
+            textAnchor="middle"
+            fontSize={22}
+            fontWeight="bold"
+            fontFamily={MONO}
+            fill={pvColor}
+          >
+            11
+          </text>
+          <text
+            x={pvCx}
+            y={s5.y + CELL_H - 22}
+            textAnchor="middle"
+            fontSize={7}
+            fontFamily={MONO}
+            fill={LABEL}
+            letterSpacing={1}
+          >
+            DAYS ADVANCE NOTICE
+          </text>
+          <text
+            x={pvCx}
+            y={s5.y + CELL_H - 10}
+            textAnchor="middle"
+            fontSize={6}
+            fontFamily={MONO}
+            fill={TEXT_DIM}
+            letterSpacing={1}
+          >
+            PRIOR AUTH DETECTED
+          </text>
+        </g>
+
+        {/* ============================================================
+            INSTRUMENT 6 — LEDGER · UNDERPAYMENT TRACKER
+           ============================================================ */}
+        <g>
+          <Bezel x={s6.x} y={s6.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s6.x} y={s6.y} text="LEDGER · UNDERPAYMENT TRACKER" />
+          {/* OWED */}
+          <text
+            x={ldColLX}
+            y={s6.y + 32}
+            textAnchor="middle"
+            fontSize={6}
+            fontFamily={MONO}
+            fill={LABEL}
+            letterSpacing={1}
+          >
+            OWED
+          </text>
+          <text
+            x={ldColLX}
+            y={s6.y + 60}
             textAnchor="middle"
             fontSize={18}
             fontWeight="bold"
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={dialColor}
+            fontFamily={MONO}
+            fill={AMBER}
           >
-            {daysRemaining}
+            ${ldOwed.toFixed(0)}K
           </text>
+          <rect
+            x={ldColLX - ldBarW / 2}
+            y={ldBarY}
+            width={ldBarW}
+            height={4}
+            fill={PANEL_FILL}
+            stroke={GRID}
+            strokeWidth={0.5}
+          />
+          <rect
+            x={ldColLX - ldBarW / 2}
+            y={ldBarY}
+            width={ldBarW}
+            height={4}
+            fill={AMBER}
+            opacity={0.85}
+          />
+          {/* RECOVERED */}
           <text
-            x={dialCx}
-            y={dialCy + 22}
-            textAnchor="middle"
-            fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={LABEL}
-            letterSpacing={1}
-          >
-            DAYS REMAINING
-          </text>
-          <text
-            x={dialCx}
-            y={dialCy + 34}
+            x={ldColRX}
+            y={s6.y + 32}
             textAnchor="middle"
             fontSize={6}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
+            fontFamily={MONO}
             fill={LABEL}
-            opacity={0.6}
             letterSpacing={1}
           >
-            60-DAY RULE
+            RECOVERED
+          </text>
+          <text
+            x={ldColRX}
+            y={s6.y + 60}
+            textAnchor="middle"
+            fontSize={18}
+            fontWeight="bold"
+            fontFamily={MONO}
+            fill={GREEN}
+          >
+            ${ldRecov.toFixed(0)}K
+          </text>
+          <rect
+            x={ldColRX - ldBarW / 2}
+            y={ldBarY}
+            width={ldBarW}
+            height={4}
+            fill={PANEL_FILL}
+            stroke={GRID}
+            strokeWidth={0.5}
+          />
+          <rect
+            x={ldColRX - ldBarW / 2}
+            y={ldBarY}
+            width={ldBarW * ldRecovFrac}
+            height={4}
+            fill={GREEN}
+            opacity={0.9}
+          />
+          {/* connecting line (gap) */}
+          <line
+            x1={ldColLX + ldBarW / 2 + 4}
+            y1={s6.y + 60}
+            x2={ldColRX - ldBarW / 2 - 4}
+            y2={s6.y + 60}
+            stroke={CYAN}
+            strokeWidth={0.8}
+            strokeDasharray="3 3"
+            opacity={ldGapPulse}
+          />
+          <text
+            x={s6.x + CELL_W / 2}
+            y={s6.y + CELL_H - 8}
+            textAnchor="middle"
+            fontSize={7}
+            fontFamily={MONO}
+            fill={GREEN}
+            letterSpacing={1}
+          >
+            60-DAY COMPLIANCE: ACTIVE
           </text>
         </g>
 
-        {/* ============== WEAPONIZATION INDEX SIGNAL METER ============== */}
+        {/* ============================================================
+            INSTRUMENT 7 — TRIAGE · DENIAL QUEUE
+           ============================================================ */}
         <g>
-          <Bezel x={wiBezelX} y={wiBezelY} width={wiW} height={wiH} />
-          {/* value */}
-          <text
-            x={wiCx}
-            y={wiBezelY + 22}
-            textAnchor="middle"
-            fontSize={13}
-            fontWeight="bold"
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={AMBER}
-          >
-            {wiValue.toFixed(2)}x
-          </text>
-          {/* 8 stacked bars, bottom-up */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            // bar 0 = bottom, bar 7 = top
-            const lit = i < wiBarsLit;
-            let color = GRID;
-            let opacity = 0.3;
-            if (lit) {
-              if (i >= 6) color = RED;
-              else if (i >= 3) color = AMBER;
-              else color = GREEN;
-              opacity = 1;
-            }
-            const barH = 12;
-            const barW = 80;
-            const gap = 4;
-            // Stack from bottom: bar 0 is lowest
-            const stackBottom = wiBezelY + wiH - 28;
-            const y = stackBottom - i * (barH + gap) - barH;
-            const x = wiCx - barW / 2;
+          <Bezel x={s7.x} y={s7.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s7.x} y={s7.y} text="TRIAGE · DENIAL QUEUE" />
+          {Array.from({ length: trVisible }).map((_, i) => {
+            const idx = (trShiftIdx + i) % trEntries.length;
+            const e = trEntries[idx];
+            // Top row fades out, bottom row fades in
+            let opacity = 1;
+            if (i === 0) opacity = 1 - trProgress;
+            else if (i === trVisible - 1) opacity = trProgress;
+            const rowY = trListY + i * trRowH;
+            const probColor =
+              e.prob > 0.8 ? GREEN : e.prob > 0.5 ? AMBER : RED;
+            const barX = trListX + 110;
+            const barW = CELL_W - 130;
             return (
-              <rect
-                key={`wi-${i}`}
-                x={x}
-                y={y}
-                width={barW}
-                height={barH}
-                rx={2}
-                fill={color}
-                opacity={opacity}
-              />
+              <g key={`tr-${i}`} opacity={opacity}>
+                <text
+                  x={trListX}
+                  y={rowY + 8}
+                  fontSize={7}
+                  fontFamily={MONO}
+                  fill={CYAN}
+                  letterSpacing={0.5}
+                >
+                  {e.code}
+                </text>
+                <text
+                  x={trListX + 42}
+                  y={rowY + 8}
+                  fontSize={7}
+                  fontFamily={MONO}
+                  fill={LABEL}
+                >
+                  {e.amt}
+                </text>
+                <rect
+                  x={barX}
+                  y={rowY + 2}
+                  width={barW}
+                  height={6}
+                  fill={PANEL_FILL}
+                  stroke={GRID}
+                  strokeWidth={0.5}
+                />
+                <rect
+                  x={barX}
+                  y={rowY + 2}
+                  width={barW * e.prob}
+                  height={6}
+                  fill={probColor}
+                  opacity={0.9}
+                />
+              </g>
             );
           })}
           <text
-            x={wiCx}
-            y={wiBezelY + wiH - 10}
-            textAnchor="middle"
-            fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
-            fill={LABEL}
+            x={s7.x + CELL_W - 10}
+            y={s7.y + CELL_H - 8}
+            textAnchor="end"
+            fontSize={8}
+            fontFamily={MONO}
+            fontWeight="bold"
+            fill={GREEN}
             letterSpacing={1}
           >
-            WEAPONIZATION INDEX
+            $847K PIPELINE
           </text>
         </g>
 
-        {/* ============== CARC TICKER TAPE ============== */}
+        {/* ============================================================
+            INSTRUMENT 8 — EVIDENCE · ASSEMBLY STATUS
+           ============================================================ */}
         <g>
-          <Bezel x={0} y={tickerY} width={1200} height={tickerH} />
+          <Bezel x={s8.x} y={s8.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s8.x} y={s8.y} text="EVIDENCE · ASSEMBLY STATUS" />
+          {evRows.map((r, i) => {
+            const fill = evRowFill(r.dur);
+            const rowY = evStartY + i * (evBarH + evRowGap + 8);
+            return (
+              <g key={`ev-${i}`}>
+                <text
+                  x={evLabelX}
+                  y={rowY + evBarH}
+                  fontSize={7}
+                  fontFamily={MONO}
+                  fill={LABEL}
+                  letterSpacing={0.5}
+                >
+                  {r.label}
+                </text>
+                <rect
+                  x={evBarX}
+                  y={rowY}
+                  width={evBarW}
+                  height={evBarH}
+                  fill={PANEL_FILL}
+                  stroke={GRID}
+                  strokeWidth={0.5}
+                />
+                <rect
+                  x={evBarX}
+                  y={rowY}
+                  width={evBarW * fill}
+                  height={evBarH}
+                  fill={fill >= 1 ? GREEN : CYAN}
+                  opacity={0.9}
+                />
+                <text
+                  x={evBarX + evBarW + 4}
+                  y={rowY + evBarH}
+                  fontSize={6}
+                  fontFamily={MONO}
+                  fill={fill >= 1 ? GREEN : LABEL}
+                >
+                  {Math.round(fill * 100)}%
+                </text>
+              </g>
+            );
+          })}
+          {evReady && (
+            <text
+              x={s8.x + CELL_W / 2}
+              y={s8.y + CELL_H - 6}
+              textAnchor="middle"
+              fontSize={9}
+              fontWeight="bold"
+              fontFamily={MONO}
+              fill={GREEN}
+              letterSpacing={2}
+            >
+              PACKAGE READY
+            </text>
+          )}
+        </g>
+
+        {/* ============================================================
+            INSTRUMENT 9 — RESOLVE · APPEAL OUTPUT
+           ============================================================ */}
+        <g>
+          <Bezel x={s9.x} y={s9.y} width={CELL_W} height={CELL_H} />
+          <CellLabel x={s9.x} y={s9.y} text="RESOLVE · APPEAL OUTPUT" />
+          <text
+            x={rsCx}
+            y={s9.y + 58}
+            textAnchor="middle"
+            fontSize={32}
+            fontWeight="bold"
+            fontFamily={MONO}
+            fill={GREEN}
+          >
+            {rsCount.toString().padStart(2, "0")}
+          </text>
+          <text
+            x={rsCx}
+            y={s9.y + 76}
+            textAnchor="middle"
+            fontSize={8}
+            fontFamily={MONO}
+            fill={rsLine2 === "8 SECONDS" ? CYAN : LABEL}
+            letterSpacing={2}
+          >
+            {rsLine2}
+          </text>
+          {/* confidence bar */}
           <rect
-            x={2}
-            y={tickerY + 2}
-            width={1196}
-            height={tickerH - 4}
+            x={rsConfX}
+            y={rsConfY}
+            width={rsConfW}
+            height={5}
             fill={PANEL_FILL}
+            stroke={GRID}
+            strokeWidth={0.5}
           />
-          {/* Static label outside the clip */}
           <rect
-            x={2}
-            y={tickerY + 2}
-            width={64}
-            height={tickerH - 4}
-            fill={BEZEL_FILL}
+            x={rsConfX}
+            y={rsConfY}
+            width={rsConfW * 0.78}
+            height={5}
+            fill={GREEN}
+            opacity={0.9}
           />
           <text
-            x={8}
-            y={tickerY + tickerH / 2 + 3}
-            fontSize={7}
-            fontFamily="ui-monospace, SFMono-Regular, monospace"
+            x={rsConfX + rsConfW}
+            y={rsConfY - 3}
+            textAnchor="end"
+            fontSize={6}
+            fontFamily={MONO}
             fill={LABEL}
             letterSpacing={1}
           >
-            LIVE DENIAL FEED
+            CONFIDENCE 78%
           </text>
-          <line
-            x1={68}
-            y1={tickerY + 4}
-            x2={68}
-            y2={tickerY + tickerH - 4}
-            stroke={GRID}
-            strokeWidth={1}
-          />
-          <g clipPath="url(#iip-ticker-clip)">
-            <text
-              x={tickerScrollX + 76}
-              y={tickerY + tickerH / 2 + 3}
-              fontSize={8}
-              fontFamily="ui-monospace, SFMono-Regular, monospace"
-              fill={CYAN}
-              opacity={0.7}
-            >
-              {TICKER_TEXT}
-            </text>
-            {/* Second copy offset for seamless scroll */}
-            <text
-              x={tickerScrollX + 76 + TICKER_WIDTH_PX}
-              y={tickerY + tickerH / 2 + 3}
-              fontSize={8}
-              fontFamily="ui-monospace, SFMono-Regular, monospace"
-              fill={CYAN}
-              opacity={0.7}
-            >
-              {TICKER_TEXT}
-            </text>
-          </g>
         </g>
       </svg>
     </div>
