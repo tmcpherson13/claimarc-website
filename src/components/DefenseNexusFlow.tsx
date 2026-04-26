@@ -248,6 +248,26 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const [isMobile, setIsMobile] = useState(false);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
+  const lastFrameRef = useRef<number | null>(null);
+
+  // Persistent chaotic random-walk state for interior nexus particles.
+  // Each particle keeps its own position + velocity and updates per frame
+  // with random direction kicks for genuinely chaotic, non-periodic motion.
+  const CHAOS_COUNT = 22;
+  const chaosRef = useRef(
+    Array.from({ length: CHAOS_COUNT }, (_, i) => {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random() * 24;
+      return {
+        x: Math.cos(a) * r,
+        y: Math.sin(a) * r,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6,
+        radius: 1.1 + (i % 3) * 0.5,
+        phase: Math.random() * Math.PI * 2,
+      };
+    })
+  );
 
   // Hover-delay timers — prevent flicker between rapid hovers
   const srcEnterTimer = useRef<number | null>(null);
