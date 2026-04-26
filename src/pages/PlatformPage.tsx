@@ -20,6 +20,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { getModule, MODULES, type ModuleDefinition } from "@/config/modules";
+import { useChatbot } from "@/context/ChatbotContext";
 
 const MODULES_LOOKUP = MODULES.map((m) => m.name);
 
