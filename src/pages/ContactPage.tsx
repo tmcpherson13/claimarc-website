@@ -384,7 +384,7 @@ const ContactPage = () => {
                   )}
                   <select
                     id="orgType"
-                    aria-required="true"
+                    aria-required={!isInfo}
                     className={fieldClass}
                     value={formData.orgType}
                     onChange={(e) => setFormData({ ...formData, orgType: e.target.value })}
