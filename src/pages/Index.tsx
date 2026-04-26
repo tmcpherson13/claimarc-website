@@ -66,83 +66,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 2: PREDICT / PROTECT / RECOVER */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
-            THE PLATFORM
-          </p>
-          <h2 className="text-white text-3xl md:text-4xl font-bold text-center mt-2">
-            {PHRASES.threeLayersNineModules}
-          </h2>
-          <p className="text-slate-400 text-center mt-2 text-lg">
-            ZDefense covers the full revenue cycle lifecycle — before, during,
-            and after every claim.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
-            {[
-              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
-              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
-              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
-            ].map((c) => (
-              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8 hover:border-emerald-800 transition-colors">
-                <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
-                <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
-                <div className="text-white font-semibold text-lg mt-4">{c.headline}</div>
-                <p className="text-slate-400 text-sm mt-3">{c.body}</p>
-                <div className="mt-6 pt-6 border-t border-slate-800 text-[var(--emerald)] text-sm font-bold mb-2">
-                  {c.proof}
-                </div>
-                <Link to={c.href} className="text-slate-300 text-sm mt-1 block hover:text-white hover:underline">
-                  {c.link}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: AI³ DEPLOYMENT */}
-      <section className="bg-[var(--navy)] py-20 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-sm font-semibold uppercase tracking-widest">AI³ DEPLOYMENT</p>
-          <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
-            AI³ = three ways to deploy the intelligence — not three different products.
-          </h2>
-          <p className="text-slate-400 text-lg mt-3 max-w-2xl">
-            Same platform. Same nine modules. Three delivery models: Actionable AI¹, Augmented AI², Automated AI³ — choose the one that fits your team's capacity and oversight preference.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            {[
-              { tag: "Actionable AI¹", title: "Your team, our platform", body: "ZDefense surfaces the intelligence and prioritized actions. Your team executes inside their existing workflow." },
-              { tag: "Augmented AI²", title: "ZTech co-pilot", body: "ZDefense plus a ZTech analyst working alongside your team — reviewing signals, prepping appeals, and accelerating recovery." },
-              { tag: "Automated AI³", title: "Fire and forget", body: "ZDefense and ZTech operate the recovery and protection workflows end-to-end. Your team receives outcomes, not work queues." },
-            ].map((c) => (
-              <div key={c.tag} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6">
-                <div className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">{c.tag}</div>
-                <div className="text-white font-semibold text-lg mt-2">{c.title}</div>
-                <p className="text-slate-400 text-sm mt-2">{c.body}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <Link to="/pricing" className="text-slate-400 text-sm underline hover:text-white transition-colors">
-              Learn about deployment models →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: MARKET PROBLEM */}
-      <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
+      {/* SECTION 2: MARKET PROBLEM */}
+      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-[var(--amber)] text-sm font-semibold uppercase tracking-widest">
             THE PROBLEM
           </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold max-w-3xl mt-2">
+          <h2 className="text-white text-3xl md:text-4xl font-bold max-w-3xl mt-2">
             Payers are winning. Most providers don't know it yet.
           </h2>
-          <p className="text-slate-600 max-w-xl mt-4 text-lg">
+          <p className="text-slate-300 max-w-xl mt-4 text-lg">
             Payers have deployed AI to identify denial opportunities faster than
             ever — shifting rules, weaponizing data, and moving faster than
             traditional revenue cycle workflows can detect. The gap between
@@ -154,9 +87,9 @@ const Index = () => {
               { stat: "86%", label: "of denials are preventable with earlier detection", source: "CAQH Index: Closing the Gap, 2023" },
               { stat: "60–90 days", label: "average lag to detect payer behavioral shifts", source: "Becker's Hospital Review, Revenue Cycle, 2023" },
             ].map((c) => (
-              <div key={c.stat} className="bg-[var(--lgray)] rounded-xl p-8">
-                <div className="text-[var(--navy)] font-bold text-4xl">{c.stat}</div>
-                <div className="text-slate-700 text-sm mt-3">{c.label}</div>
+              <div key={c.stat} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8">
+                <div className="text-[var(--emerald)] font-bold text-4xl">{c.stat}</div>
+                <div className="text-slate-300 text-sm mt-3">{c.label}</div>
                 <div className="text-slate-500 text-xs mt-3 italic">{c.source}</div>
               </div>
             ))}
@@ -164,28 +97,64 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 3.5: PAYER THREAT RADAR */}
+      {/* SECTION 3: PREDICT / PROTECT / RECOVER */}
+      <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
+            THE PLATFORM
+          </p>
+          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold text-center mt-2">
+            {PHRASES.threeLayersNineModules}
+          </h2>
+          <p className="text-slate-600 text-center mt-2 text-lg">
+            ZDefense covers the full revenue cycle lifecycle — before, during,
+            and after every claim.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+            {[
+              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
+              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
+              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
+            ].map((c) => (
+              <div key={c.tag} className="bg-[var(--lgray)] border border-transparent rounded-xl p-8 hover:border-emerald-200 transition-colors">
+                <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
+                <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
+                <div className="text-[var(--navy)] font-semibold text-lg mt-4">{c.headline}</div>
+                <p className="text-slate-600 text-sm mt-3">{c.body}</p>
+                <div className="mt-6 pt-6 border-t border-slate-200 text-[var(--emerald)] text-sm font-bold mb-2">
+                  {c.proof}
+                </div>
+                <Link to={c.href} className="text-[var(--navy)] hover:text-[var(--emerald)] text-sm mt-1 block hover:underline">
+                  {c.link}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: PAYER THREAT RADAR */}
       <PayerThreatRadar />
 
       {/* SECTION 5: DIFFERENTIATION */}
-      <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
+      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             WHY ZDEFENSE
           </p>
-          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
+          <h2 className="text-white text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
             Denial management companies process denials. ZDefense understands payers.
           </h2>
-          <p className="text-slate-600 max-w-xl mt-4 text-lg">
+          <p className="text-slate-300 max-w-xl mt-4 text-lg">
             Every denial management vendor works with data after it enters your
             system. ZDefense works at the point where data is created — the raw
             payer output, before any provider system transforms it. That is a
             data advantage no competitor can replicate.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-semibold text-lg">We aren't your generic AI Start-up</h3>
-              <p className="text-slate-600 text-sm mt-2">
+            <div className="bg-white/5 border border-slate-700 rounded-xl p-6 hover:border-[var(--emerald)]/40 transition-colors">
+              <h3 className="text-white font-semibold text-lg">We aren't your generic AI Start-up</h3>
+              <p className="text-slate-400 text-sm mt-2">
                 ZTech has processed Explanation of Benefits documents at scale
                 for nearly a decade. ZDefense reflects codified institutional
                 knowledge — not generic AI trained on generic data. The 50-rule
@@ -193,39 +162,39 @@ const Index = () => {
                 across every major payer.
               </p>
             </div>
-            <div className="border border-[var(--lgray)] rounded-xl p-6 hover:border-emerald-200 transition-colors">
-              <h3 className="text-[var(--navy)] font-semibold text-lg">No-BAA Entry Path</h3>
-              <p className="text-slate-600 text-sm mt-2">
+            <div className="bg-white/5 border border-slate-700 rounded-xl p-6 hover:border-[var(--emerald)]/40 transition-colors">
+              <h3 className="text-white font-semibold text-lg">No-BAA Entry Path</h3>
+              <p className="text-slate-400 text-sm mt-2">
                 Three modules activate immediately with zero data sharing.
                 ContractIntel, Shield, and Prevent run entirely on public payer
                 data. Start your 30-day evaluation with live intelligence
                 benchmarked to your market — no BAA, no IT, no legal agreements.
               </p>
-              <Link to="/contact?offer=trial" className="text-slate-500 text-sm mt-3 inline-block hover:text-[var(--navy)] hover:underline">
+              <Link to="/contact?offer=trial" className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
                 Start your no-BAA evaluation →
               </Link>
             </div>
           </div>
-          <Link to="/why-zdefense" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
+          <Link to="/why-zdefense" className="text-[var(--emerald)] hover:text-emerald-400 text-sm mt-8 inline-block hover:underline font-semibold">
             See all differentiators →
           </Link>
         </div>
       </section>
 
       {/* SECTION 6: OUTCOMES */}
-      <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
+      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+          <h2 className="text-[var(--navy)] text-xl md:text-2xl font-semibold text-center">
             Platform Performance Signals
           </h2>
-          <p className="text-slate-500 text-center text-xs mt-1">
+          <p className="text-slate-400 text-center text-xs mt-1">
             300-bed community hospital demo baseline · Figures are illustrative.
           </p>
-          <p className="text-slate-500 text-center text-xs mt-2">
+          <p className="text-slate-400 text-center text-xs mt-2">
             Figures shown reflect ZDefense platform demo outputs. Results vary
             by organization and data configuration.
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 mt-12 md:divide-x divide-slate-800">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 mt-12 md:divide-x divide-slate-200">
             {[
               { stat: "$12.6M", label: "90-day revenue forecast", note: "Demo baseline" },
               { stat: "89.4%", label: "Clean claim rate post-Shield", note: "Demo baseline" },
@@ -235,11 +204,11 @@ const Index = () => {
               <div
                 key={s.stat}
                 className={`text-center py-8 px-6 min-h-[120px] flex flex-col justify-center ${
-                  i < 2 ? "border-b border-slate-800 md:border-b-0" : ""
+                  i < 2 ? "border-b border-slate-200 md:border-b-0" : ""
                 }`}
               >
                 <div className="text-[var(--emerald)] text-4xl font-bold">{s.stat}</div>
-                <div className="text-white text-sm mt-2">{s.label}</div>
+                <div className="text-[var(--navy)] text-sm mt-2">{s.label}</div>
                 <div className="text-slate-500 text-xs mt-1">{s.note}</div>
               </div>
             ))}
@@ -248,33 +217,37 @@ const Index = () => {
       </section>
 
       {/* SECTION 7: WHO IT'S FOR */}
-      <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
+      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
             BUILT FOR YOUR TEAM
           </p>
-          <h2 className="text-[var(--navy)] text-2xl md:text-3xl font-semibold mt-2">
+          <h2 className="text-white text-2xl md:text-3xl font-semibold mt-2">
             Different roles. Different modules. Same platform.
           </h2>
-          <p className="text-slate-600 text-lg mt-3 max-w-xl">
+          <p className="text-slate-300 text-lg mt-3 max-w-xl">
             ZDefense routes each role to the modules that matter most — CFOs
             see Forecast, Directors see Ledger, Specialists see Triage.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
             {[
-              { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling" },
-              { role: "Rev Cycle Director", module: "Ledger", desc: "Underpayment detection and compliance oversight" },
-              { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability" },
-              { role: "Auditor/Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail" },
+              { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling", href: "/solutions?role=cfo" },
+              { role: "Rev Cycle Director", module: "Ledger", desc: "Underpayment detection and compliance oversight", href: "/solutions?role=director" },
+              { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability", href: "/solutions?role=specialist" },
+              { role: "Auditor/Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail", href: "/solutions?role=compliance" },
             ].map((r) => (
-              <div key={r.role} className="bg-[var(--lgray)] rounded-xl p-5 hover:bg-emerald-50 transition-colors cursor-pointer">
-                <div className="text-[var(--navy)] font-semibold">{r.role}</div>
-                <div className="text-slate-500 text-sm mt-0.5">{r.module}</div>
-                <div className="text-slate-600 text-xs mt-1">{r.desc}</div>
-              </div>
+              <Link
+                key={r.role}
+                to={r.href}
+                className="block bg-white/5 border border-slate-700 rounded-xl p-5 cursor-pointer hover:border-[var(--emerald)] transition-colors"
+              >
+                <div className="text-white font-semibold">{r.role}</div>
+                <div className="text-[var(--emerald)] text-xs mt-0.5">{r.module}</div>
+                <div className="text-slate-400 text-xs mt-1">{r.desc}</div>
+              </Link>
             ))}
           </div>
-          <Link to="/solutions" className="text-slate-500 text-sm mt-8 inline-block hover:text-[var(--navy)] hover:underline font-semibold">
+          <Link to="/solutions" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
             See all roles →
           </Link>
         </div>
