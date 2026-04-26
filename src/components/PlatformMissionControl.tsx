@@ -408,28 +408,31 @@ const CrucibleThroughput = ({
 // ===========================================================================
 // 4. Payer Coverage Grid
 // ===========================================================================
-const PAYERS = ["UHC", "BCBS", "Aetna", "Cigna", "Humana", "Molina", "Centene"];
 const PayerCoverageGrid = ({ t }: { t: number }) => {
   const topPad = 16;
   const bottomPad = 12;
-  const colWidth = (CELL_W - 16) / PAYERS.length;
+  const colWidth = (CELL_W - 16) / SENTINEL_PAYERS.length;
   const maxBarH = CELL_H - topPad - bottomPad - 12;
+  // Bar height represents the payer's WI relative to a 2.4x ceiling (the
+  // top of the current Sentinel scale), with a small live wobble so the
+  // panel reads as "actively monitoring" rather than static.
+  const WI_CEILING = 2.4;
   return (
     <g>
-      {PAYERS.map((p, i) => {
+      {SENTINEL_PAYERS.map((p, i) => {
         const period = 6 + (i % 4) * 1.5; // 6..10.5
         const wave = Math.sin((t / period) * Math.PI * 2 + i);
-        const norm = wave * 0.5 + 0.5; // 0..1
-        const ratio = 0.4 + norm * 0.55; // 0.4..0.95
+        const wobble = wave * 0.04; // ±0.04x — small live jitter
+        const liveWi = Math.max(0.8, p.wi + wobble);
+        const ratio = Math.min(0.95, Math.max(0.4, liveWi / WI_CEILING));
         const barH = ratio * maxBarH;
-        const wi = (1.1 + norm * 1.3).toFixed(1); // 1.1..2.4
         const x = 8 + i * colWidth;
         const colCx = x + colWidth / 2;
         const barW = colWidth * 0.55;
         const barX = colCx - barW / 2;
         const barY = topPad + 10 + (maxBarH - barH);
         return (
-          <g key={p}>
+          <g key={p.name}>
             <text
               x={colCx}
               y={topPad + 7}
@@ -438,7 +441,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
               fontFamily="monospace"
               textAnchor="middle"
             >
-              {wi}x
+              {liveWi.toFixed(1)}x
             </text>
             <defs>
               <linearGradient id={`pcg-${i}`} x1="0" y1="0" x2="0" y2="1">
@@ -463,7 +466,7 @@ const PayerCoverageGrid = ({ t }: { t: number }) => {
               fontFamily="monospace"
               textAnchor="middle"
             >
-              {p}
+              {p.name}
             </text>
           </g>
         );
