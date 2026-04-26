@@ -280,13 +280,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 8: TRIAL CALLOUT */}
-      <section className="px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <TrialCallout />
-        </div>
-      </section>
-
       {/* SECTION 9: FINAL CTA BAND */}
       <CTABand
         headline="Ready to See What Your Revenue Is Worth?"
