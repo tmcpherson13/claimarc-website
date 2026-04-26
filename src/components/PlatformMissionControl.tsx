@@ -1272,6 +1272,7 @@ const PlatformMissionControl = () => {
             cursorOn={cursorOn}
             livePulse={livePulse}
             clipId={clipId.current}
+            onActivate={goToModule}
           />
         </Bezel>
       </svg>
