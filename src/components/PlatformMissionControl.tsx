@@ -730,7 +730,12 @@ const BaaStatus = ({
         const ry = headerY + 6 + i * reqRowH + reqRowH / 2;
         const hi = rowHighlight(ry);
         return (
-          <g key={n} opacity={0.6 + 0.4 * hi}>
+          <g
+            key={n}
+            opacity={0.6 + 0.4 * hi}
+            onClick={onActivate ? () => onActivate(n) : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             <Padlock x={8} y={ry - 4} open={false} color="#F59E0B" />
             <text
               x={22}
@@ -748,7 +753,12 @@ const BaaStatus = ({
         const ry = headerY + 6 + i * noneRowH + noneRowH / 2;
         const hi = rowHighlight(ry);
         return (
-          <g key={n} opacity={0.6 + 0.4 * hi}>
+          <g
+            key={n}
+            opacity={0.6 + 0.4 * hi}
+            onClick={onActivate ? () => onActivate(n) : undefined}
+            style={onActivate ? { cursor: "pointer" } : undefined}
+          >
             <Padlock x={colW + 4} y={ry - 4} open={true} color="#10B981" />
             <text
               x={colW + 18}
