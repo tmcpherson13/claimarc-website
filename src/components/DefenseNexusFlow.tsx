@@ -730,17 +730,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 opacity={0.7 + 0.3 * Math.sin(elapsed / 300)}
               />
 
-              {/* Chaotic interior particles */}
-              {chaos.map((c, i) => (
-                <circle
-                  key={`chaos-${i}`}
-                  cx={c.cx}
-                  cy={c.cy}
-                  r={c.r}
-                  fill="#6EE7B7"
-                  opacity={c.opacity}
-                />
-              ))}
+              {/* Interior chaotic particles removed per request */}
 
               {/* Buzzing particles traveling outward along traces */}
               {buzzers.map((b, i) => (
