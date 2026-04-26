@@ -85,7 +85,17 @@ const ModulePipelineFlow = () => {
           </marker>
         </defs>
 
-        {/* Arrows: PREDICT(end ~x=300) → PROTECT(start ~x=320), PROTECT(end ~x=600) → RECOVER(start ~x=620) */}
+        {/* Connecting line spanning all three clusters */}
+        <line
+          x1="20"
+          y1="110"
+          x2="880"
+          y2="110"
+          stroke="#1E3A5F"
+          strokeWidth="1"
+          opacity="0.6"
+        />
+        {/* Arrow heads at cluster gaps */}
         <line
           x1="305"
           y1="110"
@@ -105,19 +115,19 @@ const ModulePipelineFlow = () => {
           markerEnd="url(#pipeline-arrow)"
         />
 
-        {/* Animated particles. Each travels across an entire cluster gap. */}
+        {/* Animated particles travel the full pipeline, connecting all boxes. */}
         {[
-          { path: "M 305 110 L 318 110", dur: "3s", begin: "0s" },
-          { path: "M 305 110 L 318 110", dur: "4s", begin: "1.4s" },
-          { path: "M 605 110 L 618 110", dur: "3.5s", begin: "0.6s" },
-          { path: "M 605 110 L 618 110", dur: "5s", begin: "2.2s" },
+          { dur: "6s", begin: "0s" },
+          { dur: "6s", begin: "1.5s" },
+          { dur: "6s", begin: "3s" },
+          { dur: "6s", begin: "4.5s" },
         ].map((p, i) => (
-          <circle key={i} r={3} fill="#10B981" opacity={0.85}>
+          <circle key={i} r={3.5} fill="#10B981" opacity={0.9}>
             <animateMotion
               dur={p.dur}
               begin={p.begin}
               repeatCount="indefinite"
-              path={p.path}
+              path="M 20 110 L 880 110"
             />
           </circle>
         ))}
