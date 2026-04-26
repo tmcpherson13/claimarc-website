@@ -308,13 +308,13 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
           y={210}
           textAnchor="middle"
           fill="#10B981"
-          fontSize={14}
+          fontSize={9}
           fontFamily="ui-monospace, SFMono-Regular, monospace"
           opacity={0.6}
           letterSpacing={3}
           transform={`rotate(-90 ${NEXUS_X} 210)`}
         >
-          DATA DEFENSE NEXUS
+          DEFENSE NEXUS
         </text>
 
         {packets.map((p, i) => {
