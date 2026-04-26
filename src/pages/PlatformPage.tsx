@@ -247,12 +247,6 @@ const PlatformPage = () => {
         </div>
       </section>
 
-      {/* SECTION 7: CTA */}
-      <section className="px-6 md:px-12 lg:px-16 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <TrialCallout />
-        </div>
-      </section>
       <CTABand
         headline="See the Platform in Your Market Context"
         subhead="Book a personalized demo or start your 30-day no-obligation evaluation with live payer data today."
