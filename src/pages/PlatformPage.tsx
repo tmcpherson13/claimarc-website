@@ -19,7 +19,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { getModule, type ModuleDefinition } from "@/config/modules";
+import { getModule, MODULES, type ModuleDefinition } from "@/config/modules";
+
+const MODULES_LOOKUP = MODULES.map((m) => m.name);
 
 const LAYER_LABEL: Record<ModuleDefinition["layer"], string> = {
   predict: "PREDICT",
