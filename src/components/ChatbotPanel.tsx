@@ -426,6 +426,7 @@ export default function ChatbotPanel() {
               onKeyDown={handleKeyDown}
               placeholder="Ask about any module, pricing, BAA requirements..."
               disabled={isLoading}
+              className="zd-chat-textarea"
               style={{
                 flex: 1,
                 resize: "none",
