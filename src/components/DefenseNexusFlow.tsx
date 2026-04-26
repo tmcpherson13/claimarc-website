@@ -697,7 +697,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                     cx={t.x2}
                     cy={t.y2}
                     r={PAD_R}
-                    fill="#020617"
+                    fill="#0F2A22"
                     stroke="#10B981"
                     strokeWidth={0.9}
                     opacity={0.9}
@@ -717,7 +717,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 cx={NEXUS_X}
                 cy={NEXUS_Y}
                 r={9}
-                fill="#020617"
+                fill="#0F2A22"
                 stroke="#10B981"
                 strokeWidth={1}
                 opacity={0.95}
