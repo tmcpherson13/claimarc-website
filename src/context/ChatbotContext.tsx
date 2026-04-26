@@ -165,11 +165,21 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       writePersistedModuleContext(nextModuleContext);
       setMessages((prev) => {
         if (prev.length > 0) return prev;
+        const mod = getModule(nextModuleContext);
+        const tagline = mod?.tagline ?? "";
+        const firstOutcome = mod?.outcomes?.[0] ?? "";
+        // Phrase the outcome as a problem (lowercase first letter, strip trailing period).
+        const outcomePhrase = firstOutcome
+          ? firstOutcome.charAt(0).toLowerCase() + firstOutcome.slice(1).replace(/\.$/, "")
+          : "";
+        const hook = mod
+          ? `I can see you're looking at ${nextModuleContext}${tagline ? ` — ${tagline}` : ""}.${outcomePhrase ? ` Most teams come here because they need ${outcomePhrase}.` : ""} What's your situation?`
+          : `I can see you're looking at ${nextModuleContext}. What would you like to know — how it works, what it costs, or whether you need a BAA?`;
         return [
           {
             id: generateId(),
             role: "assistant",
-            content: `Hi, I'm Z, your revenue defense assistant. I can see you're looking at ${nextModuleContext}. What would you like to know — how it works, what it costs, or whether you need a BAA?`,
+            content: `Hi, I'm Z, your revenue defense assistant. ${hook}`,
             timestamp: Date.now(),
           },
         ];
