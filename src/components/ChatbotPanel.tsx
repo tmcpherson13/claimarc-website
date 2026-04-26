@@ -166,6 +166,9 @@ export default function ChatbotPanel() {
           0% { transform: scale(1); opacity: 1; }
           75%, 100% { transform: scale(2.4); opacity: 0; }
         }
+        .zd-chat-textarea::placeholder { opacity: 0.5; }
+        .zd-chat-textarea::-webkit-input-placeholder { opacity: 0.5; }
+        .zd-chat-textarea::-moz-placeholder { opacity: 0.5; }
       `}</style>
 
       <aside
@@ -426,6 +429,7 @@ export default function ChatbotPanel() {
               onKeyDown={handleKeyDown}
               placeholder="Ask about any module, pricing, BAA requirements..."
               disabled={isLoading}
+              className="zd-chat-textarea"
               style={{
                 flex: 1,
                 resize: "none",
