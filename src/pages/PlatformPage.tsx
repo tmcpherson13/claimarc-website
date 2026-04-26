@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
@@ -18,7 +19,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { getModule, type ModuleDefinition } from "@/config/modules";
+import { getModule, MODULES, type ModuleDefinition } from "@/config/modules";
+
+const MODULES_LOOKUP = MODULES.map((m) => m.name);
 
 const LAYER_LABEL: Record<ModuleDefinition["layer"], string> = {
   predict: "PREDICT",
@@ -144,6 +147,15 @@ const ModuleDetailDialog = ({
 const PlatformPage = () => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const selectedModule = selectedName ? getModule(selectedName) ?? null : null;
+  const { hash } = useLocation();
+
+  // If we land on /platform#<modulename>, open that module's dialog.
+  useEffect(() => {
+    if (!hash) return;
+    const slug = hash.replace(/^#/, "").toLowerCase();
+    const match = MODULES_LOOKUP.find((m) => m.toLowerCase() === slug);
+    if (match) setSelectedName(match);
+  }, [hash]);
 
   return (
     <Layout>
