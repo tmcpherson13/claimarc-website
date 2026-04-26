@@ -195,21 +195,74 @@ const SignalTower = ({ className = "" }: { className?: string }) => {
           );
         })}
 
-        {/* Tower */}
-        <rect
-          x={CENTER_X - 3}
-          y={80}
-          width={6}
-          height={180}
-          fill="#10B981"
-          opacity={0.7}
-        />
-        {/* Diamond cap */}
-        <polygon
-          points={`${CENTER_X},66 ${CENTER_X + 7},80 ${CENTER_X},94 ${CENTER_X - 7},80`}
-          fill="#10B981"
-          opacity={0.7}
-        />
+        {/* Tower — broadcast signal tower centered at x=600 */}
+        {(() => {
+          const TX = 600;
+          const baseY = 310;
+          const apexY = 100;
+          const baseLeftX = 520;
+          const baseRightX = 680;
+          const apexLeftX = 594;
+          const apexRightX = 606;
+          const interp = (y: number) => {
+            const t = (y - apexY) / (baseY - apexY);
+            return {
+              left: apexLeftX + (baseLeftX - apexLeftX) * t,
+              right: apexRightX + (baseRightX - apexRightX) * t,
+            };
+          };
+          const braceYs = [150, 190, 230, 265];
+
+          // Antenna tip slow steady pulse (reuses elapsed)
+          const tipT = (elapsed % PULSE_DURATION_MS) / PULSE_DURATION_MS;
+          const tipR = 3 + tipT * 18;
+          const tipOpacity = 0.6 * (1 - tipT);
+
+          return (
+            <g>
+              {/* Base legs */}
+              <line x1={TX} y1={280} x2={baseLeftX} y2={baseY} stroke="#10B981" strokeWidth={2} opacity={0.7} />
+              <line x1={TX} y1={280} x2={baseRightX} y2={baseY} stroke="#10B981" strokeWidth={2} opacity={0.7} />
+
+              {/* Tower body sides */}
+              <line x1={baseLeftX} y1={baseY} x2={apexLeftX} y2={apexY} stroke="#10B981" strokeWidth={2} opacity={0.7} />
+              <line x1={baseRightX} y1={baseY} x2={apexRightX} y2={apexY} stroke="#10B981" strokeWidth={2} opacity={0.7} />
+
+              {/* Cross braces */}
+              {braceYs.map((y) => {
+                const { left, right } = interp(y);
+                return (
+                  <line
+                    key={`brace-${y}`}
+                    x1={left}
+                    y1={y}
+                    x2={right}
+                    y2={y}
+                    stroke="#10B981"
+                    strokeWidth={1}
+                    opacity={0.4}
+                  />
+                );
+              })}
+
+              {/* Mast */}
+              <line x1={TX} y1={apexY} x2={TX} y2={72} stroke="#10B981" strokeWidth={2} opacity={0.8} />
+
+              {/* Antenna tip pulse ring */}
+              <circle
+                cx={TX}
+                cy={70}
+                r={tipR}
+                fill="none"
+                stroke="#10B981"
+                strokeWidth={1}
+                opacity={tipOpacity}
+              />
+              {/* Antenna tip */}
+              <circle cx={TX} cy={70} r={3} fill="#10B981" opacity={1} />
+            </g>
+          );
+        })()}
 
         {/* Receiver dots */}
         {DOTS.map((dot, i) => {
