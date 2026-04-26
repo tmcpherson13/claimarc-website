@@ -75,7 +75,7 @@ const moduleRoleMap: Record<string, string[]> = MODULES.reduce(
 const SolutionsPage = () => {
   const [activeRole, setActiveRole] = useState("cfo");
   const role = roles.find((r) => r.key === activeRole)!;
-  const { hash, pathname } = useLocation();
+  const { hash, pathname, search } = useLocation();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
