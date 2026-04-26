@@ -259,8 +259,8 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
   const nexusGlow =
     0.03 + (Math.sin((elapsed / 1000) * ((2 * Math.PI) / 4)) + 1) / 2 * 0.04;
 
-  const TOOLTIP_W = 220;
-  const TOOLTIP_H = 72;
+  const TOOLTIP_W = 293;
+  const TOOLTIP_H = 96;
 
   return (
     <div
@@ -270,9 +270,10 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         visible ? "opacity-100" : "opacity-0"
       } ${className}`}
     >
+      <div className="flex justify-center w-full">
       <svg
         viewBox="0 0 1100 525"
-        className="w-full h-auto"
+        className="w-full max-w-5xl h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -475,12 +476,12 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
         {tooltip !== null &&
           (() => {
             const src = SOURCES[tooltip.index];
-            const wantRightX = tooltip.x + 170;
+            const wantRightX = tooltip.x + 168;
             const flipLeft = wantRightX + TOOLTIP_W > 1100;
             const tx = flipLeft ? tooltip.x - SRC_W - TOOLTIP_W - 10 : wantRightX;
             const ty = Math.max(
               4,
-              Math.min(525 - TOOLTIP_H - 4, tooltip.y - 10)
+              Math.min(525 - TOOLTIP_H - 4, tooltip.y - 8)
             );
             const lines = wrapText(src.description, 38, 4);
             return (
@@ -489,17 +490,17 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                   x={tx}
                   y={ty}
                   width={TOOLTIP_W}
-                  height={Math.max(TOOLTIP_H, 28 + lines.length * 11)}
+                  height={Math.max(TOOLTIP_H, 36 + lines.length * 14)}
                   rx={6}
                   fill="#0F172A"
                   stroke="#2D4F7A"
                   strokeWidth={1}
                 />
                 <text
-                  x={tx + 10}
-                  y={ty + 16}
+                  x={tx + 14}
+                  y={ty + 22}
                   fill="#CBD5E1"
-                  fontSize={9}
+                  fontSize={12}
                   fontWeight="bold"
                   fontFamily="ui-monospace, SFMono-Regular, monospace"
                 >
@@ -508,10 +509,10 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
                 {lines.map((line, li) => (
                   <text
                     key={`tt-line-${li}`}
-                    x={tx + 10}
-                    y={ty + 32 + li * 11}
+                    x={tx + 14}
+                    y={ty + 42 + li * 14}
                     fill="#64748B"
-                    fontSize={8}
+                    fontSize={11}
                     fontFamily="ui-monospace, SFMono-Regular, monospace"
                   >
                     {line}
@@ -521,6 +522,7 @@ const DefenseNexusFlow = ({ className = "" }: { className?: string }) => {
             );
           })()}
       </svg>
+      </div>
     </div>
   );
 };
