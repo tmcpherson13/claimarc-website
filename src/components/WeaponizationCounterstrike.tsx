@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const VIEW_W = 1200;
 const VIEW_H = 360;
-const BARRIER_X = 500;
+const BARRIER_X = 750;
 
 const THREAT_COUNT = 6;
 const THREAT_LEN = 120;
