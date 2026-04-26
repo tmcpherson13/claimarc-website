@@ -1203,34 +1203,6 @@ const PlatformMissionControl = () => {
             clipId={clipId.current}
           />
         </Bezel>
-
-        {/* Row 2 */}
-        <Bezel col={0} row={1} label="PAYER COVERAGE">
-          <PayerCoverageGrid t={t} />
-        </Bezel>
-        <Bezel col={1} row={1} label="RECOVERY VALUE">
-          <RecoveryOdometer t={t} />
-        </Bezel>
-        <Bezel col={2} row={1} label="SYSTEM CLOCK">
-          <SystemClock now={now} elapsedSec={t} />
-        </Bezel>
-
-        {/* Row 3 */}
-        <Bezel col={0} row={2} label="BAA SHIELD STATUS">
-          <BaaStatus t={t} />
-        </Bezel>
-        <Bezel col={1} row={2} label="APPEAL CONFIDENCE">
-          <AppealThermometer t={t} />
-        </Bezel>
-        <Bezel col={2} row={2} label="REGULATORY FEED">
-          <RegulatoryFeed
-            t={t}
-            entries={feedRef.current}
-            cursorOn={cursorOn}
-            livePulse={livePulse}
-            clipId={clipId.current}
-          />
-        </Bezel>
       </svg>
     </div>
   );
