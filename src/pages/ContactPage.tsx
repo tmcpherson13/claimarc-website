@@ -547,7 +547,7 @@ const ContactPage = () => {
                     !requiredValid ? "opacity-50 cursor-not-allowed" : "hover:bg-emerald-600"
                   }`}
                 >
-                  Request My Demo — We'll Be in Touch Within One Business Day
+                  {submitLabel}
                 </button>
               </div>
             )}
