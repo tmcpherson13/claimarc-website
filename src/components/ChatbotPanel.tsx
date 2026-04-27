@@ -115,6 +115,8 @@ export default function ChatbotPanel() {
     moduleContext,
     clearModuleContext,
     offerDemo,
+    draftPrompt,
+    consumeDraftPrompt,
   } = useChatbot();
   const navigate = useNavigate();
 
@@ -123,6 +125,17 @@ export default function ChatbotPanel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Seed the input with a prefilled prompt (e.g. from a module's Ask Z button).
+  useEffect(() => {
+    if (!isOpen || !draftPrompt) return;
+    const next = consumeDraftPrompt();
+    if (next) {
+      setInput(next);
+      // Focus the textarea so the user can edit/send immediately.
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+  }, [isOpen, draftPrompt, consumeDraftPrompt]);
 
   useEffect(() => {
     if (!scrollRef.current) return;
