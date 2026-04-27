@@ -147,6 +147,21 @@ const MODULE_CONTENT: Record<string, ModuleContent> = {
   },
 };
 
+// Default chat prompt starters per module — prefilled into the Ask Z input
+// when a user clicks the module-specific Ask Z button. The user can edit
+// before sending. Keep these phrased as natural questions a buyer would ask.
+const MODULE_PROMPT_STARTERS: Record<string, string> = {
+  Sentinel: "Which payer behaviors should I be watching for right now in Sentinel?",
+  ContractIntel: "How do I understand my options for renegotiating an underperforming payer contract?",
+  Forecast: "I have questions about my 90-day revenue outlook — where should I start?",
+  Shield: "How do I figure out where my biggest claim denial risk sits today?",
+  Prevent: "How do I understand my prior authorization exposure across payers?",
+  Ledger: "What might I be missing in underpayments or overpayment compliance?",
+  Triage: "Can you help me think through how to prioritize my denial queue?",
+  Evidence: "I have questions about building stronger appeal documentation packages.",
+  Resolve: "Can we talk through my appeal strategy and how to improve win rates?",
+};
+
 interface RoleContent {
   key: string;
   tab: string;
