@@ -528,7 +528,7 @@ export default function ChatbotPanel() {
             </div>
           )}
 
-          {error && (
+          {(error || verifyError) && (
             <div
               role="alert"
               style={{
@@ -541,7 +541,7 @@ export default function ChatbotPanel() {
                 fontSize: 12,
               }}
             >
-              {error}
+              {verifyError ?? error}
             </div>
           )}
         </div>
