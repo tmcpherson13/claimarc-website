@@ -41,6 +41,7 @@ const ChatbotContext = createContext<ChatbotContextValue | null>(null);
 
 const SESSION_KEY = "zdefense_chat_session";
 const MODULE_CONTEXT_KEY = "zdefense_chat_module_context";
+const DRAFT_PROMPTS_KEY = "zdefense_chat_draft_prompts";
 const MAX_MESSAGE_CHARS = 500;
 const CONTEXT_WINDOW = 12;
 
