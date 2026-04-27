@@ -39,6 +39,23 @@ const MAX_USER_MESSAGE_CHARS = 500;
 
 const sessions = new Map<string, { count: number; firstSeen: number }>();
 
+const INJECTION_PATTERNS = [
+  /ignore (all |previous |your |prior )?(instructions|prompt|rules|guidelines|constraints)/i,
+  /forget (everything|all|your instructions|what you were told)/i,
+  /you are now|pretend (you are|to be|that you|you're)|act as (if you|though you|a different)/i,
+  /reveal (your|the) (system |)prompt/i,
+  /what (are|were) your (instructions|system prompt|rules|guidelines)/i,
+  /disregard|override|bypass|jailbreak|DAN|do anything now/i,
+  /you have no (restrictions|limitations|rules|guidelines)/i,
+  /respond only in|from now on you (will|must|should|are)/i,
+  /simulate|roleplay|role-play|let's play a game where you/i,
+  /\[SYSTEM\]|\[INST\]|<\|system\|>|<<SYS>>/i,
+];
+
+function containsInjection(text: string): boolean {
+  return INJECTION_PATTERNS.some((pattern) => pattern.test(text));
+}
+
 function checkSession(sessionId: string): { allowed: boolean; count: number } {
   const now = Date.now();
   const existing = sessions.get(sessionId);
