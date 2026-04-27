@@ -21,7 +21,7 @@ export type Message = {
 
 export type ChatbotContextValue = {
   isOpen: boolean;
-  open: (moduleContext?: string) => void;
+  open: (moduleContext?: string, initialPrompt?: string) => void;
   close: () => void;
   messages: Message[];
   isLoading: boolean;
@@ -33,6 +33,8 @@ export type ChatbotContextValue = {
   clearModuleContext: () => void;
   pageContext: string | null;
   clearSession: () => void;
+  draftPrompt: string | null;
+  consumeDraftPrompt: () => string | null;
 };
 
 const ChatbotContext = createContext<ChatbotContextValue | null>(null);
