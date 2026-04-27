@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
  * RoleRoutingDiagram — two-column SVG showing how each role maps to its
  * related ZDefense modules. Lines draw in sequentially when the diagram
- * scrolls into view; hovering a role highlights its lines and pulses the
- * target modules. Roles and modules are clickable for navigation.
+ * scrolls into view; hovering or focusing a role highlights its lines and
+ * pulses the target modules. Roles and modules are keyboard-navigable.
  */
 
 type ClusterKey = "predict" | "protect" | "recover";
@@ -81,6 +81,32 @@ MODULES.forEach((m, i) => {
   moduleYs[m.key] = TOP_PAD + ROW_H * (i + 0.5) + Math.max(0, offset);
 });
 
+// Precompute static path data once (does not depend on hover state).
+const PATHS = ROLES.flatMap((role, ri) =>
+  role.targets
+    .map((target, ti) => {
+      const y1 = roleYs[role.key];
+      const y2 = moduleYs[target];
+      if (y2 === undefined) return null;
+      const midX = (ROLE_X_END + MODULE_X_START) / 2;
+      const d = `M ${ROLE_X_END} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${MODULE_X_START} ${y2}`;
+      return {
+        id: `${role.key}-${target}`,
+        roleKey: role.key,
+        target,
+        d,
+        isPrimary: ti === 0,
+        drawDelay: ri * 150 + ti * 60,
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null)
+);
+
+const scrollToModule = (key: string) => {
+  const el = document.getElementById(key);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 const RoleRoutingDiagram = () => {
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -103,11 +129,27 @@ const RoleRoutingDiagram = () => {
     return () => obs.disconnect();
   }, []);
 
-  const hoverTargets = hoverRole
-    ? ROLES.find((r) => r.key === hoverRole)?.targets ?? []
-    : [];
+  const hoverTargets = useMemo(
+    () =>
+      hoverRole
+        ? ROLES.find((r) => r.key === hoverRole)?.targets ?? []
+        : [],
+    [hoverRole]
+  );
 
-  const hoveredRoleObj = hoverRole ? ROLES.find((r) => r.key === hoverRole) : null;
+  const handleRoleKey = (e: KeyboardEvent<HTMLDivElement>, roleKey: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      navigate(`/solutions?role=${roleKey}`);
+    }
+  };
+
+  const handleModuleKey = (e: KeyboardEvent<HTMLDivElement>, moduleKey: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      scrollToModule(moduleKey);
+    }
+  };
 
   return (
     <section className="bg-white py-20 px-6 md:px-12 lg:px-16">
@@ -127,41 +169,44 @@ const RoleRoutingDiagram = () => {
             className="w-full h-auto"
             preserveAspectRatio="xMidYMid meet"
             aria-hidden="true"
+            style={{ willChange: "contents" }}
           >
-            {/* Connection lines — one per (role, target) pair */}
-            {ROLES.flatMap((role, ri) =>
-              role.targets.map((target, ti) => {
-                const y1 = roleYs[role.key];
-                const y2 = moduleYs[target];
-                if (y2 === undefined) return null;
-                const x1 = ROLE_X_END;
-                const x2 = MODULE_X_START;
-                const midX = (x1 + x2) / 2;
-                const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
-                const isHover = hoverRole === role.key;
-                const isPrimary = ti === 0;
-                const stroke = isHover ? "#10B981" : "#1E3A5F";
-                const strokeWidth = isHover ? 2 : isPrimary ? 1 : 0.75;
-                const strokeOpacity = isHover ? 1 : isPrimary ? 1 : 0.35;
-                const drawDelay = ri * 150 + ti * 60;
-                return (
-                  <path
-                    key={`${role.key}-${target}`}
-                    d={d}
-                    fill="none"
-                    stroke={stroke}
-                    strokeWidth={strokeWidth}
-                    strokeOpacity={strokeOpacity}
-                    strokeDasharray="600"
-                    strokeDashoffset={visible ? 0 : 600}
-                    style={{
-                      transition: `stroke-dashoffset 800ms ease-out ${drawDelay}ms, stroke 200ms ease, stroke-width 200ms ease, stroke-opacity 200ms ease`,
-                    }}
-                  />
-                );
-              })
-            )}
+            {/* Connection lines — one per (role, target) pair.
+                Hover state is applied via CSS attribute selectors so we don't
+                re-render every path on hover changes. */}
+            <g
+              data-hover-role={hoverRole ?? ""}
+              className="rrd-paths"
+            >
+              {PATHS.map((p) => (
+                <path
+                  key={p.id}
+                  d={p.d}
+                  fill="none"
+                  data-role={p.roleKey}
+                  data-primary={p.isPrimary ? "1" : "0"}
+                  className="rrd-path"
+                  strokeDasharray="600"
+                  strokeDashoffset={visible ? 0 : 600}
+                  style={{
+                    transition: `stroke-dashoffset 800ms ease-out ${p.drawDelay}ms, stroke 120ms linear, stroke-width 120ms linear, stroke-opacity 120ms linear`,
+                  }}
+                />
+              ))}
+            </g>
           </svg>
+
+          {/* Inline styles for fast attribute-driven hover transitions */}
+          <style>{`
+            .rrd-path { stroke: #1E3A5F; stroke-width: 1; stroke-opacity: 1; }
+            .rrd-path[data-primary="0"] { stroke-width: 0.75; stroke-opacity: 0.35; }
+            .rrd-paths[data-hover-role=""] .rrd-path { /* default */ }
+            .rrd-paths:not([data-hover-role=""]) .rrd-path { stroke-opacity: 0.08; stroke-width: 0.75; }
+            .rrd-paths .rrd-path[data-role=""][data-primary] { /* noop */ }
+            ${ROLES.map(
+              (r) => `.rrd-paths[data-hover-role="${r.key}"] .rrd-path[data-role="${r.key}"] { stroke: #10B981; stroke-width: 2; stroke-opacity: 1; }`
+            ).join("\n")}
+          `}</style>
 
           {/* HTML overlay */}
           <div className="absolute inset-0 pointer-events-none">
@@ -169,36 +214,54 @@ const RoleRoutingDiagram = () => {
             <div
               className="absolute left-0 top-0 h-full"
               style={{ width: `${(ROLE_X_END / SVG_W) * 100}%` }}
+              role="list"
+              aria-label="Roles"
             >
               {ROLES.map((role) => {
                 const topPct = (roleYs[role.key] / svgH) * 100;
                 const isHover = hoverRole === role.key;
                 const tooltipBelow = roleYs[role.key] < svgH / 2;
+                const targetLabels = role.targets
+                  .map((t) => MODULES.find((m) => m.key === t)?.label)
+                  .filter(Boolean)
+                  .join(", ");
                 return (
                   <div
                     key={role.key}
                     className="absolute right-2 -translate-y-1/2 pointer-events-auto group"
                     style={{ top: `${topPct}%` }}
-                    onMouseEnter={() => setHoverRole(role.key)}
-                    onMouseLeave={() => setHoverRole(null)}
-                    onClick={() => navigate(`/solutions?role=${role.key}`)}
+                    role="listitem"
                   >
-                    <span
-                      className={`inline-flex items-center gap-1.5 bg-slate-800 text-slate-200 text-sm font-medium px-4 py-2 rounded-lg whitespace-nowrap cursor-pointer transition-all hover:ring-2 hover:ring-[var(--emerald)] hover:ring-offset-1 ${
-                        isHover ? "ring-2 ring-[var(--emerald)] ring-offset-1" : ""
-                      }`}
+                    <div
+                      role="link"
+                      tabIndex={0}
+                      aria-label={`${role.label}: explore solutions for this role. Touches modules: ${targetLabels}.`}
+                      onMouseEnter={() => setHoverRole(role.key)}
+                      onMouseLeave={() => setHoverRole(null)}
+                      onFocus={() => setHoverRole(role.key)}
+                      onBlur={() => setHoverRole(null)}
+                      onClick={() => navigate(`/solutions?role=${role.key}`)}
+                      onKeyDown={(e) => handleRoleKey(e, role.key)}
+                      className="inline-block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2"
                     >
-                      {role.label}
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--emerald)]">
-                        →
+                      <span
+                        className={`inline-flex items-center gap-1.5 bg-slate-800 text-slate-200 text-sm font-medium px-4 py-2 rounded-lg whitespace-nowrap cursor-pointer transition-shadow duration-100 hover:ring-2 hover:ring-[var(--emerald)] hover:ring-offset-1 ${
+                          isHover ? "ring-2 ring-[var(--emerald)] ring-offset-1" : ""
+                        }`}
+                      >
+                        {role.label}
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--emerald)]" aria-hidden="true">
+                          →
+                        </span>
                       </span>
-                    </span>
+                    </div>
 
                     {/* Tooltip */}
                     <div
+                      role="tooltip"
                       className={`absolute left-1/2 -translate-x-1/2 ${
                         tooltipBelow ? "top-full mt-2" : "bottom-full mb-2"
-                      } bg-[var(--navy)] text-white text-xs px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-opacity duration-150 ${
+                      } bg-[var(--navy)] text-white text-xs px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-opacity duration-100 ${
                         isHover ? "opacity-100" : "opacity-0"
                       }`}
                     >
@@ -215,7 +278,6 @@ const RoleRoutingDiagram = () => {
                 .map((m) => moduleYs[m.key])
                 .filter((y) => y !== undefined);
               if (ys.length === 0) return null;
-              const avgY = ys.reduce((a, b) => a + b, 0) / ys.length;
               const minY = Math.min(...ys);
               const topPct = ((minY - ROW_H * 0.55) / svgH) * 100;
               const leftPct = ((MODULE_X_START + 8) / SVG_W) * 100;
@@ -225,6 +287,7 @@ const RoleRoutingDiagram = () => {
                   key={`label-${cluster.key}`}
                   className="absolute"
                   style={{ top: `${topPct}%`, left: `${leftPct}%` }}
+                  aria-hidden="true"
                 >
                   <span
                     className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest"
@@ -247,6 +310,8 @@ const RoleRoutingDiagram = () => {
                 left: `${(MODULE_X_START / SVG_W) * 100}%`,
                 right: 0,
               }}
+              role="list"
+              aria-label="Modules"
             >
               {MODULES.map((m) => {
                 const topPct = (moduleYs[m.key] / svgH) * 100;
@@ -257,23 +322,29 @@ const RoleRoutingDiagram = () => {
                     key={m.key}
                     className="absolute left-2 -translate-y-1/2"
                     style={{ top: `${topPct}%` }}
-                    onClick={() => {
-                      const el = document.getElementById(m.key);
-                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }}
+                    role="listitem"
                   >
-                    <span
-                      className={`inline-block text-sm font-semibold px-4 py-2 rounded-lg whitespace-nowrap border-2 cursor-pointer hover:opacity-90 transition-opacity ${
-                        isPulse ? "animate-pulse" : ""
-                      }`}
-                      style={{
-                        borderColor: color,
-                        color,
-                        backgroundColor: `${color}1A`,
-                      }}
+                    <div
+                      role="link"
+                      tabIndex={0}
+                      aria-label={`${m.label} module — jump to details in the ${m.cluster} layer.`}
+                      onClick={() => scrollToModule(m.key)}
+                      onKeyDown={(e) => handleModuleKey(e, m.key)}
+                      className="inline-block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2"
                     >
-                      {m.label}
-                    </span>
+                      <span
+                        className={`inline-block text-sm font-semibold px-4 py-2 rounded-lg whitespace-nowrap border-2 cursor-pointer hover:opacity-90 transition-opacity ${
+                          isPulse ? "animate-pulse" : ""
+                        }`}
+                        style={{
+                          borderColor: color,
+                          color,
+                          backgroundColor: `${color}1A`,
+                        }}
+                      >
+                        {m.label}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
