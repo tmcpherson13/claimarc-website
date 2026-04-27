@@ -471,6 +471,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       draftPrompt,
       draftPromptVersion,
       consumeDraftPrompt,
+      turnstileToken,
+      setTurnstileToken,
     }),
     [
       isOpen,
@@ -489,6 +491,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       draftPrompt,
       draftPromptVersion,
       consumeDraftPrompt,
+      turnstileToken,
     ]
   );
 
