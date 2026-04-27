@@ -21,7 +21,7 @@ export type Message = {
 
 export type ChatbotContextValue = {
   isOpen: boolean;
-  open: (moduleContext?: string) => void;
+  open: (moduleContext?: string, initialPrompt?: string) => void;
   close: () => void;
   messages: Message[];
   isLoading: boolean;
@@ -33,6 +33,8 @@ export type ChatbotContextValue = {
   clearModuleContext: () => void;
   pageContext: string | null;
   clearSession: () => void;
+  draftPrompt: string | null;
+  consumeDraftPrompt: () => string | null;
 };
 
 const ChatbotContext = createContext<ChatbotContextValue | null>(null);
@@ -152,14 +154,19 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     detectPageContext(typeof window !== "undefined" ? window.location.pathname : "/")
   );
 
+  const [draftPrompt, setDraftPrompt] = useState<string | null>(null);
+
   const sessionIdRef = useRef<string>(getOrCreateSessionId());
 
   useEffect(() => {
     setPageContext(detectPageContext(location.pathname));
   }, [location.pathname]);
 
-  const open = useCallback((nextModuleContext?: string) => {
+  const open = useCallback((nextModuleContext?: string, initialPrompt?: string) => {
     setIsOpen(true);
+    if (initialPrompt && initialPrompt.trim()) {
+      setDraftPrompt(initialPrompt.trim());
+    }
     if (nextModuleContext) {
       setModuleContext(nextModuleContext);
       writePersistedModuleContext(nextModuleContext);
@@ -198,6 +205,15 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         ];
       });
     }
+  }, []);
+
+  const consumeDraftPrompt = useCallback((): string | null => {
+    let value: string | null = null;
+    setDraftPrompt((prev) => {
+      value = prev;
+      return null;
+    });
+    return value;
   }, []);
 
   const close = useCallback(() => setIsOpen(false), []);
@@ -378,6 +394,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       clearModuleContext,
       pageContext,
       clearSession,
+      draftPrompt,
+      consumeDraftPrompt,
     }),
     [
       isOpen,
@@ -393,6 +411,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       clearModuleContext,
       pageContext,
       clearSession,
+      draftPrompt,
+      consumeDraftPrompt,
     ]
   );
 

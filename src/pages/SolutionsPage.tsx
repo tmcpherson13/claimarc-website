@@ -147,6 +147,21 @@ const MODULE_CONTENT: Record<string, ModuleContent> = {
   },
 };
 
+// Default chat prompt starters per module — prefilled into the Ask Z input
+// when a user clicks the module-specific Ask Z button. The user can edit
+// before sending. Keep these phrased as natural questions a buyer would ask.
+const MODULE_PROMPT_STARTERS: Record<string, string> = {
+  Sentinel: "Which payer behaviors should I be watching for right now in Sentinel?",
+  ContractIntel: "How do I understand my options for renegotiating an underperforming payer contract?",
+  Forecast: "I have questions about my 90-day revenue outlook — where should I start?",
+  Shield: "How do I figure out where my biggest claim denial risk sits today?",
+  Prevent: "How do I understand my prior authorization exposure across payers?",
+  Ledger: "What might I be missing in underpayments or overpayment compliance?",
+  Triage: "Can you help me think through how to prioritize my denial queue?",
+  Evidence: "I have questions about building stronger appeal documentation packages.",
+  Resolve: "Can we talk through my appeal strategy and how to improve win rates?",
+};
+
 interface RoleContent {
   key: string;
   tab: string;
@@ -550,16 +565,26 @@ const SolutionsPage = () => {
                                 </div>
                               </div>
                               <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
-                                <p className="italic text-slate-400 text-sm">
+                                <p
+                                  id={`${slug}-z-invitation`}
+                                  className="italic text-slate-400 text-sm"
+                                >
                                   {MODULE_CONTENT[m.name]?.zInvitation?.replace("→ Ask Z", "").trim()}
                                 </p>
                                 <button
                                   type="button"
-                                  onClick={() => openChatbot(m.name)}
-                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors whitespace-nowrap"
+                                  onClick={() =>
+                                    openChatbot(m.name, MODULE_PROMPT_STARTERS[m.name])
+                                  }
+                                  aria-label={`Ask Z about ${m.name} — opens chat with a prefilled question`}
+                                  aria-describedby={`${slug}-z-invitation`}
+                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                                 >
                                   <span aria-hidden="true">→</span>
-                                  <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
+                                  <span
+                                    aria-hidden="true"
+                                    className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold"
+                                  >
                                     Z
                                   </span>
                                   Ask Z
