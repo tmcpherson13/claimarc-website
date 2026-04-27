@@ -204,6 +204,7 @@ const SolutionsPage = () => {
   const { hash, pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
+  const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const [roleHintVisible, setRoleHintVisible] = useState(() => {
     if (typeof window === "undefined") return true;
     return sessionStorage.getItem("roleHintDismissed") !== "true";
