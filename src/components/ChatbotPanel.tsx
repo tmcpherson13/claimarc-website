@@ -324,6 +324,12 @@ export default function ChatbotPanel() {
 
   return (
     <>
+      <div
+        ref={turnstileContainerRef}
+        id="turnstile-container"
+        aria-hidden="true"
+        style={{ position: "fixed", bottom: 0, right: 0, width: 0, height: 0, overflow: "hidden", opacity: 0, pointerEvents: "none" }}
+      />
       <style>{`
         @keyframes pmcChatDot {
           0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
