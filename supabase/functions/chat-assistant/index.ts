@@ -39,6 +39,10 @@ const MAX_USER_MESSAGE_CHARS = 500;
 
 const sessions = new Map<string, { count: number; firstSeen: number }>();
 
+const IP_SESSIONS = new Map<string, { count: number; windowStart: number }>();
+const IP_MAX_SESSIONS_PER_HOUR = 5;
+const IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 const INJECTION_PATTERNS = [
   /ignore (all |previous |your |prior )?(instructions|prompt|rules|guidelines|constraints)/i,
   /forget (everything|all|your instructions|what you were told)/i,
