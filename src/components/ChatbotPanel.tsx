@@ -295,9 +295,22 @@ export default function ChatbotPanel() {
   const trimmed = input.trim();
   const canSend = trimmed.length > 0 && !isLoading && remaining >= 0;
 
-  const submit = () => {
+  const submit = async () => {
     if (!canSend) return;
     const value = trimmed;
+
+    // First message in this session: trigger invisible Turnstile challenge.
+    if (TURNSTILE_SITE_KEY && !turnstileVerified) {
+      const token = await runTurnstile();
+      if (!token) {
+        setVerifyError(
+          "Verification failed. Please refresh the page and try again."
+        );
+        return;
+      }
+    }
+
+    setVerifyError(null);
     setInput("");
     void sendMessage(value);
   };
