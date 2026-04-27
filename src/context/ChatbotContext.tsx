@@ -186,7 +186,14 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     detectPageContext(typeof window !== "undefined" ? window.location.pathname : "/")
   );
 
+  // Per-module map of the last prefilled "Ask Z" question. Persists across
+  // panel close/re-open and tab reloads (sessionStorage). The seed signal
+  // (`draftPrompt` + `draftPromptVersion`) is what ChatbotPanel watches —
+  // the version bump guarantees that re-clicking the SAME module's Ask Z
+  // button still re-seeds the textarea even if the prompt string is identical.
+  const draftPromptsRef = useRef<Record<string, string>>(readPersistedDraftPrompts());
   const [draftPrompt, setDraftPrompt] = useState<string | null>(null);
+  const [draftPromptVersion, setDraftPromptVersion] = useState(0);
 
   const sessionIdRef = useRef<string>(getOrCreateSessionId());
 
@@ -196,9 +203,29 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
   const open = useCallback((nextModuleContext?: string, initialPrompt?: string) => {
     setIsOpen(true);
+
+    // Resolve which prompt to seed:
+    // 1. Caller-supplied prompt wins and updates the persisted map for this module.
+    // 2. Otherwise, fall back to the last persisted prompt for this module (if any).
+    let resolvedPrompt: string | null = null;
     if (initialPrompt && initialPrompt.trim()) {
-      setDraftPrompt(initialPrompt.trim());
+      resolvedPrompt = initialPrompt.trim();
+      if (nextModuleContext) {
+        draftPromptsRef.current = {
+          ...draftPromptsRef.current,
+          [nextModuleContext]: resolvedPrompt,
+        };
+        writePersistedDraftPrompts(draftPromptsRef.current);
+      }
+    } else if (nextModuleContext && draftPromptsRef.current[nextModuleContext]) {
+      resolvedPrompt = draftPromptsRef.current[nextModuleContext];
     }
+
+    if (resolvedPrompt) {
+      setDraftPrompt(resolvedPrompt);
+      setDraftPromptVersion((v) => v + 1);
+    }
+
     if (nextModuleContext) {
       setModuleContext(nextModuleContext);
       writePersistedModuleContext(nextModuleContext);
@@ -239,14 +266,11 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const consumeDraftPrompt = useCallback((): string | null => {
-    let value: string | null = null;
-    setDraftPrompt((prev) => {
-      value = prev;
-      return null;
-    });
-    return value;
-  }, []);
+  // Read the current draft (without clearing it) so the panel can re-seed
+  // the textarea every time the version bumps. We intentionally keep the
+  // value around so it survives close/re-open until a new prompt arrives
+  // or the user sends a message.
+  const consumeDraftPrompt = useCallback((): string | null => draftPrompt, [draftPrompt]);
 
   const close = useCallback(() => setIsOpen(false), []);
 
