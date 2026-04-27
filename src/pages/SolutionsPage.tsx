@@ -9,6 +9,7 @@ import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
 import { MODULES } from "@/config/modules";
 import { useChatbot } from "@/context/ChatbotContext";
+import { trackEvent } from "@/lib/analytics";
 
 interface ModuleContent {
   metric: string;
@@ -475,18 +476,34 @@ const SolutionsPage = () => {
                             const next = isExpanded ? null : slug;
                             setExpandedModule(next);
                             if (next) {
+                              // Wait for the expand transition (~300ms) to finish
+                              // so we can measure the fully revealed article and
+                              // scroll so the bottom Ask Z row sits comfortably
+                              // beneath the sticky header.
                               window.setTimeout(() => {
                                 const el = document.getElementById(slug);
-                                if (el) {
-                                  el.scrollIntoView({ behavior: "smooth", block: "start" });
-                                }
-                              }, 320);
+                                if (!el) return;
+                                const rect = el.getBoundingClientRect();
+                                const articleTop = rect.top + window.scrollY;
+                                const articleBottom = articleTop + rect.height;
+                                const viewportH = window.innerHeight;
+                                // Prefer aligning the bottom of the card just
+                                // above the viewport bottom (so Ask Z is in view).
+                                // If the card is taller than the viewport, fall
+                                // back to aligning its top below the header.
+                                const bottomAligned = articleBottom - viewportH + 32;
+                                const topAligned = articleTop - SCROLL_OFFSET_PX;
+                                const target = rect.height + SCROLL_OFFSET_PX + 32 > viewportH
+                                  ? topAligned
+                                  : bottomAligned;
+                                window.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+                              }, 340);
                             }
                           }}
                           aria-expanded={isExpanded}
                           aria-controls={`${slug}-details`}
                           aria-label={`${isExpanded ? "Collapse" : "Expand"} ${m.name} details`}
-                          className="text-[var(--emerald)] text-xs font-semibold flex items-center gap-1 hover:gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 rounded"
+                          className="inline-flex items-center gap-2 text-sm font-bold text-[var(--emerald)] border-2 border-[var(--emerald)] bg-[var(--emerald)]/10 hover:bg-[var(--emerald)]/20 rounded-lg px-4 py-2 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                         >
                           <span aria-hidden="true">
                             {isExpanded ? "Collapse" : "Explore in Depth"}
@@ -573,9 +590,13 @@ const SolutionsPage = () => {
                                 </p>
                                 <button
                                   type="button"
-                                  onClick={() =>
-                                    openChatbot(m.name, MODULE_PROMPT_STARTERS[m.name])
-                                  }
+                                  onClick={() => {
+                                    trackEvent("Ask_Z_Click", {
+                                      module: m.name,
+                                      location: "solutions_module_card",
+                                    });
+                                    openChatbot(m.name, MODULE_PROMPT_STARTERS[m.name]);
+                                  }}
                                   aria-label={`Ask Z about ${m.name} — opens chat with a prefilled question`}
                                   aria-describedby={`${slug}-z-invitation`}
                                   className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--emerald)] border-2 border-[var(--emerald)] bg-[var(--emerald)]/10 rounded-lg px-4 py-2 hover:bg-[var(--emerald)]/20 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
