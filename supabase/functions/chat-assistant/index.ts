@@ -105,6 +105,21 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (containsInjection(lastUserMsg.content)) {
+      return new Response(
+        JSON.stringify({
+          reply: "I'm Z — I'm only set up to help with ZDefense and revenue cycle questions. What can I help you with on that front?",
+          messageCount: 0,
+          offerDemo: false,
+          filtered: true,
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const gate = checkSession(sessionId);
     if (!gate.allowed) {
       return new Response(
