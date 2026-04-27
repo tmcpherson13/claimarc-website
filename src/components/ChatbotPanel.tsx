@@ -4,6 +4,30 @@ import { X, Send } from "lucide-react";
 import { useChatbot, type Message } from "@/context/ChatbotContext";
 
 const MAX_CHARS = 500;
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+const TURNSTILE_TIMEOUT_MS = 5000;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: string | HTMLElement,
+        opts: {
+          sitekey: string;
+          callback?: (token: string) => void;
+          "error-callback"?: () => void;
+          "expired-callback"?: () => void;
+          appearance?: "always" | "execute" | "interaction-only";
+          size?: "normal" | "compact" | "invisible";
+          execution?: "render" | "execute";
+        }
+      ) => string;
+      execute: (widgetIdOrContainer?: string | HTMLElement) => void;
+      reset: (widgetIdOrContainer?: string | HTMLElement) => void;
+      remove: (widgetIdOrContainer?: string | HTMLElement) => void;
+    };
+  }
+}
 const LINK_RE = /\/solutions#[a-z-]+/g;
 const MONEY_RE = /\$[0-9][0-9,.]*[KMB]?/g;
 const PCT_RE = /[0-9]+(?:\.[0-9]+)?%/g;
