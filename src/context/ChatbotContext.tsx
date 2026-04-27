@@ -282,6 +282,9 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     setError(null);
     setModuleContext(null);
     writePersistedModuleContext(null);
+    setDraftPrompt(null);
+    draftPromptsRef.current = {};
+    writePersistedDraftPrompts({});
     const fresh = generateId();
     sessionIdRef.current = fresh;
     try {
