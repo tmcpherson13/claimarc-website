@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { messages, moduleContext, pageContext, sessionId } = await req.json();
+    const { messages, moduleContext, pageContext, sessionId, turnstileToken } = await req.json();
 
     if (!sessionId || typeof sessionId !== "string") {
       return new Response(JSON.stringify({ error: "sessionId is required" }), {
