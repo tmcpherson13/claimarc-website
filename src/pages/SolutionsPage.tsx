@@ -15,125 +15,135 @@ interface ModuleContent {
   whatItDoes: string;
   howItDoes: string;
   actions: string[];
+  zInvitation: string;
 }
 
 const MODULE_CONTENT: Record<string, ModuleContent> = {
   Sentinel: {
     metric: "Weaponization Index 2.4x · UHC",
     whatItDoes:
-      "Sentinel detects when payers silently change their denial strategies — often weeks before your team sees the resulting spike in denials.",
+      "Sentinel detects when payers silently change their denial strategies — often weeks before your team sees the resulting spike in denials. Payers adjust adjudication behavior systematically and quietly, and the damage accumulates before most revenue cycle teams realize anything has changed. Once Sentinel is running, your team stops reacting to denial spikes and starts intercepting them. The financial difference between detecting a behavioral shift at day 3 versus day 60 can run into six figures on a single payer relationship.",
     howItDoes:
-      "It continuously monitors 9 behavioral signals across your entire 835 remittance stream and scores each payer with a normalized Weaponization Index. When the index crosses 2.0x or spikes sharply, it fires an alert.",
+      "Sentinel continuously monitors 9 behavioral signals across your entire 835 remittance stream and scores each payer with a normalized Weaponization Index updated daily. The data comes from cross-portfolio remittance analysis — not just your claims, but patterns across hundreds of provider organizations simultaneously, which is what makes early detection possible. When the index crosses 2.0x or spikes sharply, the system fires an alert automatically without requiring manual review. The intelligence surfaces in under 24 hours of a behavioral shift beginning — giving you a window that no single-provider system can replicate.",
     actions: [
       "Immediately filter your Triage queue to the aggressive payer",
       "Update Shield rules before the next claim batch",
       "Prepare clinical teams with exact documentation changes",
       "Feed Forecast with the earliest possible downside risk signal",
     ],
+    zInvitation: "Not sure what to watch for? → Ask Z",
   },
   ContractIntel: {
     metric: "73rd percentile → $2.8M annual gap to 85th",
     whatItDoes:
-      "It shows you exactly what the same payer is paying comparable providers for the same CPT codes — giving you data-backed leverage in every contract negotiation.",
+      "ContractIntel shows you exactly what the same payer is paying comparable providers for the same CPT codes — giving you data-backed leverage in every contract negotiation. Most providers walk into renewal meetings with a general sense that their rates are low. ContractIntel gives them a number, a percentile, and a dollar gap. The conversation changes completely when you can show a payer their own payment data from comparable contracts. Providers using ContractIntel have moved from the 55th to the 78th percentile in a single renewal cycle.",
     howItDoes:
-      "Pulls from Transparency in Coverage MRFs and benchmarks your contracted rates against the true market 75th and 85th percentiles, then surfaces upcoming renewals with quantified opportunity.",
+      "ContractIntel pulls directly from Transparency in Coverage (TiC) Market Reference Files published by major payers and benchmarks your contracted rates against the true market 75th and 85th percentiles by CPT code, specialty, and geography. The data refreshes continuously as payers publish updates, so your benchmarks reflect current market conditions rather than last year's snapshot. Upcoming contract renewals are flagged automatically with a quantified revenue opportunity so you know which negotiations to prioritize. No Protected Health Information (PHI) is required — the entire analysis runs on public data.",
     actions: [
       "Walk into renewal meetings with hard evidence instead of guesses",
       "Prioritize which contracts to renegotiate first",
       "Run what-if scenarios to see the exact revenue impact of a 5% rate increase",
       "Protect strong rates you already have above market",
     ],
+    zInvitation: "Want to understand your options? → Ask Z",
   },
   Forecast: {
     metric: "$12.6M projected 90-day revenue · 84% confidence",
     whatItDoes:
-      "It synthesizes signals from all 8 other modules into a single, continuously updated 90-day revenue projection.",
+      "Forecast synthesizes signals from all 8 other modules into a single, continuously updated 90-day revenue projection that the CFO can actually trust. Most revenue projections are built from historical averages and hope. Forecast builds forward from live intelligence — what payers are doing right now, what claims are clean, what appeals are in flight, what contracts are at risk. The result is a projection with a confidence score rather than a guess with a spreadsheet behind it. When the number changes, you know exactly which module drove the change.",
     howItDoes:
-      "Combines Sentinel's Weaponization Index, Shield's clean claim rate, Prevent's auth exposure, Ledger's under/overpayments, Resolve's appeal pipeline, and ContractIntel's renewal risk into one forward-looking model with what-if sliders.",
+      "Forecast combines Sentinel's Weaponization Index, Shield's clean claim rate, Prevent's authorization exposure, Ledger's underpayment and overpayment positions, Resolve's appeal pipeline, and ContractIntel's renewal risk into one forward-looking model updated continuously. Each driver is weighted by its current signal strength, so a sudden spike in payer aggression shows up in the projection within hours rather than months. What-if sliders let leadership model contract decisions, staffing changes, or module activation scenarios before committing resources. The confidence score reflects the consistency of the underlying signals — high confidence means the drivers are stable, low confidence means something is shifting that warrants attention.",
     actions: [
       "See the real financial impact of payer aggression before it hits cash flow",
       "Make data-driven decisions on staffing, contract priorities, and resource allocation",
       "Give the CFO a single number they can trust instead of multiple conflicting reports",
       "Run scenarios to quantify the ROI of investing more in prevention",
     ],
+    zInvitation: "Have questions about your revenue outlook? → Ask Z",
   },
   Shield: {
     metric: "89.4% clean claim rate · up from 76.1%",
     whatItDoes:
-      "It scans every outbound claim against live payer behavior — not just published rules — and flags or fixes problems before submission.",
+      "Shield scans every outbound claim against live payer behavior — not just published rules — and flags or fixes problems before submission. The 13-point improvement from 76.1% to 89.4% represents claims that used to generate denials, rework, and delayed cash that now go out clean on the first pass. Every denial Shield prevents is a denial your team never has to work. At scale, that means fewer FTEs (Full Time Employees) doing rework, faster cash conversion, and a denial queue that reflects genuinely contested claims rather than preventable errors.",
     howItDoes:
-      "Combines real-time CARC prediction from Sentinel with NCCI edits, CMS fee schedule rules, and your own historical denial patterns to assign a deny risk score and specific fix guidance.",
+      "Shield combines real-time Claim Adjustment Reason Code (CARC) prediction from Sentinel with National Correct Coding Initiative (NCCI) edits, CMS fee schedule rules, and your own historical denial patterns to assign a deny risk score and specific fix guidance to every claim before it leaves your system. The Regulatory Intelligence Feed monitors CMS, MAC contractor, and commercial payer policy changes and surfaces them 45 days before they affect your claims — giving clinical and billing teams time to adjust workflows proactively. Clean claims are auto-released with zero delay. Flagged claims show the exact modifier, documentation, or coding fix required rather than a generic warning.",
     actions: [
       "Auto-release clean claims with zero delay",
       "Apply precise documentation or modifier fixes on flagged claims",
       "Stop 1 in 4 denials before they ever reach the payer",
       "Dramatically reduce rework and accelerate cash flow",
     ],
+    zInvitation: "Unsure where your claim risk sits? → Ask Z",
   },
   Prevent: {
     metric: "3 new auth requirements detected · 11 days early",
     whatItDoes:
-      "It detects new or changed prior authorization requirements — often days or weeks before the payer publishes formal notice.",
+      "Prevent detects new or changed prior authorization requirements — often days or weeks before the payer publishes formal notice or your team encounters the first CO-15 denial. Prior authorization changes are one of the most disruptive and preventable revenue cycle problems. Payers introduce new requirements quietly, providers discover them through denied claims, and the rework begins. Prevent breaks that cycle entirely by surfacing changes before they reach your claims. The 11-day average lead time is enough to update clinical workflows, submit retroactive authorizations, and brief your team before volume is affected.",
     howItDoes:
-      "Monitors CO-15 denial patterns across the entire ZDefense client portfolio and cross-references them with public payer policy pages to catch silent policy changes.",
+      "Prevent monitors CO-15 denial patterns across the entire ZDefense client portfolio — which means it sees prior authorization changes affecting other providers before they reach yours. It cross-references those patterns with public payer policy pages and commercial policy update feeds to confirm and contextualize each change. When a new requirement is detected, the alert includes the specific payer, procedure code range, effective date, and recommended workflow adjustment. No PHI is required — the detection runs entirely on public signals and anonymized cross-portfolio pattern data, which is why Prevent activates with no BAA.",
     actions: [
       "Submit prior auths proactively instead of reacting to denials",
       "Avoid entire batches of CO-15 denials",
       "Update clinical and billing workflows before the requirement hits volume",
       "Protect $284K+ in quarterly revenue that would otherwise be lost",
     ],
+    zInvitation: "Want to understand your auth exposure? → Ask Z",
   },
   Ledger: {
     metric: "$295 underpayment identified · $8,317 overpayment compliance exposure",
     whatItDoes:
-      "It finds money payers have already technically paid you but at less than the contracted rate — and simultaneously protects you from costly overpayment repayment violations.",
+      "Ledger finds money payers have already technically paid you but at less than your contracted rate — and simultaneously protects you from the regulatory and financial exposure of overpayments you have not yet identified. Underpayments are invisible in most systems because the claim was paid and closed. Ledger reopens that question at the remittance line level. Overpayment exposure is equally invisible until a CMS audit or whistleblower complaint makes it visible at the worst possible moment. Ledger makes both visible on your terms, not theirs.",
     howItDoes:
-      "Compares every 835 remittance line against your contracted rates in real time, surfaces systematic underpayments, and maintains a full audit-ready 7-stage overpayment compliance workflow including the 2025 CMS 60-day rule.",
+      "Ledger compares every 835 remittance line against your contracted rates in real time, surfacing systematic underpayments by payer, CPT code, and contract term. The underpayment workflow generates dispute documentation automatically and tracks resolution through to payment. On the overpayment side, Ledger maintains a full audit-ready 7-stage compliance workflow aligned to the 2025 CMS 60-day rule — with an immutable audit log, dual-approver authorization on every write-off, and time-stamped documentation at every stage. The workflow is designed to pass a regulatory review without additional preparation.",
     actions: [
       "Recover invisible underpayments that most systems miss",
       "Stay compliant with mandatory federal repayment deadlines",
       "Avoid False Claims Act exposure",
       "Turn Ledger into the default financial performance dashboard",
     ],
+    zInvitation: "Not sure what you might be missing? → Ask Z",
   },
   Triage: {
     metric: "71 claims · Sorted by Expected Recovery Value",
     whatItDoes:
-      "It automatically prioritizes every denial by Expected Recovery Value — dollar amount times probability — so your team works the highest-value claims first.",
+      "Triage automatically prioritizes every denial by Expected Recovery Value — dollar amount multiplied by recovery probability — so your team works the highest-value claims first rather than the most recent ones. Most denial queues are worked in arrival order, which means a $47 denial gets the same attention as a $4,700 denial depending on when it landed. Triage ends that. The result is a team that consistently works toward maximum recovery per hour rather than minimum queue length. In a department with limited capacity, that distinction compounds significantly over a quarter.",
     howItDoes:
-      "Uses a 50-rule CARC/RARC intelligence model plus payer-specific historical outcomes, then applies natural language smart search and recovery threshold filtering.",
+      "Triage uses a 50-rule CARC/RARC (Claim Adjustment Reason Code/Remittance Advice Remark Code) intelligence model trained on payer-specific historical outcomes to assign recovery probability to every claim in the queue. Natural language search lets specialists query the queue the way they think — by payer, code, amount, or clinical context — rather than navigating rigid filters. Recovery threshold filtering removes claims below a configurable floor so the team never works a claim that costs more to appeal than it will recover. One-click routing sends prioritized claims directly to Evidence or Resolve without manual handoff.",
     actions: [
       "Stop working denials in arrival order",
       "Focus effort where it produces the most revenue per hour",
       "Route claims intelligently to Evidence or Resolve with one click",
       "Give your billing team a prioritized daily worklist instead of chaos",
     ],
+    zInvitation: "Want help thinking through your denial queue? → Ask Z",
   },
   Evidence: {
     metric: "136 of 168 documents auto-retrieved · 81% complete",
     whatItDoes:
-      "It assembles the exact documentation package needed for every appeal so your team reviews instead of hunts.",
+      "Evidence assembles the exact documentation package needed for every appeal so your team reviews and submits rather than hunts and compiles. The average appeal fails not because the clinical case is weak but because the documentation package is incomplete, inconsistent, or missing the specific evidence that payer requires for that denial reason. Evidence eliminates that failure mode by building the package automatically before a specialist opens the file. An 81% auto-completion rate means 4 out of 5 appeal packages arrive at the specialist's desk ready to submit.",
     howItDoes:
-      "Links directly to claims in Triage, categorizes required documents, and uses auto-collect from the Xtract archive.",
+      "Evidence links directly to claims routed from Triage, reads the CARC and RARC codes to determine exactly what documentation each payer requires for that denial type, and auto-collects matching documents from the Xtract archive. Partial denials are handled with per-line checklists rather than claim-level summaries, so a claim with three denial reasons generates three distinct evidence requirements rather than one generic request. Missing documents are flagged with specific retrieval instructions rather than blank fields. Complete packages route to Resolve with one click.",
     actions: [
       "Eliminate hours of manual document gathering",
       "Route complete packages straight to Resolve",
       "Handle partial denials with per-line checklists",
       "Dramatically increase appeal success rates by submitting stronger packages",
     ],
+    zInvitation: "Questions about appeal documentation? → Ask Z",
   },
   Resolve: {
     metric: "$1,146K in active appeals · 37 in progress",
     whatItDoes:
-      "It generates payer-specific, CARC-accurate appeal letters at scale and tracks every outcome.",
+      "Resolve generates payer-specific, CARC-accurate appeal letters at scale and tracks every outcome back into the platform intelligence. Ten complete appeal letters in under 10 seconds is the operational headline. The strategic headline is that every outcome Resolve records — won, lost, partially paid — feeds back into Sentinel, Shield, and Triage to make the entire platform more accurate over time. Resolve is not just a letter generator. It is the feedback loop that closes the intelligence cycle.",
     howItDoes:
-      "Uses template-based generation from the 50-rule intelligence model, supports 6 automated lanes, and records outcomes that continuously improve the entire platform.",
+      "Resolve uses the 50-rule intelligence model to select the correct argument structure, clinical language, and regulatory citation for each denial reason and payer combination. Six automated appeal lanes handle the most common denial patterns without specialist input. Letters are generated in the payer's preferred format with the correct submission pathway pre-populated. Every submitted appeal is tracked through adjudication — approval, denial, partial payment, and no response — and the outcome is fed back into the recovery probability model in Triage and the behavioral scoring in Sentinel. The platform gets more accurate with every appeal cycle.",
     actions: [
       "Generate 10+ perfect appeal letters in seconds instead of hours",
       "Submit stronger, more consistent appeals",
       "Track appeal velocity and payer performance",
       "Feed real outcome data back into Sentinel, Shield, and Triage for continuous improvement",
     ],
+    zInvitation: "Want to talk through your appeal strategy? → Ask Z",
   },
 };
 
@@ -539,16 +549,22 @@ const SolutionsPage = () => {
                                   <p className="text-slate-300 text-sm">{m.audience}</p>
                                 </div>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => openChatbot(m.name)}
-                                className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
-                              >
-                                <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
-                                  Z
-                                </span>
-                                Ask Z
-                              </button>
+                              <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
+                                <p className="italic text-slate-400 text-sm">
+                                  {MODULE_CONTENT[m.name]?.zInvitation?.replace("→ Ask Z", "").trim()}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => openChatbot(m.name)}
+                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors whitespace-nowrap"
+                                >
+                                  <span aria-hidden="true">→</span>
+                                  <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
+                                    Z
+                                  </span>
+                                  Ask Z
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
