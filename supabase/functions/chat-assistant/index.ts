@@ -43,6 +43,28 @@ const IP_SESSIONS = new Map<string, { count: number; windowStart: number }>();
 const IP_MAX_SESSIONS_PER_HOUR = 5;
 const IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
+const VERIFIED_SESSIONS = new Set<string>();
+const TURNSTILE_SECRET_KEY = Deno.env.get("TURNSTILE_SECRET_KEY");
+
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  if (!TURNSTILE_SECRET_KEY) return true; // not configured: skip enforcement
+  try {
+    const form = new URLSearchParams();
+    form.append("secret", TURNSTILE_SECRET_KEY);
+    form.append("response", token);
+    if (ip && ip !== "unknown") form.append("remoteip", ip);
+    const res = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      { method: "POST", body: form }
+    );
+    const data = await res.json();
+    return Boolean(data?.success);
+  } catch (e) {
+    console.error("turnstile siteverify error", e);
+    return false;
+  }
+}
+
 const INJECTION_PATTERNS = [
   /ignore (all |previous |your |prior )?(instructions|prompt|rules|guidelines|constraints)/i,
   /forget (everything|all|your instructions|what you were told)/i,
@@ -110,7 +132,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { messages, moduleContext, pageContext, sessionId } = await req.json();
+    const { messages, moduleContext, pageContext, sessionId, turnstileToken } = await req.json();
 
     if (!sessionId || typeof sessionId !== "string") {
       return new Response(JSON.stringify({ error: "sessionId is required" }), {
@@ -139,6 +161,30 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "MESSAGE_TOO_LONG", message: `Messages must be ${MAX_USER_MESSAGE_CHARS} characters or fewer.` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Turnstile gate: require + verify token on first message of a session.
+    if (TURNSTILE_SECRET_KEY && !VERIFIED_SESSIONS.has(sessionId)) {
+      if (!turnstileToken || typeof turnstileToken !== "string") {
+        return new Response(
+          JSON.stringify({
+            error: "VERIFICATION_REQUIRED",
+            message: "Verification failed. Please refresh the page and try again.",
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const ok = await verifyTurnstile(turnstileToken, ip);
+      if (!ok) {
+        return new Response(
+          JSON.stringify({
+            error: "VERIFICATION_FAILED",
+            message: "Verification failed. Please refresh the page and try again.",
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      VERIFIED_SESSIONS.add(sessionId);
     }
 
     if (containsInjection(lastUserMsg.content)) {

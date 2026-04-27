@@ -36,6 +36,8 @@ export type ChatbotContextValue = {
   draftPrompt: string | null;
   draftPromptVersion: number;
   consumeDraftPrompt: () => string | null;
+  turnstileToken: string | null;
+  setTurnstileToken: (token: string | null) => void;
 };
 
 const ChatbotContext = createContext<ChatbotContextValue | null>(null);
@@ -195,6 +197,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   const draftPromptsRef = useRef<Record<string, string>>(readPersistedDraftPrompts());
   const [draftPrompt, setDraftPrompt] = useState<string | null>(null);
   const [draftPromptVersion, setDraftPromptVersion] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const sessionIdRef = useRef<string>(getOrCreateSessionId());
 
@@ -345,6 +348,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
               moduleContext,
               pageContext,
               sessionId: sessionIdRef.current,
+              turnstileToken,
             },
           }
         );
@@ -446,7 +450,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     },
-    [messages, moduleContext, pageContext]
+    [messages, moduleContext, pageContext, turnstileToken]
   );
 
   const value = useMemo<ChatbotContextValue>(
@@ -467,6 +471,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       draftPrompt,
       draftPromptVersion,
       consumeDraftPrompt,
+      turnstileToken,
+      setTurnstileToken,
     }),
     [
       isOpen,
@@ -485,6 +491,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       draftPrompt,
       draftPromptVersion,
       consumeDraftPrompt,
+      turnstileToken,
     ]
   );
 

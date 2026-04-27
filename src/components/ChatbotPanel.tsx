@@ -4,6 +4,30 @@ import { X, Send } from "lucide-react";
 import { useChatbot, type Message } from "@/context/ChatbotContext";
 
 const MAX_CHARS = 500;
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+const TURNSTILE_TIMEOUT_MS = 5000;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: string | HTMLElement,
+        opts: {
+          sitekey: string;
+          callback?: (token: string) => void;
+          "error-callback"?: () => void;
+          "expired-callback"?: () => void;
+          appearance?: "always" | "execute" | "interaction-only";
+          size?: "normal" | "compact" | "invisible";
+          execution?: "render" | "execute";
+        }
+      ) => string;
+      execute: (widgetIdOrContainer?: string | HTMLElement) => void;
+      reset: (widgetIdOrContainer?: string | HTMLElement) => void;
+      remove: (widgetIdOrContainer?: string | HTMLElement) => void;
+    };
+  }
+}
 const LINK_RE = /\/solutions#[a-z-]+/g;
 const MONEY_RE = /\$[0-9][0-9,.]*[KMB]?/g;
 const PCT_RE = /[0-9]+(?:\.[0-9]+)?%/g;
@@ -118,14 +142,106 @@ export default function ChatbotPanel() {
     draftPrompt,
     draftPromptVersion,
     consumeDraftPrompt,
+    turnstileToken,
+    setTurnstileToken,
   } = useChatbot();
   const navigate = useNavigate();
 
   const [input, setInput] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [turnstileVerified, setTurnstileVerified] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+  const turnstileResolveRef = useRef<((token: string | null) => void) | null>(null);
+
+  // Load Cloudflare Turnstile script once on mount.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    if (document.getElementById("cf-turnstile-script")) return;
+    const script = document.createElement("script");
+    script.id = "cf-turnstile-script";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  }, []);
+
+  // Render the invisible Turnstile widget once the script + container are ready.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    if (!isOpen) return;
+    if (turnstileWidgetIdRef.current) return;
+
+    let cancelled = false;
+    const tryRender = () => {
+      if (cancelled) return;
+      const container = turnstileContainerRef.current;
+      if (!window.turnstile || !container) {
+        window.setTimeout(tryRender, 200);
+        return;
+      }
+      try {
+        const widgetId = window.turnstile.render(container, {
+          sitekey: TURNSTILE_SITE_KEY,
+          size: "invisible",
+          appearance: "interaction-only",
+          execution: "execute",
+          callback: (token: string) => {
+            setTurnstileToken(token);
+            setTurnstileVerified(true);
+            const resolve = turnstileResolveRef.current;
+            turnstileResolveRef.current = null;
+            resolve?.(token);
+          },
+          "error-callback": () => {
+            const resolve = turnstileResolveRef.current;
+            turnstileResolveRef.current = null;
+            resolve?.(null);
+          },
+          "expired-callback": () => {
+            setTurnstileVerified(false);
+            setTurnstileToken(null);
+          },
+        });
+        turnstileWidgetIdRef.current = widgetId;
+      } catch (e) {
+        console.error("turnstile render error", e);
+      }
+    };
+    tryRender();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, setTurnstileToken]);
+
+  const runTurnstile = (): Promise<string | null> => {
+    return new Promise((resolve) => {
+      if (!TURNSTILE_SITE_KEY || !window.turnstile || !turnstileWidgetIdRef.current) {
+        resolve(null);
+        return;
+      }
+      turnstileResolveRef.current = resolve;
+      try {
+        window.turnstile.execute(turnstileWidgetIdRef.current);
+      } catch (e) {
+        console.error("turnstile execute error", e);
+        turnstileResolveRef.current = null;
+        resolve(null);
+        return;
+      }
+      window.setTimeout(() => {
+        if (turnstileResolveRef.current === resolve) {
+          turnstileResolveRef.current = null;
+          resolve(null);
+        }
+      }, TURNSTILE_TIMEOUT_MS);
+    });
+  };
 
   // Seed the input with the prefilled prompt every time a fresh signal
   // arrives (panel open OR a new draftPromptVersion bump). This guarantees
@@ -179,9 +295,22 @@ export default function ChatbotPanel() {
   const trimmed = input.trim();
   const canSend = trimmed.length > 0 && !isLoading && remaining >= 0;
 
-  const submit = () => {
+  const submit = async () => {
     if (!canSend) return;
     const value = trimmed;
+
+    // First message in this session: trigger invisible Turnstile challenge.
+    if (TURNSTILE_SITE_KEY && !turnstileVerified) {
+      const token = await runTurnstile();
+      if (!token) {
+        setVerifyError(
+          "Verification failed. Please refresh the page and try again."
+        );
+        return;
+      }
+    }
+
+    setVerifyError(null);
     setInput("");
     void sendMessage(value);
   };
@@ -195,6 +324,12 @@ export default function ChatbotPanel() {
 
   return (
     <>
+      <div
+        ref={turnstileContainerRef}
+        id="turnstile-container"
+        aria-hidden="true"
+        style={{ position: "fixed", bottom: 0, right: 0, width: 0, height: 0, overflow: "hidden", opacity: 0, pointerEvents: "none" }}
+      />
       <style>{`
         @keyframes pmcChatDot {
           0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
@@ -393,7 +528,7 @@ export default function ChatbotPanel() {
             </div>
           )}
 
-          {error && (
+          {(error || verifyError) && (
             <div
               role="alert"
               style={{
@@ -406,7 +541,7 @@ export default function ChatbotPanel() {
                 fontSize: 12,
               }}
             >
-              {error}
+              {verifyError ?? error}
             </div>
           )}
         </div>
