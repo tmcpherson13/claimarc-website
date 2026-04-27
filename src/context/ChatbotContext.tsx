@@ -34,6 +34,7 @@ export type ChatbotContextValue = {
   pageContext: string | null;
   clearSession: () => void;
   draftPrompt: string | null;
+  draftPromptVersion: number;
   consumeDraftPrompt: () => string | null;
 };
 
@@ -41,6 +42,7 @@ const ChatbotContext = createContext<ChatbotContextValue | null>(null);
 
 const SESSION_KEY = "zdefense_chat_session";
 const MODULE_CONTEXT_KEY = "zdefense_chat_module_context";
+const DRAFT_PROMPTS_KEY = "zdefense_chat_draft_prompts";
 const MAX_MESSAGE_CHARS = 500;
 const CONTEXT_WINDOW = 12;
 
@@ -138,6 +140,37 @@ function writePersistedModuleContext(value: string | null) {
   }
 }
 
+/**
+ * Per-module draft prompts: keep the last prefilled "Ask Z" question for each
+ * module so toggling between module cards (or re-opening after closing the
+ * panel) always re-seeds the input with the prompt for the module the user
+ * just clicked — never a stale one from a previous module.
+ */
+function readPersistedDraftPrompts(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_PROMPTS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePersistedDraftPrompts(map: Record<string, string>) {
+  if (typeof window === "undefined") return;
+  try {
+    if (Object.keys(map).length === 0) {
+      window.sessionStorage.removeItem(DRAFT_PROMPTS_KEY);
+    } else {
+      window.sessionStorage.setItem(DRAFT_PROMPTS_KEY, JSON.stringify(map));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 export function ChatbotProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
 
@@ -154,7 +187,14 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     detectPageContext(typeof window !== "undefined" ? window.location.pathname : "/")
   );
 
+  // Per-module map of the last prefilled "Ask Z" question. Persists across
+  // panel close/re-open and tab reloads (sessionStorage). The seed signal
+  // (`draftPrompt` + `draftPromptVersion`) is what ChatbotPanel watches —
+  // the version bump guarantees that re-clicking the SAME module's Ask Z
+  // button still re-seeds the textarea even if the prompt string is identical.
+  const draftPromptsRef = useRef<Record<string, string>>(readPersistedDraftPrompts());
   const [draftPrompt, setDraftPrompt] = useState<string | null>(null);
+  const [draftPromptVersion, setDraftPromptVersion] = useState(0);
 
   const sessionIdRef = useRef<string>(getOrCreateSessionId());
 
@@ -164,9 +204,29 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
   const open = useCallback((nextModuleContext?: string, initialPrompt?: string) => {
     setIsOpen(true);
+
+    // Resolve which prompt to seed:
+    // 1. Caller-supplied prompt wins and updates the persisted map for this module.
+    // 2. Otherwise, fall back to the last persisted prompt for this module (if any).
+    let resolvedPrompt: string | null = null;
     if (initialPrompt && initialPrompt.trim()) {
-      setDraftPrompt(initialPrompt.trim());
+      resolvedPrompt = initialPrompt.trim();
+      if (nextModuleContext) {
+        draftPromptsRef.current = {
+          ...draftPromptsRef.current,
+          [nextModuleContext]: resolvedPrompt,
+        };
+        writePersistedDraftPrompts(draftPromptsRef.current);
+      }
+    } else if (nextModuleContext && draftPromptsRef.current[nextModuleContext]) {
+      resolvedPrompt = draftPromptsRef.current[nextModuleContext];
     }
+
+    if (resolvedPrompt) {
+      setDraftPrompt(resolvedPrompt);
+      setDraftPromptVersion((v) => v + 1);
+    }
+
     if (nextModuleContext) {
       setModuleContext(nextModuleContext);
       writePersistedModuleContext(nextModuleContext);
@@ -207,14 +267,11 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const consumeDraftPrompt = useCallback((): string | null => {
-    let value: string | null = null;
-    setDraftPrompt((prev) => {
-      value = prev;
-      return null;
-    });
-    return value;
-  }, []);
+  // Read the current draft (without clearing it) so the panel can re-seed
+  // the textarea every time the version bumps. We intentionally keep the
+  // value around so it survives close/re-open until a new prompt arrives
+  // or the user sends a message.
+  const consumeDraftPrompt = useCallback((): string | null => draftPrompt, [draftPrompt]);
 
   const close = useCallback(() => setIsOpen(false), []);
 
@@ -225,6 +282,9 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     setError(null);
     setModuleContext(null);
     writePersistedModuleContext(null);
+    setDraftPrompt(null);
+    draftPromptsRef.current = {};
+    writePersistedDraftPrompts({});
     const fresh = generateId();
     sessionIdRef.current = fresh;
     try {
@@ -256,6 +316,16 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         content: trimmed,
         timestamp: Date.now(),
       };
+
+      // The user has now actually asked their question — clear the prefilled
+      // draft so closing and re-opening the panel doesn't re-seed it. Also
+      // drop the persisted prompt for the current module for the same reason.
+      setDraftPrompt(null);
+      if (moduleContext && draftPromptsRef.current[moduleContext]) {
+        const { [moduleContext]: _removed, ...rest } = draftPromptsRef.current;
+        draftPromptsRef.current = rest;
+        writePersistedDraftPrompts(rest);
+      }
 
       // Build the outgoing payload from the latest history including the new message.
       const nextMessages = [...messages, userMessage];
@@ -395,6 +465,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       pageContext,
       clearSession,
       draftPrompt,
+      draftPromptVersion,
       consumeDraftPrompt,
     }),
     [
@@ -412,6 +483,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       pageContext,
       clearSession,
       draftPrompt,
+      draftPromptVersion,
       consumeDraftPrompt,
     ]
   );
