@@ -9,6 +9,7 @@ import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
 import { MODULES } from "@/config/modules";
 import { useChatbot } from "@/context/ChatbotContext";
+import { trackEvent } from "@/lib/analytics";
 
 interface ModuleContent {
   metric: string;
