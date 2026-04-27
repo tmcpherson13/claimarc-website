@@ -348,6 +348,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
               moduleContext,
               pageContext,
               sessionId: sessionIdRef.current,
+              turnstileToken,
             },
           }
         );
