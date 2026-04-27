@@ -450,7 +450,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     },
-    [messages, moduleContext, pageContext]
+    [messages, moduleContext, pageContext, turnstileToken]
   );
 
   const value = useMemo<ChatbotContextValue>(
