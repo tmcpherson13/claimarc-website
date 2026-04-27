@@ -314,6 +314,16 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         timestamp: Date.now(),
       };
 
+      // The user has now actually asked their question — clear the prefilled
+      // draft so closing and re-opening the panel doesn't re-seed it. Also
+      // drop the persisted prompt for the current module for the same reason.
+      setDraftPrompt(null);
+      if (moduleContext && draftPromptsRef.current[moduleContext]) {
+        const { [moduleContext]: _removed, ...rest } = draftPromptsRef.current;
+        draftPromptsRef.current = rest;
+        writePersistedDraftPrompts(rest);
+      }
+
       // Build the outgoing payload from the latest history including the new message.
       const nextMessages = [...messages, userMessage];
       setMessages(nextMessages);
