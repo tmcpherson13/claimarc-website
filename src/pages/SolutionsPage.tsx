@@ -590,9 +590,13 @@ const SolutionsPage = () => {
                                 </p>
                                 <button
                                   type="button"
-                                  onClick={() =>
-                                    openChatbot(m.name, MODULE_PROMPT_STARTERS[m.name])
-                                  }
+                                  onClick={() => {
+                                    trackEvent("Ask_Z_Click", {
+                                      module: m.name,
+                                      location: "solutions_module_card",
+                                    });
+                                    openChatbot(m.name, MODULE_PROMPT_STARTERS[m.name]);
+                                  }}
                                   aria-label={`Ask Z about ${m.name} — opens chat with a prefilled question`}
                                   aria-describedby={`${slug}-z-invitation`}
                                   className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--emerald)] border-2 border-[var(--emerald)] bg-[var(--emerald)]/10 rounded-lg px-4 py-2 hover:bg-[var(--emerald)]/20 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
