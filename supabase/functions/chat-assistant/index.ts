@@ -163,7 +163,30 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (containsInjection(lastUserMsg.content)) {
+    // Turnstile gate: require + verify token on first message of a session.
+    if (TURNSTILE_SECRET_KEY && !VERIFIED_SESSIONS.has(sessionId)) {
+      if (!turnstileToken || typeof turnstileToken !== "string") {
+        return new Response(
+          JSON.stringify({
+            error: "VERIFICATION_REQUIRED",
+            message: "Verification failed. Please refresh the page and try again.",
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const ok = await verifyTurnstile(turnstileToken, ip);
+      if (!ok) {
+        return new Response(
+          JSON.stringify({
+            error: "VERIFICATION_FAILED",
+            message: "Verification failed. Please refresh the page and try again.",
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      VERIFIED_SESSIONS.add(sessionId);
+    }
+
       return new Response(
         JSON.stringify({
           reply: "I'm Z — I'm only set up to help with ZDefense and revenue cycle questions. What can I help you with on that front?",
