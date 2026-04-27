@@ -394,6 +394,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       clearModuleContext,
       pageContext,
       clearSession,
+      draftPrompt,
+      consumeDraftPrompt,
     }),
     [
       isOpen,
@@ -409,6 +411,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       clearModuleContext,
       pageContext,
       clearSession,
+      draftPrompt,
+      consumeDraftPrompt,
     ]
   );
 
