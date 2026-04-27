@@ -139,6 +139,37 @@ function writePersistedModuleContext(value: string | null) {
   }
 }
 
+/**
+ * Per-module draft prompts: keep the last prefilled "Ask Z" question for each
+ * module so toggling between module cards (or re-opening after closing the
+ * panel) always re-seeds the input with the prompt for the module the user
+ * just clicked — never a stale one from a previous module.
+ */
+function readPersistedDraftPrompts(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_PROMPTS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePersistedDraftPrompts(map: Record<string, string>) {
+  if (typeof window === "undefined") return;
+  try {
+    if (Object.keys(map).length === 0) {
+      window.sessionStorage.removeItem(DRAFT_PROMPTS_KEY);
+    } else {
+      window.sessionStorage.setItem(DRAFT_PROMPTS_KEY, JSON.stringify(map));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 export function ChatbotProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
 
