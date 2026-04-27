@@ -116,6 +116,7 @@ export default function ChatbotPanel() {
     clearModuleContext,
     offerDemo,
     draftPrompt,
+    draftPromptVersion,
     consumeDraftPrompt,
   } = useChatbot();
   const navigate = useNavigate();
@@ -126,16 +127,20 @@ export default function ChatbotPanel() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-  // Seed the input with a prefilled prompt (e.g. from a module's Ask Z button).
+  // Seed the input with the prefilled prompt every time a fresh signal
+  // arrives (panel open OR a new draftPromptVersion bump). This guarantees
+  // that toggling Ask Z between modules — or re-clicking the same module's
+  // Ask Z button — always re-seeds the textarea with the *current* module's
+  // question, never a stale one left over from editing.
   useEffect(() => {
-    if (!isOpen || !draftPrompt) return;
+    if (!isOpen) return;
     const next = consumeDraftPrompt();
     if (next) {
       setInput(next);
-      // Focus the textarea so the user can edit/send immediately.
       requestAnimationFrame(() => textareaRef.current?.focus());
     }
-  }, [isOpen, draftPrompt, consumeDraftPrompt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, draftPromptVersion]);
 
   useEffect(() => {
     if (!scrollRef.current) return;
