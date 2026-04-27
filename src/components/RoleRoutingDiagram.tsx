@@ -272,25 +272,26 @@ const RoleRoutingDiagram = () => {
               })}
             </div>
 
-            {/* Cluster layer labels */}
+            {/* Cluster layer labels — positioned to the right of the module
+                pills and vertically centered on the layer's mid-Y so the text
+                never overlaps a pill. */}
             {MODULE_CLUSTERS.map((cluster) => {
               const ys = cluster.modules
                 .map((m) => moduleYs[m.key])
                 .filter((y) => y !== undefined);
               if (ys.length === 0) return null;
-              const minY = Math.min(...ys);
-              const topPct = ((minY - ROW_H * 0.55) / svgH) * 100;
-              const leftPct = ((MODULE_X_START + 8) / SVG_W) * 100;
+              const midY = (Math.min(...ys) + Math.max(...ys)) / 2;
+              const topPct = (midY / svgH) * 100;
               const color = CLUSTER_COLOR[cluster.key];
               return (
                 <div
                   key={`label-${cluster.key}`}
-                  className="absolute"
-                  style={{ top: `${topPct}%`, left: `${leftPct}%` }}
+                  className="absolute right-0 -translate-y-1/2 pr-2"
+                  style={{ top: `${topPct}%` }}
                   aria-hidden="true"
                 >
                   <span
-                    className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap"
                     style={{ color }}
                   >
                     <span
