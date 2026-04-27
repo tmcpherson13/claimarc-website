@@ -142,6 +142,8 @@ export default function ChatbotPanel() {
     draftPrompt,
     draftPromptVersion,
     consumeDraftPrompt,
+    turnstileToken,
+    setTurnstileToken,
   } = useChatbot();
   const navigate = useNavigate();
 
