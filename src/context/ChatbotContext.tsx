@@ -452,6 +452,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       pageContext,
       clearSession,
       draftPrompt,
+      draftPromptVersion,
       consumeDraftPrompt,
     }),
     [
@@ -469,6 +470,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       pageContext,
       clearSession,
       draftPrompt,
+      draftPromptVersion,
       consumeDraftPrompt,
     ]
   );
