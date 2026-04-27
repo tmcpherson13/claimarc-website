@@ -564,10 +564,10 @@ const SolutionsPage = () => {
                                   <p className="text-slate-300 text-sm">{m.audience}</p>
                                 </div>
                               </div>
-                              <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
+                              <div className="mt-4 flex items-center gap-3 flex-wrap">
                                 <p
                                   id={`${slug}-z-invitation`}
-                                  className="italic text-slate-400 text-sm"
+                                  className="text-white text-sm font-medium"
                                 >
                                   {MODULE_CONTENT[m.name]?.zInvitation?.replace("→ Ask Z", "").trim()}
                                 </p>
@@ -578,12 +578,12 @@ const SolutionsPage = () => {
                                   }
                                   aria-label={`Ask Z about ${m.name} — opens chat with a prefilled question`}
                                   aria-describedby={`${slug}-z-invitation`}
-                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--emerald)] border-2 border-[var(--emerald)] bg-[var(--emerald)]/10 rounded-lg px-4 py-2 hover:bg-[var(--emerald)]/20 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                                 >
                                   <span aria-hidden="true">→</span>
                                   <span
                                     aria-hidden="true"
-                                    className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold"
+                                    className="bg-[var(--emerald)] text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-xs font-bold"
                                   >
                                     Z
                                   </span>
