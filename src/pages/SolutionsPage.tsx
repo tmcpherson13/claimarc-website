@@ -1,14 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
 import RoleRoutingDiagram from "@/components/RoleRoutingDiagram";
 import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
-import BADBadge from "@/components/BADBadge";
-import { MODULES, getModule } from "@/config/modules";
+import { MODULES } from "@/config/modules";
 import { useChatbot } from "@/context/ChatbotContext";
 
 interface RoleContent {
