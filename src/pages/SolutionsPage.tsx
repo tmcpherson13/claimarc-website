@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import Layout from "@/components/Layout";
 import CTABand from "@/components/CTABand";
 import HeroAccent from "@/components/HeroAccent";
@@ -9,6 +9,133 @@ import SeoHead from "@/components/SeoHead";
 import SolutionFlowStream from "@/components/SolutionFlowStream";
 import { MODULES } from "@/config/modules";
 import { useChatbot } from "@/context/ChatbotContext";
+
+interface ModuleContent {
+  metric: string;
+  whatItDoes: string;
+  howItDoes: string;
+  actions: string[];
+}
+
+const MODULE_CONTENT: Record<string, ModuleContent> = {
+  Sentinel: {
+    metric: "Weaponization Index 2.4x · UHC",
+    whatItDoes:
+      "Sentinel detects when payers silently change their denial strategies — often weeks before your team sees the resulting spike in denials.",
+    howItDoes:
+      "It continuously monitors 9 behavioral signals across your entire 835 remittance stream and scores each payer with a normalized Weaponization Index. When the index crosses 2.0x or spikes sharply, it fires an alert.",
+    actions: [
+      "Immediately filter your Triage queue to the aggressive payer",
+      "Update Shield rules before the next claim batch",
+      "Prepare clinical teams with exact documentation changes",
+      "Feed Forecast with the earliest possible downside risk signal",
+    ],
+  },
+  ContractIntel: {
+    metric: "73rd percentile → $2.8M annual gap to 85th",
+    whatItDoes:
+      "It shows you exactly what the same payer is paying comparable providers for the same CPT codes — giving you data-backed leverage in every contract negotiation.",
+    howItDoes:
+      "Pulls from Transparency in Coverage MRFs and benchmarks your contracted rates against the true market 75th and 85th percentiles, then surfaces upcoming renewals with quantified opportunity.",
+    actions: [
+      "Walk into renewal meetings with hard evidence instead of guesses",
+      "Prioritize which contracts to renegotiate first",
+      "Run what-if scenarios to see the exact revenue impact of a 5% rate increase",
+      "Protect strong rates you already have above market",
+    ],
+  },
+  Forecast: {
+    metric: "$12.6M projected 90-day revenue · 84% confidence",
+    whatItDoes:
+      "It synthesizes signals from all 8 other modules into a single, continuously updated 90-day revenue projection.",
+    howItDoes:
+      "Combines Sentinel's Weaponization Index, Shield's clean claim rate, Prevent's auth exposure, Ledger's under/overpayments, Resolve's appeal pipeline, and ContractIntel's renewal risk into one forward-looking model with what-if sliders.",
+    actions: [
+      "See the real financial impact of payer aggression before it hits cash flow",
+      "Make data-driven decisions on staffing, contract priorities, and resource allocation",
+      "Give the CFO a single number they can trust instead of multiple conflicting reports",
+      "Run scenarios to quantify the ROI of investing more in prevention",
+    ],
+  },
+  Shield: {
+    metric: "89.4% clean claim rate · up from 76.1%",
+    whatItDoes:
+      "It scans every outbound claim against live payer behavior — not just published rules — and flags or fixes problems before submission.",
+    howItDoes:
+      "Combines real-time CARC prediction from Sentinel with NCCI edits, CMS fee schedule rules, and your own historical denial patterns to assign a deny risk score and specific fix guidance.",
+    actions: [
+      "Auto-release clean claims with zero delay",
+      "Apply precise documentation or modifier fixes on flagged claims",
+      "Stop 1 in 4 denials before they ever reach the payer",
+      "Dramatically reduce rework and accelerate cash flow",
+    ],
+  },
+  Prevent: {
+    metric: "3 new auth requirements detected · 11 days early",
+    whatItDoes:
+      "It detects new or changed prior authorization requirements — often days or weeks before the payer publishes formal notice.",
+    howItDoes:
+      "Monitors CO-15 denial patterns across the entire ZDefense client portfolio and cross-references them with public payer policy pages to catch silent policy changes.",
+    actions: [
+      "Submit prior auths proactively instead of reacting to denials",
+      "Avoid entire batches of CO-15 denials",
+      "Update clinical and billing workflows before the requirement hits volume",
+      "Protect $284K+ in quarterly revenue that would otherwise be lost",
+    ],
+  },
+  Ledger: {
+    metric: "$295 underpayment identified · $8,317 overpayment compliance exposure",
+    whatItDoes:
+      "It finds money payers have already technically paid you but at less than the contracted rate — and simultaneously protects you from costly overpayment repayment violations.",
+    howItDoes:
+      "Compares every 835 remittance line against your contracted rates in real time, surfaces systematic underpayments, and maintains a full audit-ready 7-stage overpayment compliance workflow including the 2025 CMS 60-day rule.",
+    actions: [
+      "Recover invisible underpayments that most systems miss",
+      "Stay compliant with mandatory federal repayment deadlines",
+      "Avoid False Claims Act exposure",
+      "Turn Ledger into the default financial performance dashboard",
+    ],
+  },
+  Triage: {
+    metric: "71 claims · Sorted by Expected Recovery Value",
+    whatItDoes:
+      "It automatically prioritizes every denial by Expected Recovery Value — dollar amount times probability — so your team works the highest-value claims first.",
+    howItDoes:
+      "Uses a 50-rule CARC/RARC intelligence model plus payer-specific historical outcomes, then applies natural language smart search and recovery threshold filtering.",
+    actions: [
+      "Stop working denials in arrival order",
+      "Focus effort where it produces the most revenue per hour",
+      "Route claims intelligently to Evidence or Resolve with one click",
+      "Give your billing team a prioritized daily worklist instead of chaos",
+    ],
+  },
+  Evidence: {
+    metric: "136 of 168 documents auto-retrieved · 81% complete",
+    whatItDoes:
+      "It assembles the exact documentation package needed for every appeal so your team reviews instead of hunts.",
+    howItDoes:
+      "Links directly to claims in Triage, categorizes required documents, and uses auto-collect from the Xtract archive.",
+    actions: [
+      "Eliminate hours of manual document gathering",
+      "Route complete packages straight to Resolve",
+      "Handle partial denials with per-line checklists",
+      "Dramatically increase appeal success rates by submitting stronger packages",
+    ],
+  },
+  Resolve: {
+    metric: "$1,146K in active appeals · 37 in progress",
+    whatItDoes:
+      "It generates payer-specific, CARC-accurate appeal letters at scale and tracks every outcome.",
+    howItDoes:
+      "Uses template-based generation from the 50-rule intelligence model, supports 6 automated lanes, and records outcomes that continuously improve the entire platform.",
+    actions: [
+      "Generate 10+ perfect appeal letters in seconds instead of hours",
+      "Submit stronger, more consistent appeals",
+      "Track appeal velocity and payer performance",
+      "Feed real outcome data back into Sentinel, Shield, and Triage for continuous improvement",
+    ],
+  },
+};
 
 interface RoleContent {
   key: string;
@@ -77,6 +204,7 @@ const SolutionsPage = () => {
   const { hash, pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
+  const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const [roleHintVisible, setRoleHintVisible] = useState(() => {
     if (typeof window === "undefined") return true;
     return sessionStorage.getItem("roleHintDismissed") !== "true";
@@ -289,6 +417,8 @@ const SolutionsPage = () => {
               <div className="mt-12 grid grid-cols-1 gap-6">
                 {layerModules.map((m) => {
                   const slug = slugify(m.name);
+                  const content = MODULE_CONTENT[m.name];
+                  const isExpanded = expandedModule === slug;
                   return (
                     <article
                       key={m.name}
@@ -308,66 +438,106 @@ const SolutionsPage = () => {
                           <p className="text-[var(--emerald)] text-sm mt-1">
                             {m.tagline}
                           </p>
+                          {content?.metric && (
+                            <p className="text-slate-400 text-xs font-mono mt-1">
+                              {content.metric}
+                            </p>
+                          )}
                         </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedModule(isExpanded ? null : slug)
+                          }
+                          aria-expanded={isExpanded}
+                          aria-controls={`${slug}-details`}
+                          className="text-[var(--emerald)] text-xs font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+                        >
+                          {isExpanded ? "Collapse" : "Explore in Depth"}
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                              isExpanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
                       </div>
 
-                      {/* 3-column micro-layout */}
-                      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-700/60 pt-6">
-                        {/* Column 1: What it does */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            What it does
-                          </p>
-                          <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                            {m.body}
-                          </p>
-                        </div>
-
-                        {/* Column 2: Key outcomes */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            Key outcomes
-                          </p>
-                          <ul className="mt-2 space-y-2">
-                            {m.outcomes.slice(0, 3).map((o) => (
-                              <li
-                                key={o}
-                                className="flex items-start gap-2 text-slate-300 text-sm"
-                              >
-                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                <span>{o}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        {/* Column 3: Requirements */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            Requirements
-                          </p>
-                          <div className="mt-2 space-y-3">
+                      {/* Expanded details */}
+                      <div
+                        id={`${slug}-details`}
+                        className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="mt-6 border-t border-slate-700/60 pt-6">
+                            {/* Part 1 — What it does */}
                             <div>
-                              <p className="text-slate-500 text-[11px]">Data sharing</p>
-                              <p className="text-slate-300 text-sm">
-                                {m.required ? "BAA required" : "No BAA required"}
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                What it does
+                              </p>
+                              <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                                {content?.whatItDoes}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-slate-500 text-[11px]">Built for</p>
-                              <p className="text-slate-300 text-sm">{m.audience}</p>
+
+                            {/* Part 2 — How it does it */}
+                            <div className="mt-5">
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                How it does it
+                              </p>
+                              <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                                {content?.howItDoes}
+                              </p>
+                            </div>
+
+                            {/* Part 3 — What you can do with it */}
+                            <div className="mt-5">
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                What you can do with it
+                              </p>
+                              <ul className="mt-2 space-y-2">
+                                {content?.actions.map((a) => (
+                                  <li
+                                    key={a}
+                                    className="flex items-start gap-2 text-slate-300 text-sm"
+                                  >
+                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                    <span>{a}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Requirements */}
+                            <div className="border-t border-slate-700 pt-4 mt-5">
+                              <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
+                                Requirements
+                              </p>
+                              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <p className="text-slate-500 text-[11px]">Data sharing</p>
+                                  <p className="text-slate-300 text-sm">
+                                    {m.required ? "BAA required" : "No BAA required"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 text-[11px]">Built for</p>
+                                  <p className="text-slate-300 text-sm">{m.audience}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => openChatbot(m.name)}
+                                className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
+                              >
+                                <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
+                                  Z
+                                </span>
+                                Ask Z
+                              </button>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => openChatbot(m.name)}
-                            className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
-                          >
-                            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
-                              Z
-                            </span>
-                            Ask Z
-                          </button>
                         </div>
                       </div>
                     </article>
