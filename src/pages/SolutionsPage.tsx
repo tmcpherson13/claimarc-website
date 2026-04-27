@@ -77,10 +77,20 @@ const SolutionsPage = () => {
   const { hash, pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const [activeModule, setActiveModule] = useState<string>(slugify(MODULES[0].name));
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [expandedModule, setExpandedModule] = useState<string | null>(null);
-  const [activeModuleTab, setActiveModuleTab] = useState<Record<string, string>>({});
+  const [roleHintVisible, setRoleHintVisible] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return sessionStorage.getItem("roleHintDismissed") !== "true";
+  });
   const { open: openChatbot } = useChatbot();
+
+  const dismissRoleHint = () => {
+    setRoleHintVisible(false);
+    try {
+      sessionStorage.setItem("roleHintDismissed", "true");
+    } catch {
+      /* ignore */
+    }
+  };
 
   /** Smooth-scroll to the hash with header offset, on mount + hash changes. */
   const scrollToHash = useCallback((rawHash: string) => {
