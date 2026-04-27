@@ -446,15 +446,28 @@ const SolutionsPage = () => {
                         </div>
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedModule(isExpanded ? null : slug)
-                          }
+                          onClick={() => {
+                            const next = isExpanded ? null : slug;
+                            setExpandedModule(next);
+                            if (next) {
+                              window.setTimeout(() => {
+                                const el = document.getElementById(slug);
+                                if (el) {
+                                  el.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }
+                              }, 320);
+                            }
+                          }}
                           aria-expanded={isExpanded}
                           aria-controls={`${slug}-details`}
-                          className="text-[var(--emerald)] text-xs font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+                          aria-label={`${isExpanded ? "Collapse" : "Expand"} ${m.name} details`}
+                          className="text-[var(--emerald)] text-xs font-semibold flex items-center gap-1 hover:gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 rounded"
                         >
-                          {isExpanded ? "Collapse" : "Explore in Depth"}
+                          <span aria-hidden="true">
+                            {isExpanded ? "Collapse" : "Explore in Depth"}
+                          </span>
                           <ChevronDown
+                            aria-hidden="true"
                             className={`h-4 w-4 transition-transform duration-200 ${
                               isExpanded ? "rotate-180" : ""
                             }`}
