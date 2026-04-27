@@ -252,353 +252,132 @@ const SolutionsPage = () => {
         </div>
       </section>
 
-      {/* SECTION 3: 9 → 5 ROLLUP MAPPING */}
-      <section className="bg-[var(--navy)] py-16 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-            How the Pieces Fit
-          </p>
-          <h2 className="text-white font-bold text-2xl md:text-3xl mt-2">
-            How the 9 Modules Roll Up Into the 5 Roles
-          </h2>
-          <p className="text-slate-400 mt-3 max-w-2xl">
-            Every module reports up to one or more of the five roles it serves.
-            Use this as the quick map between what each module does and who
-            owns the outcome.
-          </p>
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(["predict", "protect", "recover"] as const).map((layer) => {
-              const layerModules = MODULES.filter((m) => m.layer === layer);
-              return (
-                <div
-                  key={layer}
-                  className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-6"
-                >
-                  <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-                    {LAYER_LABEL[layer]}
-                  </p>
-                  <p className="text-slate-400 text-sm mt-1">
-                    {LAYER_DESCRIPTION[layer]}
-                  </p>
-                  <ul className="mt-5 space-y-4">
-                    {layerModules.map((m) => {
-                      const primaryRole = (moduleRoleMap[m.name] ?? [])[0];
-                      const abbrev = primaryRole ? ROLE_ABBREV[primaryRole] ?? primaryRole : null;
-                      return (
-                        <li key={m.name} className="flex items-start gap-3">
-                          <div className="flex-1 min-w-0">
-                            <a
-                              href={`#${slugify(m.name)}`}
-                              onClick={(e) => handleSidebarClick(e, slugify(m.name))}
-                              className="text-white font-semibold text-sm hover:text-[var(--emerald)] transition-colors"
-                            >
-                              {m.name}
-                            </a>
-                            <p className="text-slate-500 text-xs mt-0.5">{m.tagline}</p>
-                          </div>
-                          {abbrev && (
-                            <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full shrink-0 mt-0.5">
-                              {abbrev}
-                            </span>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: ALL 9 MODULES — sidebar + section content */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
-            The Full Catalog
-          </p>
-          <h2 className="text-[var(--navy)] font-bold text-2xl md:text-3xl mt-2">
-            All Nine Modules
-          </h2>
-          <p className="text-slate-600 mt-3 max-w-2xl">
-            Every module in the ZDefense platform — across Predict, Protect, and
-            Recover. Use the sidebar to jump to any module.
-          </p>
-
-          <div className="mt-8 flex gap-8 items-start">
-            {/* Sticky sidebar */}
-            <aside
-              className={`hidden lg:block sticky transition-all duration-200 ${
-                sidebarOpen ? "w-64" : "w-12"
-              }`}
-              style={{ top: `${SCROLL_OFFSET_PX + 8}px` }}
-              aria-label="Module navigation"
-            >
-              <div className="bg-white border border-slate-200 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2 px-1">
-                  {sidebarOpen && (
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                      Modules
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setSidebarOpen((s) => !s)}
-                    className="ml-auto p-1 rounded hover:bg-slate-100 text-slate-500"
-                    aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-                  >
-                    {sidebarOpen ? (
-                      <PanelLeftClose className="h-4 w-4" />
-                    ) : (
-                      <PanelLeftOpen className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-                <nav>
-                  <ul className="space-y-1">
-                    {MODULES.map((m) => {
-                      const slug = slugify(m.name);
-                      const active = activeModule === slug;
-                      return (
-                        <li key={m.name}>
-                          <a
-                            href={`#${slug}`}
-                            onClick={(e) => handleSidebarClick(e, slug)}
-                            aria-current={active ? "true" : undefined}
-                            className={
-                              active
-                                ? "flex items-center gap-2 rounded-md bg-[var(--emerald)]/10 border-l-2 border-[var(--emerald)] px-2 py-1.5 text-sm font-semibold text-[var(--navy)]"
-                                : "flex items-center gap-2 rounded-md border-l-2 border-transparent px-2 py-1.5 text-sm text-slate-600 hover:text-[var(--navy)] hover:bg-slate-50"
-                            }
-                            title={!sidebarOpen ? m.name : undefined}
-                          >
-                            <span
-                              className={
-                                active
-                                  ? "h-2 w-2 rounded-full bg-[var(--emerald)] shrink-0"
-                                  : "h-2 w-2 rounded-full bg-slate-300 shrink-0"
-                              }
-                            />
-                            {sidebarOpen && (
-                              <>
-                                <span className="truncate">{m.name}</span>
-                                {active && (
-                                  <ChevronRight className="ml-auto h-3.5 w-3.5 text-[var(--emerald)]" />
-                                )}
-                              </>
-                            )}
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </nav>
+      {/* SECTION 3: ALL 9 MODULES — three layer-grouped dark sections */}
+      {(["predict", "protect", "recover"] as const).map((layer, idx) => {
+        const layerModules = MODULES.filter((m) => m.layer === layer);
+        const bg = idx % 2 === 0 ? "bg-[var(--navy-dk)]" : "bg-[var(--navy)]";
+        const headlines: Record<string, { h: string; d: string }> = {
+          predict: {
+            h: "See What's Coming Before It Costs You",
+            d: "Intelligence that detects payer behavioral shifts, benchmarks your rates, and projects revenue — before the damage reaches your claims.",
+          },
+          protect: {
+            h: "Stop Problems Before They Leave Your System",
+            d: "Pre-submission interception, prior authorization detection, and financial oversight that catches issues before payers do.",
+          },
+          recover: {
+            h: "Turn Denied Claims Into Recovered Revenue",
+            d: "AI-ranked denial queues, automated evidence assembly, and bulk appeal generation that works the right claims first.",
+          },
+        };
+        return (
+          <section
+            key={layer}
+            className={`${bg} py-20 px-6 md:px-12 lg:px-16`}
+          >
+            <div className="max-w-7xl mx-auto">
+              <div className="max-w-3xl">
+                <p className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+                  {LAYER_LABEL[layer]}
+                </p>
+                <h2 className="text-white font-bold text-2xl md:text-3xl mt-2">
+                  {headlines[layer].h}
+                </h2>
+                <p className="text-slate-400 mt-3">{headlines[layer].d}</p>
               </div>
-            </aside>
 
-            {/* Module sections */}
-            <div className="flex-1 min-w-0 space-y-6">
-              {MODULES.map((m) => {
-                const slug = slugify(m.name);
-                const isExpanded = expandedModule === slug;
-                const teaser = m.detail.split(".")[0] + ".";
-                return (
-                  <section
-                    key={m.name}
-                    id={slug}
-                    style={{ scrollMarginTop: `${SCROLL_OFFSET_PX}px` }}
-                    className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-[var(--emerald)] transition-colors duration-200"
-                  >
-                    {/* Collapsed header — always visible, clickable */}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setExpandedModule((prev) => (prev === slug ? null : slug))
-                      }
-                      aria-expanded={isExpanded}
-                      className="w-full text-left cursor-pointer py-4 px-6 flex items-center gap-4"
+              <div className="mt-12 grid grid-cols-1 gap-6">
+                {layerModules.map((m) => {
+                  const slug = slugify(m.name);
+                  return (
+                    <article
+                      key={m.name}
+                      id={slug}
+                      style={{ scrollMarginTop: `${SCROLL_OFFSET_PX}px` }}
+                      className="bg-white/5 border border-slate-700 rounded-xl p-6 md:p-8 hover:border-[var(--emerald)]/40 transition-colors"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3">
-                          <span className="text-[var(--emerald)] text-xs font-bold uppercase tracking-widest">
+                      {/* Card header */}
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div>
+                          <p className="text-[var(--emerald)] text-[10px] font-bold uppercase tracking-widest">
                             {LAYER_LABEL[m.layer]}
-                          </span>
-                          <BADBadge required={m.required} />
-                        </div>
-                        <h3 className="text-[var(--navy)] font-bold text-2xl mt-2">
-                          {m.name}
-                        </h3>
-                        <p className="text-[var(--emerald)] font-medium text-sm mt-1">
-                          {m.tagline}
-                        </p>
-                        {!isExpanded && (
-                          <p className="text-slate-600 text-sm mt-2 line-clamp-1">
-                            {teaser}
                           </p>
-                        )}
+                          <h3 className="text-white font-bold text-2xl mt-1">
+                            {m.name}
+                          </h3>
+                          <p className="text-[var(--emerald)] text-sm mt-1">
+                            {m.tagline}
+                          </p>
+                        </div>
                       </div>
-                      <ChevronDown
-                        className={`h-5 w-5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                          isExpanded ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
 
-                    {/* Expanded content — animated max-height */}
-                    <div
-                      className="overflow-hidden transition-[max-height] duration-300 ease-out"
-                      style={{ maxHeight: isExpanded ? "2000px" : "0px" }}
-                      aria-hidden={!isExpanded}
-                    >
-                      <div className="px-6 md:px-8 pb-8">
-                        <p className="text-slate-700 text-sm leading-relaxed mt-2">
-                          {m.detail}
-                        </p>
-
-                        {(() => {
-                          const tabs: { key: string; label: string }[] = [
-                            { key: "capabilities", label: "Capabilities" },
-                            { key: "howItWorks", label: "How It Works" },
-                            { key: "outcomes", label: "Outcomes" },
-                            { key: "dataInputs", label: "Data Inputs" },
-                          ];
-                          const activeTab = activeModuleTab[slug] ?? "capabilities";
-                          return (
-                            <>
-                              <div className="flex gap-2 mt-6 flex-wrap">
-                                {tabs.map((t) => {
-                                  const isActive = t.key === activeTab;
-                                  return (
-                                    <button
-                                      key={t.key}
-                                      type="button"
-                                      onClick={() =>
-                                        setActiveModuleTab((prev) => ({
-                                          ...prev,
-                                          [slug]: t.key,
-                                        }))
-                                      }
-                                      className={
-                                        isActive
-                                          ? "bg-[var(--navy)] text-white px-4 py-1.5 rounded-full text-xs font-semibold"
-                                          : "bg-[var(--lgray)] text-slate-600 px-4 py-1.5 rounded-full text-xs hover:bg-slate-200 transition-colors cursor-pointer"
-                                      }
-                                    >
-                                      {t.label}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-
-                              <div className="mt-6">
-                                {activeTab === "capabilities" && (
-                                  <ul className="space-y-2">
-                                    {m.capabilities.map((c) => (
-                                      <li
-                                        key={c}
-                                        className="flex items-start gap-2 text-sm text-slate-600"
-                                      >
-                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                        <span>{c}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-
-                                {activeTab === "howItWorks" && (
-                                  <ol className="space-y-2">
-                                    {m.howItWorks.map((step, i) => (
-                                      <li
-                                        key={step}
-                                        className="flex items-start gap-3 text-sm text-slate-600"
-                                      >
-                                        <span className="mt-0.5 h-5 w-5 rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] text-[11px] font-bold flex items-center justify-center shrink-0">
-                                          {i + 1}
-                                        </span>
-                                        <span>{step}</span>
-                                      </li>
-                                    ))}
-                                  </ol>
-                                )}
-
-                                {activeTab === "outcomes" && (
-                                  <ul className="space-y-2">
-                                    {m.outcomes.map((o) => (
-                                      <li
-                                        key={o}
-                                        className="flex items-start gap-2 text-sm text-slate-600"
-                                      >
-                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                        <span>{o}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-
-                                {activeTab === "dataInputs" && (
-                                  <>
-                                    <ul className="space-y-2">
-                                      {m.dataInputs.map((d) => (
-                                        <li
-                                          key={d}
-                                          className="flex items-start gap-2 text-sm text-slate-600"
-                                        >
-                                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
-                                          <span>{d}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                    <div className="mt-6 rounded-md bg-slate-50 border border-[var(--lgray)] p-3">
-                                      <p className="text-slate-400 text-xs uppercase tracking-widest">
-                                        Integration & deployment
-                                      </p>
-                                      <p className="text-slate-700 text-sm mt-1">{m.integration}</p>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            </>
-                          );
-                        })()}
-
-                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                          <div>
-                            <p className="text-slate-400 text-[11px] uppercase tracking-widest">
-                              Built for
-                            </p>
-                            <p className="text-slate-700 text-sm">{m.audience}</p>
-                          </div>
-                          <div className="flex flex-wrap items-center gap-3">
-                            <Link
-                              to="/contact"
-                              className="text-[var(--emerald)] font-semibold text-sm hover:underline"
-                            >
-                              Talk to us about {m.name} →
-                            </Link>
-                          </div>
+                      {/* 3-column micro-layout */}
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-700/60 pt-6">
+                        {/* Column 1: What it does */}
+                        <div>
+                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
+                            What it does
+                          </p>
+                          <p className="text-slate-300 text-sm mt-2 leading-relaxed">
+                            {m.body}
+                          </p>
                         </div>
 
-                        <div className="border-t border-slate-100 mt-6 pt-4 flex items-center justify-between">
-                          <div />
+                        {/* Column 2: Key outcomes */}
+                        <div>
+                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
+                            Key outcomes
+                          </p>
+                          <ul className="mt-2 space-y-2">
+                            {m.outcomes.slice(0, 3).map((o) => (
+                              <li
+                                key={o}
+                                className="flex items-start gap-2 text-slate-300 text-sm"
+                              >
+                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                <span>{o}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Column 3: Requirements */}
+                        <div>
+                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
+                            Requirements
+                          </p>
+                          <div className="mt-2 space-y-3">
+                            <div>
+                              <p className="text-slate-500 text-[11px]">Data sharing</p>
+                              <p className="text-slate-300 text-sm">
+                                {m.required ? "BAA required" : "No BAA required"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500 text-[11px]">Built for</p>
+                              <p className="text-slate-300 text-sm">{m.audience}</p>
+                            </div>
+                          </div>
                           <button
                             type="button"
                             onClick={() => openChatbot(m.name)}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
+                            className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
                           >
-                            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
-                            Ask Z about this
+                            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
+                              Z
+                            </span>
+                            Ask Z
                           </button>
                         </div>
                       </div>
-                    </div>
-                  </section>
-                );
-              })}
+                    </article>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })}
 
       <RoleRoutingDiagram />
 
@@ -615,3 +394,4 @@ const SolutionsPage = () => {
 };
 
 export default SolutionsPage;
+
