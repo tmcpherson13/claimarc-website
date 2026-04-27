@@ -187,6 +187,7 @@ Deno.serve(async (req) => {
       VERIFIED_SESSIONS.add(sessionId);
     }
 
+    if (containsInjection(lastUserMsg.content)) {
       return new Response(
         JSON.stringify({
           reply: "I'm Z — I'm only set up to help with ZDefense and revenue cycle questions. What can I help you with on that front?",
