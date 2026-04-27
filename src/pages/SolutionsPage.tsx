@@ -10,6 +10,133 @@ import SolutionFlowStream from "@/components/SolutionFlowStream";
 import { MODULES } from "@/config/modules";
 import { useChatbot } from "@/context/ChatbotContext";
 
+interface ModuleContent {
+  metric: string;
+  whatItDoes: string;
+  howItDoes: string;
+  actions: string[];
+}
+
+const MODULE_CONTENT: Record<string, ModuleContent> = {
+  Sentinel: {
+    metric: "Weaponization Index 2.4x · UHC",
+    whatItDoes:
+      "Sentinel detects when payers silently change their denial strategies — often weeks before your team sees the resulting spike in denials.",
+    howItDoes:
+      "It continuously monitors 9 behavioral signals across your entire 835 remittance stream and scores each payer with a normalized Weaponization Index. When the index crosses 2.0x or spikes sharply, it fires an alert.",
+    actions: [
+      "Immediately filter your Triage queue to the aggressive payer",
+      "Update Shield rules before the next claim batch",
+      "Prepare clinical teams with exact documentation changes",
+      "Feed Forecast with the earliest possible downside risk signal",
+    ],
+  },
+  ContractIntel: {
+    metric: "73rd percentile → $2.8M annual gap to 85th",
+    whatItDoes:
+      "It shows you exactly what the same payer is paying comparable providers for the same CPT codes — giving you data-backed leverage in every contract negotiation.",
+    howItDoes:
+      "Pulls from Transparency in Coverage MRFs and benchmarks your contracted rates against the true market 75th and 85th percentiles, then surfaces upcoming renewals with quantified opportunity.",
+    actions: [
+      "Walk into renewal meetings with hard evidence instead of guesses",
+      "Prioritize which contracts to renegotiate first",
+      "Run what-if scenarios to see the exact revenue impact of a 5% rate increase",
+      "Protect strong rates you already have above market",
+    ],
+  },
+  Forecast: {
+    metric: "$12.6M projected 90-day revenue · 84% confidence",
+    whatItDoes:
+      "It synthesizes signals from all 8 other modules into a single, continuously updated 90-day revenue projection.",
+    howItDoes:
+      "Combines Sentinel's Weaponization Index, Shield's clean claim rate, Prevent's auth exposure, Ledger's under/overpayments, Resolve's appeal pipeline, and ContractIntel's renewal risk into one forward-looking model with what-if sliders.",
+    actions: [
+      "See the real financial impact of payer aggression before it hits cash flow",
+      "Make data-driven decisions on staffing, contract priorities, and resource allocation",
+      "Give the CFO a single number they can trust instead of multiple conflicting reports",
+      "Run scenarios to quantify the ROI of investing more in prevention",
+    ],
+  },
+  Shield: {
+    metric: "89.4% clean claim rate · up from 76.1%",
+    whatItDoes:
+      "It scans every outbound claim against live payer behavior — not just published rules — and flags or fixes problems before submission.",
+    howItDoes:
+      "Combines real-time CARC prediction from Sentinel with NCCI edits, CMS fee schedule rules, and your own historical denial patterns to assign a deny risk score and specific fix guidance.",
+    actions: [
+      "Auto-release clean claims with zero delay",
+      "Apply precise documentation or modifier fixes on flagged claims",
+      "Stop 1 in 4 denials before they ever reach the payer",
+      "Dramatically reduce rework and accelerate cash flow",
+    ],
+  },
+  Prevent: {
+    metric: "3 new auth requirements detected · 11 days early",
+    whatItDoes:
+      "It detects new or changed prior authorization requirements — often days or weeks before the payer publishes formal notice.",
+    howItDoes:
+      "Monitors CO-15 denial patterns across the entire ZDefense client portfolio and cross-references them with public payer policy pages to catch silent policy changes.",
+    actions: [
+      "Submit prior auths proactively instead of reacting to denials",
+      "Avoid entire batches of CO-15 denials",
+      "Update clinical and billing workflows before the requirement hits volume",
+      "Protect $284K+ in quarterly revenue that would otherwise be lost",
+    ],
+  },
+  Ledger: {
+    metric: "$295 underpayment identified · $8,317 overpayment compliance exposure",
+    whatItDoes:
+      "It finds money payers have already technically paid you but at less than the contracted rate — and simultaneously protects you from costly overpayment repayment violations.",
+    howItDoes:
+      "Compares every 835 remittance line against your contracted rates in real time, surfaces systematic underpayments, and maintains a full audit-ready 7-stage overpayment compliance workflow including the 2025 CMS 60-day rule.",
+    actions: [
+      "Recover invisible underpayments that most systems miss",
+      "Stay compliant with mandatory federal repayment deadlines",
+      "Avoid False Claims Act exposure",
+      "Turn Ledger into the default financial performance dashboard",
+    ],
+  },
+  Triage: {
+    metric: "71 claims · Sorted by Expected Recovery Value",
+    whatItDoes:
+      "It automatically prioritizes every denial by Expected Recovery Value — dollar amount times probability — so your team works the highest-value claims first.",
+    howItDoes:
+      "Uses a 50-rule CARC/RARC intelligence model plus payer-specific historical outcomes, then applies natural language smart search and recovery threshold filtering.",
+    actions: [
+      "Stop working denials in arrival order",
+      "Focus effort where it produces the most revenue per hour",
+      "Route claims intelligently to Evidence or Resolve with one click",
+      "Give your billing team a prioritized daily worklist instead of chaos",
+    ],
+  },
+  Evidence: {
+    metric: "136 of 168 documents auto-retrieved · 81% complete",
+    whatItDoes:
+      "It assembles the exact documentation package needed for every appeal so your team reviews instead of hunts.",
+    howItDoes:
+      "Links directly to claims in Triage, categorizes required documents, and uses auto-collect from the Xtract archive.",
+    actions: [
+      "Eliminate hours of manual document gathering",
+      "Route complete packages straight to Resolve",
+      "Handle partial denials with per-line checklists",
+      "Dramatically increase appeal success rates by submitting stronger packages",
+    ],
+  },
+  Resolve: {
+    metric: "$1,146K in active appeals · 37 in progress",
+    whatItDoes:
+      "It generates payer-specific, CARC-accurate appeal letters at scale and tracks every outcome.",
+    howItDoes:
+      "Uses template-based generation from the 50-rule intelligence model, supports 6 automated lanes, and records outcomes that continuously improve the entire platform.",
+    actions: [
+      "Generate 10+ perfect appeal letters in seconds instead of hours",
+      "Submit stronger, more consistent appeals",
+      "Track appeal velocity and payer performance",
+      "Feed real outcome data back into Sentinel, Shield, and Triage for continuous improvement",
+    ],
+  },
+};
+
 interface RoleContent {
   key: string;
   tab: string;
