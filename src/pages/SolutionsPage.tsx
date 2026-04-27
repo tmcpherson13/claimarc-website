@@ -417,6 +417,8 @@ const SolutionsPage = () => {
               <div className="mt-12 grid grid-cols-1 gap-6">
                 {layerModules.map((m) => {
                   const slug = slugify(m.name);
+                  const content = MODULE_CONTENT[m.name];
+                  const isExpanded = expandedModule === slug;
                   return (
                     <article
                       key={m.name}
@@ -436,66 +438,106 @@ const SolutionsPage = () => {
                           <p className="text-[var(--emerald)] text-sm mt-1">
                             {m.tagline}
                           </p>
+                          {content?.metric && (
+                            <p className="text-slate-400 text-xs font-mono mt-1">
+                              {content.metric}
+                            </p>
+                          )}
                         </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedModule(isExpanded ? null : slug)
+                          }
+                          aria-expanded={isExpanded}
+                          aria-controls={`${slug}-details`}
+                          className="text-[var(--emerald)] text-xs font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+                        >
+                          {isExpanded ? "Collapse" : "Explore in Depth"}
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                              isExpanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
                       </div>
 
-                      {/* 3-column micro-layout */}
-                      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-700/60 pt-6">
-                        {/* Column 1: What it does */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            What it does
-                          </p>
-                          <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                            {m.body}
-                          </p>
-                        </div>
-
-                        {/* Column 2: Key outcomes */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            Key outcomes
-                          </p>
-                          <ul className="mt-2 space-y-2">
-                            {m.outcomes.slice(0, 3).map((o) => (
-                              <li
-                                key={o}
-                                className="flex items-start gap-2 text-slate-300 text-sm"
-                              >
-                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
-                                <span>{o}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        {/* Column 3: Requirements */}
-                        <div>
-                          <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
-                            Requirements
-                          </p>
-                          <div className="mt-2 space-y-3">
+                      {/* Expanded details */}
+                      <div
+                        id={`${slug}-details`}
+                        className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="mt-6 border-t border-slate-700/60 pt-6">
+                            {/* Part 1 — What it does */}
                             <div>
-                              <p className="text-slate-500 text-[11px]">Data sharing</p>
-                              <p className="text-slate-300 text-sm">
-                                {m.required ? "BAA required" : "No BAA required"}
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                What it does
+                              </p>
+                              <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                                {content?.whatItDoes}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-slate-500 text-[11px]">Built for</p>
-                              <p className="text-slate-300 text-sm">{m.audience}</p>
+
+                            {/* Part 2 — How it does it */}
+                            <div className="mt-5">
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                How it does it
+                              </p>
+                              <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                                {content?.howItDoes}
+                              </p>
+                            </div>
+
+                            {/* Part 3 — What you can do with it */}
+                            <div className="mt-5">
+                              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                What you can do with it
+                              </p>
+                              <ul className="mt-2 space-y-2">
+                                {content?.actions.map((a) => (
+                                  <li
+                                    key={a}
+                                    className="flex items-start gap-2 text-slate-300 text-sm"
+                                  >
+                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--emerald)] shrink-0" />
+                                    <span>{a}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Requirements */}
+                            <div className="border-t border-slate-700 pt-4 mt-5">
+                              <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">
+                                Requirements
+                              </p>
+                              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <p className="text-slate-500 text-[11px]">Data sharing</p>
+                                  <p className="text-slate-300 text-sm">
+                                    {m.required ? "BAA required" : "No BAA required"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 text-[11px]">Built for</p>
+                                  <p className="text-slate-300 text-sm">{m.audience}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => openChatbot(m.name)}
+                                className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
+                              >
+                                <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
+                                  Z
+                                </span>
+                                Ask Z
+                              </button>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => openChatbot(m.name)}
-                            className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/5 transition-colors"
-                          >
-                            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold">
-                              Z
-                            </span>
-                            Ask Z
-                          </button>
                         </div>
                       </div>
                     </article>
