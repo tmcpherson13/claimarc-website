@@ -197,6 +197,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   const draftPromptsRef = useRef<Record<string, string>>(readPersistedDraftPrompts());
   const [draftPrompt, setDraftPrompt] = useState<string | null>(null);
   const [draftPromptVersion, setDraftPromptVersion] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const sessionIdRef = useRef<string>(getOrCreateSessionId());
 
