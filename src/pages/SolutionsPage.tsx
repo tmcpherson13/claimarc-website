@@ -183,13 +183,22 @@ const SolutionsPage = () => {
       <section className="bg-white py-20 px-6 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <div className="sticky top-[72px] z-40 bg-white border-b border-slate-100 -mx-6 md:-mx-12 lg:-mx-16 px-6 md:px-12 lg:px-16 py-4 mb-12">
+            {roleHintVisible && (
+              <div className="mb-3 flex items-center gap-2 text-[var(--emerald)] text-xs font-bold uppercase tracking-widest animate-fade-in">
+                <span>Select your role</span>
+                <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
+              </div>
+            )}
             <div className="flex gap-2 flex-wrap">
               {roles.map((r) => {
                 const active = r.key === activeRole;
                 return (
                   <button
                     key={r.key}
-                    onClick={() => setActiveRole(r.key)}
+                    onClick={() => {
+                      setActiveRole(r.key);
+                      if (roleHintVisible) dismissRoleHint();
+                    }}
                     className={
                       active
                         ? "bg-[var(--emerald)] text-white px-5 py-2 rounded-full font-semibold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2"
@@ -202,6 +211,7 @@ const SolutionsPage = () => {
               })}
             </div>
           </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
             <div className="md:col-span-3">
