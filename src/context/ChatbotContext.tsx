@@ -259,7 +259,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
             id: generateId(),
             role: "assistant",
             content:
-              "Hi, I'm Z, your revenue defense assistant. Ask me anything about ZDefense — how the modules work, what requires a BAA, or why your denial rate is probably not as random as it looks.",
+              "Hi, I'm Z, your revenue defense assistant. I can help you understand how ZDefense works, which modules fit your situation, and what questions to ask before your next payer negotiation or contract renewal. For anything with legal or compliance consequences, loop in your team — but for platform questions, I'm the right place to start. What are you working on?",
             timestamp: Date.now(),
           },
         ];
