@@ -36,6 +36,8 @@ export type ChatbotContextValue = {
   draftPrompt: string | null;
   draftPromptVersion: number;
   consumeDraftPrompt: () => string | null;
+  turnstileToken: string | null;
+  setTurnstileToken: (token: string | null) => void;
 };
 
 const ChatbotContext = createContext<ChatbotContextValue | null>(null);
