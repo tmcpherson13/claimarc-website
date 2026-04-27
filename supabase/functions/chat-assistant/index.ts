@@ -39,6 +39,10 @@ const MAX_USER_MESSAGE_CHARS = 500;
 
 const sessions = new Map<string, { count: number; firstSeen: number }>();
 
+const IP_SESSIONS = new Map<string, { count: number; windowStart: number }>();
+const IP_MAX_SESSIONS_PER_HOUR = 5;
+const IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 const INJECTION_PATTERNS = [
   /ignore (all |previous |your |prior )?(instructions|prompt|rules|guidelines|constraints)/i,
   /forget (everything|all|your instructions|what you were told)/i,
@@ -70,8 +74,40 @@ function checkSession(sessionId: string): { allowed: boolean; count: number } {
   return { allowed: true, count: existing.count };
 }
 
+function checkIpLimit(ip: string): boolean {
+  const now = Date.now();
+  const existing = IP_SESSIONS.get(ip);
+  if (!existing || now - existing.windowStart > IP_WINDOW_MS) {
+    IP_SESSIONS.set(ip, { count: 1, windowStart: now });
+    return true;
+  }
+  if (existing.count >= IP_MAX_SESSIONS_PER_HOUR) {
+    return false;
+  }
+  existing.count += 1;
+  return true;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const ip =
+    req.headers.get("cf-connecting-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    "unknown";
+
+  if (ip !== "unknown" && !checkIpLimit(ip)) {
+    return new Response(
+      JSON.stringify({
+        error: "RATE_LIMITED",
+        message: "Too many sessions from your location. Please try again in an hour or book a demo to speak with our team directly.",
+      }),
+      {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
 
   try {
     const { messages, moduleContext, pageContext, sessionId } = await req.json();
