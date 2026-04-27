@@ -149,9 +149,99 @@ export default function ChatbotPanel() {
 
   const [input, setInput] = useState("");
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [turnstileVerified, setTurnstileVerified] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+  const turnstileResolveRef = useRef<((token: string | null) => void) | null>(null);
+
+  // Load Cloudflare Turnstile script once on mount.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    if (document.getElementById("cf-turnstile-script")) return;
+    const script = document.createElement("script");
+    script.id = "cf-turnstile-script";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  }, []);
+
+  // Render the invisible Turnstile widget once the script + container are ready.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    if (!isOpen) return;
+    if (turnstileWidgetIdRef.current) return;
+
+    let cancelled = false;
+    const tryRender = () => {
+      if (cancelled) return;
+      const container = turnstileContainerRef.current;
+      if (!window.turnstile || !container) {
+        window.setTimeout(tryRender, 200);
+        return;
+      }
+      try {
+        const widgetId = window.turnstile.render(container, {
+          sitekey: TURNSTILE_SITE_KEY,
+          size: "invisible",
+          appearance: "interaction-only",
+          execution: "execute",
+          callback: (token: string) => {
+            setTurnstileToken(token);
+            setTurnstileVerified(true);
+            const resolve = turnstileResolveRef.current;
+            turnstileResolveRef.current = null;
+            resolve?.(token);
+          },
+          "error-callback": () => {
+            const resolve = turnstileResolveRef.current;
+            turnstileResolveRef.current = null;
+            resolve?.(null);
+          },
+          "expired-callback": () => {
+            setTurnstileVerified(false);
+            setTurnstileToken(null);
+          },
+        });
+        turnstileWidgetIdRef.current = widgetId;
+      } catch (e) {
+        console.error("turnstile render error", e);
+      }
+    };
+    tryRender();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, setTurnstileToken]);
+
+  const runTurnstile = (): Promise<string | null> => {
+    return new Promise((resolve) => {
+      if (!TURNSTILE_SITE_KEY || !window.turnstile || !turnstileWidgetIdRef.current) {
+        resolve(null);
+        return;
+      }
+      turnstileResolveRef.current = resolve;
+      try {
+        window.turnstile.execute(turnstileWidgetIdRef.current);
+      } catch (e) {
+        console.error("turnstile execute error", e);
+        turnstileResolveRef.current = null;
+        resolve(null);
+        return;
+      }
+      window.setTimeout(() => {
+        if (turnstileResolveRef.current === resolve) {
+          turnstileResolveRef.current = null;
+          resolve(null);
+        }
+      }, TURNSTILE_TIMEOUT_MS);
+    });
+  };
 
   // Seed the input with the prefilled prompt every time a fresh signal
   // arrives (panel open OR a new draftPromptVersion bump). This guarantees
