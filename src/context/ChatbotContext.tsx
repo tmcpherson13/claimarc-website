@@ -34,6 +34,7 @@ export type ChatbotContextValue = {
   pageContext: string | null;
   clearSession: () => void;
   draftPrompt: string | null;
+  draftPromptVersion: number;
   consumeDraftPrompt: () => string | null;
 };
 
