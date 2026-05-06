@@ -89,12 +89,12 @@ export const MODULES: ModuleDefinition[] = [
       "Renewal countdown alerts so finance is never caught flat-footed",
     ],
     dataInputs: [
-      "Public TiC files from 7 major commercial payers",
+      "TiC Machine-Readable Files (MRFs) from 7 major commercial payers",
       "HPT files from 5,400+ hospitals for peer comparison",
       "Your contracted fee schedules (uploaded — no PHI required)",
     ],
     integration:
-      "100% public-data — no BAA, no PHI. Stands up in days, not quarters.",
+      "Authoritative regulatory data — no BAA, no PHI. Stands up in days, not quarters.",
     learnMoreHref: "/solutions#contractintel",
   },
   {
@@ -338,9 +338,9 @@ export const getModule = (name: string) =>
   MODULES.find((m) => m.name === name);
 
 /**
- * Modules that can run with NO BAA (public-data only). Source of truth used
+ * Modules that can run with NO BAA (authoritative regulatory data only). Source of truth used
  * by the platform hero readouts, the BAA shield panel, and any other place
- * we need to differentiate public-data vs. PHI-bearing modules.
+ * we need to differentiate regulatory-data vs. PHI-bearing modules.
  */
 export const NO_BAA_MODULES: ReadonlyArray<string> = [
   "ContractIntel",
