@@ -47,7 +47,7 @@ export const SENTINEL_PAYERS: PayerWi[] = [
   { name: "Centene", wi: 1.5, active: true },
 ];
 
-/** Crucible — public-data ingest rails. */
+/** Crucible — authoritative regulatory data ingest rails. */
 export interface IngestRail {
   label: string;
   /** Approx ingest cadence in seconds between batches. */
