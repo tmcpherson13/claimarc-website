@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import HeroAccent from "@/components/HeroAccent";
 import OpenChannel from "@/components/OpenChannel";
+import { supabase } from "@/integrations/supabase/client";
 
 const payerList = [
   "UHC (United Health Care)",
@@ -57,6 +58,8 @@ const ContactPage = () => {
   });
   const [emailTouched, setEmailTouched] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const offer = searchParams.get("offer");
@@ -120,9 +123,32 @@ const ContactPage = () => {
     formData.role &&
     (isInfo || (formData.orgType && formData.claimVolume));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setEmailTouched(true);
     if (!requiredValid) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const { error } = await supabase.from("contact_submissions").insert({
+      first_name: formData.firstName.trim(),
+      last_name: formData.lastName.trim(),
+      email: formData.email.trim().toLowerCase(),
+      organization: formData.organization.trim(),
+      role: formData.role,
+      org_type: formData.orgType || null,
+      claim_volume: formData.claimVolume || null,
+      primary_challenge: formData.primaryChallenge || null,
+      offer_type: formData.offerType || null,
+      interested_in_trial: formData.interestedInTrial,
+      selected_payers: formData.selectedPayers,
+      other_payer: formData.otherPayer.trim() || null,
+      message: formData.message.trim() || null,
+    });
+    setSubmitting(false);
+    if (error) {
+      console.error("contact_submissions insert error", error);
+      setSubmitError("Something went wrong. Please try again or email us directly.");
+      return;
+    }
     setSubmitted(true);
   };
 
@@ -558,16 +584,21 @@ const ContactPage = () => {
                   />
                 </div>
 
+                {submitError && (
+                  <p role="alert" className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+                    {submitError}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={!requiredValid}
-                  aria-disabled={!requiredValid}
+                  disabled={!requiredValid || submitting}
+                  aria-disabled={!requiredValid || submitting}
                   className={`w-full bg-[var(--emerald)] text-white py-4 rounded font-semibold text-lg mt-6 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 ${
-                    !requiredValid ? "opacity-50 cursor-not-allowed" : "hover:bg-emerald-600"
+                    !requiredValid || submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-emerald-600"
                   }`}
                 >
-                  {submitLabel}
+                  {submitting ? "Submitting…" : submitLabel}
                 </button>
               </div>
             )}

@@ -1,7 +1,13 @@
 // Z — the ZDefense revenue defense assistant.
 // Calls the Anthropic API directly using claude-haiku-4-5.
-// Includes simple in-memory per-session rate limiting.
-import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
+// Rate limiting is persisted in Supabase (chat_sessions + chat_ip_limits tables)
+// via SECURITY DEFINER RPCs so limits are shared across all function instances.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 const SYSTEM_PROMPT = `You are Z, the ZDefense revenue defense assistant — embedded on the ZDefense revenue cycle platform website. Your role is to help healthcare finance leaders (CFOs, Revenue Cycle Directors, RC Managers, Billing Specialists, Compliance Officers) understand how ZDefense solves their specific problems.
 
@@ -33,16 +39,16 @@ Keep responses under 180 words. Be direct. Never hedge. Never say "certainly" or
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
-const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const MAX_MESSAGES_PER_SESSION = 10;
 const MAX_USER_MESSAGE_CHARS = 500;
-
-const sessions = new Map<string, { count: number; firstSeen: number }>();
-
-const IP_SESSIONS = new Map<string, { count: number; windowStart: number }>();
+const SESSION_TTL_SECS = 30 * 60; // 30 minutes
 const IP_MAX_SESSIONS_PER_HOUR = 5;
-const IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const IP_WINDOW_SECS = 60 * 60; // 1 hour
 
+// Turnstile verification cache (in-memory per instance, first-message only).
+// This is intentionally kept in-memory: it tracks only whether *this instance*
+// has already verified a session token. The DB rate limits cover cross-instance
+// enforcement; Turnstile verification just prevents bots from opening new sessions.
 const VERIFIED_SESSIONS = new Set<string>();
 const TURNSTILE_SECRET_KEY = Deno.env.get("TURNSTILE_SECRET_KEY");
 
@@ -82,32 +88,43 @@ function containsInjection(text: string): boolean {
   return INJECTION_PATTERNS.some((pattern) => pattern.test(text));
 }
 
-function checkSession(sessionId: string): { allowed: boolean; count: number } {
-  const now = Date.now();
-  const existing = sessions.get(sessionId);
-  if (!existing || now - existing.firstSeen > SESSION_TTL_MS) {
-    sessions.set(sessionId, { count: 1, firstSeen: now });
-    return { allowed: true, count: 1 };
-  }
-  if (existing.count >= MAX_MESSAGES_PER_SESSION) {
-    return { allowed: false, count: existing.count };
-  }
-  existing.count += 1;
-  return { allowed: true, count: existing.count };
+// Supabase admin client — uses service role to call SECURITY DEFINER RPCs.
+function getAdminClient() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
 }
 
-function checkIpLimit(ip: string): boolean {
-  const now = Date.now();
-  const existing = IP_SESSIONS.get(ip);
-  if (!existing || now - existing.windowStart > IP_WINDOW_MS) {
-    IP_SESSIONS.set(ip, { count: 1, windowStart: now });
-    return true;
+async function checkIpLimit(ip: string): Promise<boolean> {
+  if (ip === "unknown") return true; // can't rate-limit unknown IPs
+  const admin = getAdminClient();
+  const { data, error } = await admin.rpc("chat_ip_check", {
+    p_ip: ip,
+    p_max_sess: IP_MAX_SESSIONS_PER_HOUR,
+    p_window_secs: IP_WINDOW_SECS,
+  });
+  if (error) {
+    console.error("chat_ip_check rpc error", error);
+    return true; // fail open rather than blocking all users on DB hiccup
   }
-  if (existing.count >= IP_MAX_SESSIONS_PER_HOUR) {
-    return false;
+  return Boolean(data);
+}
+
+async function checkSession(sessionId: string): Promise<{ allowed: boolean; count: number }> {
+  const admin = getAdminClient();
+  const { data, error } = await admin.rpc("chat_session_check", {
+    p_session_id: sessionId,
+    p_max_msgs: MAX_MESSAGES_PER_SESSION,
+    p_ttl_secs: SESSION_TTL_SECS,
+  });
+  if (error) {
+    console.error("chat_session_check rpc error", error);
+    return { allowed: true, count: 1 }; // fail open
   }
-  existing.count += 1;
-  return true;
+  // RPC returns a single-row table: [{ allowed, msg_count }]
+  const row = Array.isArray(data) ? data[0] : data;
+  return { allowed: Boolean(row?.allowed), count: Number(row?.msg_count ?? 1) };
 }
 
 Deno.serve(async (req) => {
@@ -118,7 +135,9 @@ Deno.serve(async (req) => {
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
     "unknown";
 
-  if (ip !== "unknown" && !checkIpLimit(ip)) {
+  // IP-level rate limit check (shared across instances via DB).
+  const ipAllowed = await checkIpLimit(ip);
+  if (!ipAllowed) {
     return new Response(
       JSON.stringify({
         error: "RATE_LIMITED",
@@ -164,8 +183,6 @@ Deno.serve(async (req) => {
     }
 
     // Turnstile gate: require + verify token on first message of a session.
-    // Skipped entirely when TURNSTILE_SECRET_KEY is not configured, so the
-    // function can operate before the frontend site key is wired up.
     const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
     if (turnstileSecret) {
       if (!VERIFIED_SESSIONS.has(sessionId)) {
@@ -207,7 +224,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    const gate = checkSession(sessionId);
+    // Session-level rate limit (shared across instances via DB).
+    const gate = await checkSession(sessionId);
     if (!gate.allowed) {
       return new Response(
         JSON.stringify({

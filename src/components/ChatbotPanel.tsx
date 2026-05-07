@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, useCallback, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Send } from "lucide-react";
 import { useChatbot, type Message } from "@/context/ChatbotContext";
@@ -151,6 +151,7 @@ export default function ChatbotPanel() {
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [turnstileVerified, setTurnstileVerified] = useState(false);
   const [verifyError, setVerifyError] = useState<string | null>(null);
+  const asideRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -218,6 +219,63 @@ export default function ChatbotPanel() {
       cancelled = true;
     };
   }, [isOpen, setTurnstileToken]);
+
+  // Mark the panel inert (invisible to AT, no keyboard focus) when closed.
+  useEffect(() => {
+    const el = asideRef.current;
+    if (!el) return;
+    if (isOpen) {
+      el.removeAttribute("inert");
+    } else {
+      el.setAttribute("inert", "");
+    }
+  }, [isOpen]);
+
+  // Focus the textarea when the panel opens.
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+  }, [isOpen]);
+
+  // Focus trap: keep Tab / Shift+Tab inside the panel while it's open.
+  const handlePanelKeyDown = useCallback(
+    (e: globalThis.KeyboardEvent) => {
+      if (!isOpen) return;
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = asideRef.current;
+      if (!panel) return;
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.closest("[inert]"));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [isOpen, close]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handlePanelKeyDown);
+    return () => document.removeEventListener("keydown", handlePanelKeyDown);
+  }, [handlePanelKeyDown]);
 
   const runTurnstile = (): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -345,8 +403,10 @@ export default function ChatbotPanel() {
       `}</style>
 
       <aside
+        ref={asideRef}
         role="dialog"
         aria-label="Z — your revenue defense assistant"
+        aria-modal="true"
         aria-hidden={!isOpen}
         style={{
           position: "fixed",
