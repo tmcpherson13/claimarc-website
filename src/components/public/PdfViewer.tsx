@@ -486,6 +486,7 @@ const PdfViewer = ({ url, fileName, sizeBytes, title, storageKey }: PdfViewerPro
                 key={url /* recreate iframe per document; page changes via src below */}
                 src={embedUrl}
                 title={`${title} — PDF preview`}
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
                 onLoad={() => {
                   if (!iframeLoaded) {
                     setIframeLoaded(true);

@@ -8,8 +8,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const SECRET = Deno.env.get("PREVIEW_TOKEN_SECRET") ??
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "dev-fallback";
+const _rawSecret = Deno.env.get("PREVIEW_TOKEN_SECRET");
+if (!_rawSecret) {
+  throw new Error(
+    "PREVIEW_TOKEN_SECRET env var is not set. " +
+    "Generate a random secret and add it to your Supabase project secrets."
+  );
+}
+const SECRET: string = _rawSecret;
 const TOKEN_TTL_SECONDS = 30 * 60; // 30 min
 
 const b64url = (bytes: Uint8Array) =>
