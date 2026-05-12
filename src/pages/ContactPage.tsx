@@ -1,11 +1,36 @@
 import { FormEvent, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CalendarClock, CheckCircle2, Mail } from "lucide-react";
+import { CalendarClock, CheckCircle2, Loader2, Mail } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
 import { Eyebrow } from "@/components/marketing/primitives";
 import { COMPANY, services } from "@/config/site";
+import { supabase } from "@/integrations/supabase/client";
+
+const mailtoFallback = (form: {
+  name: string;
+  email: string;
+  organization: string;
+  role: string;
+  volume: string;
+  service: string;
+  message: string;
+}) => {
+  const lines = [
+    `Name: ${form.name}`,
+    `Email: ${form.email}`,
+    `Organization: ${form.organization}`,
+    form.role && `Role: ${form.role}`,
+    form.volume && `Claim volume: ${form.volume}`,
+    form.service && `Interested in: ${form.service}`,
+    "",
+    form.message || "(no additional details)",
+  ].filter(Boolean);
+  const subject = encodeURIComponent(`Demo request — ${form.organization}`);
+  const body = encodeURIComponent(lines.join("\n"));
+  window.location.href = `mailto:${COMPANY.email}?subject=${subject}&body=${body}`;
+};
 
 const roles = [
   "CFO / Finance executive",
@@ -56,9 +81,12 @@ const ContactPage = () => {
     volume: "",
     service: initialService,
     message: "",
+    company_website: "", // honeypot — must stay empty
   });
   const [emailTouched, setEmailTouched] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const emailInvalid = emailTouched && form.email.length > 0 && !EMAIL_RE.test(form.email);
   const canSubmit = form.name.trim() && EMAIL_RE.test(form.email) && form.organization.trim();
@@ -67,24 +95,37 @@ const ContactPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
-    // No backend is wired yet — hand the request to the visitor's mail client
-    // so the inquiry still reaches the team, then show a confirmation.
-    const lines = [
-      `Name: ${form.name}`,
-      `Organization: ${form.organization}`,
-      form.role && `Role: ${form.role}`,
-      form.volume && `Claim volume: ${form.volume}`,
-      form.service && `Interested in: ${form.service}`,
-      "",
-      form.message || "(no additional details)",
-    ].filter(Boolean);
-    const subject = encodeURIComponent(`Demo request — ${form.organization}`);
-    const body = encodeURIComponent(lines.join("\n"));
-    window.location.href = `mailto:${COMPANY.email}?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const { error } = await supabase.functions.invoke("contact", {
+        body: {
+          name: form.name,
+          email: form.email,
+          organization: form.organization,
+          role: form.role,
+          volume: form.volume,
+          interest: form.service,
+          message: form.message,
+          company_website: form.company_website,
+          source: typeof window !== "undefined" ? window.location.pathname + window.location.search : "/contact",
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch {
+      // Backend unavailable — fall back to the visitor's mail client so the
+      // inquiry still reaches the team.
+      setSubmitError(
+        "We couldn't reach our server just now — your email client should open so you can send the request directly.",
+      );
+      mailtoFallback(form);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -208,12 +249,29 @@ const ContactPage = () => {
                     <textarea id="message" rows={4} value={form.message} onChange={set("message")} className={`${inputCls} resize-none`} />
                   </div>
 
+                  {/* Honeypot — hidden from real users */}
+                  <div aria-hidden="true" className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden">
+                    <label htmlFor="company_website">Company website</label>
+                    <input
+                      id="company_website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={form.company_website}
+                      onChange={set("company_website")}
+                    />
+                  </div>
+
+                  {submitError && (
+                    <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800">{submitError}</p>
+                  )}
+
                   <button
                     type="submit"
-                    disabled={!canSubmit}
-                    className="w-full rounded-md bg-[var(--cyan)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--cyan-dk)] disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={!canSubmit || submitting}
+                    className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--cyan)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--cyan-dk)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Request a demo
+                    {submitting && <Loader2 size={16} className="animate-spin" />}
+                    {submitting ? "Sending…" : "Request a demo"}
                   </button>
                   <p className="text-center text-xs text-[var(--slate)]">
                     We'll only use your details to follow up about ClaimARC. No spam.
