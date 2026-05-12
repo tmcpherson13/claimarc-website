@@ -1,269 +1,264 @@
 import { Link } from "react-router-dom";
+import { ArrowRight, Banknote, Boxes, FileStack, RefreshCw } from "lucide-react";
 import Layout from "@/components/Layout";
-
-import CTABand from "@/components/CTABand";
-
-import HeroAccent from "@/components/HeroAccent";
-import HeroNetwork from "@/components/HeroNetwork";
-import PayerThreatRadar from "@/components/PayerThreatRadar";
 import SeoHead from "@/components/SeoHead";
-import ComplianceStrip from "@/components/ComplianceStrip";
-import { PHRASES } from "@/config/terminology";
-import { useChatbot } from "@/context/ChatbotContext";
+import Reveal from "@/components/marketing/Reveal";
+import HeroArc from "@/components/marketing/HeroArc";
+import ComplianceStrip from "@/components/marketing/ComplianceStrip";
+import StatRow from "@/components/marketing/StatRow";
+import StepFlow from "@/components/marketing/StepFlow";
+import CompareTable from "@/components/marketing/CompareTable";
+import ValueCards from "@/components/marketing/ValueCards";
+import CtaBand from "@/components/marketing/CtaBand";
+import { Section, SectionHeading, Eyebrow, CtaLink } from "@/components/marketing/primitives";
+import { services } from "@/config/site";
 
-const Index = () => {
-  const { open: openChatbot } = useChatbot();
-  return (
-    <Layout>
-      <SeoHead
-        title="ZDefense AI³ — Revenue Cycle Intelligence Platform"
-        description="Predict payer risk. Protect revenue. Recover cash. ZDefense gives providers real-time payer behavioral insights, denial prevention, and 90-day revenue forecasting."
-        path="/"
+const serviceCards = [
+  {
+    to: "/eob-conversion",
+    icon: FileStack,
+    name: "EOB Conversion",
+    tag: "Xtract Engine",
+    desc: "Paper EOBs, checks, and correspondence become structured, auto-postable 835 files — your custom business rules applied, 99.7% real-world accuracy.",
+    accent: "var(--cyan)",
+  },
+  {
+    to: "/era-processing",
+    icon: RefreshCw,
+    name: "ERA Processing",
+    tag: "Remittance Intelligence",
+    desc: "Electronic remittance normalized, reconciled, and posted across every payer — with a searchable, audit-ready archive and reporting on demand.",
+    accent: "var(--lime)",
+  },
+  {
+    to: "/accelerator",
+    icon: Banknote,
+    name: "Claims Accelerator",
+    tag: "Patent Pending",
+    desc: "AI scores every claim for propensity to pay and advances payment to you in 1–2 business days — at a fraction of the cost of a line of credit or factoring.",
+    accent: "var(--cyan)",
+  },
+];
+
+const flywheel = [
+  {
+    title: "Paper & ERA in",
+    lead: "Remittance arrives",
+    body: "EOBs, checks, correspondence, and 835s flow into ClaimARC from any lockbox, bank, or clearinghouse. Your workflow is enhanced, not disrupted.",
+    footnote: "Bank, clearinghouse & lockbox agnostic.",
+  },
+  {
+    title: "Xtract Engine",
+    lead: "Structured in 24–48h",
+    body: "AI data-lifting converts every document to clean, auto-postable 835 files with your business rules applied, returned to your SFTP.",
+    footnote: "Builds the data asset.",
+  },
+  {
+    title: "AI Scoring",
+    lead: "Propensity to pay",
+    body: "Your remittance history trains ML models that predict payment likelihood and timing — per claim, per payer, per procedure. The more you process, the sharper it gets.",
+    footnote: "More data = lower cost.",
+  },
+  {
+    title: "Accelerator",
+    lead: "Funded in 1–2 days",
+    body: "Select which scored claims to fund. Cash lands with you in one to two business days, with bi-directional true-up built into every advance.",
+    footnote: "Always in your favor.",
+  },
+];
+
+const compareRows = [
+  { label: "Cost of funds", them: "10–30% per transaction", us: "Transparent, risk-scored fee" },
+  { label: "Recourse model", them: "One-directional", us: "Bi-directional true-up — overage returned to you" },
+  { label: "Claim intelligence", them: "None", us: "AI propensity scoring on every claim" },
+  { label: "Compatibility", them: "Often vendor-specific", us: "Bank, clearinghouse & lockbox agnostic" },
+  { label: "Workflow impact", them: "Disruptive to existing processes", us: "Enhances your existing workflow" },
+];
+
+const cfoValue = [
+  {
+    icon: Banknote,
+    accent: "cyan" as const,
+    title: "Cash flow transformation",
+    body: "A 45+ day wait becomes 1–2 days. Meet payroll, fund operations, and stop financing your own receivables — without the cost or covenants of a line of credit.",
+    footnote: "Predictable cash, on your terms.",
+  },
+  {
+    icon: RefreshCw,
+    accent: "lime" as const,
+    title: "Compounding intelligence",
+    body: "Every EOB and ERA processed makes the scoring engine smarter. Better predictions mean lower acceleration costs over time — a moat that builds itself.",
+    footnote: "A moat that builds itself.",
+  },
+  {
+    icon: Boxes,
+    accent: "cyan" as const,
+    title: "One vendor. Full lifecycle.",
+    body: "Paper → structured data → AI scoring → accelerated payment → searchable archive. One relationship, one contract, SOC 2 Type II at every step.",
+    footnote: "No integration complexity.",
+  },
+];
+
+const Index = () => (
+  <Layout>
+    <SeoHead
+      title="ClaimARC — Precision Valuation. Lightning Acceleration."
+      description="ClaimARC is the AI-powered revenue intelligence platform for healthcare: EOB conversion to auto-postable 835s, ERA processing, and claim payment acceleration in 1–2 business days."
+      path="/"
+    />
+
+    {/* Hero */}
+    <section className="relative overflow-hidden bg-[var(--navy)]">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-70"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "radial-gradient(55% 65% at 78% 5%, rgba(26,167,208,0.20), transparent 60%), radial-gradient(45% 55% at 5% 100%, rgba(132,189,0,0.12), transparent 60%)",
+        }}
       />
-
-      {/* SECTION 1: HERO */}
-      <section className="relative overflow-hidden bg-[var(--navy)] min-h-[90vh] flex items-center px-6 md:px-12 lg:px-16 py-24">
-        <HeroAccent />
-        <HeroNetwork className="absolute inset-0 w-full h-full" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto">
-          <p className="text-slate-400 italic text-base max-w-xl">
-            While payers weaponize data and shifting rules against providers,
-            ZDefense turns that same intelligence into your defense.
-          </p>
-          <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mt-4 leading-tight">
-            Predict payer risk. Protect revenue. Recover cash.
+      <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.15fr_1fr]">
+        <Reveal>
+          <Eyebrow tone="cyan" className="mb-5">AI-Powered Revenue Intelligence</Eyebrow>
+          <h1 className="text-balance text-4xl font-extrabold leading-[1.08] tracking-tight text-white md:text-5xl lg:text-[3.6rem]">
+            The revenue cycle,{" "}
+            <span className="text-[var(--cyan)]">rebuilt around your cash flow.</span>
           </h1>
-          <p className="text-slate-300 text-lg md:text-xl max-w-xl mt-6">
-            Nine modules. One platform. Real-time intelligence from payer
-            behavior to 90-day revenue forecast.
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70">
+            ClaimARC turns remittance — paper EOBs and electronic ERAs alike — into
+            structured intelligence, then uses it to advance payment on your claims in
+            as little as one business day. Bank, clearinghouse, and lockbox agnostic.
+            Precision valuation. Lightning acceleration.
           </p>
-          <div className="mt-10 flex gap-4 flex-wrap">
-            <Link
-              to="/contact"
-              className="bg-[var(--emerald)] text-white px-7 py-3 rounded font-semibold text-lg hover:bg-emerald-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
-            >
-              Book a Demo
-            </Link>
-            <Link
-              to="/contact?offer=trial"
-              className="border-2 border-[var(--emerald)] text-[var(--emerald)] px-7 py-3 rounded font-semibold text-lg hover:bg-[var(--emerald)]/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
-              title="ContractIntel, Shield, and Prevent run on public payer data only. No BAA. No IT involvement."
-            >
-              30-Day Evaluation
-            </Link>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <CtaLink to="/contact" variant="primary">
+              Book a Demo <ArrowRight size={16} />
+            </CtaLink>
+            <CtaLink to="/why-claimarc" variant="onDark">See how it works</CtaLink>
           </div>
-          <button
-            type="button"
-            onClick={() => openChatbot()}
-            className="text-white/50 text-xs hover:text-white/80 transition-colors flex items-center gap-1.5 mt-3"
-          >
-            <span className="bg-[var(--emerald)] text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-[10px] font-bold mr-1">Z</span>
-            Have a question? Ask Z
-          </button>
-          <div className="mt-14 pt-6 border-t border-slate-800">
-            <ComplianceStrip />
-          </div>
-        </div>
-      </section>
+        </Reveal>
+        <Reveal delay={140} className="hidden lg:block">
+          <HeroArc />
+        </Reveal>
+      </div>
+    </section>
+    <ComplianceStrip />
 
-      {/* SECTION 2: MARKET PROBLEM */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[var(--amber)] text-sm font-semibold uppercase tracking-widest">
-            THE PROBLEM
-          </p>
-          <h2 className="text-white text-3xl md:text-4xl font-bold max-w-3xl mt-2">
-            Payers are winning. Most providers don't know it yet.
-          </h2>
-          <p className="text-slate-300 max-w-xl mt-4 text-lg">
-            Payers have deployed AI to identify denial opportunities faster than
-            ever — shifting rules, weaponizing data, and moving faster than
-            traditional revenue cycle workflows can detect. The gap between
-            payer intelligence and provider response is widening.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            {[
-              { stat: "41%", label: "of providers report denial rates above 10%", source: "HFMA Denials Management Survey, 2024" },
-              { stat: "86%", label: "of denials are preventable with earlier detection", source: "CAQH Index: Closing the Gap, 2023" },
-              { stat: "60–90 days", label: "average lag to detect payer behavioral shifts", source: "Becker's Hospital Review, Revenue Cycle, 2023" },
-            ].map((c) => (
-              <div key={c.stat} className="bg-[var(--navy-dk)] border border-slate-700 rounded-xl p-8">
-                <div className="text-[var(--emerald)] font-bold text-4xl">{c.stat}</div>
-                <div className="text-slate-300 text-sm mt-3">{c.label}</div>
-                <div className="text-slate-500 text-xs mt-3 italic">{c.source}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+    <StatRow
+      stats={[
+        { value: "45+", label: "Days you're currently waiting", note: "Industry-avg DSO · HFMA", accent: "cyan" },
+        { value: "99.7%", label: "Real-world EOB data accuracy", note: "98.5% contracted SLA · ClaimARC", accent: "lime" },
+        { value: "1–2", label: "Business days to payment", note: "ClaimARC Accelerator funding target", accent: "cyan" },
+      ]}
+    />
 
-      {/* SECTION 3: PREDICT / PROTECT / RECOVER */}
-      <section className="bg-white py-24 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest text-center">
-            THE PLATFORM
-          </p>
-          <h2 className="text-[var(--navy)] text-3xl md:text-4xl font-bold text-center mt-2">
-            {PHRASES.threeLayersNineModules}
-          </h2>
-          <p className="text-slate-600 text-center mt-2 text-lg">
-            ZDefense covers the full revenue cycle lifecycle — before, during,
-            and after every claim.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
-            {[
-              { tag: "PREDICT", modules: "Sentinel · ContractIntel · Forecast", headline: "See risk before it becomes a denial.", body: "Payer behavior, contract gaps, and a 90-day revenue projection — surfaced for leadership.", proof: "$12.6M forecasted over 90 days", href: "/platform#predict", link: "Explore PREDICT →" },
-              { tag: "PROTECT", modules: "Shield · Prevent · Ledger", headline: "Stop problems before payers or regulators find them.", body: "Pre-submission interception, prior auth defense, and 60-day Medicare compliance — handled.", proof: "89.4% clean claim rate", href: "/platform#protect", link: "Explore PROTECT →" },
-              { tag: "RECOVER", modules: "Triage · Evidence · Resolve", headline: "Turn denied claims into recovered cash.", body: "Probability-ranked triage, automated evidence, and payer-specific appeals at bulk scale.", proof: "$1.146M active appeals pipeline", href: "/platform#recover", link: "Explore RECOVER →" },
-            ].map((c) => (
-              <div key={c.tag} className="bg-[var(--lgray)] border border-transparent rounded-xl p-8 hover:border-emerald-200 transition-colors">
-                <div className="text-[var(--emerald)] font-bold text-xs uppercase tracking-widest">{c.tag}</div>
-                <div className="text-slate-500 text-xs mt-1">{c.modules}</div>
-                <div className="text-[var(--navy)] font-semibold text-lg mt-4">{c.headline}</div>
-                <p className="text-slate-600 text-sm mt-3">{c.body}</p>
-                <div className="mt-6 pt-6 border-t border-slate-200 text-[var(--emerald)] text-sm font-bold mb-2">
-                  {c.proof}
-                </div>
-                <Link to={c.href} className="text-[var(--navy)] hover:text-[var(--emerald)] text-sm mt-1 block hover:underline">
-                  {c.link}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: PAYER THREAT RADAR */}
-      <PayerThreatRadar />
-
-      {/* SECTION 5: DIFFERENTIATION */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
-            WHY ZDEFENSE
-          </p>
-          <h2 className="text-white text-2xl md:text-3xl font-semibold max-w-3xl mt-2">
-            Denial management companies process denials. ZDefense understands payers.
-          </h2>
-          <p className="text-slate-300 max-w-xl mt-4 text-lg">
-            Every denial management vendor works with data after it enters your
-            system. ZDefense works at the point where data is created — the raw
-            payer output, before any provider system transforms it. That is a
-            data advantage no competitor can replicate.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-            <div className="bg-white/5 border border-slate-700 rounded-xl p-6 hover:border-[var(--emerald)]/40 transition-colors">
-              <h3 className="text-white font-semibold text-lg">We aren't your generic AI Start-up</h3>
-              <p className="text-slate-400 text-sm mt-2">
-                ZTech has processed Explanation of Benefits documents at scale
-                for nearly a decade. ZDefense reflects codified institutional
-                knowledge — not generic AI trained on generic data. The 50-rule
-                CARC model reflects real denial patterns from real providers
-                across every major payer.
-              </p>
+    {/* Problem framing */}
+    <Section tone="mist">
+      <div className="grid items-start gap-12 lg:grid-cols-2">
+        <Reveal>
+          <SectionHeading
+            eyebrow="The cost of the status quo"
+            title={<>Your money is already earned. It's just stuck.</>}
+            intro="A/R keeps aging, manual remittance handling keeps costing, and most financing options charge you for the privilege of waiting on your own claims. ClaimARC was built to close that gap — without disrupting a single workflow you rely on today."
+          />
+        </Reveal>
+        <Reveal delay={120} className="grid gap-4 sm:grid-cols-2">
+          {[
+            { v: "5.2%", l: "Annual A/R increase", n: "Trend keeps worsening · Becker's / Kodiak, 2024" },
+            { v: "$20B", l: "Annual remittance admin burden", n: "Processing inefficiency · HFMA" },
+            { v: "7yr", l: "Compliant remittance archive", n: "Included · 10-year option available" },
+            { v: "0", l: "Workflow changes required", n: "Enhances, never replaces" },
+          ].map((s) => (
+            <div key={s.l} className="rounded-2xl border border-[var(--line)] bg-white p-6">
+              <p className="text-3xl font-extrabold tracking-tight text-[var(--navy)]">{s.v}</p>
+              <p className="mt-2 text-sm font-semibold text-[var(--navy)]/80">{s.l}</p>
+              <p className="mt-1 text-xs text-[var(--slate)]">{s.n}</p>
             </div>
-            <div className="bg-white/5 border border-slate-700 rounded-xl p-6 hover:border-[var(--emerald)]/40 transition-colors">
-              <h3 className="text-white font-semibold text-lg">No-BAA Entry Path</h3>
-              <p className="text-slate-400 text-sm mt-2">
-                Three modules activate immediately with zero data sharing.
-                ContractIntel, Shield, and Prevent run entirely on public payer
-                data. Start your 30-day evaluation with live intelligence
-                benchmarked to your market — no BAA, no IT, no legal agreements.
-              </p>
-              <Link to="/contact?offer=trial" className="text-[var(--emerald)] text-sm mt-3 inline-block hover:underline">
-                Start your no-BAA evaluation →
-              </Link>
-            </div>
-          </div>
-          <Link to="/why-zdefense" className="text-[var(--emerald)] hover:text-emerald-400 text-sm mt-8 inline-block hover:underline font-semibold">
-            See all differentiators →
-          </Link>
-        </div>
-      </section>
+          ))}
+        </Reveal>
+      </div>
+    </Section>
 
-      {/* SECTION 6: OUTCOMES */}
-      <section className="bg-white py-16 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-[var(--navy)] text-xl md:text-2xl font-semibold text-center">
-            Platform Performance Signals
-          </h2>
-          <p className="text-slate-400 text-center text-xs mt-1">
-            300-bed community hospital demo baseline · Figures are illustrative.
-          </p>
-          <p className="text-slate-400 text-center text-xs mt-2">
-            Figures shown reflect ZDefense platform demo outputs. Results vary
-            by organization and data configuration.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 mt-12 md:divide-x divide-slate-200">
-            {[
-              { stat: "$12.6M", label: "90-day revenue forecast", note: "Demo baseline" },
-              { stat: "89.4%", label: "Clean claim rate post-Shield", note: "Demo baseline" },
-              { stat: "$1.146M", label: "Active appeals pipeline", note: "Demo baseline" },
-              { stat: "$2.8M", label: "Annual contract gap identified", note: "Demo baseline" },
-            ].map((s, i) => (
-              <div
-                key={s.stat}
-                className={`text-center py-8 px-6 min-h-[120px] flex flex-col justify-center ${
-                  i < 2 ? "border-b border-slate-200 md:border-b-0" : ""
-                }`}
-              >
-                <div className="text-[var(--emerald)] text-4xl font-bold">{s.stat}</div>
-                <div className="text-[var(--navy)] text-sm mt-2">{s.label}</div>
-                <div className="text-slate-500 text-xs mt-1">{s.note}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 7: WHO IT'S FOR */}
-      <section className="bg-[var(--navy)] py-24 px-6 md:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
-            BUILT FOR YOUR TEAM
-          </p>
-          <h2 className="text-white text-2xl md:text-3xl font-semibold mt-2">
-            Different roles. Different modules. Same platform.
-          </h2>
-          <p className="text-slate-300 text-lg mt-3 max-w-xl">
-            ZDefense routes each role to the modules that matter most — CFOs
-            see Forecast, Directors see Ledger, Specialists see Triage.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
-            {[
-              { role: "CFO / Executive", module: "Forecast", desc: "90-day revenue visibility and risk modeling", href: "/solutions?role=cfo" },
-              { role: "Rev Cycle Director", module: "Ledger", desc: "Underpayment detection and compliance oversight", href: "/solutions?role=director" },
-              { role: "Billing Specialist", module: "Triage", desc: "Denial queue ranked by recovery probability", href: "/solutions?role=specialist" },
-              { role: "Auditor/Compliance Officer", module: "Ledger", desc: "Medicare 60-day rule enforcement and audit trail", href: "/solutions?role=compliance" },
-            ].map((r) => (
-              <Link
-                key={r.role}
-                to={r.href}
-                className="block bg-white/5 border border-slate-700 rounded-xl p-5 cursor-pointer hover:border-[var(--emerald)] transition-colors"
-              >
-                <div className="text-white font-semibold">{r.role}</div>
-                <div className="text-[var(--emerald)] text-xs mt-0.5">{r.module}</div>
-                <div className="text-slate-400 text-xs mt-1">{r.desc}</div>
-              </Link>
-            ))}
-          </div>
-          <Link to="/solutions" className="text-[var(--emerald)] text-sm mt-8 inline-block hover:underline font-semibold">
-            See all roles →
-          </Link>
-        </div>
-      </section>
-
-      {/* SECTION 9: FINAL CTA BAND */}
-      <CTABand
-        headline="Ready to See What Your Revenue Is Worth?"
-        subhead="Book a personalized demo or start your 30-day no-obligation evaluation. Live payer data. No BAA required."
-        primaryText="Book a Demo"
-        primaryHref="/contact"
-        secondaryText="Start Your 30-Day Evaluation — No BAA Required"
-        secondaryHref="/contact?offer=trial"
+    {/* Services */}
+    <Section tone="light">
+      <SectionHeading
+        align="center"
+        eyebrow="What we do"
+        title={<>Three services. One compounding platform.</>}
+        intro="Each works on its own. Together, they create an advantage competitors can't replicate — because it's built from your own data."
+        className="mb-4"
       />
-    </Layout>
-  );
-};
+      <div className="mt-12 grid gap-6 md:grid-cols-3">
+        {serviceCards.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <Reveal key={s.to} delay={i * 90}>
+              <Link
+                to={s.to}
+                className="group flex h-full flex-col rounded-2xl border border-[var(--line)] bg-white p-7 transition-shadow hover:shadow-[0_10px_36px_rgba(10,38,71,0.10)]"
+              >
+                <div
+                  className="flex h-11 w-11 items-center justify-center rounded-xl"
+                  style={{ background: `${s.accent}1a`, color: s.accent }}
+                >
+                  <Icon size={22} />
+                </div>
+                <p className="mt-5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--slate)]">
+                  {s.tag}
+                </p>
+                <h3 className="mt-1 text-xl font-bold text-[var(--navy)]">{s.name}</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--slate)]">{s.desc}</p>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--cyan)]">
+                  Explore {s.name}
+                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            </Reveal>
+          );
+        })}
+      </div>
+    </Section>
+
+    {/* Flywheel */}
+    <Section tone="navy">
+      <SectionHeading
+        invert
+        eyebrow="How the platform compounds"
+        eyebrowTone="cyan"
+        title={<>More data. Smarter scoring. Lower cost. Repeat.</>}
+        intro="Remittance is the fuel. Every document you process feeds the AI that prices and accelerates your claims — so the longer you run ClaimARC, the better it works for you."
+      />
+      <StepFlow steps={flywheel} />
+    </Section>
+
+    {/* Comparison */}
+    <Section tone="light">
+      <SectionHeading
+        eyebrow="Why most financing options fall short"
+        title={<>A line of credit costs you. Factoring costs you more.</>}
+        intro="ClaimARC isn't a loan and it isn't factoring. It's payment acceleration priced by AI, with the upside returned to you."
+      />
+      <CompareTable themHeading="LOC / Factoring" usHeading="ClaimARC" rows={compareRows} />
+    </Section>
+
+    {/* CFO value */}
+    <Section tone="mist">
+      <SectionHeading
+        align="center"
+        eyebrow="Built for finance & revenue cycle leaders"
+        title={<>What changes when you run ClaimARC.</>}
+        intro="Designed with CFOs, controllers, and revenue cycle directors — for the metrics they're measured on."
+      />
+      <ValueCards cards={cfoValue} columns={3} />
+    </Section>
+
+    <CtaBand
+      kicker="ClaimARC partnerships are limited and require qualification."
+      headline="The question isn't whether you can afford ClaimARC."
+      highlight="It's whether you can afford another 45 days of waiting."
+      subhead="Book a 30-minute working session with our team and see the model against your own numbers."
+    />
+  </Layout>
+);
 
 export default Index;

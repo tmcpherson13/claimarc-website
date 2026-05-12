@@ -14,6 +14,22 @@ export default {
     },
     extend: {
       colors: {
+        navy: {
+          DEFAULT: "var(--navy)",
+          dk: "var(--navy-dk)",
+          soft: "var(--navy-soft)",
+        },
+        brand: {
+          navy: "var(--navy)",
+          "navy-dk": "var(--navy-dk)",
+          "navy-soft": "var(--navy-soft)",
+          cyan: "var(--cyan)",
+          "cyan-dk": "var(--cyan-dk)",
+          lime: "var(--lime)",
+          "lime-dk": "var(--lime-dk)",
+          slate: "var(--slate)",
+          mist: "var(--mist)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,120 +1,83 @@
-import { Link, NavLink } from "react-router-dom";
-import { Shield, Lock, FileCheck } from "lucide-react";
-import AI3 from "./AI3";
-import { footerPlatformRoutes } from "@/config/routes";
+import { Link } from "react-router-dom";
+import Logo from "./Logo";
+import { COMPANY, compliance, primaryNav, services } from "@/config/site";
 
-const compliance = [
-  { label: "SOC 2 Type II", Icon: Shield },
-  { label: "ISO 27001:2022", Icon: Lock },
-  { label: "HIPAA Compliant", Icon: FileCheck },
-];
+const year = new Date().getFullYear();
 
 const Footer = () => {
   return (
-    <footer className="bg-[var(--navy)] text-white px-6 md:px-12 lg:px-16 py-16">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Col 1 — Brand */}
+    <footer className="bg-[var(--navy-dk)] text-white">
+      <div className="shell-wide py-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="text-white font-bold text-xl">
-              ZDefense <AI3 />
-            </div>
-            <p className="text-slate-400 text-sm mt-1">
-              Revenue Cycle Intelligence Platform
+            <Logo variant="light" />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+              The complete revenue intelligence platform — EOB conversion, ERA
+              processing, and AI-powered claim payment acceleration.
             </p>
-            <p className="text-[var(--emerald)] italic mt-2">
-              Predict. Protect. Recover.
-            </p>
-            <p className="text-slate-500 text-xs mt-6">© 2026 ZTech.</p>
+            <p className="mt-4 text-sm italic text-[var(--cyan)]">{COMPANY.tagline}</p>
           </div>
 
-          {/* Col 2 — Platform */}
           <div>
-            <p className="text-slate-500 text-xs uppercase tracking-wider mb-4">
-              PLATFORM
+            <p className="mb-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+              Services
             </p>
-            <ul className="space-y-2">
-              {footerPlatformRoutes.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-slate-400 text-sm hover:text-white transition-colors"
-                  >
-                    {l.label}
+            <ul className="space-y-2.5">
+              {services.map((s) => (
+                <li key={s.to}>
+                  <Link to={s.to} className="text-sm text-white/65 transition-colors hover:text-white">
+                    {s.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Col 3 — Company */}
           <div>
-            <p className="text-slate-500 text-xs uppercase tracking-wider mb-4">
-              COMPANY
+            <p className="mb-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+              Company
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
+              {primaryNav.map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to} className="text-sm text-white/65 transition-colors hover:text-white">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
               <li>
-                <Link to="/about" className="text-slate-400 text-sm hover:text-white transition-colors">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-slate-400 text-sm hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-slate-400 text-sm hover:text-white transition-colors">
-                  Book a Demo
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact?offer=trial"
-                  className="text-slate-400 text-sm hover:text-white transition-colors"
+                <a
+                  href={`mailto:${COMPANY.email}`}
+                  className="text-sm text-white/65 transition-colors hover:text-white"
                 >
-                  Start Your 30-Day Evaluation — No BAA Required
-                </Link>
-              </li>
-              <li>
-                <NavLink
-                  to="/admin/login"
-                  className={({ isActive }) =>
-                    `text-sm transition-colors ${
-                      isActive
-                        ? "text-[var(--emerald)] font-medium underline underline-offset-4"
-                        : "text-slate-400 hover:text-white"
-                    }`
-                  }
-                >
-                  Admin
-                </NavLink>
+                  {COMPANY.email}
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 4 — Compliance */}
           <div>
-            <p className="text-slate-500 text-xs uppercase tracking-wider mb-4">
-              COMPLIANCE
+            <p className="mb-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+              Trust & Compliance
             </p>
-            <div className="flex flex-col items-start">
-              {compliance.map(({ label, Icon }) => (
-                <span
-                  key={label}
-                  className="border border-slate-600 rounded px-3 py-1 text-xs text-slate-400 inline-flex items-center gap-2 mb-2"
+            <ul className="flex flex-wrap gap-2">
+              {compliance.map((c) => (
+                <li
+                  key={c}
+                  className="rounded-md border border-white/15 px-2.5 py-1 text-[0.7rem] font-medium text-white/60"
                 >
-                  <Icon size={12} className="text-[var(--emerald)]" />
-                  {label}
-                </span>
+                  {c}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col md:flex-row justify-between text-slate-500 text-xs gap-2">
-          <span>ZDefense is a product of ZTech</span>
-          <span>Privacy Policy · Terms of Service</span>
+        <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
+          <span>
+            © {year} {COMPANY.legal}. Patent Pending. All rights reserved.
+          </span>
+          <span>{COMPANY.arc}</span>
         </div>
       </div>
     </footer>
