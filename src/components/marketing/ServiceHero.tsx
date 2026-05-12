@@ -30,7 +30,7 @@ const ServiceHero = ({
       aria-hidden="true"
       style={{
         backgroundImage:
-          "radial-gradient(55% 70% at 80% 0%, rgba(26,167,208,0.18), transparent 60%), radial-gradient(45% 60% at 0% 100%, rgba(132,189,0,0.12), transparent 60%)",
+          "radial-gradient(55% 70% at 80% 0%, rgba(0,160,200,0.18), transparent 60%), radial-gradient(45% 60% at 0% 100%, rgba(104,184,64,0.12), transparent 60%)",
       }}
     />
     <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.4fr_1fr]">

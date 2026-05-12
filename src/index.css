@@ -6,22 +6,22 @@
 
 @layer base {
   :root {
-    /* ClaimARC brand palette */
-    --navy: #0A2647;        /* deep brand navy — dark sections, headings */
-    --navy-dk: #06182F;     /* near-black navy — footer, deepest panels */
-    --navy-soft: #143A66;   /* lifted navy — cards on dark backgrounds */
-    --cyan: #1AA7D0;        /* primary accent — links, highlights, step nodes */
-    --cyan-dk: #1488AC;
-    --lime: #84BD00;        /* secondary accent — stats, confirmations */
-    --lime-dk: #6E9E00;
-    --slate: #5B7184;       /* muted body text on light */
-    --mist: #F3F6F9;        /* light section background */
-    --line: #E2E8F0;        /* hairline borders on light */
+    /* ClaimARC brand palette — sampled from the official logo */
+    --navy: #00457E;        /* brand navy — wordmark, headings, dark sections */
+    --navy-dk: #052A48;     /* deep navy — footer, deepest panels */
+    --navy-soft: #0E5288;   /* lifted navy — cards on dark backgrounds */
+    --cyan: #00A0C8;        /* primary accent — "ARC", links, highlights */
+    --cyan-dk: #0085A6;
+    --lime: #68B840;        /* secondary accent — tagline, confirmations */
+    --lime-dk: #559A32;
+    --slate: #5A7184;       /* muted body text on light */
+    --mist: #F2F6F9;        /* light section background */
+    --line: #DDE6EE;        /* hairline borders on light */
 
     /* Legacy aliases so any stray ZDefense-era references still resolve */
-    --emerald: #84BD00;
-    --amber: #1AA7D0;
-    --lgray: #F3F6F9;
+    --emerald: #68B840;
+    --amber: #00A0C8;
+    --lgray: #F2F6F9;
 
     --background: 0 0% 100%;
     --foreground: 213 75% 10%;
@@ -32,7 +32,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 213 75% 10%;
 
-    --primary: 213 75% 16%;
+    --primary: 207 100% 25%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 33% 96%;
@@ -41,7 +41,7 @@
     --muted: 210 33% 96%;
     --muted-foreground: 212 18% 44%;
 
-    --accent: 196 78% 46%;
+    --accent: 192 100% 39%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -49,7 +49,7 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 196 78% 46%;
+    --ring: 192 100% 39%;
 
     --radius: 0.625rem;
 
@@ -60,7 +60,7 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 196 78% 46%;
+    --sidebar-ring: 192 100% 39%;
   }
 }
 

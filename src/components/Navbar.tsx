@@ -36,7 +36,7 @@ const Navbar = () => {
     >
       <div className="shell-wide flex h-16 items-center justify-between gap-6">
         <Link to="/" aria-label="ClaimARC home" className="shrink-0">
-          <Logo variant="light" />
+          <Logo variant="light" kind="horiz" height={40} />
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">

@@ -114,7 +114,7 @@ const Index = () => (
         aria-hidden="true"
         style={{
           backgroundImage:
-            "radial-gradient(55% 65% at 78% 5%, rgba(26,167,208,0.20), transparent 60%), radial-gradient(45% 55% at 5% 100%, rgba(132,189,0,0.12), transparent 60%)",
+            "radial-gradient(55% 65% at 78% 5%, rgba(0,160,200,0.20), transparent 60%), radial-gradient(45% 55% at 5% 100%, rgba(104,184,64,0.12), transparent 60%)",
         }}
       />
       <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.15fr_1fr]">

@@ -24,7 +24,7 @@ const CtaBand = ({
       aria-hidden="true"
       style={{
         backgroundImage:
-          "radial-gradient(60% 80% at 15% 0%, rgba(26,167,208,0.18), transparent 60%), radial-gradient(50% 70% at 90% 100%, rgba(132,189,0,0.14), transparent 60%)",
+          "radial-gradient(60% 80% at 15% 0%, rgba(0,160,200,0.18), transparent 60%), radial-gradient(50% 70% at 90% 100%, rgba(104,184,64,0.14), transparent 60%)",
       }}
     />
     <div className="shell relative py-20 text-center md:py-24">

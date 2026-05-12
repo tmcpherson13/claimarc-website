@@ -10,8 +10,8 @@ const Footer = () => {
       <div className="shell-wide py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Logo variant="light" />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
+            <Logo variant="light" kind="horiz" height={44} />
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/55">
               The complete revenue intelligence platform — EOB conversion, ERA
               processing, and AI-powered claim payment acceleration.
             </p>
