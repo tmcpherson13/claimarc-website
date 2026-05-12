@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local env
+.env
+.env.local
+
+# Bun (this project uses npm)
+bun.lockb
+bun.lock
+
+# Vercel
+.vercel
