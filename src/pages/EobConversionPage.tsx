@@ -70,7 +70,7 @@ const EobConversionPage = () => (
     <ServiceHero
       eyebrow="Xtract EOB Conversion · HIPAA Compliant"
       title={<>Unlock efficiency buried <span className="text-[var(--cyan)]">under paper EOBs.</span></>}
-      body="ClaimARC's Xtract platform converts paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files with your custom business rules applied. Bank, clearinghouse, and lockbox agnostic — enhancing your workflow, not disrupting it."
+      body="ClaimARC's Xtract platform turns paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files — your custom business rules applied, returned ready to post. Works with whatever lockbox, bank, or scanning vendor you already use. Nothing in your workflow changes; the data just shows up clean."
       statValue="99.7"
       statSuffix="%"
       statLabel="Real-world data accuracy"

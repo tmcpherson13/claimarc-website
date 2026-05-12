@@ -125,10 +125,11 @@ const Index = () => (
             <span className="text-[var(--cyan)]">rebuilt around your cash flow.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70">
-            ClaimARC turns remittance — paper EOBs and electronic ERAs alike — into
-            structured intelligence, then uses it to advance payment on your claims in
-            as little as one business day. Bank, clearinghouse, and lockbox agnostic.
-            Precision valuation. Lightning acceleration.
+            ClaimARC turns your remittance — paper EOBs and electronic ERAs alike —
+            into structured intelligence, then uses it to advance payment on your
+            claims in as little as one business day. Works with the lockbox, bank,
+            and clearinghouse you already have. Precision valuation, lightning
+            acceleration.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <CtaLink to="/contact" variant="primary">

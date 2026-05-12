@@ -60,7 +60,7 @@ const WhyClaimArcPage = () => (
     <ServiceHero
       eyebrow="EOB Conversion + ERA + Claim Acceleration"
       title={<>One platform. <span className="text-[var(--cyan)]">A compounding advantage.</span></>}
-      body="ClaimARC's Accelerator advances payment in 1–2 business days — and the AI powering it is fueled by structured remittance data, the byproduct of our conversion platform. Three services. One advantage that builds over time. SOC 2 Type II."
+      body="EOB conversion produces clean remittance data. That data trains the AI that scores and prices your claims. That scoring is what lets ClaimARC fund you in 1–2 business days. Three services, one loop — and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
       statValue="3"
       statLabel="Services · one vendor · no disruption"
       statNote="Conversion · Intelligence · Acceleration"
