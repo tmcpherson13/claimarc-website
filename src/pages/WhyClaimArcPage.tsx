@@ -12,9 +12,9 @@ import { Section, SectionHeading } from "@/components/marketing/primitives";
 import { compliance } from "@/config/site";
 
 const pipeline = [
-  { label: "Paper & ERA", sub: "Remittance in", color: "var(--navy-soft)", note: "Expensive to process manually, invisible to most systems. This is where most organizations leave value on the table.", foot: "The starting point." },
-  { label: "Xtract Engine", sub: "Structured 835s", color: "var(--cyan)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
-  { label: "AI Scoring", sub: "Propensity to pay", color: "var(--navy)", key: true, note: "Remittance history trains ML models that predict propensity to pay — per claim, per payer, per procedure. The more you process, the smarter it gets.", foot: "More data = lower cost." },
+  { label: "Paper & ERA", sub: "Remittance in", color: "var(--text-lo)", note: "Expensive to process manually, invisible to most systems. This is where most organizations leave value on the table.", foot: "The starting point." },
+  { label: "Xtract Engine", sub: "Structured 835s", color: "var(--arc-1)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
+  { label: "AI Scoring", sub: "Propensity to pay", color: "var(--arc-2)", key: true, note: "Remittance history trains ML models that predict propensity to pay — per claim, per payer, per procedure. The more you process, the smarter it gets.", foot: "More data = lower cost." },
   { label: "Accelerator", sub: "Funded in 1–2 days", color: "var(--lime)", note: "Selected claims funded in 1–2 days at a fraction of LOC or factoring cost. Bi-directional true-up built in. Funds directly to you.", foot: "Always in your favor." },
 ];
 
@@ -23,7 +23,7 @@ const advantages = [
     icon: TrendingUp,
     accent: "cyan" as const,
     title: "Cash flow transformation",
-    body: "A 45+ day wait becomes 1–2 days. Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and ISO 27001 certified.",
+    body: "A 45+ day wait becomes 1–2 days. Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and HIPAA compliant at every step.",
     footnote: "Bank, clearinghouse & lockbox agnostic.",
   },
   {
@@ -59,7 +59,7 @@ const WhyClaimArcPage = () => (
     />
     <ServiceHero
       eyebrow="EOB Conversion + ERA + Claim Acceleration"
-      title={<>One platform. <span className="text-[var(--cyan)]">A compounding advantage.</span></>}
+      title={<>One platform. <span className="arc-text">A compounding advantage.</span></>}
       body="EOB conversion produces clean remittance data. That data trains the AI that scores and prices your claims. That scoring is what lets ClaimARC fund you in 1–2 business days. Three services, one loop — and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
       statValue="3"
       statLabel="Services · one vendor · no disruption"
@@ -90,15 +90,15 @@ const WhyClaimArcPage = () => (
               style={{ background: p.color }}
             >
               {p.key && (
-                <span className="absolute -top-2.5 left-5 rounded bg-[var(--lime)] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-[var(--navy)]">
+                <span className="absolute -top-2.5 left-5 rounded bg-[var(--lime)] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-[var(--ink-0)]">
                   Key
                 </span>
               )}
               <p className="text-base font-bold uppercase tracking-wide">{p.label}</p>
               <p className="text-xs text-white/70">{p.sub}</p>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-[var(--slate)]">{p.note}</p>
-            <p className="mt-4 border-t border-[var(--line)] pt-3 text-xs font-semibold text-[var(--cyan)]">
+            <p className="mt-4 text-sm leading-relaxed text-[var(--text-mid)]">{p.note}</p>
+            <p className="mt-4 border-t border-white/[0.08] pt-3 text-xs font-semibold text-[var(--arc-1)]">
               {p.foot}
             </p>
           </Reveal>
@@ -135,16 +135,16 @@ const WhyClaimArcPage = () => (
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { icon: ShieldCheck, t: "SOC 2 Type II", d: "Independently audited security, availability, and confidentiality controls." },
-          { icon: Lock, t: "ISO 27001", d: "Certified information security management across people, process, and technology." },
-          { icon: Layers, t: "HIPAA Compliant", d: "BAA-backed handling of PHI, with a 7-year (10-year optional) compliant archive." },
+          { icon: Lock, t: "HIPAA Compliant", d: "BAA-backed handling of PHI with PHI-aware access controls across every surface of the platform." },
+          { icon: Layers, t: "7-Year Archive", d: "Compliant remittance archive included, 10-year option available — instantly retrievable, audit-ready." },
           { icon: TrendingUp, t: "Patent Pending", d: "Proprietary AI propensity scoring and bi-directional true-up methodology." },
         ].map((c, i) => {
           const Icon = c.icon;
           return (
-            <Reveal key={c.t} delay={i * 70} className="rounded-2xl border border-white/10 bg-[var(--navy-soft)] p-6">
-              <Icon size={22} className="text-[var(--cyan)]" />
-              <h3 className="mt-3 text-base font-bold text-white">{c.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/65">{c.d}</p>
+            <Reveal key={c.t} delay={i * 70} className="glass p-6">
+              <Icon size={22} className="text-[var(--arc-1)]" />
+              <h3 className="mt-3 text-base font-bold text-[var(--text-hi)]">{c.t}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-mid)]">{c.d}</p>
             </Reveal>
           );
         })}

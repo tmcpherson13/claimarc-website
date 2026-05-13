@@ -3,13 +3,24 @@ import { Link } from "react-router-dom";
 
 /* ---------------------------------------------------------------- Section */
 
-type Tone = "light" | "mist" | "navy" | "navy-dk";
+/**
+ * Dark-canvas tones. Every tone is a layer of the same near-black canvas;
+ * "light"/"mist" stay as legacy aliases so existing pages keep working.
+ */
+type Tone = "light" | "mist" | "navy" | "navy-dk" | "deep" | "elev";
 
 const toneClass: Record<Tone, string> = {
-  light: "bg-white text-[var(--navy)]",
-  mist: "bg-[var(--mist)] text-[var(--navy)]",
-  navy: "bg-[var(--navy)] text-white",
-  "navy-dk": "bg-[var(--navy-dk)] text-white",
+  // Default surface — translucent so the mesh background shows through
+  light: "text-[var(--text-hi)]",
+  // Subtly lifted panel
+  mist: "bg-[var(--ink-1)]/60 text-[var(--text-hi)] backdrop-blur-xl",
+  // Brand navy strip — preserved for explicit brand sections
+  navy: "bg-[var(--ink-2)]/70 text-[var(--text-hi)] backdrop-blur-xl",
+  "navy-dk": "bg-[var(--ink-1)] text-[var(--text-hi)]",
+  // Deepest — for end-of-page CTA bands
+  deep: "bg-[var(--ink-0)] text-[var(--text-hi)]",
+  // Elevated glass — for feature islands
+  elev: "bg-[var(--ink-2)]/70 text-[var(--text-hi)] backdrop-blur-xl border-y border-white/[0.06]",
 };
 
 export function Section({
@@ -24,8 +35,8 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={`${toneClass[tone]} py-20 md:py-28 ${className}`}>
-      <div className="shell">{children}</div>
+    <section id={id} className={`relative ${toneClass[tone]} py-20 md:py-28 ${className}`}>
+      <div className="shell relative">{children}</div>
     </section>
   );
 }
@@ -38,11 +49,17 @@ export function Eyebrow({
   className = "",
 }: {
   children: ReactNode;
-  tone?: "cyan" | "lime" | "white";
+  tone?: "cyan" | "lime" | "white" | "arc";
   className?: string;
 }) {
   const color =
-    tone === "lime" ? "text-[var(--lime)]" : tone === "white" ? "text-white/70" : "text-[var(--cyan)]";
+    tone === "lime"
+      ? "text-[var(--lime)]"
+      : tone === "white"
+        ? "text-white/70"
+        : tone === "arc"
+          ? "shimmer-text"
+          : "text-[var(--arc-1)]";
   return <p className={`eyebrow ${color} ${className}`}>{children}</p>;
 }
 
@@ -54,11 +71,12 @@ export function SectionHeading({
   title,
   intro,
   align = "left",
-  invert = false,
+  // `invert` retained for backwards compat — dark-first means no-op
+  invert: _invert = false,
   className = "",
 }: {
   eyebrow?: string;
-  eyebrowTone?: "cyan" | "lime" | "white";
+  eyebrowTone?: "cyan" | "lime" | "white" | "arc";
   title: ReactNode;
   intro?: ReactNode;
   align?: "left" | "center";
@@ -70,19 +88,15 @@ export function SectionHeading({
       className={`${align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"} ${className}`}
     >
       {eyebrow && (
-        <Eyebrow tone={eyebrowTone ?? (invert ? "white" : "cyan")} className="mb-4">
+        <Eyebrow tone={eyebrowTone ?? "cyan"} className="mb-4">
           {eyebrow}
         </Eyebrow>
       )}
-      <h2
-        className={`text-balance text-3xl font-bold leading-[1.15] tracking-tight md:text-4xl ${
-          invert ? "text-white" : "text-[var(--navy)]"
-        }`}
-      >
+      <h2 className="display text-balance text-3xl leading-[1.12] tracking-tight text-[var(--text-hi)] md:text-[2.6rem]">
         {title}
       </h2>
       {intro && (
-        <p className={`mt-5 text-lg leading-relaxed ${invert ? "text-white/70" : "text-[var(--slate)]"}`}>
+        <p className="mt-5 text-lg leading-relaxed text-[var(--text-mid)]">
           {intro}
         </p>
       )}
@@ -95,15 +109,19 @@ export function SectionHeading({
 type BtnVariant = "primary" | "secondary" | "ghost" | "onDark";
 
 const btnBase =
-  "inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
+  "relative inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink-0)]";
 
 const btnVariant: Record<BtnVariant, string> = {
-  primary: "bg-[var(--cyan)] text-white hover:bg-[var(--cyan-dk)] focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-white",
+  // Primary CTA — signature gradient with glow
+  primary:
+    "text-white shadow-[0_0_0_1px_rgba(255,255,255,0.10)_inset,0_10px_30px_-10px_rgba(0,200,255,0.55)] bg-gradient-to-r from-[var(--arc-1)] via-[var(--arc-2)] to-[var(--arc-3)] bg-[length:200%_100%] bg-left hover:bg-right hover:shadow-[0_0_0_1px_rgba(255,255,255,0.18)_inset,0_18px_44px_-12px_rgba(110,91,255,0.7)] focus-visible:ring-[var(--arc-1)]",
+  // Secondary — hairline border, light fill on hover
   secondary:
-    "border-2 border-[var(--navy)] text-[var(--navy)] hover:bg-[var(--navy)] hover:text-white focus-visible:ring-[var(--navy)] focus-visible:ring-offset-white",
-  ghost: "text-[var(--cyan)] hover:text-[var(--cyan-dk)] px-0 py-0",
+    "border border-white/15 bg-white/[0.03] text-[var(--text-hi)] hover:border-white/30 hover:bg-white/[0.06] focus-visible:ring-white",
+  ghost:
+    "text-[var(--arc-1)] hover:text-white px-0 py-0",
   onDark:
-    "border border-white/25 text-white hover:bg-white/10 focus-visible:ring-white focus-visible:ring-offset-[var(--navy)]",
+    "border border-white/20 text-white hover:bg-white/10 hover:border-white/35 focus-visible:ring-white",
 };
 
 export function CtaLink({
@@ -141,7 +159,7 @@ export function Card({
 }) {
   return (
     <Tag
-      className={`rounded-2xl border border-[var(--line)] bg-white p-7 transition-shadow hover:shadow-[0_8px_30px_rgba(10,38,71,0.08)] ${className}`}
+      className={`glass p-7 transition-all duration-300 hover:border-white/15 hover:bg-white/[0.05] ${className}`}
     >
       {children}
     </Tag>

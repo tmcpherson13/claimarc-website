@@ -13,7 +13,7 @@ interface ServiceHeroProps {
   primaryText?: string;
 }
 
-/** Shared hero for the three service pages — headline left, hero stat right. */
+/** Shared hero for the three service pages — dark, gradient-accented. */
 const ServiceHero = ({
   eyebrow,
   title,
@@ -24,39 +24,61 @@ const ServiceHero = ({
   statNote,
   primaryText = "Book a Demo",
 }: ServiceHeroProps) => (
-  <section className="relative overflow-hidden bg-[var(--navy)]">
+  <section className="relative overflow-hidden">
+    {/* Localised spotlight */}
     <div
-      className="pointer-events-none absolute inset-0 opacity-60"
+      className="pointer-events-none absolute inset-0"
       aria-hidden="true"
       style={{
-        backgroundImage:
-          "radial-gradient(55% 70% at 80% 0%, rgba(0,160,200,0.18), transparent 60%), radial-gradient(45% 60% at 0% 100%, rgba(104,184,64,0.12), transparent 60%)",
+        background:
+          "radial-gradient(55% 65% at 78% 5%, rgba(0,200,255,0.18), transparent 60%), radial-gradient(45% 55% at 5% 100%, rgba(110,91,255,0.14), transparent 60%)",
       }}
     />
     <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.4fr_1fr]">
       <Reveal>
-        <Eyebrow tone="cyan" className="mb-5">{eyebrow}</Eyebrow>
-        <h1 className="text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-white md:text-5xl lg:text-[3.4rem]">
+        <Eyebrow tone="arc" className="mb-5">
+          {eyebrow}
+        </Eyebrow>
+        <h1 className="display text-balance text-4xl leading-[1.06] tracking-tight md:text-5xl lg:text-[3.4rem]">
           {title}
         </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70">{body}</p>
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--text-mid)]">
+          {body}
+        </p>
         <div className="mt-9 flex flex-wrap gap-3">
-          <CtaLink to="/contact" variant="primary">{primaryText}</CtaLink>
-          <CtaLink to="/why-claimarc" variant="onDark">See the full platform</CtaLink>
+          <CtaLink to="/contact" variant="primary">
+            {primaryText}
+          </CtaLink>
+          <CtaLink to="/why-claimarc" variant="secondary">
+            See the full platform
+          </CtaLink>
         </div>
       </Reveal>
       <Reveal delay={120} className="lg:justify-self-end">
-        <div className="flex items-start gap-5 border-l-2 border-[var(--cyan)] pl-6">
-          <div>
-            <p className="text-6xl font-extrabold leading-none tracking-tight text-[var(--cyan)] md:text-7xl">
-              {statValue}
-              {statSuffix && <span className="text-[var(--lime)]">{statSuffix}</span>}
-            </p>
-            <p className="mt-3 text-sm font-semibold uppercase tracking-[0.14em] text-white">
-              {statLabel}
-            </p>
-            {statNote && <p className="mt-1 text-xs italic text-white/45">{statNote}</p>}
-          </div>
+        <div className="glass-strong relative p-7">
+          {/* Glow rail behind the stat */}
+          <div
+            aria-hidden="true"
+            className="absolute -inset-px rounded-2xl opacity-60"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(0,200,255,0.18), rgba(110,91,255,0.18), rgba(255,79,163,0.10))",
+              filter: "blur(14px)",
+              zIndex: -1,
+            }}
+          />
+          <p className="display text-6xl leading-none tracking-tight md:text-7xl">
+            <span className="arc-text">{statValue}</span>
+            {statSuffix && (
+              <span className="text-[var(--lime)]">{statSuffix}</span>
+            )}
+          </p>
+          <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--text-hi)]">
+            {statLabel}
+          </p>
+          {statNote && (
+            <p className="mt-1 text-xs italic text-[var(--text-lo)]">{statNote}</p>
+          )}
         </div>
       </Reveal>
     </div>

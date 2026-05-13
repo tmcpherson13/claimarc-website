@@ -48,7 +48,7 @@ const delivers = [
     stat: "7yr",
     accent: "cyan" as const,
     title: "Archive & compliance",
-    body: "Seven-year image storage included, with a 10-year option available. SOC 2 Type II and ISO 27001 certified. HIPAA compliant, instantly retrievable, audit-ready.",
+    body: "Seven-year image storage included, with a 10-year option available. SOC 2 Type II and HIPAA compliant — instantly retrievable, audit-ready, BAA-backed.",
     footnote: "Enterprise security. Zero compromise.",
   },
   {
@@ -69,7 +69,7 @@ const EobConversionPage = () => (
     />
     <ServiceHero
       eyebrow="Xtract EOB Conversion · HIPAA Compliant"
-      title={<>Unlock efficiency buried <span className="text-[var(--cyan)]">under paper EOBs.</span></>}
+      title={<>Unlock efficiency buried <span className="arc-text">under paper EOBs.</span></>}
       body="ClaimARC's Xtract platform turns paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files — your custom business rules applied, returned ready to post. Works with whatever lockbox, bank, or scanning vendor you already use. Nothing in your workflow changes; the data just shows up clean."
       statValue="99.7"
       statSuffix="%"
@@ -102,10 +102,10 @@ const EobConversionPage = () => (
         intro="Accuracy you can post against, compliance you can defend, and a data layer that pays dividends downstream."
       />
       <ValueCards cards={delivers} columns={3} />
-      <div className="mt-10 flex flex-wrap gap-x-8 gap-y-2 text-sm font-semibold text-[var(--navy)]">
-        <span className="inline-flex items-center gap-2"><Zap size={16} className="text-[var(--cyan)]" />Eliminate the cost of manual error.</span>
+      <div className="mt-10 flex flex-wrap gap-x-8 gap-y-2 text-sm font-semibold text-[var(--text-hi)]">
+        <span className="inline-flex items-center gap-2"><Zap size={16} className="text-[var(--arc-1)]" />Eliminate the cost of manual error.</span>
         <span className="inline-flex items-center gap-2"><ShieldCheck size={16} className="text-[var(--lime)]" />Enterprise security. Zero compromise.</span>
-        <span className="inline-flex items-center gap-2"><InfinityIcon size={16} className="text-[var(--cyan)]" />A competitive moat that builds itself.</span>
+        <span className="inline-flex items-center gap-2"><InfinityIcon size={16} className="text-[var(--arc-1)]" />A competitive moat that builds itself.</span>
       </div>
     </Section>
 

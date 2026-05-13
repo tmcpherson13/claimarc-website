@@ -59,9 +59,9 @@ const serviceOptions = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const labelCls = "mb-1.5 block text-sm font-medium text-[var(--navy)]";
+const labelCls = "mb-1.5 block text-sm font-medium text-[var(--text-mid)]";
 const inputCls =
-  "w-full rounded-md border border-[var(--line)] bg-white px-3.5 py-2.5 text-sm text-[var(--navy)] outline-none transition-colors focus:border-[var(--cyan)] focus:ring-2 focus:ring-[var(--cyan)]/30";
+  "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-[var(--text-hi)] placeholder:text-[var(--text-lo)] outline-none transition-colors focus:border-[var(--arc-1)] focus:bg-white/[0.06] focus:ring-2 focus:ring-[var(--arc-1)]/30";
 
 const ContactPage = () => {
   const [params] = useSearchParams();
@@ -137,28 +137,28 @@ const ContactPage = () => {
         path="/contact"
       />
 
-      <section className="relative overflow-hidden bg-[var(--navy)]">
+      <section className="relative overflow-hidden">
         <div
-          className="pointer-events-none absolute inset-0 opacity-60"
+          className="pointer-events-none absolute inset-0"
           aria-hidden="true"
           style={{
-            backgroundImage:
-              "radial-gradient(55% 70% at 85% 0%, rgba(0,160,200,0.18), transparent 60%), radial-gradient(45% 60% at 0% 100%, rgba(104,184,64,0.12), transparent 60%)",
+            background:
+              "radial-gradient(55% 70% at 85% 0%, rgba(0,200,255,0.18), transparent 60%), radial-gradient(45% 60% at 0% 100%, rgba(110,91,255,0.14), transparent 60%)",
           }}
         />
         <div className="shell relative grid gap-12 py-20 md:py-24 lg:grid-cols-[1fr_1.1fr]">
           <Reveal>
-            <Eyebrow tone="cyan" className="mb-5">Talk to ClaimARC</Eyebrow>
-            <h1 className="text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-white md:text-5xl">
-              Book a working session.
+            <Eyebrow tone="arc" className="mb-5">Talk to ClaimARC</Eyebrow>
+            <h1 className="display text-balance text-4xl leading-[1.05] md:text-5xl">
+              Book a <span className="arc-text">working session.</span>
             </h1>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-white/70">
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--text-mid)]">
               Thirty minutes with our team — bring a recent claims or remittance file and
               we'll run it through the model with you. No slide deck, no obligation.
             </p>
-            <ul className="mt-8 space-y-4 text-sm text-white/75">
+            <ul className="mt-8 space-y-4 text-sm text-[var(--text-mid)]">
               <li className="flex items-start gap-3">
-                <CalendarClock size={18} className="mt-0.5 shrink-0 text-[var(--cyan)]" />
+                <CalendarClock size={18} className="mt-0.5 shrink-0 text-[var(--arc-1)]" />
                 <span>See payment acceleration timing and pricing against your own data.</span>
               </li>
               <li className="flex items-start gap-3">
@@ -166,10 +166,10 @@ const ContactPage = () => {
                 <span>Walk away with a sample 835 and a clear picture of the workflow fit.</span>
               </li>
               <li className="flex items-start gap-3">
-                <Mail size={18} className="mt-0.5 shrink-0 text-[var(--cyan)]" />
+                <Mail size={18} className="mt-0.5 shrink-0 text-[var(--arc-2)]" />
                 <span>
                   Prefer email?{" "}
-                  <a href={`mailto:${COMPANY.email}`} className="font-semibold text-white underline underline-offset-4">
+                  <a href={`mailto:${COMPANY.email}`} className="font-semibold text-[var(--text-hi)] underline underline-offset-4">
                     {COMPANY.email}
                   </a>
                 </span>
@@ -178,15 +178,17 @@ const ContactPage = () => {
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="rounded-2xl bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.25)] md:p-8">
+            <div className="glass-strong relative p-7 md:p-8">
               {submitted ? (
                 <div className="py-10 text-center">
                   <CheckCircle2 size={44} className="mx-auto text-[var(--lime)]" />
-                  <h2 className="mt-4 text-2xl font-bold text-[var(--navy)]">Thanks — we're on it.</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-[var(--slate)]">
+                  <h2 className="mt-4 text-2xl font-bold text-[var(--text-hi)]">
+                    Thanks — we're on it.
+                  </h2>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--text-mid)]">
                     Your email client should have opened with the details prefilled. If it
                     didn't, just send a note to{" "}
-                    <a href={`mailto:${COMPANY.email}`} className="font-semibold text-[var(--cyan)]">
+                    <a href={`mailto:${COMPANY.email}`} className="font-semibold text-[var(--arc-1)]">
                       {COMPANY.email}
                     </a>{" "}
                     and we'll get back to you within one business day.
@@ -263,18 +265,26 @@ const ContactPage = () => {
                   </div>
 
                   {submitError && (
-                    <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800">{submitError}</p>
+                    <p className="rounded-md border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+                      {submitError}
+                    </p>
                   )}
 
                   <button
                     type="submit"
                     disabled={!canSubmit || submitting}
-                    className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--cyan)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--cyan-dk)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="relative flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{
+                      background:
+                        "linear-gradient(100deg, var(--arc-1) 0%, var(--arc-2) 55%, var(--arc-3) 100%)",
+                      boxShadow:
+                        "0 0 0 1px rgba(255,255,255,0.10) inset, 0 14px 36px -12px rgba(0,200,255,0.55)",
+                    }}
                   >
                     {submitting && <Loader2 size={16} className="animate-spin" />}
                     {submitting ? "Sending…" : "Request a demo"}
                   </button>
-                  <p className="text-center text-xs text-[var(--slate)]">
+                  <p className="text-center text-xs text-[var(--text-lo)]">
                     We'll only use your details to follow up about ClaimARC. No spam.
                   </p>
                 </form>
@@ -285,11 +295,15 @@ const ContactPage = () => {
       </section>
 
       {/* tiny service quick-links */}
-      <div className="border-t border-[var(--line)] bg-[var(--mist)]">
+      <div className="border-y border-white/[0.06] bg-white/[0.015] backdrop-blur-xl">
         <div className="shell flex flex-wrap items-center gap-x-6 gap-y-2 py-5 text-sm">
-          <span className="font-semibold text-[var(--navy)]">Exploring a specific service?</span>
+          <span className="font-semibold text-[var(--text-hi)]">Exploring a specific service?</span>
           {services.map((s) => (
-            <a key={s.to} href={s.to} className="text-[var(--cyan)] hover:text-[var(--cyan-dk)] hover:underline">
+            <a
+              key={s.to}
+              href={s.to}
+              className="text-[var(--arc-1)] hover:text-white hover:underline"
+            >
               {s.label}
             </a>
           ))}

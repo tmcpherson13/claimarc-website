@@ -24,12 +24,12 @@ export const services: NavItem[] = [
 
 export const primaryNav: NavItem[] = [
   { label: "Why ClaimARC", to: "/why-claimarc" },
+  { label: "Leadership", to: "/leadership" },
   { label: "Contact", to: "/contact" },
 ];
 
 export const compliance = [
   "SOC 2 Type II",
-  "ISO 27001",
   "HIPAA Compliant",
   "Patent Pending",
 ];

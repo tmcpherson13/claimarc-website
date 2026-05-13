@@ -69,7 +69,7 @@ const EraProcessingPage = () => (
     />
     <ServiceHero
       eyebrow="ERA Processing · 835 Normalization"
-      title={<>Every payer's remittance, <span className="text-[var(--cyan)]">one clean pipeline.</span></>}
+      title={<>Every payer's remittance, <span className="arc-text">one clean pipeline.</span></>}
       body="ClaimARC pulls electronic remittance from every clearinghouse, bank, and payer portal into one normalized stream — reconciled to your deposits, returned auto-postable, and archived in a searchable, audit-ready portal. Run it alongside EOB Conversion and your paper and electronic remittance finally live in one dataset."
       statValue="100"
       statSuffix="%"
