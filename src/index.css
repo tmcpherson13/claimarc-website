@@ -27,11 +27,13 @@
     --text-mid: #B8C2D9;
     --text-lo: #7E89A6;
 
-    /* Bespoke accent gradient — the signature ARC */
-    --arc-1: #00C8FF;    /* electric cyan */
-    --arc-2: #6E5BFF;    /* violet */
-    --arc-3: #FF4FA3;    /* magenta */
-    --arc-glow: #00C8FF;
+    /* Signature ARC gradient — tuned to the official ClaimARC logo
+       (navy ribbon underside → cyan ribbon top → lime accent dots). */
+    --arc-1: #00C8E6;    /* electric cyan — logo top stroke, brightened */
+    --arc-2: #1474B4;    /* mid blue — bridges cyan to navy */
+    --arc-3: #7ED957;    /* lime — logo accent dots, brightened for dark UI */
+    --arc-navy: #052A48; /* deep navy — ribbon shadow */
+    --arc-glow: #00C8E6;
 
     /* Legacy aliases retained for any older references */
     --slate: #7E89A6;
@@ -189,53 +191,96 @@
     height: 1px;
   }
 
-  /* Animated gradient mesh background — used by Layout */
+  /* Layered fintech background — conic aurora + drifting orbs.
+     Compositing order (bottom→top): ink base, conic aurora, two drifting orbs. */
   .mesh-bg {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background-color: var(--ink-0);
     overflow: hidden;
+    background-color: var(--ink-0);
+    /* Slow-rotating conic aurora in brand colors */
+    background-image:
+      conic-gradient(
+        from 210deg at 50% 120%,
+        rgba(0, 200, 230, 0.10) 0deg,
+        rgba(20, 116, 180, 0.16) 70deg,
+        rgba(5, 42, 72, 0.0) 140deg,
+        rgba(126, 217, 87, 0.08) 210deg,
+        rgba(0, 200, 230, 0.10) 320deg,
+        rgba(0, 200, 230, 0.10) 360deg
+      );
+    background-size: 220% 220%;
+    animation: auroraShift 40s ease-in-out infinite alternate;
   }
   .mesh-bg::before,
   .mesh-bg::after {
     content: "";
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.32;
+    filter: blur(90px);
     will-change: transform;
   }
   .mesh-bg::before {
-    width: 60vw;
-    height: 60vw;
-    top: -15vw;
-    right: -10vw;
+    width: 62vw;
+    height: 62vw;
+    top: -18vw;
+    right: -12vw;
     background: radial-gradient(circle, var(--arc-1), transparent 60%);
+    opacity: 0.26;
     animation: meshDrift 22s ease-in-out infinite alternate;
   }
   .mesh-bg::after {
-    width: 55vw;
-    height: 55vw;
-    bottom: -20vw;
-    left: -15vw;
-    background: radial-gradient(circle, var(--arc-2), transparent 60%);
+    width: 58vw;
+    height: 58vw;
+    bottom: -22vw;
+    left: -16vw;
+    background: radial-gradient(circle, var(--arc-3), transparent 62%);
+    opacity: 0.18;
     animation: meshDrift 28s ease-in-out -8s infinite alternate-reverse;
   }
-  /* Static grid overlay over the mesh — sense of precision */
+
+  /* Precision grid overlay — fine grid + coarser "blueprint" lines, with a
+     subtle horizontal scan that drifts down the page. */
   .grid-overlay {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-    background-size: 56px 56px;
-    background-position: -1px -1px;
-    mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 70%);
-    -webkit-mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 70%);
+      /* Fine grid */
+      linear-gradient(rgba(0, 200, 230, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 200, 230, 0.045) 1px, transparent 1px),
+      /* Coarse blueprint grid */
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size:
+      56px 56px,
+      56px 56px,
+      280px 280px,
+      280px 280px;
+    background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 25%, #000 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 25%, #000 0%, transparent 75%);
+  }
+  .grid-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(0, 200, 230, 0.05) 49%,
+        rgba(126, 217, 87, 0.06) 50%,
+        rgba(0, 200, 230, 0.05) 51%,
+        transparent 100%
+      );
+    background-size: 100% 600%;
+    animation: scanDrift 14s linear infinite;
+    mix-blend-mode: screen;
+    opacity: 0.7;
   }
 }
 
@@ -246,6 +291,22 @@
   100% {
     transform: translate3d(-8vw, 6vw, 0) scale(1.15);
   }
+}
+
+@keyframes auroraShift {
+  0%   { background-position: 0% 0%;   filter: hue-rotate(0deg); }
+  50%  { background-position: 100% 50%; filter: hue-rotate(-12deg); }
+  100% { background-position: 0% 100%; filter: hue-rotate(0deg); }
+}
+
+@keyframes scanDrift {
+  0%   { background-position: 0% -100%; }
+  100% { background-position: 0% 200%; }
+}
+
+/* Infinity-loop dot crawl, used by AnimatedInfinityLogo */
+@keyframes loopDotDraw {
+  to { stroke-dashoffset: 0; }
 }
 
 /* Scroll reveal */
@@ -356,8 +417,11 @@
   .arc-orbit-rev,
   .arc-float,
   .shimmer-text,
+  .mesh-bg,
   .mesh-bg::before,
-  .mesh-bg::after {
+  .mesh-bg::after,
+  .grid-overlay::after,
+  .loop-dot {
     animation: none;
   }
   html {
