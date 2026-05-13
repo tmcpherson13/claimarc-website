@@ -18,7 +18,7 @@ const steps = [
   },
   {
     title: "Extract",
-    lead: "Xtract AI processes",
+    lead: "Our platform processes",
     body: "ML data-lifting pulls every data element from the image. Each file is quality-checked and structured for clean 835 generation.",
     footnote: "Builds your intelligence layer.",
   },
@@ -64,13 +64,13 @@ const EobConversionPage = () => (
   <Layout>
     <SeoHead
       title="EOB Conversion — Paper to Auto-Postable 835s | ClaimARC"
-      description="ClaimARC's Xtract engine converts paper EOBs, checks, and correspondence into structured, auto-postable ANSI X12 835 files with your business rules applied — 99.7% real-world accuracy, 24/48-hour turnaround."
+      description="ClaimARC's platform converts paper EOBs, checks, and correspondence into structured, auto-postable ANSI X12 835 files with your business rules applied — 99.7% real-world accuracy, 24/48-hour turnaround."
       path="/eob-conversion"
     />
     <ServiceHero
-      eyebrow="Xtract EOB Conversion · HIPAA Compliant"
+      eyebrow="EOB Conversion Platform · HIPAA Compliant"
       title={<>Unlock efficiency buried <span className="arc-text">under paper EOBs.</span></>}
-      body="ClaimARC's Xtract platform turns paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files — your custom business rules applied, returned ready to post. Works with whatever lockbox, bank, or scanning vendor you already use. Nothing in your workflow changes; the data just shows up clean."
+      body="ClaimARC's platform turns paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files — your custom business rules applied, returned ready to post. Works with whatever lockbox, bank, or scanning vendor you already use. Nothing in your workflow changes; the data just shows up clean."
       statValue="99.7"
       statSuffix="%"
       statLabel="Real-world data accuracy"

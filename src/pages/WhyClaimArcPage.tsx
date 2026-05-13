@@ -13,7 +13,7 @@ import { compliance } from "@/config/site";
 
 const pipeline = [
   { label: "Paper & ERA", sub: "Remittance in", color: "var(--text-lo)", note: "Expensive to process manually, invisible to most systems. This is where most organizations leave value on the table.", foot: "The starting point." },
-  { label: "Xtract Engine", sub: "Structured 835s", color: "var(--arc-1)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
+  { label: "Conversion Platform", sub: "Structured 835s", color: "var(--arc-1)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
   { label: "AI Scoring", sub: "Propensity to pay", color: "var(--arc-2)", key: true, note: "Remittance history trains ML models that predict propensity to pay — per claim, per payer, per procedure. The more you process, the smarter it gets.", foot: "More data = lower cost." },
   { label: "Accelerator", sub: "Funded in 1–2 days", color: "var(--lime)", note: "Selected claims funded in 1–2 days at a fraction of LOC or factoring cost. Bi-directional true-up built in. Funds directly to you.", foot: "Always in your favor." },
 ];

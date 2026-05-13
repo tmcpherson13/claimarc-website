@@ -18,7 +18,7 @@ const serviceCards = [
     to: "/eob-conversion",
     icon: FileStack,
     name: "EOB Conversion",
-    tag: "Xtract Engine",
+    tag: "Conversion Platform",
     desc: "Paper EOBs, checks, and correspondence become structured, auto-postable 835 files — your custom business rules applied, 99.7% real-world accuracy.",
     accent: "var(--arc-1)",
   },
@@ -48,7 +48,7 @@ const flywheel = [
     footnote: "Bank, clearinghouse & lockbox agnostic.",
   },
   {
-    title: "Xtract Engine",
+    title: "Conversion Platform",
     lead: "Structured in 24–48h",
     body: "AI data-lifting converts every document to clean, auto-postable 835 files with your business rules applied, returned to your SFTP.",
     footnote: "Builds the data asset.",

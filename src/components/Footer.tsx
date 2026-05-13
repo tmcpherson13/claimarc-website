@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { COMPANY, compliance, primaryNav, services } from "@/config/site";
 
-const year = new Date().getFullYear();
-
 const Footer = () => {
   return (
     <footer className="relative border-t border-white/[0.06] bg-[var(--ink-0)]/80 text-white backdrop-blur-xl">
@@ -100,7 +98,7 @@ const Footer = () => {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
           <span>
-            © {year} {COMPANY.legal}. Patent Pending. All rights reserved.
+            © 2026 Retrieve Remit, LLC dba ClaimARC
           </span>
           <span>{COMPANY.arc}</span>
         </div>
