@@ -1,57 +1,148 @@
 /**
- * Abstract "acceleration arc" hero visual: a claim moves through scoring rings
- * and is launched along an arc toward funded. Pure SVG, no dependencies.
+ * Animated data-flow visualization for the hero.
+ *
+ * Tells the ClaimARC story visually:
+ *   inbound documents (EOB / ERA / 835) flow into the AI scoring core, get
+ *   priced, then accelerate along a gradient arc to a "Funded" terminal.
+ *
+ * Pure SVG + CSS animation. No deps. Respects prefers-reduced-motion.
  */
 const HeroArc = ({ className = "" }: { className?: string }) => (
   <div className={`relative ${className}`} aria-hidden="true">
-    <svg viewBox="0 0 460 380" className="h-auto w-full" fill="none">
+    {/* Ambient haloed glow behind the SVG */}
+    <div
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{
+        background:
+          "radial-gradient(45% 45% at 32% 60%, rgba(0,200,255,0.30), transparent 60%), radial-gradient(40% 40% at 80% 30%, rgba(110,91,255,0.25), transparent 60%), radial-gradient(35% 35% at 70% 85%, rgba(255,79,163,0.18), transparent 60%)",
+        filter: "blur(8px)",
+      }}
+    />
+
+    <svg viewBox="0 0 520 440" className="h-auto w-full" fill="none">
       <defs>
-        <linearGradient id="arcGrad" x1="0" y1="380" x2="460" y2="0">
-          <stop offset="0" stopColor="#00A0C8" />
-          <stop offset="0.6" stopColor="#00A0C8" />
-          <stop offset="1" stopColor="#68B840" />
+        {/* Signature ARC gradient */}
+        <linearGradient id="arcGrad" x1="0" y1="440" x2="520" y2="0">
+          <stop offset="0" stopColor="#00C8FF" />
+          <stop offset="0.5" stopColor="#6E5BFF" />
+          <stop offset="1" stopColor="#FF4FA3" />
         </linearGradient>
-        <radialGradient id="glowGrad" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#00A0C8" stopOpacity="0.35" />
-          <stop offset="1" stopColor="#00A0C8" stopOpacity="0" />
+        <linearGradient id="arcGradSoft" x1="0" y1="0" x2="520" y2="440">
+          <stop offset="0" stopColor="#00C8FF" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#FF4FA3" stopOpacity="0.2" />
+        </linearGradient>
+        <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#00C8FF" stopOpacity="0.55" />
+          <stop offset="0.5" stopColor="#6E5BFF" stopOpacity="0.25" />
+          <stop offset="1" stopColor="#6E5BFF" stopOpacity="0" />
         </radialGradient>
+        <radialGradient id="terminalGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#FF4FA3" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#FF4FA3" stopOpacity="0" />
+        </radialGradient>
+        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.5" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
-      {/* ambient glow */}
-      <circle cx="150" cy="240" r="150" fill="url(#glowGrad)" />
+      {/* Background grid for scale & precision */}
+      <g opacity="0.06" stroke="#FFFFFF" strokeWidth="0.5">
+        <path d="M0 110 H520 M0 220 H520 M0 330 H520" />
+        <path d="M130 0 V440 M260 0 V440 M390 0 V440" />
+      </g>
 
-      {/* concentric scoring rings */}
-      <circle cx="150" cy="240" r="110" stroke="#FFFFFF" strokeOpacity="0.10" strokeWidth="1.5" />
-      <circle cx="150" cy="240" r="78" stroke="#FFFFFF" strokeOpacity="0.14" strokeWidth="1.5" />
-      <circle cx="150" cy="240" r="46" stroke="#FFFFFF" strokeOpacity="0.18" strokeWidth="1.5" />
+      {/* Core ambient glow */}
+      <circle cx="200" cy="260" r="170" fill="url(#coreGlow)" />
+      <circle cx="430" cy="120" r="110" fill="url(#terminalGlow)" />
 
-      {/* the three trajectory arcs */}
-      <path d="M150 240 C 230 140, 330 110, 430 150" stroke="url(#arcGrad)" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.85" />
-      <path d="M150 240 C 250 175, 340 165, 432 195" stroke="url(#arcGrad)" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5" />
-      <path d="M150 240 C 240 110, 320 70, 420 95" stroke="url(#arcGrad)" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.5" />
+      {/* Inbound document nodes — EOB / ERA / 835 */}
+      <g>
+        {/* EOB */}
+        <g className="arc-float" style={{ animationDelay: "0s" }}>
+          <rect x="20" y="200" width="62" height="36" rx="6" fill="#0B1020" stroke="#00C8FF" strokeOpacity="0.55" strokeWidth="1.25" />
+          <text x="51" y="223" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#00C8FF">EOB</text>
+        </g>
+        {/* ERA */}
+        <g className="arc-float" style={{ animationDelay: "1.6s" }}>
+          <rect x="20" y="250" width="62" height="36" rx="6" fill="#0B1020" stroke="#6E5BFF" strokeOpacity="0.55" strokeWidth="1.25" />
+          <text x="51" y="273" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#9D8DFF">ERA</text>
+        </g>
+        {/* 835 */}
+        <g className="arc-float" style={{ animationDelay: "3.2s" }}>
+          <rect x="20" y="300" width="62" height="36" rx="6" fill="#0B1020" stroke="#FF4FA3" strokeOpacity="0.55" strokeWidth="1.25" />
+          <text x="51" y="323" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#FF7AB6">835</text>
+        </g>
+      </g>
 
-      {/* animated data pulses traveling the main arc */}
-      <path className="arc-dash" d="M150 240 C 230 140, 330 110, 430 150" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Inbound connector lines */}
+      <g stroke="url(#arcGradSoft)" strokeWidth="1.25" strokeLinecap="round" fill="none">
+        <path d="M82 218 C 130 218, 150 245, 195 255" />
+        <path d="M82 268 C 130 268, 155 265, 195 262" />
+        <path d="M82 318 C 130 318, 155 285, 195 270" />
+      </g>
+      {/* Animated dashes traveling inbound */}
+      <g stroke="#FFFFFF" strokeWidth="1.25" strokeLinecap="round" fill="none" opacity="0.65">
+        <path className="arc-dash-fast" d="M82 218 C 130 218, 150 245, 195 255" />
+        <path className="arc-dash-fast" style={{ animationDelay: "1.5s" }} d="M82 268 C 130 268, 155 265, 195 262" />
+        <path className="arc-dash-fast" style={{ animationDelay: "3s" }} d="M82 318 C 130 318, 155 285, 195 270" />
+      </g>
 
-      {/* core node — the claim */}
-      <circle cx="150" cy="240" r="22" fill="#0E5288" stroke="#00A0C8" strokeWidth="2" />
-      <circle className="arc-pulse" cx="150" cy="240" r="34" stroke="#00A0C8" strokeWidth="1.5" />
-      <text x="150" y="245" textAnchor="middle" fontSize="11" fontWeight="700" fill="#FFFFFF">
-        CLAIM
-      </text>
+      {/* Concentric scoring rings around the AI core */}
+      <g>
+        <circle cx="210" cy="260" r="118" stroke="#FFFFFF" strokeOpacity="0.07" strokeWidth="1" />
+        <circle cx="210" cy="260" r="86" stroke="#FFFFFF" strokeOpacity="0.10" strokeWidth="1" />
+        <circle cx="210" cy="260" r="56" stroke="#FFFFFF" strokeOpacity="0.14" strokeWidth="1" />
+      </g>
 
-      {/* destination node — funded */}
-      <circle cx="430" cy="150" r="20" fill="#0E5288" stroke="#68B840" strokeWidth="2" />
-      <circle className="arc-pulse" cx="430" cy="150" r="30" stroke="#68B840" strokeWidth="1.5" />
-      <text x="430" y="123" textAnchor="middle" fontSize="10" fontWeight="700" fill="#68B840">
-        FUNDED
-      </text>
+      {/* Orbiting score markers on outer ring */}
+      <g className="arc-orbit" style={{ transformOrigin: "210px 260px" }}>
+        <circle cx="328" cy="260" r="3.5" fill="#00C8FF" filter="url(#softGlow)" />
+        <circle cx="92" cy="260" r="3" fill="#6E5BFF" />
+      </g>
+      <g className="arc-orbit-rev" style={{ transformOrigin: "210px 260px" }}>
+        <circle cx="210" cy="174" r="3" fill="#FF4FA3" filter="url(#softGlow)" />
+        <circle cx="210" cy="346" r="2.5" fill="#FFFFFF" opacity="0.6" />
+      </g>
 
-      {/* small score markers along the rings */}
-      <circle cx="228" cy="240" r="4" fill="#00A0C8" />
-      <circle cx="150" cy="130" r="4" fill="#00A0C8" />
-      <circle cx="196" cy="194" r="3.5" fill="#68B840" />
-      <circle cx="150" cy="162" r="3.5" fill="#68B840" />
+      {/* Core node — the claim being scored */}
+      <circle cx="210" cy="260" r="36" fill="#070A13" stroke="url(#arcGrad)" strokeWidth="1.5" />
+      <circle className="arc-pulse" cx="210" cy="260" r="44" stroke="#00C8FF" strokeOpacity="0.55" strokeWidth="1.25" />
+      <text x="210" y="257" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#00C8FF" letterSpacing="1">SCORING</text>
+      <text x="210" y="270" textAnchor="middle" fontSize="11" fontWeight="800" fill="#FFFFFF">AI</text>
+
+      {/* Trajectory arcs from core to terminal */}
+      <g fill="none" strokeLinecap="round">
+        <path d="M246 260 C 320 200, 360 160, 430 130" stroke="url(#arcGrad)" strokeWidth="2.5" strokeOpacity="0.95" />
+        <path d="M246 260 C 320 230, 370 200, 430 150" stroke="url(#arcGrad)" strokeWidth="1.5" strokeOpacity="0.45" />
+        <path d="M246 260 C 320 170, 360 130, 430 110" stroke="url(#arcGrad)" strokeWidth="1.5" strokeOpacity="0.45" />
+      </g>
+
+      {/* Animated white pulses traveling along main arc */}
+      <path className="arc-dash" d="M246 260 C 320 200, 360 160, 430 130" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+      {/* Terminal node — FUNDED */}
+      <circle cx="430" cy="130" r="28" fill="#070A13" stroke="#FF4FA3" strokeWidth="1.5" />
+      <circle className="arc-pulse" cx="430" cy="130" r="40" stroke="#FF4FA3" strokeOpacity="0.5" strokeWidth="1.25" />
+      <text x="430" y="128" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FF7AB6" letterSpacing="1.2">1–2 DAYS</text>
+      <text x="430" y="140" textAnchor="middle" fontSize="9" fontWeight="800" fill="#FFFFFF" letterSpacing="1.2">FUNDED</text>
+
+      {/* Score tag floating near core */}
+      <g transform="translate(296 196)" filter="url(#softGlow)">
+        <rect x="0" y="0" width="78" height="26" rx="13" fill="#070A13" stroke="#00C8FF" strokeOpacity="0.6" />
+        <circle cx="13" cy="13" r="4" fill="#68B840" />
+        <text x="24" y="17" fontSize="10" fontWeight="700" fill="#FFFFFF">P-PAY 94%</text>
+      </g>
+
+      {/* Faint axis labels */}
+      <g fill="#FFFFFF" opacity="0.32" fontSize="8.5" fontWeight="600" letterSpacing="1.5">
+        <text x="20" y="184">INBOUND</text>
+        <text x="180" y="412" textAnchor="middle">PRECISION VALUATION</text>
+        <text x="500" y="92" textAnchor="end">ACCELERATION</text>
+      </g>
     </svg>
   </div>
 );

@@ -9,6 +9,7 @@ import EobConversionPage from "./pages/EobConversionPage";
 import EraProcessingPage from "./pages/EraProcessingPage";
 import AcceleratorPage from "./pages/AcceleratorPage";
 import WhyClaimArcPage from "./pages/WhyClaimArcPage";
+import LeadershipPage from "./pages/LeadershipPage";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/era-processing" element={<EraProcessingPage />} />
           <Route path="/accelerator" element={<AcceleratorPage />} />
           <Route path="/why-claimarc" element={<WhyClaimArcPage />} />
+          <Route path="/leadership" element={<LeadershipPage />} />
           <Route path="/contact" element={<ContactPage />} />
 
           {/* Legacy ZDefense paths → closest ClaimARC equivalent */}

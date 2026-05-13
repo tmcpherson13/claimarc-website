@@ -78,7 +78,7 @@ const AcceleratorPage = () => (
     />
     <ServiceHero
       eyebrow="Claim Payment Accelerator · Patent Pending · AI-Powered"
-      title={<>Unlock capital already sitting in <span className="text-[var(--cyan)]">unpaid claims.</span></>}
+      title={<>Unlock capital already sitting in <span className="arc-text">unpaid claims.</span></>}
       body="Stop financing your own receivables. ClaimARC scores every claim for propensity to pay, then advances the cash to you in as little as one business day — at a fraction of the cost of a line of credit or factoring, with the upside returned to you. You choose which claims to fund. Nothing about your billing workflow changes."
       statValue="45"
       statSuffix="+"

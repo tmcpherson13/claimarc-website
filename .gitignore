@@ -33,3 +33,12 @@ bun.lock
 
 # Vercel
 .vercel
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Windows folder metadata
+desktop.ini
+
+# Supabase CLI temp files
+supabase/.temp/

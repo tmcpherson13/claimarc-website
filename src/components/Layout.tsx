@@ -7,7 +7,10 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => (
-  <div className="flex min-h-screen flex-col bg-white">
+  <div className="relative flex min-h-screen flex-col">
+    {/* Global animated gradient mesh + precision grid */}
+    <div aria-hidden="true" className="mesh-bg" />
+    <div aria-hidden="true" className="grid-overlay" />
     <Navbar />
     <main className="flex-1">{children}</main>
     <Footer />

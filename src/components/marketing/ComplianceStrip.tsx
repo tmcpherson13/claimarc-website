@@ -1,21 +1,64 @@
-import { ShieldCheck } from "lucide-react";
-import { compliance } from "@/config/site";
+import { ShieldCheck, Lock, FileBadge, Sparkles } from "lucide-react";
 
-/** Slim trust strip — meant to sit directly under a dark hero. */
+type Badge = {
+  label: string;
+  sub: string;
+  Icon: typeof ShieldCheck;
+  accent: string;
+};
+
+const badges: Badge[] = [
+  {
+    label: "SOC 2 Type II",
+    sub: "Continuously audited",
+    Icon: ShieldCheck,
+    accent: "var(--arc-1)",
+  },
+  {
+    label: "HIPAA Compliant",
+    sub: "PHI safeguarded end-to-end",
+    Icon: Lock,
+    accent: "var(--lime)",
+  },
+  {
+    label: "Patent Pending",
+    sub: "Proprietary AI valuation",
+    Icon: Sparkles,
+    accent: "var(--arc-2)",
+  },
+  {
+    label: "Healthcare-Native",
+    sub: "Built for revenue cycle",
+    Icon: FileBadge,
+    accent: "var(--arc-3)",
+  },
+];
+
+/** Bespoke trust strip — sits directly under a dark hero. */
 const ComplianceStrip = () => (
-  <div className="border-t border-white/10 bg-[var(--navy)]">
-    <div className="shell flex flex-wrap items-center gap-x-6 gap-y-2 py-4 text-xs">
-      <span className="inline-flex items-center gap-1.5 font-semibold uppercase tracking-[0.16em] text-white/45">
-        <ShieldCheck size={14} className="text-[var(--lime)]" />
-        Built for healthcare
-      </span>
-      <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
-        {compliance.map((c) => (
-          <li key={c} className="text-white/55">
-            {c}
-          </li>
+  <div className="relative border-y border-white/[0.06] bg-white/[0.015] backdrop-blur-xl">
+    <div className="shell-wide py-7">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+        {badges.map(({ label, sub, Icon, accent }) => (
+          <div key={label} className="flex items-center gap-3">
+            <span
+              className="relative inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl"
+              style={{
+                background: `linear-gradient(135deg, ${accent}26, ${accent}05)`,
+                border: `1px solid ${accent}40`,
+              }}
+            >
+              <Icon size={18} color={accent} strokeWidth={2} />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[var(--text-hi)]">
+                {label}
+              </p>
+              <p className="truncate text-xs text-[var(--text-lo)]">{sub}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   </div>
 );
