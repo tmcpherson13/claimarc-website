@@ -14,7 +14,7 @@ const HeroArc = ({ className = "" }: { className?: string }) => (
       className="pointer-events-none absolute inset-0 -z-10"
       style={{
         background:
-          "radial-gradient(45% 45% at 32% 60%, rgba(0,200,255,0.30), transparent 60%), radial-gradient(40% 40% at 80% 30%, rgba(110,91,255,0.25), transparent 60%), radial-gradient(35% 35% at 70% 85%, rgba(255,79,163,0.18), transparent 60%)",
+          "radial-gradient(45% 45% at 32% 60%, rgba(0,200,230,0.32), transparent 60%), radial-gradient(40% 40% at 80% 30%, rgba(20,116,180,0.28), transparent 60%), radial-gradient(35% 35% at 70% 85%, rgba(126,217,87,0.18), transparent 60%)",
         filter: "blur(8px)",
       }}
     />
@@ -23,22 +23,22 @@ const HeroArc = ({ className = "" }: { className?: string }) => (
       <defs>
         {/* Signature ARC gradient */}
         <linearGradient id="arcGrad" x1="0" y1="440" x2="520" y2="0">
-          <stop offset="0" stopColor="#00C8FF" />
-          <stop offset="0.5" stopColor="#6E5BFF" />
-          <stop offset="1" stopColor="#FF4FA3" />
+          <stop offset="0" stopColor="#052A48" />
+          <stop offset="0.5" stopColor="#00C8E6" />
+          <stop offset="1" stopColor="#7ED957" />
         </linearGradient>
         <linearGradient id="arcGradSoft" x1="0" y1="0" x2="520" y2="440">
-          <stop offset="0" stopColor="#00C8FF" stopOpacity="0.5" />
-          <stop offset="1" stopColor="#FF4FA3" stopOpacity="0.2" />
+          <stop offset="0" stopColor="#00C8E6" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#7ED957" stopOpacity="0.25" />
         </linearGradient>
         <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#00C8FF" stopOpacity="0.55" />
-          <stop offset="0.5" stopColor="#6E5BFF" stopOpacity="0.25" />
-          <stop offset="1" stopColor="#6E5BFF" stopOpacity="0" />
+          <stop offset="0" stopColor="#00C8E6" stopOpacity="0.55" />
+          <stop offset="0.5" stopColor="#1474B4" stopOpacity="0.25" />
+          <stop offset="1" stopColor="#052A48" stopOpacity="0" />
         </radialGradient>
         <radialGradient id="terminalGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#FF4FA3" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#FF4FA3" stopOpacity="0" />
+          <stop offset="0" stopColor="#7ED957" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#7ED957" stopOpacity="0" />
         </radialGradient>
         <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.5" result="b" />
@@ -63,18 +63,18 @@ const HeroArc = ({ className = "" }: { className?: string }) => (
       <g>
         {/* EOB */}
         <g className="arc-float" style={{ animationDelay: "0s" }}>
-          <rect x="20" y="200" width="62" height="36" rx="6" fill="#0B1020" stroke="#00C8FF" strokeOpacity="0.55" strokeWidth="1.25" />
-          <text x="51" y="223" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#00C8FF">EOB</text>
+          <rect x="20" y="200" width="62" height="36" rx="6" fill="#0B1020" stroke="#00C8E6" strokeOpacity="0.6" strokeWidth="1.25" />
+          <text x="51" y="223" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#00C8E6">EOB</text>
         </g>
         {/* ERA */}
         <g className="arc-float" style={{ animationDelay: "1.6s" }}>
-          <rect x="20" y="250" width="62" height="36" rx="6" fill="#0B1020" stroke="#6E5BFF" strokeOpacity="0.55" strokeWidth="1.25" />
-          <text x="51" y="273" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#9D8DFF">ERA</text>
+          <rect x="20" y="250" width="62" height="36" rx="6" fill="#0B1020" stroke="#1474B4" strokeOpacity="0.65" strokeWidth="1.25" />
+          <text x="51" y="273" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#5BA9D8">ERA</text>
         </g>
         {/* 835 */}
         <g className="arc-float" style={{ animationDelay: "3.2s" }}>
-          <rect x="20" y="300" width="62" height="36" rx="6" fill="#0B1020" stroke="#FF4FA3" strokeOpacity="0.55" strokeWidth="1.25" />
-          <text x="51" y="323" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#FF7AB6">835</text>
+          <rect x="20" y="300" width="62" height="36" rx="6" fill="#0B1020" stroke="#7ED957" strokeOpacity="0.6" strokeWidth="1.25" />
+          <text x="51" y="323" textAnchor="middle" fontSize="11" fontWeight="700" letterSpacing="1" fill="#A6E883">835</text>
         </g>
       </g>
 
@@ -100,18 +100,18 @@ const HeroArc = ({ className = "" }: { className?: string }) => (
 
       {/* Orbiting score markers on outer ring */}
       <g className="arc-orbit" style={{ transformOrigin: "210px 260px" }}>
-        <circle cx="328" cy="260" r="3.5" fill="#00C8FF" filter="url(#softGlow)" />
-        <circle cx="92" cy="260" r="3" fill="#6E5BFF" />
+        <circle cx="328" cy="260" r="3.5" fill="#00C8E6" filter="url(#softGlow)" />
+        <circle cx="92" cy="260" r="3" fill="#1474B4" />
       </g>
       <g className="arc-orbit-rev" style={{ transformOrigin: "210px 260px" }}>
-        <circle cx="210" cy="174" r="3" fill="#FF4FA3" filter="url(#softGlow)" />
+        <circle cx="210" cy="174" r="3" fill="#7ED957" filter="url(#softGlow)" />
         <circle cx="210" cy="346" r="2.5" fill="#FFFFFF" opacity="0.6" />
       </g>
 
       {/* Core node — the claim being scored */}
       <circle cx="210" cy="260" r="36" fill="#070A13" stroke="url(#arcGrad)" strokeWidth="1.5" />
-      <circle className="arc-pulse" cx="210" cy="260" r="44" stroke="#00C8FF" strokeOpacity="0.55" strokeWidth="1.25" />
-      <text x="210" y="257" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#00C8FF" letterSpacing="1">SCORING</text>
+      <circle className="arc-pulse" cx="210" cy="260" r="44" stroke="#00C8E6" strokeOpacity="0.55" strokeWidth="1.25" />
+      <text x="210" y="257" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#00C8E6" letterSpacing="1">SCORING</text>
       <text x="210" y="270" textAnchor="middle" fontSize="11" fontWeight="800" fill="#FFFFFF">AI</text>
 
       {/* Trajectory arcs from core to terminal */}
@@ -125,15 +125,15 @@ const HeroArc = ({ className = "" }: { className?: string }) => (
       <path className="arc-dash" d="M246 260 C 320 200, 360 160, 430 130" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" fill="none" />
 
       {/* Terminal node — FUNDED */}
-      <circle cx="430" cy="130" r="28" fill="#070A13" stroke="#FF4FA3" strokeWidth="1.5" />
-      <circle className="arc-pulse" cx="430" cy="130" r="40" stroke="#FF4FA3" strokeOpacity="0.5" strokeWidth="1.25" />
-      <text x="430" y="128" textAnchor="middle" fontSize="9" fontWeight="700" fill="#FF7AB6" letterSpacing="1.2">1–2 DAYS</text>
+      <circle cx="430" cy="130" r="28" fill="#070A13" stroke="#7ED957" strokeWidth="1.5" />
+      <circle className="arc-pulse" cx="430" cy="130" r="40" stroke="#7ED957" strokeOpacity="0.5" strokeWidth="1.25" />
+      <text x="430" y="128" textAnchor="middle" fontSize="9" fontWeight="700" fill="#A6E883" letterSpacing="1.2">1–2 DAYS</text>
       <text x="430" y="140" textAnchor="middle" fontSize="9" fontWeight="800" fill="#FFFFFF" letterSpacing="1.2">FUNDED</text>
 
       {/* Score tag floating near core */}
       <g transform="translate(296 196)" filter="url(#softGlow)">
-        <rect x="0" y="0" width="78" height="26" rx="13" fill="#070A13" stroke="#00C8FF" strokeOpacity="0.6" />
-        <circle cx="13" cy="13" r="4" fill="#68B840" />
+        <rect x="0" y="0" width="78" height="26" rx="13" fill="#070A13" stroke="#00C8E6" strokeOpacity="0.6" />
+        <circle cx="13" cy="13" r="4" fill="#7ED957" />
         <text x="24" y="17" fontSize="10" fontWeight="700" fill="#FFFFFF">P-PAY 94%</text>
       </g>
 
