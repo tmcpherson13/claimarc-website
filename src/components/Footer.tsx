@@ -98,7 +98,7 @@ const Footer = () => {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
           <span>
-            © 2026 Retrieve Remit, LLC dba ClaimARC
+            © 2026 Retrieve Remit, LLC dba ClaimARC. Patent Pending. All rights reserved.
           </span>
           <span>{COMPANY.arc}</span>
         </div>
