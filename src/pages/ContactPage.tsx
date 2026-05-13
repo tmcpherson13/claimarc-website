@@ -101,6 +101,7 @@ const ContactPage = () => {
     setSubmitting(true);
     setSubmitError(null);
     try {
+      if (!supabase) throw new Error("Supabase not configured");
       const { error } = await supabase.functions.invoke("contact", {
         body: {
           name: form.name,
