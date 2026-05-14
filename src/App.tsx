@@ -11,6 +11,8 @@ import AcceleratorPage from "./pages/AcceleratorPage";
 import WhyClaimArcPage from "./pages/WhyClaimArcPage";
 import LeadershipPage from "./pages/LeadershipPage";
 import ContactPage from "./pages/ContactPage";
+import InsightsIndex from "./pages/InsightsIndex";
+import InsightsDetail from "./pages/InsightsDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/accelerator" element={<AcceleratorPage />} />
           <Route path="/why-claimarc" element={<WhyClaimArcPage />} />
           <Route path="/leadership" element={<LeadershipPage />} />
+          <Route path="/insights" element={<InsightsIndex />} />
+          <Route path="/insights/:slug" element={<InsightsDetail />} />
           <Route path="/contact" element={<ContactPage />} />
 
           {/* Legacy ZDefense paths → closest ClaimARC equivalent */}

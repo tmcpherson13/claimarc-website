@@ -4,6 +4,8 @@ import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
 import HeroDataViz from "@/components/marketing/HeroDataViz";
+import HeroDataStream from "@/components/marketing/HeroDataStream";
+import PipelineStrip from "@/components/marketing/PipelineStrip";
 import StatCallouts from "@/components/marketing/StatCallouts";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
@@ -12,7 +14,7 @@ import CompareTable from "@/components/marketing/CompareTable";
 import ValueCards from "@/components/marketing/ValueCards";
 import CtaBand from "@/components/marketing/CtaBand";
 import LeadershipGrid from "@/components/marketing/LeadershipGrid";
-import { Section, SectionHeading, Eyebrow, CtaLink } from "@/components/marketing/primitives";
+import { Section, SectionHeading, CtaLink, IndexedEyebrow } from "@/components/marketing/primitives";
 
 // Order is deliberate — Acceleration leads. The conversion and ERA services
 // are the data engine that makes Acceleration possible.
@@ -22,7 +24,7 @@ const serviceCards = [
     icon: Banknote,
     name: "Claims Accelerator",
     tag: "The differentiator · Patent Pending",
-    desc: "AI scores every claim for propensity to pay and advances payment to you in 1–2 business days — at a fraction of the cost of a line of credit or factoring. Bi-directional true-up returns the upside to you.",
+    desc: "AI scores every claim for propensity to pay and advances payment to you in 1 business day — at a fraction of the cost of a line of credit or factoring. Bi-directional true-up returns the upside to you.",
     accent: "var(--arc-1)",
   },
   {
@@ -89,7 +91,7 @@ const flywheel = [
   },
   {
     title: "Accelerator",
-    lead: "Funded in 1–2 days",
+    lead: "Funded in 1 day",
     body: "Select which scored claims to fund. Cash lands with you in one to two business days, with bi-directional true-up built into every advance.",
     footnote: "Always in your favor.",
   },
@@ -108,7 +110,7 @@ const cfoValue = [
     icon: Banknote,
     accent: "cyan" as const,
     title: "Cash flow transformation",
-    body: "A 45+ day wait becomes 1–2 days. Meet payroll, fund operations, and stop financing your own receivables — without the cost or covenants of a line of credit.",
+    body: "A 45+ day wait becomes 1 day. Meet payroll, fund operations, and stop financing your own receivables — without the cost or covenants of a line of credit.",
     footnote: "Predictable cash, on your terms.",
   },
   {
@@ -130,8 +132,8 @@ const cfoValue = [
 const Index = () => (
   <Layout>
     <SeoHead
-      title="ClaimARC — Claim Payment Acceleration in 1–2 Business Days"
-      description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1–2 business days, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
+      title="ClaimARC — Claim Payment Acceleration in 1 Business Day"
+      description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1 business day, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
       path="/"
     />
     {/* Layer 2 — subtle dot-grid background (home only) */}
@@ -139,7 +141,10 @@ const Index = () => (
 
     {/* Hero */}
     <section className="relative overflow-hidden">
+      {/* Bespoke motion: drifting data streams + atmospheric brand wash + ∞ watermark */}
       <div aria-hidden="true" className="hero-precision-accent" />
+      <HeroDataStream />
+
       <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.1fr_1fr]">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
@@ -151,20 +156,24 @@ const Index = () => (
               AI-Powered Claim Payment Acceleration
             </span>
           </div>
-          <h1 className="display mt-6 text-balance text-4xl leading-[1.05] tracking-tight md:text-5xl lg:text-[3.8rem]">
-            Get paid in <span className="arc-text">1–2 business days.</span>
+          {/* Three-line stacked headline — bigger declarative voice */}
+          <h1 className="display mt-6 text-balance text-4xl leading-[1.04] tracking-tight md:text-5xl lg:text-[3.6rem]">
+            <span className="block text-[var(--text-hi)]">Precision valuation.</span>
+            <span className="block arc-text">Lightning acceleration.</span>
+            <span className="block text-[var(--text-mid)] text-[0.62em] font-medium mt-3">
+              Get paid in 1 business day.
+            </span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--text-mid)]">
+          <p className="mt-2 text-xs text-[var(--text-lo)]">
+            *1 business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
+          </p>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
             ClaimARC's AI scores every claim, prices the risk, and advances cash to
             you in as little as one business day — instead of the 45+ you're waiting
             on now. Claim-to-cash conversion, correspondence indexing, and ERA
-            processing feed the engine. Works with the lockbox, bank, and
-            clearinghouse you already have.{" "}
-            <span className="shimmer-text font-semibold">
-              Precision valuation. Lightning acceleration.
-            </span>
+            processing feed the engine.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <CtaLink to="/contact" variant="primary">
               Contact Us <ArrowRight size={16} />
             </CtaLink>
@@ -172,8 +181,25 @@ const Index = () => (
               See how it works
             </CtaLink>
           </div>
-          {/* Inline trust strip — small, premium */}
-          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)]">
+
+          {/* Stat tiles — terminal-style stacked tiles replace the old trust strip */}
+          <div className="mt-10 flex flex-wrap gap-3">
+            <div className="stat-tile" data-ix="01">
+              <span className="stat-value">1</span>
+              <span className="stat-units">Business day to cash*</span>
+            </div>
+            <div className="stat-tile" data-ix="02">
+              <span className="stat-value">99.7%</span>
+              <span className="stat-units">Real-world accuracy</span>
+            </div>
+            <div className="stat-tile" data-ix="03">
+              <span className="stat-value">45+</span>
+              <span className="stat-units">Day DSO replaced</span>
+            </div>
+          </div>
+
+          {/* Compliance pills — small, on their own line */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)]">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--arc-1)]" />
               SOC 2 Type II
@@ -195,6 +221,9 @@ const Index = () => (
       <div className="hairline" />
     </section>
 
+    {/* Pipeline strip — three numbered process nodes directly under hero */}
+    <PipelineStrip />
+
     {/* Layer 4 — stat callouts (placeholder numbers — needs real client metrics) */}
     <StatCallouts />
 
@@ -204,7 +233,7 @@ const Index = () => (
       stats={[
         { value: "45+", label: "Days you're currently waiting", note: "Industry-avg DSO · HFMA", accent: "cyan" },
         { value: "99.7%", label: "Real-world EOB data accuracy", note: "98.5% contracted SLA · ClaimARC", accent: "lime" },
-        { value: "1–2", label: "Business days to payment", note: "ClaimARC Accelerator funding target", accent: "cyan" },
+        { value: "1", label: "Business day to payment*", note: "ClaimARC Accelerator funding target", accent: "cyan" },
       ]}
     />
 
@@ -213,6 +242,7 @@ const Index = () => (
       <div className="grid items-start gap-12 lg:grid-cols-2">
         <Reveal>
           <SectionHeading
+            numberedIndex="01"
             eyebrow="The cost of the status quo"
             title={<>Your money is already earned. <span className="arc-text">It's just stuck.</span></>}
             intro="A/R keeps aging, manual remittance handling keeps costing, and most financing options charge you for the privilege of waiting on your own claims. ClaimARC was built to close that gap — without disrupting a single workflow you rely on today."
@@ -239,6 +269,7 @@ const Index = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
+        numberedIndex="02"
         eyebrow="Built around Acceleration"
         title={<>One platform. <span className="arc-text">Acceleration at the center.</span></>}
         intro="Claim payment acceleration is the differentiator — claim-to-cash conversion and ERA processing are the supporting services that feed it. Each works on its own; together, they create an advantage competitors can't replicate, because it's built from your own data."
@@ -251,8 +282,14 @@ const Index = () => (
             <Reveal key={s.to} delay={i * 90}>
               <Link
                 to={s.to}
-                className="glass group relative flex h-full flex-col p-7 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
+                className="glass group relative flex h-full flex-col overflow-hidden p-7 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
               >
+                {/* Per-service top color bar */}
+                <span
+                  aria-hidden="true"
+                  className="service-bar"
+                  style={{ color: s.accent }}
+                />
                 {/* Accent glow on hover */}
                 <div
                   aria-hidden="true"
@@ -311,20 +348,21 @@ const Index = () => (
     {/* Flywheel */}
     <Section tone="elev">
       <SectionHeading
+        numberedIndex="03"
         eyebrow="How the platform compounds"
-        eyebrowTone="arc"
         title={<>More data. Smarter scoring. <span className="arc-text">Lower cost.</span> Repeat.</>}
         intro="Remittance is the fuel. Every document you process feeds the AI that prices and accelerates your claims — so the longer you run ClaimARC, the better it works for you."
       />
       <StepFlow steps={flywheel} />
     </Section>
 
-    {/* Frictionless Implementation */}
-    <Section tone="mist">
+    {/* Frictionless Implementation — paper-tone breaker for visual rhythm */}
+    <Section tone="paper">
       <SectionHeading
         align="center"
+        numberedIndex="04"
         eyebrow="Frictionless implementation"
-        title={<>Live without <span className="arc-text">the implementation tax.</span></>}
+        title={<>Live without <span className="text-[var(--cyan-dk)]">the implementation tax.</span></>}
         intro="ClaimARC is engineered to drop into your existing workflow — not replace it. Onboarding is documented end-to-end, testing is free, and your business rules drive the output."
       />
       <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -332,12 +370,20 @@ const Index = () => (
           const Icon = p.icon;
           return (
             <Reveal key={p.title} delay={i * 90}>
-              <div className="glass relative flex h-full flex-col p-7">
+              {/* White card with left accent stripe — readable on paper tone */}
+              <div
+                className="relative flex h-full flex-col bg-white p-7"
+                style={{
+                  borderRadius: "14px",
+                  border: "1px solid #D6E2EB",
+                  borderLeft: `3px solid ${p.accent}`,
+                }}
+              >
                 <div
                   className="flex h-11 w-11 items-center justify-center rounded-xl"
                   style={{
-                    background: `linear-gradient(135deg, ${p.accent}33, ${p.accent}05)`,
-                    border: `1px solid ${p.accent}55`,
+                    background: `linear-gradient(135deg, ${p.accent}22, ${p.accent}05)`,
+                    border: `1px solid ${p.accent}44`,
                     color: p.accent,
                   }}
                 >
@@ -358,6 +404,7 @@ const Index = () => (
     {/* Comparison */}
     <Section tone="light">
       <SectionHeading
+        numberedIndex="05"
         eyebrow="Why most financing options fall short"
         title={<>A line of credit costs you. Factoring costs you more.</>}
         intro="ClaimARC isn't a loan and it isn't factoring. It's payment acceleration priced by AI, with the upside returned to you."
@@ -369,6 +416,7 @@ const Index = () => (
     <Section tone="mist">
       <SectionHeading
         align="center"
+        numberedIndex="06"
         eyebrow="Built for finance & revenue cycle leaders"
         title={<>What changes when you <span className="arc-text">run ClaimARC.</span></>}
         intro="Designed with CFOs, controllers, and revenue cycle directors — for the metrics they're measured on."
@@ -380,9 +428,10 @@ const Index = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
+        numberedIndex="07"
         eyebrow="Leadership"
         title={<>The people <span className="arc-text">accountable</span> for every advance.</>}
-        intro="Operators, scientists, and capital allocators with deep records in healthcare revenue cycle and institutional finance."
+        intro="Operators, data scientists, and capital allocators with deep records in healthcare revenue cycle and institutional finance."
         className="mb-12"
       />
       <LeadershipGrid />

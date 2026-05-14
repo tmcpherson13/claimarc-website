@@ -15,7 +15,7 @@ const pipeline = [
   { label: "Paper & ERA", sub: "Remittance in", color: "var(--text-lo)", note: "Expensive to process manually, invisible to most systems. This is where most organizations leave value on the table.", foot: "The starting point." },
   { label: "Conversion Platform", sub: "Structured 835s", color: "var(--arc-1)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
   { label: "AI Scoring", sub: "Propensity to pay", color: "var(--arc-2)", key: true, note: "Remittance history trains ML models that predict propensity to pay — per claim, per payer, per procedure. The more you process, the smarter it gets.", foot: "More data = lower cost." },
-  { label: "Accelerator", sub: "Funded in 1–2 days", color: "var(--lime)", note: "Selected claims funded in 1–2 days at a fraction of LOC or factoring cost. Bi-directional true-up built in. Funds directly to you.", foot: "Always in your favor." },
+  { label: "Accelerator", sub: "Funded in 1 day*", color: "var(--lime)", note: "Selected claims funded in 1 business day (target) at a fraction of LOC or factoring cost. Bi-directional true-up built in. Funds directly to you.", foot: "Always in your favor." },
 ];
 
 const advantages = [
@@ -23,7 +23,7 @@ const advantages = [
     icon: TrendingUp,
     accent: "cyan" as const,
     title: "Cash flow transformation",
-    body: "A 45+ day wait becomes 1–2 days. Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and HIPAA compliant at every step.",
+    body: "A 45+ day wait becomes 1 business day (target). Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and HIPAA compliant at every step.",
     footnote: "Bank, clearinghouse & lockbox agnostic.",
   },
   {
@@ -54,14 +54,14 @@ const WhyClaimArcPage = () => (
   <Layout>
     <SeoHead
       title="Why ClaimARC — Acceleration, Powered by Your Own Data"
-      description="ClaimARC's claim payment acceleration is the differentiator. Claim-to-cash conversion (EOBs + correspondence indexing and categorization) and ERA processing feed the AI that scores, prices, and funds your claims in 1–2 business days. SOC 2 Type II at every step."
+      description="ClaimARC's claim payment acceleration is the differentiator. Claim-to-cash conversion (EOBs + correspondence indexing and categorization) and ERA processing feed the AI that scores, prices, and funds your claims in 1 business day (target). SOC 2 Type II at every step."
       path="/why-claimarc"
     />
     <ServiceHero
       eyebrow="Acceleration, powered by your data"
       title={<>Acceleration leads. <span className="arc-text">Your data makes it cheaper.</span></>}
-      body="Claim payment acceleration is the differentiator. Claim-to-cash conversion — paper EOBs, checks, and correspondence indexed and categorized into clean 835s — produces the remittance data that trains the AI scoring engine. That scoring is what lets ClaimARC fund you in 1–2 business days, and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
-      statValue="1–2"
+      body="Claim payment acceleration is the differentiator. Claim-to-cash conversion — paper EOBs, checks, and correspondence indexed and categorized into clean 835s — produces the remittance data that trains the AI scoring engine. That scoring is what lets ClaimARC fund you in 1 business day (target), and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
+      statValue="1"
       statLabel="Business days to payment"
       statNote="Acceleration · Conversion · Intelligence"
     />
@@ -70,7 +70,7 @@ const WhyClaimArcPage = () => (
     <StatRow
       stats={[
         { value: "99.7%", label: "Real-world EOB accuracy", note: "98.5% contracted SLA · ClaimARC", accent: "lime" },
-        { value: "1–2", label: "Business days to payment", note: "ClaimARC Accelerator funding target", accent: "cyan" },
+        { value: "1", label: "Business day to payment*", note: "ClaimARC Accelerator funding target", accent: "cyan" },
         { value: "7yr", label: "Compliant remittance archive", note: "10-year option available", accent: "cyan" },
       ]}
     />

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
  * Dark-canvas tones. Every tone is a layer of the same near-black canvas;
  * "light"/"mist" stay as legacy aliases so existing pages keep working.
  */
-type Tone = "light" | "mist" | "navy" | "navy-dk" | "deep" | "elev";
+type Tone = "light" | "mist" | "navy" | "navy-dk" | "deep" | "elev" | "paper";
 
 const toneClass: Record<Tone, string> = {
   // Default surface — translucent so the mesh background shows through
@@ -21,6 +21,11 @@ const toneClass: Record<Tone, string> = {
   deep: "bg-[var(--ink-0)] text-[var(--text-hi)]",
   // Elevated glass — for feature islands
   elev: "bg-[var(--ink-2)]/70 text-[var(--text-hi)] backdrop-blur-xl border-y border-white/[0.06]",
+  // Light "paper" break — pale cyan-tinted near-white. ClaimARC's
+  // institutional-document tone, used to give the page a dark→light→dark
+  // rhythm without dropping the cool brand temperature.
+  paper:
+    "bg-[#EEF4F8] text-[#0F1B2D] border-y border-[#D6E2EB] [--text-hi:#0F1B2D] [--text-mid:#3C5067] [--text-lo:#6E7E94]",
 };
 
 export function Section({
@@ -63,11 +68,35 @@ export function Eyebrow({
   return <p className={`eyebrow ${color} ${className}`}>{children}</p>;
 }
 
+/* ---------------------------------------------------------- IndexedEyebrow
+
+  Numbered eyebrow with a thin lime tick — e.g. "01 / ACCELERATION".
+  ClaimARC's section signature. */
+
+export function IndexedEyebrow({
+  index,
+  children,
+  className = "",
+}: {
+  index: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={`indexed-eyebrow ${className}`}>
+      <span className="ix-num">{index}</span>
+      <span>/</span>
+      <span>{children}</span>
+    </p>
+  );
+}
+
 /* ---------------------------------------------------------- Section header */
 
 export function SectionHeading({
   eyebrow,
   eyebrowTone,
+  numberedIndex,
   title,
   intro,
   align = "left",
@@ -77,6 +106,10 @@ export function SectionHeading({
 }: {
   eyebrow?: string;
   eyebrowTone?: "cyan" | "lime" | "white" | "arc";
+  /** When set, renders a numbered IndexedEyebrow (e.g. "01") instead of the
+      plain colored eyebrow. Replaces the gradient-bar eyebrow seen in many
+      "modern fintech" templates with a more institutional voice. */
+  numberedIndex?: string;
   title: ReactNode;
   intro?: ReactNode;
   align?: "left" | "center";
@@ -87,11 +120,15 @@ export function SectionHeading({
     <div
       className={`${align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"} ${className}`}
     >
-      {eyebrow && (
+      {numberedIndex && eyebrow ? (
+        <IndexedEyebrow index={numberedIndex} className={align === "center" ? "justify-center mb-4" : "mb-4"}>
+          {eyebrow}
+        </IndexedEyebrow>
+      ) : eyebrow ? (
         <Eyebrow tone={eyebrowTone ?? "cyan"} className="mb-4">
           {eyebrow}
         </Eyebrow>
-      )}
+      ) : null}
       <h2 className="display text-balance text-3xl leading-[1.12] tracking-tight text-[var(--text-hi)] md:text-[2.6rem]">
         {title}
       </h2>

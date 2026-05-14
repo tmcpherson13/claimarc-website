@@ -7,7 +7,7 @@ export const COMPANY = {
   legal: "Retrieve Remit, LLC",
   tagline: "Precision valuation. Lightning acceleration.",
   arc: "Acceleration · Receivables · Contracts",
-  email: "hello@claimarc.com",
+  email: "info@claimarc.com",
 };
 
 export interface NavItem {
@@ -25,6 +25,7 @@ export const services: NavItem[] = [
 
 export const primaryNav: NavItem[] = [
   { label: "Why ClaimARC", to: "/why-claimarc" },
+  { label: "Insights", to: "/insights" },
   { label: "Leadership", to: "/leadership" },
   { label: "Contact", to: "/contact" },
 ];
