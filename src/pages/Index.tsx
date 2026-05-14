@@ -3,6 +3,8 @@ import { ArrowRight, Banknote, Boxes, FileStack, RefreshCw } from "lucide-react"
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
+import HeroDataViz from "@/components/marketing/HeroDataViz";
+import StatCallouts from "@/components/marketing/StatCallouts";
 import HeroArc from "@/components/marketing/HeroArc";
 import AnimatedInfinityLogo from "@/components/AnimatedInfinityLogo";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
@@ -107,6 +109,8 @@ const Index = () => (
       description="ClaimARC is the AI-powered revenue intelligence platform for healthcare: EOB conversion to auto-postable 835s, ERA processing, and claim payment acceleration in 1–2 business days."
       path="/"
     />
+    {/* Layer 2 — subtle dot-grid background (home only) */}
+    <div className="home-dot-grid">
 
     {/* Hero */}
     <section className="relative overflow-hidden">
@@ -119,6 +123,10 @@ const Index = () => (
             "radial-gradient(55% 60% at 80% 10%, rgba(0,200,230,0.20), transparent 60%), radial-gradient(45% 50% at 5% 100%, rgba(126,217,87,0.12), transparent 65%)",
         }}
       />
+      {/* Layer 1 — animated brand-color gradient orbs */}
+      <div aria-hidden="true" className="hero-orb hero-orb-a" />
+      <div aria-hidden="true" className="hero-orb hero-orb-b" />
+
       <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.1fr_1fr]">
         <Reveal>
           <div className="mb-6 -ml-1">
@@ -170,12 +178,15 @@ const Index = () => (
             </span>
           </div>
         </Reveal>
-        <Reveal delay={140} className="hidden lg:block">
-          <HeroArc />
+        <Reveal delay={140} className="hidden md:block">
+          <HeroDataViz />
         </Reveal>
       </div>
       <div className="hairline" />
     </section>
+
+    {/* Layer 4 — stat callouts (placeholder numbers — needs real client metrics) */}
+    <StatCallouts />
 
     <ComplianceStrip />
 
@@ -270,6 +281,23 @@ const Index = () => (
       </div>
     </Section>
 
+    {/* Layer 5 — logo trust band */}
+    <section className="relative py-16 md:py-20">
+      <div className="shell flex flex-col items-center text-center">
+        <p className="eyebrow text-[var(--text-mid)]">Built for healthcare RCM teams</p>
+        <img
+          src="/brand/claimarc-stacked-color.png"
+          alt="ClaimARC"
+          width={480}
+          height={228}
+          loading="lazy"
+          decoding="async"
+          className="mt-6 h-auto w-full max-w-[240px]"
+          style={{ filter: "drop-shadow(0 0 20px rgb(0 160 200 / 0.30))" }}
+        />
+      </div>
+    </section>
+
     {/* Flywheel */}
     <Section tone="elev">
       <SectionHeading
@@ -325,6 +353,7 @@ const Index = () => (
       highlight="It's whether you can afford another 45 days of waiting."
       subhead="Book a 30-minute working session with our team and see the model against your own numbers."
     />
+    </div>
   </Layout>
 );
 

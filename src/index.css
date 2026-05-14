@@ -404,6 +404,69 @@
   animation: shimmer 6s linear infinite;
 }
 
+/* Home page visual system — Layer 1: hero gradient orbs */
+.hero-orb {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 9999px;
+  opacity: 0.3;
+  filter: blur(120px);
+  pointer-events: none;
+  will-change: transform;
+}
+.hero-orb-a {
+  top: -180px;
+  left: -180px;
+  background: radial-gradient(circle, #00A0C8 0%, transparent 60%);
+  animation: heroOrbDriftA 20s ease-in-out infinite alternate;
+}
+.hero-orb-b {
+  right: -180px;
+  bottom: -180px;
+  background: radial-gradient(circle, #68B840 0%, transparent 60%);
+  animation: heroOrbDriftB 20s ease-in-out infinite alternate;
+}
+@keyframes heroOrbDriftA {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(50px, -50px, 0); }
+}
+@keyframes heroOrbDriftB {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50px, 50px, 0); }
+}
+@media (max-width: 767px) {
+  .hero-orb {
+    width: 360px;
+    height: 360px;
+    filter: blur(80px);
+  }
+}
+
+/* Home page visual system — Layer 2: subtle dot-grid background */
+.home-dot-grid {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='1' cy='1' r='1' fill='white' fill-opacity='0.04'/></svg>");
+  background-repeat: repeat;
+}
+
+/* Home page visual system — Layer 3: hero data-viz */
+@keyframes heroChartDraw {
+  from { stroke-dashoffset: 800; }
+  to   { stroke-dashoffset: 0; }
+}
+.hero-chart-line {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+  animation: heroChartDraw 2s ease-out 0.3s forwards;
+}
+@keyframes heroFlowDash {
+  to { stroke-dashoffset: -20; }
+}
+.hero-flow-line {
+  stroke-dasharray: 5 5;
+  animation: heroFlowDash 1.5s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -417,11 +480,19 @@
   .arc-orbit-rev,
   .arc-float,
   .shimmer-text,
+  .hero-orb-a,
+  .hero-orb-b,
+  .hero-flow-line,
   .mesh-bg,
   .mesh-bg::before,
   .mesh-bg::after,
   .grid-overlay::after,
   .loop-dot {
+    animation: none;
+  }
+  .hero-chart-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
     animation: none;
   }
   html {
