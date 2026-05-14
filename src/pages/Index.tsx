@@ -144,13 +144,13 @@ const Index = () => (
     {/* Layer 2 — subtle dot-grid background (home only) */}
     <div className="home-dot-grid">
 
-    {/* Hero */}
-    <section className="relative overflow-hidden">
+    {/* Hero — constrained to ~viewport so the scroll cue stays above fold */}
+    <section className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden">
       {/* Bespoke motion: drifting data streams + atmospheric brand wash + ∞ watermark */}
       <div aria-hidden="true" className="hero-precision-accent" />
       <HeroDataStream />
 
-      <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.1fr_1fr]">
+      <div className="shell relative grid flex-1 items-center gap-12 py-12 md:py-16 lg:grid-cols-[1.1fr_1fr]">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
             <span className="relative flex h-2 w-2">
@@ -211,7 +211,7 @@ const Index = () => (
           <HeroDataViz />
         </Reveal>
       </div>
-      <ScrollIndicator />
+      <ScrollIndicator absolute />
       <div className="hairline" />
     </section>
 
