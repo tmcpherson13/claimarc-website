@@ -53,17 +53,17 @@ const compareRows = [
 const WhyClaimArcPage = () => (
   <Layout>
     <SeoHead
-      title="Why ClaimARC — One Platform: Conversion, Intelligence, Acceleration"
-      description="ClaimARC unifies EOB conversion, ERA processing, and AI-powered claim payment acceleration into one platform. More data trains smarter scoring, which lowers acceleration cost — a compounding advantage competitors can't replicate."
+      title="Why ClaimARC — Acceleration, Powered by Your Own Data"
+      description="ClaimARC's claim payment acceleration is the differentiator. Claim-to-cash conversion (EOBs + correspondence indexing and categorization) and ERA processing feed the AI that scores, prices, and funds your claims in 1–2 business days. SOC 2 Type II at every step."
       path="/why-claimarc"
     />
     <ServiceHero
-      eyebrow="EOB Conversion + ERA + Claim Acceleration"
-      title={<>One platform. <span className="arc-text">A compounding advantage.</span></>}
-      body="EOB conversion produces clean remittance data. That data trains the AI that scores and prices your claims. That scoring is what lets ClaimARC fund you in 1–2 business days. Three services, one loop — and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
-      statValue="3"
-      statLabel="Services · one vendor · no disruption"
-      statNote="Conversion · Intelligence · Acceleration"
+      eyebrow="Acceleration, powered by your data"
+      title={<>Acceleration leads. <span className="arc-text">Your data makes it cheaper.</span></>}
+      body="Claim payment acceleration is the differentiator. Claim-to-cash conversion — paper EOBs, checks, and correspondence indexed and categorized into clean 835s — produces the remittance data that trains the AI scoring engine. That scoring is what lets ClaimARC fund you in 1–2 business days, and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
+      statValue="1–2"
+      statLabel="Business days to payment"
+      statNote="Acceleration · Conversion · Intelligence"
     />
     <ComplianceStrip />
 

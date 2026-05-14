@@ -22,7 +22,7 @@ const ServiceHero = ({
   statSuffix,
   statLabel,
   statNote,
-  primaryText = "Book a Demo",
+  primaryText = "Contact Us",
 }: ServiceHeroProps) => (
   <section className="relative overflow-hidden">
     {/* Localised spotlight */}

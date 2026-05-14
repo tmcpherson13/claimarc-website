@@ -15,11 +15,12 @@ export interface NavItem {
   to: string;
 }
 
-// Primary services — used by the navbar dropdown, footer, and home page.
+// Primary services — Acceleration leads; the others feed it.
+// URL path /eob-conversion preserved to avoid breaking inbound links and SEO.
 export const services: NavItem[] = [
-  { label: "EOB Conversion", to: "/eob-conversion" },
-  { label: "ERA Processing", to: "/era-processing" },
   { label: "Claims Accelerator", to: "/accelerator" },
+  { label: "Claim to Cash Conversion", to: "/eob-conversion" },
+  { label: "ERA Processing", to: "/era-processing" },
 ];
 
 export const primaryNav: NavItem[] = [

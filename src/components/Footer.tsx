@@ -21,8 +21,8 @@ const Footer = () => {
           <div>
             <Logo variant="light" kind="horiz" height={44} />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-[var(--text-lo)]">
-              The complete revenue intelligence platform — EOB conversion, ERA
-              processing, and AI-powered claim payment acceleration.
+              AI-powered claim payment acceleration — powered by claim-to-cash
+              conversion, correspondence indexing, and ERA processing.
             </p>
             <p className="mt-4 text-sm italic shimmer-text">{COMPANY.tagline}</p>
           </div>

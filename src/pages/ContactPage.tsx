@@ -51,7 +51,7 @@ const volumes = [
 
 const serviceOptions = [
   "Claims Accelerator — payment in 1–2 days",
-  "EOB Conversion — paper to 835",
+  "Claim to Cash Conversion — paper, EOBs & correspondence to 835",
   "ERA Processing — 835 normalization & posting",
   "The full platform",
   "Not sure yet — let's talk",
@@ -68,7 +68,7 @@ const ContactPage = () => {
   const initialService = useMemo(() => {
     const s = params.get("service");
     if (s === "accelerator") return serviceOptions[0];
-    if (s === "eob") return serviceOptions[1];
+    if (s === "eob" || s === "conversion") return serviceOptions[1];
     if (s === "era") return serviceOptions[2];
     return "";
   }, [params]);
@@ -132,8 +132,8 @@ const ContactPage = () => {
   return (
     <Layout>
       <SeoHead
-        title="Book a Demo — ClaimARC"
-        description="Talk to the ClaimARC team about EOB conversion, ERA processing, and AI-powered claim payment acceleration. Book a 30-minute working session and see the model against your own numbers."
+        title="Contact Us — ClaimARC"
+        description="Talk to the ClaimARC team about AI-powered claim payment acceleration, claim-to-cash conversion, and ERA processing. Book a 30-minute working session and see the model against your own numbers."
         path="/contact"
       />
 

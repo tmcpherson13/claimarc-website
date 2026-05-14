@@ -12,9 +12,15 @@ import { Section, SectionHeading } from "@/components/marketing/primitives";
 const steps = [
   {
     title: "Receive",
-    lead: "Paper EOBs arrive",
+    lead: "Paper & correspondence arrive",
     body: "EOBs, checks, and correspondence are scanned at 300 DPI and transmitted to ClaimARC via SFTP in the agreed format — from any lockbox or scanning vendor.",
     footnote: "Any lockbox or scanning vendor.",
+  },
+  {
+    title: "Index & categorize",
+    lead: "Every document classified",
+    body: "Correspondence is automatically indexed and categorized — denials, requests for information, refunds, recoupments — so nothing sits in a queue waiting to be triaged.",
+    footnote: "No more correspondence backlog.",
   },
   {
     title: "Extract",
@@ -63,14 +69,14 @@ const delivers = [
 const EobConversionPage = () => (
   <Layout>
     <SeoHead
-      title="EOB Conversion — Paper to Auto-Postable 835s | ClaimARC"
-      description="ClaimARC's platform converts paper EOBs, checks, and correspondence into structured, auto-postable ANSI X12 835 files with your business rules applied — 99.7% real-world accuracy, 24/48-hour turnaround."
+      title="Claim to Cash Conversion — Paper, EOBs & Correspondence to 835s | ClaimARC"
+      description="ClaimARC's claim-to-cash conversion platform turns paper EOBs, checks, and correspondence into structured, auto-postable ANSI X12 835 files — indexed, categorized, and routed with your business rules applied. 99.7% accuracy, 24/48-hour turnaround."
       path="/eob-conversion"
     />
     <ServiceHero
-      eyebrow="EOB Conversion Platform · HIPAA Compliant"
-      title={<>Unlock efficiency buried <span className="arc-text">under paper EOBs.</span></>}
-      body="ClaimARC's platform turns paper Explanation of Benefits, checks, and correspondence into structured, auto-postable 835 files — your custom business rules applied, returned ready to post. Works with whatever lockbox, bank, or scanning vendor you already use. Nothing in your workflow changes; the data just shows up clean."
+      eyebrow="Claim to Cash Conversion · HIPAA Compliant"
+      title={<>Unlock the data buried <span className="arc-text">in paper and correspondence.</span></>}
+      body="ClaimARC turns paper Explanation of Benefits, checks, and correspondence — indexed and categorized — into structured, auto-postable 835 files. Your custom business rules applied, returned ready to post. The same clean output feeds the AI that powers claim payment acceleration. Works with whatever lockbox, bank, or scanning vendor you already use; nothing in your workflow changes."
       statValue="99.7"
       statSuffix="%"
       statLabel="Real-world data accuracy"
@@ -89,7 +95,7 @@ const EobConversionPage = () => (
     <Section tone="light">
       <SectionHeading
         eyebrow="From paper to structured intelligence"
-        title={<>Four steps. Zero manual handling.</>}
+        title={<>Five steps. Zero manual handling.</>}
         intro="Your team stops keying remittance by hand. ClaimARC delivers clean, postable data — and quietly builds the data asset that powers the rest of the platform."
       />
       <StepFlow steps={steps} />
