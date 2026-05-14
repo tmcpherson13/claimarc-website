@@ -162,7 +162,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
               </span>
               <span
                 className="text-sm leading-snug text-[var(--text-hi)]"
-                style={{ fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "-0.01em" }}
+                style={{ fontWeight: 700, letterSpacing: "-0.01em" }}
               >
                 {node.label}
               </span>
@@ -185,14 +185,14 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
         <span className="flex items-baseline gap-2">
           <span
             className="text-[var(--text-lo)] line-through"
-            style={{ fontFamily: "var(--font-display)", fontWeight: 700 }}
+            style={{ fontWeight: 700 }}
           >
             45
           </span>
           <span className="text-[var(--text-mid)]">→</span>
           <span
             className="tabular-nums text-[var(--lime)]"
-            style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.4rem", letterSpacing: "-0.02em" }}
+            style={{ fontWeight: 800, fontSize: "1.4rem", letterSpacing: "-0.02em" }}
           >
             {dso}
           </span>

@@ -15,10 +15,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        display: ["Neue Montreal", "Helvetica Neue", "sans-serif"],
-        body: ["Inter", "InterVariable", "ui-sans-serif", "system-ui", "sans-serif"],
-      },
       colors: {
         navy: {
           DEFAULT: "var(--navy)",

@@ -4,7 +4,6 @@ import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
 import HeroDataViz from "@/components/marketing/HeroDataViz";
-import AnimatedInfinityLogo from "@/components/AnimatedInfinityLogo";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
@@ -140,9 +139,6 @@ const Index = () => (
       <div aria-hidden="true" className="hero-precision-accent" />
       <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.1fr_1fr]">
         <Reveal>
-          <div className="mb-6 -ml-1">
-            <AnimatedInfinityLogo size={180} />
-          </div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--arc-1)] opacity-70" />

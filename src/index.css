@@ -6,10 +6,6 @@
 
 @layer base {
   :root {
-    /* Typography stacks */
-    --font-display: "Neue Montreal", "Helvetica Neue", sans-serif;
-    --font-body: "Inter", "InterVariable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
     /* ClaimARC brand palette — sampled from the official logo */
     --navy: #00457E;
     --navy-dk: #052A48;
@@ -93,18 +89,12 @@
 
   html,
   body {
-    font-family: var(--font-body);
+    font-family:
+      "Inter", "InterVariable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "ss02", "cv11", "cv02", "cv03";
-  }
-
-  /* Headings inherit the display stack site-wide. Individual components can
-     still override locally if needed. */
-  h1,
-  h2,
-  .display {
-    font-family: var(--font-display);
   }
 
   body {
@@ -140,11 +130,12 @@
     @apply h-px w-7 bg-current opacity-70;
   }
 
-  /* Display headline — bespoke type, tighter tracking */
+  /* Display headline — slight optical refinement */
   .display {
-    font-family: var(--font-display);
+    font-family: "Inter", "InterVariable", ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "ss01", "ss02", "cv11";
+    letter-spacing: -0.02em;
     font-weight: 800;
-    letter-spacing: -0.03em;
   }
 
   /* Signature gradient text — the ARC */
@@ -292,11 +283,6 @@
   100% { background-position: 0% 200%; }
 }
 
-/* Infinity-loop dot crawl, used by AnimatedInfinityLogo */
-@keyframes loopDotDraw {
-  to { stroke-dashoffset: 0; }
-}
-
 /* Scroll reveal */
 .reveal {
   opacity: 0;
@@ -406,7 +392,6 @@
   .arc-float,
   .shimmer-text,
   .grid-overlay::after,
-  .loop-cluster,
   .hero-viz-node,
   .hero-viz-label {
     animation: none;
