@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 import typography from "@tailwindcss/typography";
 
@@ -16,6 +15,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["Neue Montreal", "Helvetica Neue", "sans-serif"],
+        body: ["Inter", "InterVariable", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
         navy: {
           DEFAULT: "var(--navy)",

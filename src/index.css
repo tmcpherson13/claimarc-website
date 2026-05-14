@@ -6,6 +6,10 @@
 
 @layer base {
   :root {
+    /* Typography stacks */
+    --font-display: "Neue Montreal", "Helvetica Neue", sans-serif;
+    --font-body: "Inter", "InterVariable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
     /* ClaimARC brand palette — sampled from the official logo */
     --navy: #00457E;
     --navy-dk: #052A48;
@@ -89,12 +93,18 @@
 
   html,
   body {
-    font-family:
-      "Inter", "InterVariable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-      Helvetica, Arial, sans-serif;
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "ss02", "cv11", "cv02", "cv03";
+  }
+
+  /* Headings inherit the display stack site-wide. Individual components can
+     still override locally if needed. */
+  h1,
+  h2,
+  .display {
+    font-family: var(--font-display);
   }
 
   body {
@@ -130,12 +140,11 @@
     @apply h-px w-7 bg-current opacity-70;
   }
 
-  /* Display headline — slight optical refinement */
+  /* Display headline — bespoke type, tighter tracking */
   .display {
-    font-family: "Inter", "InterVariable", ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: "ss01", "ss02", "cv11";
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
     font-weight: 800;
+    letter-spacing: -0.03em;
   }
 
   /* Signature gradient text — the ARC */
