@@ -70,7 +70,7 @@ const EraProcessingPage = () => (
     <ServiceHero
       eyebrow="ERA Processing · 835 Normalization"
       title={<>Every payer's remittance, <span className="arc-text">one clean pipeline.</span></>}
-      body="ClaimARC pulls electronic remittance from every clearinghouse, bank, and payer portal into one normalized stream — reconciled to your deposits, returned auto-postable, and archived in a searchable, audit-ready portal. Run it alongside EOB Conversion and your paper and electronic remittance finally live in one dataset."
+      body="ClaimARC pulls electronic remittance from every clearinghouse, bank, and payer portal into one normalized stream — reconciled to your deposits, returned auto-postable, and archived in a searchable, audit-ready portal. Run it alongside Claim to Cash Conversion and your paper and electronic remittance finally live in one dataset."
       statValue="100"
       statSuffix="%"
       statLabel="Of your payers, one pipeline"
@@ -105,7 +105,7 @@ const EraProcessingPage = () => (
     </Section>
 
     <CtaBand
-      kicker="ERA and EOB conversion work best together — most teams have one, not both."
+      kicker="ERA and claim-to-cash conversion work best together — most teams have one, not both."
       headline="Bring every remittance into one pipeline."
       highlight="Then put that data to work."
       subhead="We'll map your current ERA flow and show where ClaimARC removes the manual steps."

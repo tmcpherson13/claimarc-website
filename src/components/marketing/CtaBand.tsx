@@ -15,7 +15,7 @@ const CtaBand = ({
   headline,
   highlight,
   subhead,
-  primaryText = "Book a Demo",
+  primaryText = "Contact Us",
   primaryTo = "/contact",
 }: CtaBandProps) => (
   <section className="relative overflow-hidden">

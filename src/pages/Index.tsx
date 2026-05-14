@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Banknote, Boxes, FileStack, RefreshCw } from "lucide-react";
+import { ArrowRight, Banknote, Boxes, FileStack, FlaskConical, RefreshCw, Settings2, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
@@ -14,30 +14,57 @@ import CtaBand from "@/components/marketing/CtaBand";
 import LeadershipGrid from "@/components/marketing/LeadershipGrid";
 import { Section, SectionHeading, Eyebrow, CtaLink } from "@/components/marketing/primitives";
 
+// Order is deliberate — Acceleration leads. The conversion and ERA services
+// are the data engine that makes Acceleration possible.
 const serviceCards = [
+  {
+    to: "/accelerator",
+    icon: Banknote,
+    name: "Claims Accelerator",
+    tag: "The differentiator · Patent Pending",
+    desc: "AI scores every claim for propensity to pay and advances payment to you in 1–2 business days — at a fraction of the cost of a line of credit or factoring. Bi-directional true-up returns the upside to you.",
+    accent: "var(--arc-1)",
+  },
   {
     to: "/eob-conversion",
     icon: FileStack,
-    name: "EOB Conversion",
-    tag: "Conversion Platform",
-    desc: "Paper EOBs, checks, and correspondence become structured, auto-postable 835 files — your custom business rules applied, 99.7% real-world accuracy.",
-    accent: "var(--arc-1)",
+    name: "Claim to Cash Conversion",
+    tag: "The fuel for acceleration",
+    desc: "Paper EOBs, checks, and correspondence become structured, auto-postable 835 files — indexed, categorized, and routed with your custom business rules applied. 99.7% real-world accuracy.",
+    accent: "var(--arc-2)",
   },
   {
     to: "/era-processing",
     icon: RefreshCw,
     name: "ERA Processing",
-    tag: "Remittance Intelligence",
+    tag: "Remittance intelligence",
     desc: "Electronic remittance normalized, reconciled, and posted across every payer — with a searchable, audit-ready archive and reporting on demand.",
-    accent: "var(--arc-2)",
+    accent: "var(--arc-3)",
+  },
+];
+
+// Three pillars of ClaimARC's frictionless implementation.
+const implementationPillars = [
+  {
+    icon: ShieldCheck,
+    accent: "var(--arc-1)",
+    title: "Comprehensive onboarding",
+    body: "A guided implementation playbook — connectivity, security, SLAs, escalation paths — documented end to end before a single file moves. Your team always knows what's next.",
+    footnote: "No surprises. Ever.",
   },
   {
-    to: "/accelerator",
-    icon: Banknote,
-    name: "Claims Accelerator",
-    tag: "Patent Pending",
-    desc: "AI scores every claim for propensity to pay and advances payment to you in 1–2 business days — at a fraction of the cost of a line of credit or factoring.",
+    icon: FlaskConical,
     accent: "var(--arc-3)",
+    title: "Free parallel testing",
+    body: "Run ClaimARC against your live remittance in parallel with your current process — at no cost — until output meets your bar. You only commit when the numbers prove themselves.",
+    footnote: "Prove it before you commit.",
+  },
+  {
+    icon: Settings2,
+    accent: "var(--arc-2)",
+    title: "Your business rules",
+    body: "Posting logic, payer mappings, exception handling, adjustment codes — encoded to your specifications, not ours. ClaimARC adapts to how your shop already works.",
+    footnote: "Configured to you.",
   },
 ];
 
@@ -49,9 +76,9 @@ const flywheel = [
     footnote: "Bank, clearinghouse & lockbox agnostic.",
   },
   {
-    title: "Conversion Platform",
+    title: "Claim to Cash Conversion",
     lead: "Structured in 24–48h",
-    body: "AI data-lifting converts every document to clean, auto-postable 835 files with your business rules applied, returned to your SFTP.",
+    body: "AI data-lifting converts every EOB, check, and correspondence document to clean, auto-postable 835 files — indexed, categorized, and returned to your SFTP with your custom business rules applied.",
     footnote: "Builds the data asset.",
   },
   {
@@ -103,8 +130,8 @@ const cfoValue = [
 const Index = () => (
   <Layout>
     <SeoHead
-      title="ClaimARC — Precision Valuation. Lightning Acceleration."
-      description="ClaimARC is the AI-powered revenue intelligence platform for healthcare: EOB conversion to auto-postable 835s, ERA processing, and claim payment acceleration in 1–2 business days."
+      title="ClaimARC — Claim Payment Acceleration in 1–2 Business Days"
+      description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1–2 business days, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
       path="/"
     />
 
@@ -130,25 +157,25 @@ const Index = () => (
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--arc-1)]" />
             </span>
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-mid)]">
-              AI-Powered Revenue Intelligence
+              AI-Powered Claim Payment Acceleration
             </span>
           </div>
           <h1 className="display mt-6 text-balance text-4xl leading-[1.05] tracking-tight md:text-5xl lg:text-[3.8rem]">
-            The revenue cycle,{" "}
-            <span className="arc-text">rebuilt around your cash flow.</span>
+            Get paid in <span className="arc-text">1–2 business days.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--text-mid)]">
-            ClaimARC turns your remittance — paper EOBs and electronic ERAs alike —
-            into structured intelligence, then uses it to advance payment on your
-            claims in as little as one business day. Works with the lockbox, bank,
-            and clearinghouse you already have.{" "}
+            ClaimARC's AI scores every claim, prices the risk, and advances cash to
+            you in as little as one business day — instead of the 45+ you're waiting
+            on now. Claim-to-cash conversion, correspondence indexing, and ERA
+            processing feed the engine. Works with the lockbox, bank, and
+            clearinghouse you already have.{" "}
             <span className="shimmer-text font-semibold">
               Precision valuation. Lightning acceleration.
             </span>
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <CtaLink to="/contact" variant="primary">
-              Book a Demo <ArrowRight size={16} />
+              Contact Us <ArrowRight size={16} />
             </CtaLink>
             <CtaLink to="/why-claimarc" variant="secondary">
               See how it works
@@ -214,13 +241,13 @@ const Index = () => (
       </div>
     </Section>
 
-    {/* Services */}
+    {/* Services — Acceleration leads */}
     <Section tone="light">
       <SectionHeading
         align="center"
-        eyebrow="What we do"
-        title={<>Three services. <span className="arc-text">One compounding platform.</span></>}
-        intro="Each works on its own. Together, they create an advantage competitors can't replicate — because it's built from your own data."
+        eyebrow="Built around Acceleration"
+        title={<>One platform. <span className="arc-text">Acceleration at the center.</span></>}
+        intro="Claim payment acceleration is the differentiator — claim-to-cash conversion and ERA processing are the supporting services that feed it. Each works on its own; together, they create an advantage competitors can't replicate, because it's built from your own data."
         className="mb-4"
       />
       <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -279,6 +306,42 @@ const Index = () => (
         intro="Remittance is the fuel. Every document you process feeds the AI that prices and accelerates your claims — so the longer you run ClaimARC, the better it works for you."
       />
       <StepFlow steps={flywheel} />
+    </Section>
+
+    {/* Frictionless Implementation */}
+    <Section tone="mist">
+      <SectionHeading
+        align="center"
+        eyebrow="Frictionless implementation"
+        title={<>Live without <span className="arc-text">the implementation tax.</span></>}
+        intro="ClaimARC is engineered to drop into your existing workflow — not replace it. Onboarding is documented end-to-end, testing is free, and your business rules drive the output."
+      />
+      <div className="mt-12 grid gap-6 md:grid-cols-3">
+        {implementationPillars.map((p, i) => {
+          const Icon = p.icon;
+          return (
+            <Reveal key={p.title} delay={i * 90}>
+              <div className="glass relative flex h-full flex-col p-7">
+                <div
+                  className="flex h-11 w-11 items-center justify-center rounded-xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${p.accent}33, ${p.accent}05)`,
+                    border: `1px solid ${p.accent}55`,
+                    color: p.accent,
+                  }}
+                >
+                  <Icon size={22} />
+                </div>
+                <h3 className="mt-5 text-xl font-bold text-[var(--text-hi)]">{p.title}</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text-mid)]">{p.body}</p>
+                <p className="mt-5 text-[0.7rem] font-semibold uppercase tracking-[0.18em]" style={{ color: p.accent }}>
+                  {p.footnote}
+                </p>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
     </Section>
 
     {/* Comparison */}

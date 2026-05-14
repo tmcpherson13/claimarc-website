@@ -98,7 +98,7 @@ const Navbar = () => {
             to="/contact"
             className="rounded-md bg-[var(--cyan)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--cyan-dk)]"
           >
-            Book a Demo
+            Contact Us
           </Link>
         </div>
 
@@ -146,7 +146,7 @@ const Navbar = () => {
               to="/contact"
               className="mt-3 rounded-md bg-[var(--cyan)] px-4 py-3 text-center text-sm font-semibold text-white"
             >
-              Book a Demo
+              Contact Us
             </Link>
           </div>
         </div>
