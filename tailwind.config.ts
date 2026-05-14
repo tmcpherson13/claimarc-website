@@ -31,6 +31,11 @@ export default {
           "lime-dk": "var(--lime-dk)",
           slate: "var(--slate)",
           mist: "var(--mist)",
+          // Logo-sampled tokens used by the home-page visual system.
+          // Hex (not var) so Tailwind opacity modifiers like /40 work.
+          primary: "#00A0C8",
+          accent: "#68B840",
+          muted: "#00457E",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

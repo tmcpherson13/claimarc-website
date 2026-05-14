@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
 import HeroDataViz from "@/components/marketing/HeroDataViz";
+import StatCallouts from "@/components/marketing/StatCallouts";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
@@ -133,6 +134,8 @@ const Index = () => (
       description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1–2 business days, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
       path="/"
     />
+    {/* Layer 2 — subtle dot-grid background (home only) */}
+    <div className="home-dot-grid">
 
     {/* Hero */}
     <section className="relative overflow-hidden">
@@ -191,6 +194,9 @@ const Index = () => (
       </div>
       <div className="hairline" />
     </section>
+
+    {/* Layer 4 — stat callouts (placeholder numbers — needs real client metrics) */}
+    <StatCallouts />
 
     <ComplianceStrip />
 
@@ -285,6 +291,23 @@ const Index = () => (
       </div>
     </Section>
 
+    {/* Layer 5 — logo trust band */}
+    <section className="relative py-16 md:py-20">
+      <div className="shell flex flex-col items-center text-center">
+        <p className="eyebrow text-[var(--text-mid)]">Built for healthcare RCM teams</p>
+        <img
+          src="/brand/claimarc-stacked-color.png"
+          alt="ClaimARC"
+          width={480}
+          height={228}
+          loading="lazy"
+          decoding="async"
+          className="mt-6 h-auto w-full max-w-[240px]"
+          style={{ filter: "drop-shadow(0 0 20px rgb(0 160 200 / 0.30))" }}
+        />
+      </div>
+    </section>
+
     {/* Flywheel */}
     <Section tone="elev">
       <SectionHeading
@@ -376,6 +399,7 @@ const Index = () => (
       highlight="It's whether you can afford another 45 days of waiting."
       subhead="Book a 30-minute working session with our team and see the model against your own numbers."
     />
+    </div>
   </Layout>
 );
 

@@ -378,6 +378,12 @@
   animation: shimmer 6s linear infinite;
 }
 
+/* Home page subtle dot-grid background (kept; orbs removed for precision look). */
+.home-dot-grid {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='1' cy='1' r='1' fill='white' fill-opacity='0.04'/></svg>");
+  background-repeat: repeat;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
