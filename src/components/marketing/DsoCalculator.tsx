@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -10,13 +10,16 @@ import { Link } from "react-router-dom";
  * days. No email gate — the visitor leaves with a number they can take to
  * their CFO, which is the point.
  *
- * The math is intentionally simple and conservative:
- *   monthlyClaims × averageClaim = monthly receipts
- *   acceleratedDays = currentDSO - 1 (our target)
- *   cashUnlocked = (monthly receipts × 12) × (acceleratedDays / 365)
+ * Three demo-craft moves on top of the math:
+ *   1. Preset chips populate "what's typical" volumes in one click.
+ *   2. The headline dollar figure animates between values via rAF count-up.
+ *   3. A two-bar visual contrasts "stuck at N days" vs "ClaimARC at 1 day"
+ *      so the delta is felt visually, not just read.
  *
- * This is an order-of-magnitude tool, not a quote. The CTA at the bottom
- * is the actual quote conversion.
+ * Math (intentionally simple, conservative, order-of-magnitude):
+ *   monthlyClaims × averageClaim = monthly receipts
+ *   acceleratedDays = currentDSO - 1
+ *   cashUnlocked = (monthly receipts × 12) × (acceleratedDays / 365)
  */
 const fmt$ = (n: number) =>
   new Intl.NumberFormat("en-US", {
@@ -28,111 +31,298 @@ const fmt$ = (n: number) =>
 const fmtNum = (n: number) =>
   new Intl.NumberFormat("en-US").format(Math.round(n));
 
+interface Preset {
+  label: string;
+  sub: string;
+  monthlyClaims: number;
+  avgClaim: number;
+  currentDso: number;
+}
+
+const PRESETS: Preset[] = [
+  {
+    label: "Mid-size group",
+    sub: "Multi-specialty · 15K claims/mo",
+    monthlyClaims: 15_000,
+    avgClaim: 220,
+    currentDso: 46,
+  },
+  {
+    label: "Regional system",
+    sub: "Hospital network · 120K claims/mo",
+    monthlyClaims: 120_000,
+    avgClaim: 380,
+    currentDso: 52,
+  },
+  {
+    label: "Enterprise",
+    sub: "Health system · 400K claims/mo",
+    monthlyClaims: 400_000,
+    avgClaim: 540,
+    currentDso: 58,
+  },
+];
+
+/** Smooth count-up between values using rAF. */
+function useAnimatedNumber(target: number, durationMs = 700) {
+  const [value, setValue] = useState(target);
+  const fromRef = useRef(target);
+  const startRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    fromRef.current = value;
+    startRef.current = null;
+
+    const tick = (t: number) => {
+      if (startRef.current === null) startRef.current = t;
+      const elapsed = t - startRef.current;
+      const k = Math.min(1, elapsed / durationMs);
+      // ease-out cubic for that "machine settling" feel
+      const eased = 1 - Math.pow(1 - k, 3);
+      const next = fromRef.current + (target - fromRef.current) * eased;
+      setValue(next);
+      if (k < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target, durationMs]);
+
+  return value;
+}
+
 const DsoCalculator = () => {
-  const [monthlyClaims, setMonthlyClaims] = useState(15_000);
-  const [avgClaim, setAvgClaim] = useState(220);
-  const [currentDso, setCurrentDso] = useState(46);
+  const [monthlyClaims, setMonthlyClaims] = useState(PRESETS[0].monthlyClaims);
+  const [avgClaim, setAvgClaim] = useState(PRESETS[0].avgClaim);
+  const [currentDso, setCurrentDso] = useState(PRESETS[0].currentDso);
+  const [activePreset, setActivePreset] = useState<number | null>(0);
+
+  const applyPreset = (i: number) => {
+    const p = PRESETS[i];
+    setMonthlyClaims(p.monthlyClaims);
+    setAvgClaim(p.avgClaim);
+    setCurrentDso(p.currentDso);
+    setActivePreset(i);
+  };
+
+  const onSlide = (setter: (v: number) => void) => (v: number) => {
+    setter(v);
+    setActivePreset(null);
+  };
 
   const result = useMemo(() => {
     const monthlyReceipts = monthlyClaims * avgClaim;
     const annualReceipts = monthlyReceipts * 12;
     const daysAccelerated = Math.max(0, currentDso - 1);
     const cashUnlocked = annualReceipts * (daysAccelerated / 365);
+    // Cash currently locked in A/R at current DSO
+    const cashStuckAtCurrent = annualReceipts * (currentDso / 365);
+    // Cash locked at 1-day DSO (ClaimARC)
+    const cashStuckAtAccel = annualReceipts * (1 / 365);
     return {
       cashUnlocked,
       daysAccelerated,
       monthlyReceipts,
+      cashStuckAtCurrent,
+      cashStuckAtAccel,
     };
   }, [monthlyClaims, avgClaim, currentDso]);
 
-  return (
-    <div className="grid items-start gap-10 md:grid-cols-[1.05fr_1fr]">
-      {/* Left — inputs */}
-      <div className="space-y-6">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
-          <Calculator size={13} className="text-[var(--arc-1)]" />
-          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[var(--text-mid)]">
-            Run your numbers
-          </span>
-        </div>
-        <h3 className="display text-balance text-3xl leading-tight tracking-tight text-[var(--text-hi)] md:text-4xl">
-          What does <span className="arc-text">1-day funding</span> unlock for your AR?
-        </h3>
-        <p className="max-w-md text-sm leading-relaxed text-[var(--text-mid)]">
-          Order-of-magnitude only — not a quote. Move the sliders to see the
-          shape of the upside on your own volume. No data leaves the page.
-        </p>
+  const animatedCash = useAnimatedNumber(result.cashUnlocked);
 
-        <div className="space-y-5">
-          <SliderRow
-            label="Monthly claims"
-            value={monthlyClaims}
-            display={fmtNum(monthlyClaims)}
-            min={1000}
-            max={500_000}
-            step={1000}
-            onChange={setMonthlyClaims}
-          />
-          <SliderRow
-            label="Average claim amount"
-            value={avgClaim}
-            display={fmt$(avgClaim)}
-            min={50}
-            max={2000}
-            step={10}
-            onChange={setAvgClaim}
-          />
-          <SliderRow
-            label="Current DSO (days)"
-            value={currentDso}
-            display={`${currentDso}d`}
-            min={15}
-            max={120}
-            step={1}
-            onChange={setCurrentDso}
-          />
-        </div>
+  // Bar widths (percentages of max — the "current" bar always anchors at 100%).
+  const currentBarPct = 100;
+  const accelBarPct = Math.max(
+    2,
+    Math.round((result.cashStuckAtAccel / result.cashStuckAtCurrent) * 100),
+  );
+
+  return (
+    <div className="space-y-10">
+      {/* Preset chips */}
+      <div className="flex flex-wrap gap-2">
+        <span className="mr-2 self-center text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[var(--text-lo)]">
+          Quick start
+        </span>
+        {PRESETS.map((p, i) => (
+          <button
+            key={p.label}
+            type="button"
+            onClick={() => applyPreset(i)}
+            className={`group rounded-lg border px-3.5 py-2 text-left text-xs transition-all ${
+              activePreset === i
+                ? "border-[var(--arc-1)] bg-[var(--arc-1)]/10 text-white shadow-[0_0_0_1px_rgba(0,200,230,0.35)_inset]"
+                : "border-white/10 bg-white/[0.02] text-[var(--text-mid)] hover:border-white/25 hover:text-white"
+            }`}
+          >
+            <span className="block text-sm font-semibold">{p.label}</span>
+            <span className="mono mt-0.5 block text-[0.65rem] text-[var(--text-lo)]">
+              {p.sub}
+            </span>
+          </button>
+        ))}
       </div>
 
-      {/* Right — result tile */}
-      <div className="glass-strong relative flex flex-col gap-6 p-7 md:p-8">
-        <div>
-          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
-            Annual cash unlocked
+      <div className="grid items-start gap-10 md:grid-cols-[1.05fr_1fr]">
+        {/* Left — inputs */}
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
+            <Calculator size={13} className="text-[var(--arc-1)]" />
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[var(--text-mid)]">
+              Run your numbers
+            </span>
+          </div>
+          <h3 className="display text-balance text-3xl leading-tight tracking-tight text-[var(--text-hi)] md:text-4xl">
+            What does <span className="arc-text">1-day funding</span> unlock for
+            your AR?
+          </h3>
+          <p className="max-w-md text-sm leading-relaxed text-[var(--text-mid)]">
+            Order-of-magnitude only — not a quote. Move the sliders to see the
+            shape of the upside on your own volume. No data leaves the page.
           </p>
-          <p className="mono mt-2 text-5xl font-semibold leading-none tracking-tight text-[var(--lime)] md:text-6xl">
-            {fmt$(result.cashUnlocked)}
-          </p>
-          <p className="mt-3 text-xs text-[var(--text-mid)]">
-            from accelerating <span className="mono text-[var(--text-hi)]">{result.daysAccelerated}</span> days
-            of monthly receipts of <span className="mono text-[var(--text-hi)]">{fmt$(result.monthlyReceipts)}</span>.
-          </p>
+
+          <div className="space-y-5">
+            <SliderRow
+              label="Monthly claims"
+              value={monthlyClaims}
+              display={fmtNum(monthlyClaims)}
+              min={1000}
+              max={500_000}
+              step={1000}
+              onChange={onSlide(setMonthlyClaims)}
+            />
+            <SliderRow
+              label="Average claim amount"
+              value={avgClaim}
+              display={fmt$(avgClaim)}
+              min={50}
+              max={2000}
+              step={10}
+              onChange={onSlide(setAvgClaim)}
+            />
+            <SliderRow
+              label="Current DSO (days)"
+              value={currentDso}
+              display={`${currentDso}d`}
+              min={15}
+              max={120}
+              step={1}
+              onChange={onSlide(setCurrentDso)}
+            />
+          </div>
         </div>
 
-        <div className="h-px w-full bg-white/[0.06]" />
+        {/* Right — result tile */}
+        <div className="glass-strong relative flex flex-col gap-6 p-7 md:p-8 md:sticky md:top-24">
+          <div>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
+              Working capital you're leaving on the table
+            </p>
+            <p className="mono mt-2 text-5xl font-semibold leading-none tracking-tight text-[var(--lime)] tabular-nums md:text-6xl">
+              {fmt$(animatedCash)}
+            </p>
+            <p className="mt-3 text-xs text-[var(--text-mid)]">
+              from accelerating{" "}
+              <span className="mono text-[var(--text-hi)]">
+                {result.daysAccelerated}
+              </span>{" "}
+              days of monthly receipts of{" "}
+              <span className="mono text-[var(--text-hi)]">
+                {fmt$(result.monthlyReceipts)}
+              </span>
+              .
+            </p>
+          </div>
 
-        <div className="flex flex-col gap-2 text-sm text-[var(--text-mid)]">
-          <p className="text-[var(--text-hi)]">
-            This is one-time working capital you free up by closing the
-            gap between earned and received.
-          </p>
-          <p>
+          {/* Comparison bars — stuck vs ClaimARC */}
+          <div className="space-y-3">
+            <CompareBar
+              label="Stuck in A/R today"
+              sub={`${currentDso} days · industry default`}
+              value={fmt$(result.cashStuckAtCurrent)}
+              widthPct={currentBarPct}
+              tone="warn"
+            />
+            <CompareBar
+              label="With ClaimARC"
+              sub="1 day · funding target"
+              value={fmt$(result.cashStuckAtAccel)}
+              widthPct={accelBarPct}
+              tone="good"
+            />
+          </div>
+
+          <div className="h-px w-full bg-white/[0.06]" />
+
+          <p className="text-xs text-[var(--text-mid)]">
             Acceleration fees apply, priced by AI per claim — typically a
             fraction of the cost of factoring or a line of credit.
           </p>
-        </div>
 
-        <Link
-          to="/contact"
-          className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[var(--arc-1)] via-[var(--arc-2)] to-[var(--arc-3)] bg-[length:200%_100%] bg-left px-5 py-3 text-sm font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.10)_inset] transition-all hover:bg-right"
-        >
-          Get pricing on your volume
-          <ArrowRight size={16} />
-        </Link>
+          <Link
+            to="/contact"
+            className="mt-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[var(--arc-1)] via-[var(--arc-2)] to-[var(--arc-3)] bg-[length:200%_100%] bg-left px-5 py-3 text-sm font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.10)_inset] transition-all hover:bg-right"
+          >
+            Get pricing on your volume
+            <ArrowRight size={16} />
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
+
+function CompareBar({
+  label,
+  sub,
+  value,
+  widthPct,
+  tone,
+}: {
+  label: string;
+  sub: string;
+  value: string;
+  widthPct: number;
+  tone: "warn" | "good";
+}) {
+  const fill =
+    tone === "warn"
+      ? "linear-gradient(90deg, rgba(220,38,38,0.55), rgba(220,38,38,0.25))"
+      : "linear-gradient(90deg, var(--lime), var(--arc-1))";
+  const textColor = tone === "warn" ? "text-red-300" : "text-[var(--lime)]";
+  return (
+    <div>
+      <div className="mb-1 flex items-baseline justify-between gap-3">
+        <div className="flex items-baseline gap-2">
+          <span className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-hi)]">
+            {label}
+          </span>
+          <span className="mono text-[0.65rem] text-[var(--text-lo)]">{sub}</span>
+        </div>
+        <span className={`mono text-sm font-semibold tabular-nums ${textColor}`}>
+          {value}
+        </span>
+      </div>
+      <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.04]">
+        <div
+          className="h-full rounded-full transition-[width] duration-500 ease-out"
+          style={{
+            width: `${widthPct}%`,
+            background: fill,
+            boxShadow:
+              tone === "good"
+                ? "0 0 12px -2px rgba(126,217,87,0.5)"
+                : "none",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
 
 function SliderRow({
   label,
@@ -157,7 +347,9 @@ function SliderRow({
         <span className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-mid)]">
           {label}
         </span>
-        <span className="mono text-base font-semibold text-[var(--text-hi)]">{display}</span>
+        <span className="mono text-base font-semibold text-[var(--text-hi)] tabular-nums">
+          {display}
+        </span>
       </div>
       <input
         type="range"
@@ -166,7 +358,7 @@ function SliderRow({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 w-full accent-[var(--arc-1)]"
+        className="dso-slider mt-2 w-full"
       />
     </label>
   );

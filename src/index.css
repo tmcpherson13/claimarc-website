@@ -592,6 +592,55 @@
   background-repeat: repeat;
 }
 
+/* DSO calculator — custom range slider with gradient track + glowing thumb. */
+.dso-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--arc-1), var(--arc-2));
+  background-color: rgba(255, 255, 255, 0.06);
+  outline: none;
+  cursor: pointer;
+}
+.dso-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lime);
+  border: 2px solid #0a0f1c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 12px -2px rgba(126, 217, 87, 0.7);
+  cursor: grab;
+  transition: transform 120ms ease;
+}
+.dso-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+}
+.dso-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lime);
+  border: 2px solid #0a0f1c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 12px -2px rgba(126, 217, 87, 0.7);
+  cursor: grab;
+}
+
+/* Scroll-down hint arrow — slow drift down + fade to suggest "more below". */
+@keyframes scrollIndicatorBob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+.scroll-indicator-arrow {
+  animation: scrollIndicatorBob 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -606,7 +655,8 @@
   .arc-float,
   .shimmer-text,
   .grid-overlay::after,
-  .hero-infinity-watermark {
+  .hero-infinity-watermark,
+  .scroll-indicator-arrow {
     animation: none;
   }
   html {

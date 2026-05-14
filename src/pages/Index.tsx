@@ -8,7 +8,9 @@ import HeroDataStream from "@/components/marketing/HeroDataStream";
 import PipelineStrip from "@/components/marketing/PipelineStrip";
 import PartnerBand from "@/components/marketing/PartnerBand";
 import DsoCalculator from "@/components/marketing/DsoCalculator";
+import DenialCrisis from "@/components/marketing/DenialCrisis";
 import Define from "@/components/marketing/Define";
+import ScrollIndicator from "@/components/marketing/ScrollIndicator";
 import StatCallouts from "@/components/marketing/StatCallouts";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
@@ -165,7 +167,7 @@ const Index = () => (
             <span className="block text-[var(--text-hi)]">Get paid in</span>
             <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
           </h1>
-          <p className="mt-4 text-lg font-medium text-[var(--text-mid)]">
+          <p className="mt-5 text-2xl font-semibold tracking-tight md:text-3xl">
             <span className="shimmer-text">Precision valuation.</span>{" "}
             <span className="shimmer-text">Lightning acceleration.</span>
           </p>
@@ -209,6 +211,7 @@ const Index = () => (
           <HeroDataViz />
         </Reveal>
       </div>
+      <ScrollIndicator />
       <div className="hairline" />
     </section>
 
@@ -231,14 +234,17 @@ const Index = () => (
       ]}
     />
 
-    {/* Problem framing */}
+    {/* Empathy / problem-framing — payer slow-pay & denial crisis */}
+    <DenialCrisis />
+
+    {/* Cost of waiting (renumbered after DenialCrisis took 01) */}
     <Section tone="mist">
       <div className="grid items-start gap-12 lg:grid-cols-2">
         <Reveal>
           <SectionHeading
-            numberedIndex="01"
+            numberedIndex="02"
             eyebrow="The cost of the status quo"
-            title={<>Your money is already earned. <span className="arc-text">It's just stuck.</span></>}
+            title={<>Your money is already earned. <span className="arc-text">Waiting on it costs you.</span></>}
             intro="A/R keeps aging, manual remittance handling keeps costing, and most financing options charge you for the privilege of waiting on your own claims. ClaimARC was built to close that gap — without disrupting a single workflow you rely on today."
           />
         </Reveal>
@@ -263,7 +269,7 @@ const Index = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
-        numberedIndex="02"
+        numberedIndex="03"
         eyebrow="Built around Acceleration"
         title={<>One platform. <span className="arc-text">Acceleration at the center.</span></>}
         intro="Claim payment acceleration is the differentiator — claim-to-cash conversion and ERA processing are the supporting services that feed it. Each works on its own; together, they create an advantage competitors can't replicate, because it's built from your own data."
@@ -427,7 +433,7 @@ const Index = () => (
     {/* Flywheel */}
     <Section tone="elev">
       <SectionHeading
-        numberedIndex="03"
+        numberedIndex="04"
         eyebrow="How the platform compounds"
         title={<>More data. Smarter scoring. <span className="arc-text">Lower cost.</span> Repeat.</>}
         intro="Remittance is the fuel. Every document you process feeds the AI that prices and accelerates your claims — so the longer you run ClaimARC, the better it works for you."
@@ -439,7 +445,7 @@ const Index = () => (
     <Section tone="paper">
       <SectionHeading
         align="center"
-        numberedIndex="04"
+        numberedIndex="05"
         eyebrow="Frictionless implementation"
         title={<>Live without <span className="text-[var(--cyan-dk)]">the implementation tax.</span></>}
         intro="ClaimARC is engineered to drop into your existing workflow — not replace it. Onboarding is documented end-to-end, testing is free, and your business rules drive the output."
@@ -488,7 +494,7 @@ const Index = () => (
     {/* Comparison */}
     <Section tone="light">
       <SectionHeading
-        numberedIndex="05"
+        numberedIndex="06"
         eyebrow="Why most financing options fall short"
         title={<>A line of credit costs you. Factoring costs you more.</>}
         intro="ClaimARC isn't a loan and it isn't factoring. It's payment acceleration priced by AI, with the upside returned to you."
@@ -519,7 +525,7 @@ const Index = () => (
     <Section tone="mist">
       <SectionHeading
         align="center"
-        numberedIndex="06"
+        numberedIndex="07"
         eyebrow="Built for finance & revenue cycle leaders"
         title={<>What changes when you <span className="arc-text">run ClaimARC.</span></>}
         intro="Designed with CFOs, controllers, and revenue cycle directors — for the metrics they're measured on."
@@ -531,7 +537,7 @@ const Index = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
-        numberedIndex="07"
+        numberedIndex="08"
         eyebrow="Leadership"
         title={<>The people <span className="arc-text">accountable</span> for every advance.</>}
         intro="Operators, data scientists, and capital allocators with deep records in healthcare revenue cycle and institutional finance."

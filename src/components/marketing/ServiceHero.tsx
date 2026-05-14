@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { CtaLink, Eyebrow } from "./primitives";
 import Reveal from "./Reveal";
+import ScrollIndicator from "./ScrollIndicator";
 
 interface ServiceHeroProps {
   eyebrow: string;
@@ -11,6 +12,7 @@ interface ServiceHeroProps {
   statLabel: string;
   statNote?: string;
   primaryText?: string;
+  hideSecondary?: boolean;
 }
 
 /** Shared hero for the three service pages — dark, gradient-accented. */
@@ -23,6 +25,7 @@ const ServiceHero = ({
   statLabel,
   statNote,
   primaryText = "Contact Us",
+  hideSecondary = false,
 }: ServiceHeroProps) => (
   <section className="relative overflow-hidden">
     {/* Localised spotlight */}
@@ -49,9 +52,11 @@ const ServiceHero = ({
           <CtaLink to="/contact" variant="primary">
             {primaryText}
           </CtaLink>
-          <CtaLink to="/why-claimarc" variant="secondary">
-            See the full platform
-          </CtaLink>
+          {!hideSecondary && (
+            <CtaLink to="/why-claimarc" variant="secondary">
+              See the full platform
+            </CtaLink>
+          )}
         </div>
       </Reveal>
       <Reveal delay={120} className="lg:justify-self-end">
@@ -82,6 +87,7 @@ const ServiceHero = ({
         </div>
       </Reveal>
     </div>
+    <ScrollIndicator />
   </section>
 );
 
