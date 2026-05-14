@@ -6,6 +6,9 @@ import Reveal from "@/components/marketing/Reveal";
 import HeroDataViz from "@/components/marketing/HeroDataViz";
 import HeroDataStream from "@/components/marketing/HeroDataStream";
 import PipelineStrip from "@/components/marketing/PipelineStrip";
+import PartnerBand from "@/components/marketing/PartnerBand";
+import DsoCalculator from "@/components/marketing/DsoCalculator";
+import Define from "@/components/marketing/Define";
 import StatCallouts from "@/components/marketing/StatCallouts";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
@@ -157,21 +160,23 @@ const Index = () => (
             </span>
           </div>
           {/* Three-line stacked headline — bigger declarative voice */}
-          <h1 className="display mt-6 text-balance text-4xl leading-[1.04] tracking-tight md:text-5xl lg:text-[3.6rem]">
-            <span className="block text-[var(--text-hi)]">Precision valuation.</span>
-            <span className="block arc-text">Lightning acceleration.</span>
-            <span className="block text-[var(--text-mid)] text-[0.62em] font-medium mt-3">
-              Get paid in 1 business day.
-            </span>
+          {/* Value prop leads; brand slogan supports underneath. */}
+          <h1 className="display mt-6 text-balance text-5xl leading-[0.98] tracking-tight md:text-6xl lg:text-[4.4rem]">
+            <span className="block text-[var(--text-hi)]">Get paid in</span>
+            <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
           </h1>
-          <p className="mt-2 text-xs text-[var(--text-lo)]">
-            *1 business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
+          <p className="mt-4 text-lg font-medium text-[var(--text-mid)]">
+            <span className="shimmer-text">Precision valuation.</span>{" "}
+            <span className="shimmer-text">Lightning acceleration.</span>
           </p>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
             ClaimARC's AI scores every claim, prices the risk, and advances cash to
             you in as little as one business day — instead of the 45+ you're waiting
             on now. Claim-to-cash conversion, correspondence indexing, and ERA
             processing feed the engine.
+          </p>
+          <p className="mt-3 max-w-xl text-xs leading-relaxed text-[var(--text-lo)]">
+            <span className="text-[var(--lime)]">*</span> One business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <CtaLink to="/contact" variant="primary">
@@ -182,24 +187,10 @@ const Index = () => (
             </CtaLink>
           </div>
 
-          {/* Stat tiles — terminal-style stacked tiles replace the old trust strip */}
-          <div className="mt-10 flex flex-wrap gap-3">
-            <div className="stat-tile" data-ix="01">
-              <span className="stat-value">1</span>
-              <span className="stat-units">Business day to cash*</span>
-            </div>
-            <div className="stat-tile" data-ix="02">
-              <span className="stat-value">99.7%</span>
-              <span className="stat-units">Real-world accuracy</span>
-            </div>
-            <div className="stat-tile" data-ix="03">
-              <span className="stat-value">45+</span>
-              <span className="stat-units">Day DSO replaced</span>
-            </div>
-          </div>
-
-          {/* Compliance pills — small, on their own line */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)]">
+          {/* Compliance pills — small, on their own line. Stat tiles
+              removed: the HeroDataViz duel on the right carries the
+              before/after weight without duplicating numbers. */}
+          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)]">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--arc-1)]" />
               SOC 2 Type II
@@ -220,6 +211,9 @@ const Index = () => (
       </div>
       <div className="hairline" />
     </section>
+
+    {/* Partner band — "who runs on this" credibility moment under the hero */}
+    <PartnerBand />
 
     {/* Pipeline strip — three numbered process nodes directly under hero */}
     <PipelineStrip />
@@ -275,8 +269,95 @@ const Index = () => (
         intro="Claim payment acceleration is the differentiator — claim-to-cash conversion and ERA processing are the supporting services that feed it. Each works on its own; together, they create an advantage competitors can't replicate, because it's built from your own data."
         className="mb-4"
       />
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {serviceCards.map((s, i) => {
+      {/* Featured service — Acceleration, the differentiator. Spans full
+          width on md+; horizontal layout with the value prop on the left
+          and the lime gradient pane on the right. */}
+      {(() => {
+        const featured = serviceCards[0];
+        const FIcon = featured.icon;
+        return (
+          <Reveal className="mt-12 block">
+            <Link
+              to={featured.to}
+              className="group relative grid items-stretch gap-0 overflow-hidden rounded-2xl border border-[var(--lime)]/30 bg-gradient-to-br from-[var(--lime)]/[0.07] via-[var(--ink-1)] to-[var(--ink-1)] transition-all duration-300 hover:border-[var(--lime)]/50 hover:shadow-[0_24px_60px_-30px_rgba(126,217,87,0.5)] md:grid-cols-[1.4fr_1fr]"
+            >
+              {/* Top accent bar */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--lime)] via-[var(--arc-1)] to-transparent"
+              />
+              {/* Left — copy */}
+              <div className="relative flex flex-col p-8 md:p-10">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{
+                      background: `linear-gradient(135deg, ${featured.accent}33, ${featured.accent}05)`,
+                      border: `1px solid ${featured.accent}66`,
+                      color: featured.accent,
+                    }}
+                  >
+                    <FIcon size={24} />
+                  </span>
+                  <span className="rounded-full border border-[var(--lime)]/30 bg-[var(--lime)]/10 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-[var(--lime)]">
+                    The differentiator
+                  </span>
+                </div>
+                <h3 className="display mt-5 text-balance text-3xl font-bold leading-tight text-[var(--text-hi)] md:text-[2.2rem]">
+                  {featured.name}
+                </h3>
+                <p className="mt-4 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
+                  AI scores every claim for{" "}
+                  <Define
+                    term="propensity to pay"
+                    definition="ClaimARC's per-claim probability that a given payer pays a given amount within a target window — produced by ML models trained on your remittance history."
+                  />{" "}
+                  and advances payment to you in 1 business day (target) — at a fraction of the
+                  cost of a line of credit or factoring.{" "}
+                  <Define
+                    term="Bi-directional true-up"
+                    definition="If the claim ultimately pays more than ClaimARC priced, the upside is returned to you. The model never benefits from being wrong in its favor."
+                  />{" "}
+                  returns the upside to you.
+                </p>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--lime)] transition-transform group-hover:translate-x-0.5">
+                    Explore {featured.name}
+                    <ArrowRight size={15} />
+                  </span>
+                  <span className="hidden text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)] md:inline">
+                    · Patent Pending
+                  </span>
+                </div>
+              </div>
+              {/* Right — accent pane with the headline metric */}
+              <div className="relative flex flex-col items-center justify-center gap-2 border-t border-white/[0.05] p-8 md:border-l md:border-t-0 md:p-10">
+                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
+                  Funding target
+                </span>
+                <p className="mono text-7xl font-semibold leading-none tracking-tight text-[var(--lime)] md:text-[6rem]">
+                  1
+                </p>
+                <span className="mono text-xs uppercase tracking-[0.16em] text-[var(--text-mid)]">
+                  Business day
+                </span>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    background:
+                      "radial-gradient(60% 80% at 50% 50%, rgba(126,217,87,0.15), transparent 70%)",
+                  }}
+                />
+              </div>
+            </Link>
+          </Reveal>
+        );
+      })()}
+
+      {/* Two secondary services — supporting cards, equal weight */}
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        {serviceCards.slice(1).map((s, i) => {
           const Icon = s.icon;
           return (
             <Reveal key={s.to} delay={i * 90}>
@@ -284,13 +365,11 @@ const Index = () => (
                 to={s.to}
                 className="glass group relative flex h-full flex-col overflow-hidden p-7 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
               >
-                {/* Per-service top color bar */}
                 <span
                   aria-hidden="true"
                   className="service-bar"
                   style={{ color: s.accent }}
                 />
-                {/* Accent glow on hover */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
@@ -401,6 +480,11 @@ const Index = () => (
       </div>
     </Section>
 
+    {/* DSO calculator — soft conversion, run your own numbers */}
+    <Section tone="elev">
+      <DsoCalculator />
+    </Section>
+
     {/* Comparison */}
     <Section tone="light">
       <SectionHeading
@@ -409,7 +493,26 @@ const Index = () => (
         title={<>A line of credit costs you. Factoring costs you more.</>}
         intro="ClaimARC isn't a loan and it isn't factoring. It's payment acceleration priced by AI, with the upside returned to you."
       />
-      <CompareTable themHeading="LOC / Factoring" usHeading="ClaimARC" rows={compareRows} />
+      <CompareTable
+        themHeading="LOC / Factoring"
+        usHeading="ClaimARC"
+        rows={compareRows}
+        footer={
+          <span className="block">
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
+              Bottom line
+            </span>
+            <span className="mt-2 block text-base leading-snug text-[var(--text-hi)]">
+              Acceleration priced per claim, with the upside returned via{" "}
+              <Define
+                term="bi-directional true-up"
+                definition="If the claim ultimately pays more than ClaimARC priced, the upside is returned to you. The model never benefits from being wrong in its favor."
+              />
+              — versus a flat 10–30% cost of funds you pay every month, win or lose.
+            </span>
+          </span>
+        }
+      />
     </Section>
 
     {/* CFO value */}
