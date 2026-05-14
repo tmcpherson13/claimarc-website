@@ -7,6 +7,7 @@ import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
 import CtaBand from "@/components/marketing/CtaBand";
+import NextPage from "@/components/marketing/NextPage";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
 
 const steps = [
@@ -103,6 +104,13 @@ const EraProcessingPage = () => (
       />
       <ValueCards cards={delivers} columns={3} />
     </Section>
+
+    <NextPage
+      title="Next: see how it all fits together."
+      description="ERA closes the loop on remittance. The whole platform — pipeline, scoring, and acceleration — runs on what you've just seen feed in."
+      to="/why-claimarc"
+      cta="See the full platform"
+    />
 
     <CtaBand
       kicker="ERA and claim-to-cash conversion work best together — most teams have one, not both."
