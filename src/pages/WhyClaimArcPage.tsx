@@ -64,6 +64,7 @@ const WhyClaimArcPage = () => (
       statValue="1"
       statLabel="Business days to payment"
       statNote="Acceleration · Conversion · Intelligence"
+      hideSecondary
     />
     <ComplianceStrip />
 
