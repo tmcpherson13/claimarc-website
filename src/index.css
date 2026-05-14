@@ -130,12 +130,17 @@
     @apply h-px w-7 bg-current opacity-70;
   }
 
-  /* Display headline — slight optical refinement */
+  /* Display headline — Space Grotesk for a technical/geometric voice that
+     differentiates from generic Tailwind/Inter aesthetics. */
   .display {
-    font-family: "Inter", "InterVariable", ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: "ss01", "ss02", "cv11";
-    letter-spacing: -0.02em;
-    font-weight: 800;
+    font-family: "Space Grotesk", "Inter", "InterVariable", ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "ss01", "ss02";
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  h1.display,
+  h2.display {
+    font-weight: 700;
   }
 
   /* Signature gradient text — the ARC */
@@ -203,16 +208,200 @@
     background-color: var(--ink-0);
   }
 
-  /* Single subtle hero accent — high-precision, not synthwave. */
+  /* Hero atmospheric stack — focused brand-color directional light.
+     One element, but composed of three positioned radials to evoke a
+     "spotlit lab" rather than the generic blob/aurora trope. */
   .hero-precision-accent {
     position: absolute;
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 40% at 75% 20%,
-        rgba(0, 200, 230, 0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 30% at 20% 80%,
-        rgba(126, 217, 87, 0.04) 0%, transparent 70%);
+      radial-gradient(ellipse 70% 50% at 80% 15%, rgba(0, 200, 230, 0.16) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 15% 60%, rgba(20, 116, 180, 0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 35% at 65% 100%, rgba(126, 217, 87, 0.10) 0%, transparent 70%);
+  }
+
+  /* Hero data-stream canvas — sits behind the hero content, runs animated
+     horizontal "signal" lines drifting right-to-left. Defined here so the
+     canvas can use a fixed CSS-positioned wrapper; the lines are drawn in
+     JS. The ClaimARC equivalent of Zapare's star field — same role
+     (bespoke motion), different metaphor (remittance data flow). */
+  .data-stream-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Giant infinity-loop watermark — sits centered behind the hero at very
+     low opacity. The brand mark in the negative space. */
+  .hero-infinity-watermark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 720px;
+    height: auto;
+    opacity: 0.035;
+    pointer-events: none;
+    animation: watermarkBreathe 14s ease-in-out infinite alternate;
+  }
+
+  /* Indexed eyebrow — section-numbered tag (e.g., "01 / SERVICES") with a
+     thin lime tick. Replaces Zapare's gradient-bar eyebrow with a more
+     institutional / engineering-doc voice. */
+  .indexed-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+  }
+  .indexed-eyebrow::before {
+    content: "";
+    width: 14px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--arc-3), transparent);
+    border-radius: 1px;
+  }
+  .indexed-eyebrow .ix-num {
+    color: var(--arc-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Stat tile — terminal-style stacked card for hero metrics.
+     Bigger than ClaimARC's old trust strip; structurally different from
+     Zapare's horizontal pill (stacked layout, optional index tab). */
+  .stat-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+    backdrop-filter: blur(10px);
+    min-width: 140px;
+  }
+  .stat-tile::before {
+    content: attr(data-ix);
+    position: absolute;
+    top: -1px;
+    left: 12px;
+    transform: translateY(-50%);
+    font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--text-lo);
+    background: var(--ink-0);
+    padding: 0 6px;
+  }
+  .stat-tile .stat-value {
+    font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    color: var(--text-hi);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-tile .stat-units {
+    font-size: 0.7rem;
+    color: var(--text-mid);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* Pipeline strip — three numbered process nodes joined by tick arrows.
+     ClaimARC's "process" answer to Zapare's "product menu" chip strip. */
+  .pipeline-strip {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 22px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
+  }
+  .pipeline-node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 4px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.18s, transform 0.18s;
+  }
+  .pipeline-node:hover {
+    color: var(--text-hi);
+    transform: translateY(-1px);
+  }
+  .pipeline-node .pn-index {
+    font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid;
+    /* `currentColor` so each node tints by its accent var */
+    border-color: currentColor;
+    color: inherit;
+  }
+  .pipeline-node .pn-name {
+    font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-hi);
+    line-height: 1.2;
+  }
+  .pipeline-node .pn-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--text-lo);
+  }
+  .pipeline-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-lo);
+    opacity: 0.55;
+  }
+  @media (max-width: 900px) {
+    .pipeline-strip {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .pipeline-strip .pipeline-arrow {
+      transform: rotate(90deg);
+      justify-self: center;
+    }
+  }
+
+  /* Service-card top color bar — ClaimARC's per-service color identity.
+     Adapted from Zapare's product card bars but applied to a glass dark
+     card rather than a white card, with a soft gradient fade instead of
+     a flat stripe. */
+  .service-bar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+    opacity: 0.85;
   }
 
   /* Precision grid overlay — fine grid + coarser "blueprint" lines, with a
@@ -276,6 +465,11 @@
 .hero-viz-label {
   opacity: 0;
   animation: heroVizLabelIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes watermarkBreathe {
+  0%   { opacity: 0.025; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0.045; transform: translate(-50%, -50%) scale(1.04); }
 }
 
 @keyframes scanDrift {
@@ -399,7 +593,8 @@
   .shimmer-text,
   .grid-overlay::after,
   .hero-viz-node,
-  .hero-viz-label {
+  .hero-viz-label,
+  .hero-infinity-watermark {
     animation: none;
   }
   .hero-viz-node,
