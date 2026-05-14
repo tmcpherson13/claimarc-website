@@ -4,6 +4,7 @@ import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
 import LeadershipGrid from "@/components/marketing/LeadershipGrid";
 import CtaBand from "@/components/marketing/CtaBand";
+import ScrollIndicator from "@/components/marketing/ScrollIndicator";
 import { Section, SectionHeading, Eyebrow } from "@/components/marketing/primitives";
 
 const aboutPillars = [
@@ -50,6 +51,7 @@ const LeadershipPage = () => (
             that providers had to wait 45+ days for money they'd already earned.
           </p>
         </Reveal>
+        <ScrollIndicator />
       </div>
     </section>
 
@@ -137,7 +139,6 @@ const LeadershipPage = () => (
     <CtaBand
       kicker="Want to meet the team?"
       headline="Every conversation includes a working session with leadership."
-      highlight="No layers, no SDRs."
       subhead="If you're qualified to evaluate ClaimARC, you should be talking to the people building it."
     />
   </Layout>

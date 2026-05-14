@@ -592,6 +592,15 @@
   background-repeat: repeat;
 }
 
+/* Scroll-down hint arrow — slow drift down + fade to suggest "more below". */
+@keyframes scrollIndicatorBob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+.scroll-indicator-arrow {
+  animation: scrollIndicatorBob 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -606,7 +615,8 @@
   .arc-float,
   .shimmer-text,
   .grid-overlay::after,
-  .hero-infinity-watermark {
+  .hero-infinity-watermark,
+  .scroll-indicator-arrow {
     animation: none;
   }
   html {

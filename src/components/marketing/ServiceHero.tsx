@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { CtaLink, Eyebrow } from "./primitives";
 import Reveal from "./Reveal";
+import ScrollIndicator from "./ScrollIndicator";
 
 interface ServiceHeroProps {
   eyebrow: string;
@@ -82,6 +83,7 @@ const ServiceHero = ({
         </div>
       </Reveal>
     </div>
+    <ScrollIndicator />
   </section>
 );
 

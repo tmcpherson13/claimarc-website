@@ -9,6 +9,7 @@ import PipelineStrip from "@/components/marketing/PipelineStrip";
 import PartnerBand from "@/components/marketing/PartnerBand";
 import DsoCalculator from "@/components/marketing/DsoCalculator";
 import Define from "@/components/marketing/Define";
+import ScrollIndicator from "@/components/marketing/ScrollIndicator";
 import StatCallouts from "@/components/marketing/StatCallouts";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
@@ -165,7 +166,7 @@ const Index = () => (
             <span className="block text-[var(--text-hi)]">Get paid in</span>
             <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
           </h1>
-          <p className="mt-4 text-lg font-medium text-[var(--text-mid)]">
+          <p className="mt-5 text-2xl font-semibold tracking-tight md:text-3xl">
             <span className="shimmer-text">Precision valuation.</span>{" "}
             <span className="shimmer-text">Lightning acceleration.</span>
           </p>
@@ -209,6 +210,7 @@ const Index = () => (
           <HeroDataViz />
         </Reveal>
       </div>
+      <ScrollIndicator />
       <div className="hairline" />
     </section>
 
@@ -238,7 +240,7 @@ const Index = () => (
           <SectionHeading
             numberedIndex="01"
             eyebrow="The cost of the status quo"
-            title={<>Your money is already earned. <span className="arc-text">It's just stuck.</span></>}
+            title={<>Your money is already earned. <span className="arc-text">Waiting on it costs you.</span></>}
             intro="A/R keeps aging, manual remittance handling keeps costing, and most financing options charge you for the privilege of waiting on your own claims. ClaimARC was built to close that gap — without disrupting a single workflow you rely on today."
           />
         </Reveal>
