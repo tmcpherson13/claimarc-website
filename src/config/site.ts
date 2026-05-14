@@ -25,6 +25,7 @@ export const services: NavItem[] = [
 
 export const primaryNav: NavItem[] = [
   { label: "Why ClaimARC", to: "/why-claimarc" },
+  { label: "Insights", to: "/insights" },
   { label: "Leadership", to: "/leadership" },
   { label: "Contact", to: "/contact" },
 ];
