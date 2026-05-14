@@ -267,6 +267,26 @@
   }
 }
 
+/* Hero data-viz entrance — node cards fade + slide in from below,
+   micro-labels fade up slightly later. Stagger is driven by inline
+   animation-delay on each element so order matches the flow. */
+@keyframes heroVizNodeIn {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.97); }
+  100% { opacity: 1; transform: none; }
+}
+.hero-viz-node {
+  opacity: 0;
+  animation: heroVizNodeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroVizLabelIn {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: none; }
+}
+.hero-viz-label {
+  opacity: 0;
+  animation: heroVizLabelIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes scanDrift {
   0%   { background-position: 0% -100%; }
   100% { background-position: 0% 200%; }
@@ -386,8 +406,15 @@
   .arc-float,
   .shimmer-text,
   .grid-overlay::after,
-  .loop-cluster {
+  .loop-cluster,
+  .hero-viz-node,
+  .hero-viz-label {
     animation: none;
+  }
+  .hero-viz-node,
+  .hero-viz-label {
+    opacity: 1;
+    transform: none;
   }
   html {
     scroll-behavior: auto;

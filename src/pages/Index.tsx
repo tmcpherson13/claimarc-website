@@ -3,7 +3,7 @@ import { ArrowRight, Banknote, Boxes, FileStack, FlaskConical, RefreshCw, Settin
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
-import HeroArc from "@/components/marketing/HeroArc";
+import HeroDataViz from "@/components/marketing/HeroDataViz";
 import AnimatedInfinityLogo from "@/components/AnimatedInfinityLogo";
 import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
@@ -189,8 +189,8 @@ const Index = () => (
             </span>
           </div>
         </Reveal>
-        <Reveal delay={140} className="hidden lg:block">
-          <HeroArc />
+        <Reveal delay={140} className="hidden md:block">
+          <HeroDataViz />
         </Reveal>
       </div>
       <div className="hairline" />
