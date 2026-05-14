@@ -24,7 +24,7 @@ const serviceCards = [
     icon: Banknote,
     name: "Claims Accelerator",
     tag: "The differentiator · Patent Pending",
-    desc: "AI scores every claim for propensity to pay and advances payment to you in 1–2 business days — at a fraction of the cost of a line of credit or factoring. Bi-directional true-up returns the upside to you.",
+    desc: "AI scores every claim for propensity to pay and advances payment to you in 1 business day — at a fraction of the cost of a line of credit or factoring. Bi-directional true-up returns the upside to you.",
     accent: "var(--arc-1)",
   },
   {
@@ -91,7 +91,7 @@ const flywheel = [
   },
   {
     title: "Accelerator",
-    lead: "Funded in 1–2 days",
+    lead: "Funded in 1 day",
     body: "Select which scored claims to fund. Cash lands with you in one to two business days, with bi-directional true-up built into every advance.",
     footnote: "Always in your favor.",
   },
@@ -110,7 +110,7 @@ const cfoValue = [
     icon: Banknote,
     accent: "cyan" as const,
     title: "Cash flow transformation",
-    body: "A 45+ day wait becomes 1–2 days. Meet payroll, fund operations, and stop financing your own receivables — without the cost or covenants of a line of credit.",
+    body: "A 45+ day wait becomes 1 day. Meet payroll, fund operations, and stop financing your own receivables — without the cost or covenants of a line of credit.",
     footnote: "Predictable cash, on your terms.",
   },
   {
@@ -132,8 +132,8 @@ const cfoValue = [
 const Index = () => (
   <Layout>
     <SeoHead
-      title="ClaimARC — Claim Payment Acceleration in 1–2 Business Days"
-      description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1–2 business days, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
+      title="ClaimARC — Claim Payment Acceleration in 1 Business Day"
+      description="ClaimARC is the AI-powered claim payment acceleration platform for healthcare. Get paid in 1 business day, powered by claim-to-cash conversion, correspondence indexing, and ERA processing."
       path="/"
     />
     {/* Layer 2 — subtle dot-grid background (home only) */}
@@ -161,9 +161,12 @@ const Index = () => (
             <span className="block text-[var(--text-hi)]">Precision valuation.</span>
             <span className="block arc-text">Lightning acceleration.</span>
             <span className="block text-[var(--text-mid)] text-[0.62em] font-medium mt-3">
-              Get paid in 1–2 business days.
+              Get paid in 1 business day.
             </span>
           </h1>
+          <p className="mt-2 text-xs text-[var(--text-lo)]">
+            *1 business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
+          </p>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
             ClaimARC's AI scores every claim, prices the risk, and advances cash to
             you in as little as one business day — instead of the 45+ you're waiting
@@ -182,8 +185,8 @@ const Index = () => (
           {/* Stat tiles — terminal-style stacked tiles replace the old trust strip */}
           <div className="mt-10 flex flex-wrap gap-3">
             <div className="stat-tile" data-ix="01">
-              <span className="stat-value">1–2</span>
-              <span className="stat-units">Business days to cash</span>
+              <span className="stat-value">1</span>
+              <span className="stat-units">Business day to cash*</span>
             </div>
             <div className="stat-tile" data-ix="02">
               <span className="stat-value">99.7%</span>
@@ -230,7 +233,7 @@ const Index = () => (
       stats={[
         { value: "45+", label: "Days you're currently waiting", note: "Industry-avg DSO · HFMA", accent: "cyan" },
         { value: "99.7%", label: "Real-world EOB data accuracy", note: "98.5% contracted SLA · ClaimARC", accent: "lime" },
-        { value: "1–2", label: "Business days to payment", note: "ClaimARC Accelerator funding target", accent: "cyan" },
+        { value: "1", label: "Business day to payment*", note: "ClaimARC Accelerator funding target", accent: "cyan" },
       ]}
     />
 

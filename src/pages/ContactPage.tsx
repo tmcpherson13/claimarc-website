@@ -27,7 +27,7 @@ const mailtoFallback = (form: {
     "",
     form.message || "(no additional details)",
   ].filter(Boolean);
-  const subject = encodeURIComponent(`Demo request — ${form.organization}`);
+  const subject = encodeURIComponent(`Contact request — ${form.organization}`);
   const body = encodeURIComponent(lines.join("\n"));
   window.location.href = `mailto:${COMPANY.email}?subject=${subject}&body=${body}`;
 };
@@ -50,7 +50,7 @@ const volumes = [
 ];
 
 const serviceOptions = [
-  "Claims Accelerator — payment in 1–2 days",
+  "Claims Accelerator — payment in 1 business day (target)",
   "Claim to Cash Conversion — paper, EOBs & correspondence to 835",
   "ERA Processing — 835 normalization & posting",
   "The full platform",
@@ -150,20 +150,21 @@ const ContactPage = () => {
           <Reveal>
             <Eyebrow tone="arc" className="mb-5">Talk to ClaimARC</Eyebrow>
             <h1 className="display text-balance text-4xl leading-[1.05] md:text-5xl">
-              Book a <span className="arc-text">working session.</span>
+              Start a <span className="arc-text">conversation.</span>
             </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--text-mid)]">
-              Thirty minutes with our team — bring a recent claims or remittance file and
-              we'll run it through the model with you. No slide deck, no obligation.
+              A 30-minute open discussion with our team to explore how ClaimARC could fit
+              your operation. No data exchange, no slide deck — just questions, scenarios,
+              and an honest read on where the platform helps.
             </p>
             <ul className="mt-8 space-y-4 text-sm text-[var(--text-mid)]">
               <li className="flex items-start gap-3">
                 <CalendarClock size={18} className="mt-0.5 shrink-0 text-[var(--arc-1)]" />
-                <span>See payment acceleration timing and pricing against your own data.</span>
+                <span>Walk through the platform's three services and where each one applies to your shop.</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-[var(--lime)]" />
-                <span>Walk away with a sample 835 and a clear picture of the workflow fit.</span>
+                <span>Get a clear answer on workflow fit, integration scope, and what a pilot would look like.</span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail size={18} className="mt-0.5 shrink-0 text-[var(--arc-2)]" />
@@ -282,7 +283,7 @@ const ContactPage = () => {
                     }}
                   >
                     {submitting && <Loader2 size={16} className="animate-spin" />}
-                    {submitting ? "Sending…" : "Request a demo"}
+                    {submitting ? "Sending…" : "Send message"}
                   </button>
                   <p className="text-center text-xs text-[var(--text-lo)]">
                     We'll only use your details to follow up about ClaimARC. No spam.

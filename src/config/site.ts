@@ -7,7 +7,7 @@ export const COMPANY = {
   legal: "Retrieve Remit, LLC",
   tagline: "Precision valuation. Lightning acceleration.",
   arc: "Acceleration · Receivables · Contracts",
-  email: "hello@claimarc.com",
+  email: "info@claimarc.com",
 };
 
 export interface NavItem {

@@ -30,13 +30,13 @@ const Navbar = () => {
     <header
       className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
         scrolled
-          ? "border-white/10 bg-[var(--navy)]/95 backdrop-blur"
-          : "border-transparent bg-[var(--navy)]"
+          ? "border-[#D6E2EB] bg-white/95 backdrop-blur"
+          : "border-transparent bg-white"
       }`}
     >
       <div className="shell-wide flex h-16 items-center justify-between gap-6">
         <Link to="/" aria-label="ClaimARC home" className="shrink-0">
-          <Logo variant="light" kind="horiz" height={40} />
+          <Logo variant="color" kind="horiz" height={40} />
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
@@ -50,7 +50,7 @@ const Navbar = () => {
               onClick={() => setServicesOpen((v) => !v)}
               aria-expanded={servicesOpen}
               className={`flex items-center gap-1 text-sm font-medium transition-colors ${
-                servicesActive ? "text-[var(--cyan)]" : "text-white/80 hover:text-white"
+                servicesActive ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D] hover:text-[var(--cyan-dk)]"
               }`}
             >
               Services
@@ -61,15 +61,15 @@ const Navbar = () => {
             </button>
             {servicesOpen && (
               <div className="absolute left-1/2 top-full w-72 -translate-x-1/2 pt-3">
-                <div className="overflow-hidden rounded-xl border border-white/10 bg-[var(--navy-soft)] shadow-xl">
+                <div className="overflow-hidden rounded-xl border border-[#D6E2EB] bg-white shadow-lg">
                   {services.map((s) => (
                     <Link
                       key={s.to}
                       to={s.to}
                       className={`block px-5 py-3.5 text-sm transition-colors ${
                         isActive(s.to)
-                          ? "bg-white/5 text-[var(--cyan)]"
-                          : "text-white/85 hover:bg-white/5 hover:text-white"
+                          ? "bg-[#F0F6FA] text-[var(--cyan-dk)]"
+                          : "text-[#0F1B2D] hover:bg-[#F0F6FA] hover:text-[var(--cyan-dk)]"
                       }`}
                     >
                       {s.label}
@@ -85,7 +85,7 @@ const Navbar = () => {
               key={item.to}
               to={item.to}
               className={`text-sm font-medium transition-colors ${
-                isActive(item.to) ? "text-[var(--cyan)]" : "text-white/80 hover:text-white"
+                isActive(item.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D] hover:text-[var(--cyan-dk)]"
               }`}
             >
               {item.label}
@@ -96,7 +96,7 @@ const Navbar = () => {
         <div className="hidden lg:block">
           <Link
             to="/contact"
-            className="rounded-md bg-[var(--cyan)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--cyan-dk)]"
+            className="rounded-md bg-[var(--cyan-dk)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--navy)]"
           >
             Contact Us
           </Link>
@@ -107,16 +107,16 @@ const Navbar = () => {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="-mr-2 rounded p-2 text-white lg:hidden"
+          className="-mr-2 rounded p-2 text-[#0F1B2D] lg:hidden"
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-[var(--navy)] lg:hidden">
+        <div className="border-t border-[#D6E2EB] bg-white lg:hidden">
           <div className="shell-wide flex flex-col gap-1 py-4">
-            <p className="px-1 pt-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+            <p className="px-1 pt-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-[#6E7E94]">
               Services
             </p>
             {services.map((s) => (
@@ -124,19 +124,19 @@ const Navbar = () => {
                 key={s.to}
                 to={s.to}
                 className={`rounded-md px-1 py-2.5 text-base ${
-                  isActive(s.to) ? "text-[var(--cyan)]" : "text-white/85"
+                  isActive(s.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D]"
                 }`}
               >
                 {s.label}
               </Link>
             ))}
-            <div className="my-2 h-px bg-white/10" />
+            <div className="my-2 h-px bg-[#D6E2EB]" />
             {primaryNav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 className={`rounded-md px-1 py-2.5 text-base ${
-                  isActive(item.to) ? "text-[var(--cyan)]" : "text-white/85"
+                  isActive(item.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D]"
                 }`}
               >
                 {item.label}
@@ -144,7 +144,7 @@ const Navbar = () => {
             ))}
             <Link
               to="/contact"
-              className="mt-3 rounded-md bg-[var(--cyan)] px-4 py-3 text-center text-sm font-semibold text-white"
+              className="mt-3 rounded-md bg-[var(--cyan-dk)] px-4 py-3 text-center text-sm font-semibold text-white"
             >
               Contact Us
             </Link>

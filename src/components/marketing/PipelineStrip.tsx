@@ -33,7 +33,7 @@ const NODES = [
   {
     ix: "03",
     name: "Claims Accelerator",
-    tag: "Funded in 1–2 days",
+    tag: "Funded in 1 business day*",
     color: "#7ED957",
     to: "/accelerator",
   },

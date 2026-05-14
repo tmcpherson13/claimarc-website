@@ -26,8 +26,8 @@ const steps = [
   {
     title: "Get paid",
     lead: "Next-day funding",
-    body: "Funds are sent directly to you in 1–2 business days after claim submission. No waiting on the payer's timeline.",
-    footnote: "1–2 business days. Always.",
+    body: "Funds are sent directly to you in 1 business day (target) after claim submission. No waiting on the payer's timeline.",
+    footnote: "1 business day target.",
   },
   {
     title: "True-up",
@@ -56,7 +56,7 @@ const delivers = [
     icon: Banknote,
     accent: "cyan" as const,
     title: "Cash flow on your schedule",
-    body: "Turn a 45+ day wait into 1–2 days, on the claims you choose, without covenants or new debt on the balance sheet. Meet payroll. Fund operations. Grow.",
+    body: "Turn a 45+ day wait into 1 day, on the claims you choose, without covenants or new debt on the balance sheet. Meet payroll. Fund operations. Grow.",
     footnote: "Workflow enhanced, not disrupted.",
   },
 ];
@@ -72,8 +72,8 @@ const compareRows = [
 const AcceleratorPage = () => (
   <Layout>
     <SeoHead
-      title="Claim Payment Accelerator — Funded in 1–2 Business Days | ClaimARC"
-      description="ClaimARC's patent-pending Accelerator scores every claim for propensity to pay and advances payment in 1–2 business days at a fraction of the cost of a line of credit or factoring — with bi-directional true-up. Bank, clearinghouse, and lockbox agnostic."
+      title="Claim Payment Accelerator — Funded in 1 Business Day | ClaimARC"
+      description="ClaimARC's patent-pending Accelerator scores every claim for propensity to pay and advances payment in 1 business day (target) at a fraction of the cost of a line of credit or factoring — with bi-directional true-up. Bank, clearinghouse, and lockbox agnostic."
       path="/accelerator"
     />
     <ServiceHero
@@ -90,7 +90,7 @@ const AcceleratorPage = () => (
     <StatRow
       stats={[
         { value: "5.2%", label: "Annual A/R increase", note: "Trend keeps getting worse · Becker's / Kodiak, 2024", accent: "lime" },
-        { value: "1–2", label: "Business days to payment", note: "ClaimARC funding target · always", accent: "cyan" },
+        { value: "1", label: "Business day to payment*", note: "ClaimARC funding target", accent: "cyan" },
         { value: "2-way", label: "Bi-directional true-up", note: "Overage returned to you on every advance", accent: "cyan" },
       ]}
     />
@@ -128,7 +128,7 @@ const AcceleratorPage = () => (
       kicker="ClaimARC partnerships are limited and require qualification."
       headline="The question isn't whether you can afford ClaimARC."
       highlight="It's whether you can afford another 45 days of waiting."
-      subhead="Bring a recent claims file — we'll run it through the model with you on a short call."
+      subhead="A 30-minute conversation with our team — open discussion of how the platform fits your operation, no data required."
     />
   </Layout>
 );
