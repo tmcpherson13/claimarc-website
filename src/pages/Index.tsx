@@ -137,15 +137,7 @@ const Index = () => (
 
     {/* Hero */}
     <section className="relative overflow-hidden">
-      {/* Spotlight gradients localised to hero */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(55% 60% at 80% 10%, rgba(0,200,230,0.20), transparent 60%), radial-gradient(45% 50% at 5% 100%, rgba(126,217,87,0.12), transparent 65%)",
-        }}
-      />
+      <div aria-hidden="true" className="hero-precision-accent" />
       <div className="shell relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.1fr_1fr]">
         <Reveal>
           <div className="mb-6 -ml-1">

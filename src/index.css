@@ -200,8 +200,9 @@
     height: 1px;
   }
 
-  /* Layered fintech background — conic aurora + drifting orbs.
-     Compositing order (bottom→top): ink base, conic aurora, two drifting orbs. */
+  /* Background canvas — pure ink, no orbs.
+     Precision aesthetic comes from .grid-overlay and the .hero-precision-accent
+     scoped to the hero, not from animated blobs. */
   .mesh-bg {
     position: fixed;
     inset: 0;
@@ -209,45 +210,18 @@
     pointer-events: none;
     overflow: hidden;
     background-color: var(--ink-0);
-    /* Slow-rotating conic aurora in brand colors */
-    background-image:
-      conic-gradient(
-        from 210deg at 50% 120%,
-        rgba(0, 200, 230, 0.10) 0deg,
-        rgba(20, 116, 180, 0.16) 70deg,
-        rgba(5, 42, 72, 0.0) 140deg,
-        rgba(126, 217, 87, 0.08) 210deg,
-        rgba(0, 200, 230, 0.10) 320deg,
-        rgba(0, 200, 230, 0.10) 360deg
-      );
-    background-size: 220% 220%;
-    animation: auroraShift 40s ease-in-out infinite alternate;
   }
-  .mesh-bg::before,
-  .mesh-bg::after {
-    content: "";
+
+  /* Single subtle hero accent — high-precision, not synthwave. */
+  .hero-precision-accent {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    will-change: transform;
-  }
-  .mesh-bg::before {
-    width: 62vw;
-    height: 62vw;
-    top: -18vw;
-    right: -12vw;
-    background: radial-gradient(circle, var(--arc-1), transparent 60%);
-    opacity: 0.26;
-    animation: meshDrift 22s ease-in-out infinite alternate;
-  }
-  .mesh-bg::after {
-    width: 58vw;
-    height: 58vw;
-    bottom: -22vw;
-    left: -16vw;
-    background: radial-gradient(circle, var(--arc-3), transparent 62%);
-    opacity: 0.18;
-    animation: meshDrift 28s ease-in-out -8s infinite alternate-reverse;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 75% 20%,
+        rgba(0, 200, 230, 0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 20% 80%,
+        rgba(126, 217, 87, 0.04) 0%, transparent 70%);
   }
 
   /* Precision grid overlay — fine grid + coarser "blueprint" lines, with a
@@ -291,21 +265,6 @@
     mix-blend-mode: screen;
     opacity: 0.7;
   }
-}
-
-@keyframes meshDrift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(-8vw, 6vw, 0) scale(1.15);
-  }
-}
-
-@keyframes auroraShift {
-  0%   { background-position: 0% 0%;   filter: hue-rotate(0deg); }
-  50%  { background-position: 100% 50%; filter: hue-rotate(-12deg); }
-  100% { background-position: 0% 100%; filter: hue-rotate(0deg); }
 }
 
 @keyframes scanDrift {
@@ -426,9 +385,6 @@
   .arc-orbit-rev,
   .arc-float,
   .shimmer-text,
-  .mesh-bg,
-  .mesh-bg::before,
-  .mesh-bg::after,
   .grid-overlay::after,
   .loop-cluster {
     animation: none;
