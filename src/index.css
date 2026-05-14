@@ -421,7 +421,7 @@
   .mesh-bg::before,
   .mesh-bg::after,
   .grid-overlay::after,
-  .loop-dot {
+  .loop-cluster {
     animation: none;
   }
   html {
