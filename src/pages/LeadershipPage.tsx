@@ -19,7 +19,7 @@ const LeadershipPage = () => (
         <Reveal>
           <Eyebrow tone="arc" className="mb-5">The team behind ClaimARC</Eyebrow>
           <h1 className="display text-balance text-4xl leading-[1.05] md:text-6xl">
-            Operators, scientists,{" "}
+            Operators, data scientists,{" "}
             <span className="arc-text">and capital allocators.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-mid)]">

@@ -382,7 +382,7 @@ const Index = () => (
         align="center"
         eyebrow="Leadership"
         title={<>The people <span className="arc-text">accountable</span> for every advance.</>}
-        intro="Operators, scientists, and capital allocators with deep records in healthcare revenue cycle and institutional finance."
+        intro="Operators, data scientists, and capital allocators with deep records in healthcare revenue cycle and institutional finance."
         className="mb-12"
       />
       <LeadershipGrid />
