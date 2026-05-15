@@ -8,7 +8,6 @@ import CompareTable from "@/components/marketing/CompareTable";
 import ValueCards from "@/components/marketing/ValueCards";
 import CtaBand from "@/components/marketing/CtaBand";
 import PartnerBand from "@/components/marketing/PartnerBand";
-import StepFlow from "@/components/marketing/StepFlow";
 import NextPage from "@/components/marketing/NextPage";
 import Reveal from "@/components/marketing/Reveal";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
@@ -26,33 +25,6 @@ const pipeline = [
   { label: "Conversion Platform", sub: "Structured 835s", color: "var(--arc-1)", note: "AI converts paper to structured, auto-postable 835 files in 24–48 hours with your business rules applied. Output returned to your SFTP.", foot: "Builds the data asset." },
   { label: "AI Scoring", sub: "Propensity to pay", color: "var(--arc-2)", key: true, note: "Remittance history trains ML models that predict propensity to pay — per claim, per payer, per procedure. The more you process, the smarter it gets.", foot: "More data = lower cost." },
   { label: "Accelerator", sub: "Funded in 1 day*", color: "var(--lime)", note: "Selected claims funded in 1 business day (target) at a fraction of LOC or factoring cost. Bi-directional true-up built in. Funds directly to you.", foot: "Always in your favor." },
-];
-
-const flywheel = [
-  {
-    title: "Paper & ERA in",
-    lead: "Remittance arrives",
-    body: "EOBs, checks, correspondence, and 835s flow into ClaimARC from any lockbox, bank, or clearinghouse. Your workflow is enhanced, not disrupted.",
-    footnote: "Bank, clearinghouse & lockbox agnostic.",
-  },
-  {
-    title: "Claim to Cash Conversion",
-    lead: "Structured in 24–48h",
-    body: "AI data-lifting converts every EOB, check, and correspondence document to clean, auto-postable 835 files — indexed, categorized, and returned to your SFTP with your custom business rules applied.",
-    footnote: "Builds the data asset.",
-  },
-  {
-    title: "AI Scoring",
-    lead: "Propensity to pay",
-    body: "Your remittance history trains ML models that predict payment likelihood and timing — per claim, per payer, per procedure. The more you process, the sharper it gets.",
-    footnote: "More data = lower cost.",
-  },
-  {
-    title: "Accelerator",
-    lead: "Funded in 1 day",
-    body: "Select which scored claims to fund. Cash lands with you in one to two business days, with bi-directional true-up built into every advance.",
-    footnote: "Always in your favor.",
-  },
 ];
 
 const advantages = [
@@ -96,8 +68,8 @@ const WhyClaimArcPage = () => (
     />
     <ServiceHero
       eyebrow="Acceleration, powered by your data"
-      title={<>Acceleration leads. <span className="arc-text">Your data makes it cheaper.</span></>}
-      body="Claim payment acceleration is the differentiator. Claim-to-cash conversion — paper EOBs, checks, and correspondence indexed and categorized into clean 835s — produces the remittance data that trains the AI scoring engine. That scoring is what lets ClaimARC fund you in 1 business day (target), and it gets cheaper to run the longer you run it. SOC 2 Type II at every step."
+      title={<>Acceleration leads. <span className="arc-text">Your data makes it less expensive.</span></>}
+      body="Claim payment acceleration is the differentiator. Claim-to-cash conversion — paper EOBs, checks, and correspondence indexed and categorized into clean 835s — produces the remittance data that trains the AI scoring engine. That scoring is what lets ClaimARC fund you in 1 business day (target), and it gets less expensive to run the longer you run it. SOC 2 Type II at every step."
       statValue="1"
       statLabel="Business days to payment"
       statNote="Acceleration · Conversion · Intelligence"
@@ -117,13 +89,12 @@ const WhyClaimArcPage = () => (
       ]}
     />
 
-    {/* 01 — Pipeline diagram */}
+    {/* Pipeline — the four stages, with the compounding payoff as the lede. */}
     <Section tone="light">
       <SectionHeading
-        numberedIndex="01"
-        eyebrow="The pipeline at a glance"
-        title={<>Four stages. <span className="arc-text">One platform.</span></>}
-        intro="Remittance enters, conversion structures it, scoring prices it, and the accelerator funds it. Each stage stands on its own — together they compound."
+        eyebrow="How the platform works"
+        title={<>Four stages. <span className="arc-text">More data, less expensive over time.</span></>}
+        intro="Remittance enters, conversion structures it, scoring prices it, and the accelerator funds it. Each stage stands on its own — and every document you process feeds the AI that prices the next one, so the longer you run ClaimARC, the less it costs you to run."
       />
       <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         {pipeline.map((p, i) => (
@@ -149,32 +120,17 @@ const WhyClaimArcPage = () => (
       </div>
     </Section>
 
-    {/* 02 — Flywheel — moved from home */}
-    <Section tone="elev">
-      <SectionHeading
-        numberedIndex="02"
-        eyebrow="How the platform compounds"
-        title={<>More data. Smarter scoring. <span className="arc-text">Lower cost.</span> Repeat.</>}
-        intro="Remittance is the fuel. Every document you process feeds the AI that prices and accelerates your claims — so the longer you run ClaimARC, the better it works for you."
-      />
-      <StepFlow steps={flywheel} />
-    </Section>
-
-    {/* 03 — Three advantages */}
     <Section tone="mist">
       <SectionHeading
-        numberedIndex="03"
-        eyebrow="What changes when you have both"
+        eyebrow="What changes when you run the platform"
         title={<>Three advantages. One vendor. No disruption.</>}
-        intro="Most health systems have one or the other. The ones growing fastest have both."
+        intro="Cash flow transformation, compounding intelligence, and a single relationship that spans paper-to-payment."
       />
       <ValueCards cards={advantages} columns={3} />
     </Section>
 
-    {/* 04 — Comparison */}
     <Section tone="light">
       <SectionHeading
-        numberedIndex="04"
         eyebrow="Why most financing options fall short"
         title={<>A line of credit costs you. Factoring costs you more.</>}
         intro="ClaimARC prices acceleration with AI on your own data — and returns the upside to you."
@@ -182,11 +138,9 @@ const WhyClaimArcPage = () => (
       <CompareTable themHeading="LOC / Factoring" usHeading="ClaimARC" rows={compareRows} />
     </Section>
 
-    {/* 05 — Trust */}
     <Section tone="navy">
       <SectionHeading
         invert
-        numberedIndex="05"
         eyebrow="Trust & compliance"
         eyebrowTone="cyan"
         title={<>Built for healthcare from the first byte.</>}
@@ -214,17 +168,17 @@ const WhyClaimArcPage = () => (
 
     <NextPage
       eyebrow="Continue the conversation"
-      title="Run the numbers against your volume."
-      description="Book a 30-minute working session with our team. We'll price the model against your remittance and your DSO — no slides."
+      title="Talk through how it fits your operation."
+      description="A 30-minute working session with our team — open discussion on how conversion, scoring, and acceleration would map to your payer mix, your volumes, and your existing workflow."
       to="/contact"
       cta="Talk to the team"
     />
 
     <CtaBand
       kicker="ClaimARC partnerships are limited and require qualification."
-      headline="Most health systems have one or the other."
-      highlight="The ones growing fastest have both."
-      subhead="Talk to our team about bringing conversion, intelligence, and acceleration under one roof."
+      headline="Conversion. Intelligence. Acceleration."
+      highlight="Three services. One platform."
+      subhead="Talk to our team about bringing all three under one roof — built around the service that matters to you most."
     />
   </Layout>
 );

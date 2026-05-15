@@ -135,7 +135,6 @@ const Index = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
-        numberedIndex="02"
         eyebrow="The answer"
         title={<>One platform. <span className="arc-text">Acceleration at the center.</span></>}
         intro="Acceleration is the differentiator. Claim-to-cash conversion and ERA processing are the supporting services that feed it — each works on its own; together they create an advantage built from your own data."
@@ -294,7 +293,6 @@ const Index = () => (
     <Section tone="elev">
       <SectionHeading
         align="center"
-        numberedIndex="03"
         eyebrow="Run your numbers"
         title={<>What does <span className="arc-text">1-day funding</span> unlock for your AR?</>}
         intro="No email, no gate — move the sliders to see the shape of the upside on your own volume."

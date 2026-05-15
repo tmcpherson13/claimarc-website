@@ -62,7 +62,6 @@ const DenialCrisis = () => (
   <Section tone="navy">
     <Reveal>
       <SectionHeading
-        numberedIndex="01"
         eyebrow="Does this feel familiar?"
         title={
           <>
