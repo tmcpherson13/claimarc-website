@@ -4,26 +4,28 @@ import { Link } from "react-router-dom";
 /* ---------------------------------------------------------------- Section */
 
 /**
- * Dark-canvas tones. Every tone is a layer of the same near-black canvas;
- * "light"/"mist" stay as legacy aliases so existing pages keep working.
+ * Two-tone dark rhythm. Every "dark" tone maps to one of two surfaces —
+ * FLAT (pure ink) or ELEV (ink + soft top gradient). Section tones from
+ * earlier pages are kept as semantic aliases so existing markup doesn't
+ * change; they just resolve to one of the two surfaces. Visual rhythm
+ * comes from the alternation, not from contrast jumps. The "paper" tone
+ * is preserved as a true light break for the few sections that need
+ * documentation-style readability.
  */
 type Tone = "light" | "mist" | "navy" | "navy-dk" | "deep" | "elev" | "paper";
 
 const toneClass: Record<Tone, string> = {
-  // Default surface — translucent so the mesh background shows through
-  light: "text-[var(--text-hi)]",
-  // Subtly lifted panel
-  mist: "bg-[var(--ink-1)]/60 text-[var(--text-hi)] backdrop-blur-xl",
-  // Brand navy strip — preserved for explicit brand sections
-  navy: "bg-[var(--ink-2)]/70 text-[var(--text-hi)] backdrop-blur-xl",
-  "navy-dk": "bg-[var(--ink-1)] text-[var(--text-hi)]",
-  // Deepest — for end-of-page CTA bands
-  deep: "bg-[var(--ink-0)] text-[var(--text-hi)]",
-  // Elevated glass — for feature islands
-  elev: "bg-[var(--ink-2)]/70 text-[var(--text-hi)] backdrop-blur-xl border-y border-white/[0.06]",
-  // Light "paper" break — pale cyan-tinted near-white. ClaimARC's
-  // institutional-document tone, used to give the page a dark→light→dark
-  // rhythm without dropping the cool brand temperature.
+  // FLAT surface — pure ink, the resting tone
+  light: "surface-flat text-[var(--text-hi)]",
+  deep: "surface-flat text-[var(--text-hi)]",
+  "navy-dk": "surface-flat text-[var(--text-hi)]",
+
+  // ELEV surface — lifted ink with soft cyan-tinted top gradient
+  mist: "surface-elev text-[var(--text-hi)]",
+  navy: "surface-elev text-[var(--text-hi)]",
+  elev: "surface-elev text-[var(--text-hi)]",
+
+  // Light institutional break — used sparingly for documentation-tone moments
   paper:
     "bg-[#EEF4F8] text-[#0F1B2D] border-y border-[#D6E2EB] [--text-hi:#0F1B2D] [--text-mid:#3C5067] [--text-lo:#6E7E94]",
 };
