@@ -6,7 +6,6 @@ import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
-import CtaBand from "@/components/marketing/CtaBand";
 import NextPage from "@/components/marketing/NextPage";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
 
@@ -112,12 +111,6 @@ const EraProcessingPage = () => (
       cta="See the full platform"
     />
 
-    <CtaBand
-      kicker="ERA and claim-to-cash conversion work best together — most teams have one, not both."
-      headline="Bring every remittance into one pipeline."
-      highlight="Then put that data to work."
-      subhead="We'll map your current ERA flow and show where ClaimARC removes the manual steps."
-    />
   </Layout>
 );
 

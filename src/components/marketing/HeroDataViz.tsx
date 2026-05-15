@@ -47,7 +47,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
   }, []);
 
   return (
-    <div className={`relative hidden md:flex flex-col items-center justify-center ${className}`} aria-hidden="true">
+    <div className={`relative hidden lg:flex flex-col items-center justify-center ${className}`} aria-hidden="true">
       {/* The duel — two big numerals with an arrow between */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 lg:gap-10">
         {/* Before — 45 days */}

@@ -83,15 +83,9 @@ const Index = () => (
             <span className="block text-[var(--text-hi)]">Get paid in</span>
             <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
           </h1>
-          <p className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="shimmer-text">Precision valuation.</span>{" "}
-            <span className="shimmer-text">Lightning acceleration.</span>
-          </p>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
-            ClaimARC's AI scores every claim, prices the risk, and advances cash to
-            you in as little as one business day — instead of the 45+ you're waiting
-            on now. Claim-to-cash conversion, correspondence indexing, and ERA
-            processing feed the engine.
+          <p className="mt-5 max-w-xl text-xl leading-snug tracking-tight text-[var(--text-mid)] sm:text-2xl">
+            <span className="text-[var(--text-hi)]">AI scores every claim.</span>{" "}
+            We advance the cash — instead of the 45+ days you wait on the payer now.
           </p>
           <p className="mt-3 max-w-xl text-xs leading-relaxed text-[var(--text-lo)]">
             <span className="text-[var(--lime)]">*</span> One business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
@@ -104,23 +98,8 @@ const Index = () => (
               See how it works
             </CtaLink>
           </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--text-lo)]">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--arc-1)]" />
-              SOC 2 Type II
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--lime)]" />
-              HIPAA Compliant
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--arc-2)]" />
-              Patent Pending
-            </span>
-          </div>
         </Reveal>
-        <Reveal delay={140} className="hidden md:block">
+        <Reveal delay={140} className="hidden lg:block">
           <HeroDataViz />
         </Reveal>
       </div>
@@ -174,17 +153,15 @@ const Index = () => (
                 </h3>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-[var(--text-mid)]">
                   AI scores every claim for{" "}
-                  <Define
-                    term="propensity to pay"
-                    definition="ClaimARC's per-claim probability that a given payer pays a given amount within a target window — produced by ML models trained on your remittance history."
-                  />{" "}
-                  and advances payment to you in 1 business day (target) — at a fraction of the
-                  cost of a line of credit or factoring.{" "}
-                  <Define
-                    term="Bi-directional true-up"
-                    definition="If the claim ultimately pays more than ClaimARC priced, the upside is returned to you. The model never benefits from being wrong in its favor."
-                  />{" "}
-                  returns the upside to you.
+                  <span className="font-semibold text-[var(--text-hi)]">propensity to pay</span> —
+                  the probability the payer pays the claim, predicted per claim — then
+                  advances payment to you in 1 business day (target) at a fraction of the
+                  cost of a line of credit or factoring. If a claim ultimately pays more
+                  than we priced, the upside comes back to you
+                  {" "}(<Define
+                    term="bi-directional true-up"
+                    definition="ClaimARC's recourse model: overage on every advance is returned to you. The model never benefits from being wrong in its favor."
+                  />).
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--lime)] transition-transform group-hover:translate-x-0.5">
@@ -303,7 +280,7 @@ const Index = () => (
 
     {/* 06 — Convert. */}
     <CtaBand
-      kicker="ClaimARC partnerships are limited and require qualification."
+      kicker="We onboard a small number of new partners each quarter. We work the math with you first."
       headline="The question isn't whether you can afford ClaimARC."
       highlight="It's whether you can afford another 45 days of waiting."
       subhead="Book a 30-minute working session with our team and see the model against your own numbers."

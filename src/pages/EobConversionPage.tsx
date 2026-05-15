@@ -6,7 +6,6 @@ import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
-import CtaBand from "@/components/marketing/CtaBand";
 import NextPage from "@/components/marketing/NextPage";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
 
@@ -123,12 +122,6 @@ const EobConversionPage = () => (
       cta="ERA Processing"
     />
 
-    <CtaBand
-      kicker="Every paper EOB processed manually is a cost your organization shouldn't be carrying."
-      headline="Stop absorbing the cost of inefficiency."
-      highlight="Eliminate it — and let the data compound in your favor."
-      subhead="See a sample 835 built from your own remittance in a short working session."
-    />
   </Layout>
 );
 

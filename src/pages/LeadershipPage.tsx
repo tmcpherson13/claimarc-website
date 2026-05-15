@@ -112,7 +112,7 @@ const LeadershipPage = () => (
                     color: p.accent,
                   }}
                 >
-                  <Icon size={20} />
+                  <Icon size={22} />
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-[var(--text-hi)]">{p.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--text-mid)]">{p.body}</p>
