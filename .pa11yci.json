@@ -1,0 +1,28 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "wait": 1500,
+    "concurrency": 1,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+    },
+    "ignore": [
+      "WCAG2AA.Principle1.Guideline1_3.1_3_5.H98"
+    ],
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    }
+  },
+  "urls": [
+    "http://127.0.0.1:4173/",
+    "http://127.0.0.1:4173/why-claimarc",
+    "http://127.0.0.1:4173/accelerator",
+    "http://127.0.0.1:4173/eob-conversion",
+    "http://127.0.0.1:4173/era-processing",
+    "http://127.0.0.1:4173/leadership",
+    "http://127.0.0.1:4173/contact",
+    "http://127.0.0.1:4173/insights"
+  ]
+}

@@ -11,9 +11,9 @@
     --navy-dk: #052A48;
     --navy-soft: #0E5288;
     --cyan: #00A0C8;
-    --cyan-dk: #0085A6;
+    --cyan-dk: #006A87;   /* darkened from #0085A6 — clears WCAG AA (6.16:1) on white */
     --lime: #68B840;
-    --lime-dk: #559A32;
+    --lime-dk: #3F7724;   /* darkened from #559A32 — clears AA (4.88:1) on paper tone */
 
     /* Dark canvas system */
     --ink-0: #04060C;    /* deepest — body */
@@ -36,7 +36,7 @@
     /* Signature ARC gradient — tuned to the official ClaimARC logo
        (navy ribbon underside → cyan ribbon top → lime accent dots). */
     --arc-1: #00C8E6;    /* electric cyan — logo top stroke, brightened */
-    --arc-2: #1474B4;    /* mid blue — bridges cyan to navy */
+    --arc-2: #3993D5;    /* mid blue — brightened from #1474B4 to clear AA on ink (4.04:1 → 6.09:1) */
     --arc-3: #7ED957;    /* lime — logo accent dots, brightened for dark UI */
     --arc-navy: #052A48; /* deep navy — ribbon shadow */
     --arc-glow: #00C8E6;
@@ -685,6 +685,19 @@
     width: 18px;
     height: 18px;
   }
+}
+/* Keyboard focus — visible ring around the thumb, scoped to focus-visible so
+ * mouse users don't see the outline when they click + drag. */
+.dso-slider:focus-visible {
+  outline: none;
+}
+.dso-slider:focus-visible::-webkit-slider-thumb {
+  outline: 3px solid var(--arc-1);
+  outline-offset: 3px;
+}
+.dso-slider:focus-visible::-moz-range-thumb {
+  outline: 3px solid var(--arc-1);
+  outline-offset: 3px;
 }
 
 /* Scroll-down hint arrow — slow drift down + fade to suggest "more below". */

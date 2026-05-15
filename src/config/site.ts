@@ -7,7 +7,7 @@ export const SITE_URL = "https://www.claimarc.com";
 export const COMPANY = {
   name: "ClaimARC",
   legal: "Retrieve Remit, LLC",
-  tagline: "Precision valuation. Lightning acceleration.",
+  tagline: "Get paid in 1 business day.",
   arc: "Acceleration · Receivables · Contracts",
   email: "info@claimarc.com",
 };
