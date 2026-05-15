@@ -60,7 +60,6 @@ const LeadershipPage = () => (
       <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.1fr]">
         <Reveal>
           <SectionHeading
-            numberedIndex="01"
             eyebrow="About ClaimARC"
             title={<>Born from a survey. <span className="arc-text">Two answers kept coming back.</span></>}
             intro="ClaimARC, a Retrieve Remit company, was born from a partnership with a leading Electronic Health Record platform. When we surveyed their providers, the answers came back unanimous: time-to-reimbursement was the biggest pain point, and making sense of claim-to-cash data — paper and electronic — was a close second."
@@ -127,7 +126,6 @@ const LeadershipPage = () => (
     <Section tone="light">
       <SectionHeading
         align="center"
-        numberedIndex="02"
         eyebrow="Leadership"
         title={<>The people accountable for every advance.</>}
         intro="Real names, real expertise, real accountability. We treat client capital like our own — because it is."
