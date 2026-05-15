@@ -27,7 +27,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
     }
     const FROM = 45;
     const TO = 1;
-    const DURATION = 1600;
+    const DURATION = 3200;
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
