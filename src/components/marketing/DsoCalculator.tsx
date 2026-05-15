@@ -173,16 +173,13 @@ const DsoCalculator = () => {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 backdrop-blur">
             <Calculator size={13} className="text-[var(--arc-1)]" />
             <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[var(--text-mid)]">
-              Run your numbers
+              Three inputs · One number
             </span>
           </div>
-          <h3 className="display text-balance text-3xl leading-tight tracking-tight text-[var(--text-hi)] md:text-4xl">
-            What does <span className="arc-text">1-day funding</span> unlock for
-            your AR?
-          </h3>
           <p className="max-w-md text-sm leading-relaxed text-[var(--text-mid)]">
-            Order-of-magnitude only — not a quote. Move the sliders to see the
-            shape of the upside on your own volume. No data leaves the page.
+            Order-of-magnitude only — not a quote, just the shape of the upside on
+            your own volume. Numbers stay on this page; nothing is sent anywhere.
+            Pick a preset to start, or drag the sliders.
           </p>
 
           <div className="space-y-5">

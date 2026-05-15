@@ -79,11 +79,11 @@ const Index = () => (
               AI-Powered Claim Payment Acceleration
             </span>
           </div>
-          <h1 className="display mt-6 text-balance text-5xl leading-[0.98] tracking-tight md:text-6xl lg:text-[4.4rem]">
+          <h1 className="display mt-6 text-balance text-[2.6rem] leading-[1.02] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.4rem] lg:leading-[0.98]">
             <span className="block text-[var(--text-hi)]">Get paid in</span>
             <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
           </h1>
-          <p className="mt-5 text-2xl font-semibold tracking-tight md:text-3xl">
+          <p className="mt-5 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
             <span className="shimmer-text">Precision valuation.</span>{" "}
             <span className="shimmer-text">Lightning acceleration.</span>
           </p>

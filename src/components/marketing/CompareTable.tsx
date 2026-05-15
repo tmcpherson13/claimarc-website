@@ -27,7 +27,8 @@ const CompareTable = ({
   footer?: React.ReactNode;
 }) => (
   <div className="mt-12 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl">
-    <table className="w-full border-collapse text-left text-sm">
+    <div className="overflow-x-auto">
+    <table className="w-full min-w-[640px] border-collapse text-left text-sm">
       <thead>
         <tr>
           <th className="w-1/3 bg-white/[0.02] px-5 py-4" />
@@ -105,6 +106,7 @@ const CompareTable = ({
         </tfoot>
       )}
     </table>
+    </div>
   </div>
 );
 
