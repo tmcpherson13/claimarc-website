@@ -25,9 +25,11 @@ const toneClass: Record<Tone, string> = {
   navy: "surface-elev text-[var(--text-hi)]",
   elev: "surface-elev text-[var(--text-hi)]",
 
-  // Light institutional break — used sparingly for documentation-tone moments
+  // Light institutional break — used sparingly for documentation-tone moments.
+  // Scope-overrides the arc tokens so brand-color text (eyebrows, footnotes,
+  // borders) hits WCAG AA on the light background instead of the dark-bg shades.
   paper:
-    "bg-[#EEF4F8] text-[#0F1B2D] border-y border-[#D6E2EB] [--text-hi:#0F1B2D] [--text-mid:#3C5067] [--text-lo:#6E7E94]",
+    "bg-[#EEF4F8] text-[#0F1B2D] border-y border-[#D6E2EB] [--text-hi:#0F1B2D] [--text-mid:#3C5067] [--text-lo:#6E7E94] [--arc-1:#006A87] [--arc-2:#1A5F96] [--arc-3:#3F7724]",
 };
 
 export function Section({

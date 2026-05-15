@@ -143,8 +143,8 @@ const AcceleratorPage = () => (
     <Section tone="mist">
       <SectionHeading
         eyebrow="What ClaimARC delivers"
-        title={<>Precision valuation. Lightning acceleration.</>}
-        intro="Fair pricing, recourse that runs both ways, and cash when you need it — on the claims you choose."
+        title={<>Fair pricing. Recourse that runs <span className="arc-text">both ways.</span></>}
+        intro="Cash when you need it — on the claims you choose, with the upside returned to you."
       />
       <ValueCards cards={delivers} columns={3} />
     </Section>

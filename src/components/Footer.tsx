@@ -28,7 +28,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/40">
+            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
               Services
             </p>
             <ul className="space-y-2.5">
@@ -46,7 +46,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/40">
+            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
               Company
             </p>
             <ul className="space-y-2.5">
@@ -64,7 +64,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/40">
+            <p className="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-lo)]">
               Trust & Compliance
             </p>
             <ul className="flex flex-wrap gap-2">
@@ -80,7 +80,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mono mt-12 flex flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
+        <div className="mono mt-12 flex flex-col gap-2 border-t border-white/[0.06] pt-6 text-xs text-[var(--text-lo)] md:flex-row md:items-center md:justify-between">
           <span>
             © 2026 Retrieve Remit, LLC dba ClaimARC. Patent Pending. All rights reserved.
           </span>

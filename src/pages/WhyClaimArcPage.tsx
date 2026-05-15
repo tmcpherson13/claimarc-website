@@ -99,16 +99,16 @@ const WhyClaimArcPage = () => (
         {pipeline.map((p, i) => (
           <Reveal key={p.label} delay={i * 80} className="flex flex-col">
             <div
-              className="relative flex h-24 flex-col justify-center rounded-xl px-5 text-white"
+              className="relative flex h-24 flex-col justify-center rounded-xl px-5 text-[var(--ink-0)]"
               style={{ background: p.color }}
             >
               {p.key && (
-                <span className="absolute -top-2.5 left-5 rounded bg-[var(--lime)] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-[var(--ink-0)]">
+                <span className="absolute -top-2.5 left-5 rounded bg-[var(--ink-0)] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-[var(--lime)]">
                   Key
                 </span>
               )}
               <p className="text-base font-bold uppercase tracking-wide">{p.label}</p>
-              <p className="text-xs text-white/70">{p.sub}</p>
+              <p className="text-xs text-[var(--ink-0)]/75">{p.sub}</p>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-[var(--text-mid)]">{p.note}</p>
             <p className="mt-4 border-t border-white/[0.08] pt-3 text-xs font-semibold text-[var(--arc-1)]">
@@ -162,7 +162,7 @@ const WhyClaimArcPage = () => (
           );
         })}
       </div>
-      <p className="mt-6 text-xs text-white/40">{compliance.join(" · ")}</p>
+      <p className="mt-6 text-xs text-[var(--text-lo)]">{compliance.join(" · ")}</p>
     </Section>
 
     <NextPage
