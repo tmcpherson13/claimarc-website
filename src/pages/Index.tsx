@@ -79,9 +79,18 @@ const Index = () => (
               AI-Powered Claim Payment Acceleration
             </span>
           </div>
-          <h1 className="display mt-6 text-balance text-[2.6rem] leading-[1.02] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.4rem] lg:leading-[0.98]">
+          <h1 className="display mt-6 text-balance text-[2.6rem] leading-[1.08] tracking-tight sm:text-5xl sm:leading-[1.06] md:text-6xl lg:text-[4.4rem] lg:leading-[1.04]">
             <span className="block text-[var(--text-hi)]">Get paid in</span>
-            <span className="block arc-text">1 business day.<span className="text-[0.4em] align-super text-[var(--text-lo)] ml-1">*</span></span>
+            <span className="block arc-text">
+              1 business day.
+              <span
+                aria-hidden="true"
+                className="ml-0.5 align-top text-[0.22em] font-normal text-[var(--text-lo)]/60"
+                style={{ WebkitTextFillColor: "currentColor" }}
+              >
+                *
+              </span>
+            </span>
           </h1>
           <p className="mt-5 max-w-xl text-xl leading-snug tracking-tight text-[var(--text-mid)] sm:text-2xl">
             <span className="text-[var(--text-hi)]">AI scores every claim.</span>{" "}
