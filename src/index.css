@@ -22,6 +22,12 @@
     --ink-3: #11182E;    /* hover / elevated */
     --ink-4: #1A2240;    /* borders, dividers */
 
+    /* Tonal-rhythm surfaces. Two values shifts (~3–8% luminance) plus a
+     * subtle gradient tilt — gives the eye section breaks without the
+     * jarring contrast of true light/dark slabs. */
+    --surface-flat: var(--ink-0);
+    --surface-elev: var(--ink-1);
+
     /* Surface text */
     --text-hi: #F2F6FF;
     --text-mid: #B8C2D9;
@@ -590,6 +596,42 @@
 .home-dot-grid {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='1' cy='1' r='1' fill='white' fill-opacity='0.04'/></svg>");
   background-repeat: repeat;
+}
+
+/* ----------------------------------------------------------------
+   Two-tone dark rhythm
+   ----------------------------------------------------------------
+   Section backgrounds alternate between FLAT (pure ink) and ELEV
+   (ink + a soft vertical gradient with brand tint at the top edge).
+   Stays inside the dark aesthetic, but gives the eye a clean shift
+   per section — same trick film uses with subtle exposure changes
+   between scenes. */
+
+.surface-flat {
+  background: var(--surface-flat);
+}
+
+.surface-elev {
+  background:
+    radial-gradient(
+      120% 60% at 50% 0%,
+      rgba(0, 200, 230, 0.05),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #0A0F1C 0%, var(--surface-elev) 35%, var(--surface-elev) 100%);
+}
+
+/* Optional seam — thin gradient strip placed BETWEEN two sections to
+ * blur their join. Used sparingly where a clean break would feel
+ * abrupt. */
+.surface-seam {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
 }
 
 /* DSO calculator — custom range slider with gradient track + glowing thumb. */
