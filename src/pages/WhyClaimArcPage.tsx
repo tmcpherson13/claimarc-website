@@ -6,7 +6,6 @@ import ComplianceStrip from "@/components/marketing/ComplianceStrip";
 import StatRow from "@/components/marketing/StatRow";
 import CompareTable from "@/components/marketing/CompareTable";
 import ValueCards from "@/components/marketing/ValueCards";
-import CtaBand from "@/components/marketing/CtaBand";
 import PartnerBand from "@/components/marketing/PartnerBand";
 import NextPage from "@/components/marketing/NextPage";
 import Reveal from "@/components/marketing/Reveal";
@@ -174,12 +173,6 @@ const WhyClaimArcPage = () => (
       cta="Talk to the team"
     />
 
-    <CtaBand
-      kicker="ClaimARC partnerships are limited and require qualification."
-      headline="Conversion. Intelligence. Acceleration."
-      highlight="Three services. One platform."
-      subhead="Talk to our team about bringing all three under one roof — built around the service that matters to you most."
-    />
   </Layout>
 );
 

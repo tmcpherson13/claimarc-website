@@ -7,7 +7,6 @@ import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
 import CompareTable from "@/components/marketing/CompareTable";
-import CtaBand from "@/components/marketing/CtaBand";
 import NextPage from "@/components/marketing/NextPage";
 import Reveal from "@/components/marketing/Reveal";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
@@ -198,13 +197,6 @@ const AcceleratorPage = () => (
       description="The Accelerator is only as smart as the remittance it learns from. Claim to Cash Conversion is how paper EOBs, checks, and correspondence become the structured data the AI uses to price you."
       to="/eob-conversion"
       cta="Claim to Cash Conversion"
-    />
-
-    <CtaBand
-      kicker="ClaimARC partnerships are limited and require qualification."
-      headline="The question isn't whether you can afford ClaimARC."
-      highlight="It's whether you can afford another 45 days of waiting."
-      subhead="A 30-minute conversation with our team — open discussion of how the platform fits your operation, no data required."
     />
   </Layout>
 );
