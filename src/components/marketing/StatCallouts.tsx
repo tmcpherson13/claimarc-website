@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Clock, DollarSign, FileCheck, Target, type LucideIcon } from "lucide-react";
+import { Archive, Clock, FileCheck, RefreshCw, type LucideIcon } from "lucide-react";
 
 type Stat = {
   icon: LucideIcon;
@@ -13,22 +13,22 @@ type Stat = {
 
 const stats: Stat[] = [
   {
-    icon: DollarSign,
-    prefix: "$",
-    target: 2.5,
-    suffix: "B+",
-    decimals: 1,
-    label: "Recovered for clients",
-    ariaLabel: "$2.5 billion plus recovered for clients",
-  },
-  {
-    icon: Target,
+    icon: RefreshCw,
     prefix: "",
-    target: 98,
+    target: 100,
     suffix: "%",
     decimals: 0,
-    label: "Claim accuracy",
-    ariaLabel: "98 percent claim accuracy",
+    label: "Bi-directional true-up",
+    ariaLabel: "One hundred percent bi-directional true-up — overage on every advance returned to you",
+  },
+  {
+    icon: Archive,
+    prefix: "",
+    target: 10,
+    suffix: "yr",
+    decimals: 0,
+    label: "Audit-ready archive",
+    ariaLabel: "Ten year audit-ready remittance archive option",
   },
   {
     icon: Clock,

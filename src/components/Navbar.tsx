@@ -26,6 +26,11 @@ const Navbar = () => {
     pathname === to || (to !== "/" && pathname.startsWith(to));
   const servicesActive = services.some((s) => isActive(s.to));
 
+  // Always scroll to top on header nav click. ScrollToTop handles cross-page;
+  // this handler additionally covers clicks on the link to the current page
+  // (where pathname doesn't change and ScrollToTop wouldn't fire).
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
     <header
       className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
@@ -35,7 +40,12 @@ const Navbar = () => {
       }`}
     >
       <div className="shell-wide flex h-16 items-center justify-between gap-6">
-        <Link to="/" aria-label="ClaimARC home" className="shrink-0">
+        <Link
+          to="/"
+          aria-label="ClaimARC home"
+          className="shrink-0"
+          onClick={scrollTop}
+        >
           <Logo variant="color" kind="horiz" height={40} />
         </Link>
 
@@ -66,6 +76,7 @@ const Navbar = () => {
                     <Link
                       key={s.to}
                       to={s.to}
+                      onClick={scrollTop}
                       className={`block px-5 py-3.5 text-sm transition-colors ${
                         isActive(s.to)
                           ? "bg-[#F0F6FA] text-[var(--cyan-dk)]"
@@ -84,6 +95,7 @@ const Navbar = () => {
             <Link
               key={item.to}
               to={item.to}
+              onClick={scrollTop}
               className={`text-sm font-medium transition-colors ${
                 isActive(item.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D] hover:text-[var(--cyan-dk)]"
               }`}
@@ -96,6 +108,7 @@ const Navbar = () => {
         <div className="hidden lg:block">
           <Link
             to="/contact"
+            onClick={scrollTop}
             className="rounded-md bg-[var(--cyan-dk)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--navy)]"
           >
             Contact Us
@@ -123,6 +136,7 @@ const Navbar = () => {
               <Link
                 key={s.to}
                 to={s.to}
+                onClick={scrollTop}
                 className={`rounded-md px-1 py-2.5 text-base ${
                   isActive(s.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D]"
                 }`}
@@ -135,6 +149,7 @@ const Navbar = () => {
               <Link
                 key={item.to}
                 to={item.to}
+                onClick={scrollTop}
                 className={`rounded-md px-1 py-2.5 text-base ${
                   isActive(item.to) ? "text-[var(--cyan-dk)]" : "text-[#0F1B2D]"
                 }`}
@@ -144,6 +159,7 @@ const Navbar = () => {
             ))}
             <Link
               to="/contact"
+              onClick={scrollTop}
               className="mt-3 rounded-md bg-[var(--cyan-dk)] px-4 py-3 text-center text-sm font-semibold text-white"
             >
               Contact Us

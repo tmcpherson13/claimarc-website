@@ -1,4 +1,4 @@
-import { Banknote, Scale, Target } from "lucide-react";
+import { Banknote, FlaskConical, Scale, Settings2, ShieldCheck, Target } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import ServiceHero from "@/components/marketing/ServiceHero";
@@ -8,7 +8,33 @@ import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
 import CompareTable from "@/components/marketing/CompareTable";
 import CtaBand from "@/components/marketing/CtaBand";
+import NextPage from "@/components/marketing/NextPage";
+import Reveal from "@/components/marketing/Reveal";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
+
+const implementationPillars = [
+  {
+    icon: ShieldCheck,
+    accent: "var(--arc-1)",
+    title: "Comprehensive onboarding",
+    body: "A guided implementation playbook — connectivity, security, SLAs, escalation paths — documented end to end before a single file moves. Your team always knows what's next.",
+    footnote: "No surprises. Ever.",
+  },
+  {
+    icon: FlaskConical,
+    accent: "var(--arc-3)",
+    title: "Free parallel testing",
+    body: "Run ClaimARC against your live remittance in parallel with your current process — at no cost — until output meets your bar. You only commit when the numbers prove themselves.",
+    footnote: "Prove it before you commit.",
+  },
+  {
+    icon: Settings2,
+    accent: "var(--arc-2)",
+    title: "Your business rules",
+    body: "Posting logic, payer mappings, exception handling, adjustment codes — encoded to your specifications, not ours. ClaimARC adapts to how your shop already works.",
+    footnote: "Configured to you.",
+  },
+];
 
 const steps = [
   {
@@ -123,6 +149,56 @@ const AcceleratorPage = () => (
       />
       <ValueCards cards={delivers} columns={3} />
     </Section>
+
+    {/* Frictionless implementation — moved from home */}
+    <Section tone="paper">
+      <SectionHeading
+        align="center"
+        eyebrow="Frictionless implementation"
+        title={<>Live without <span className="text-[var(--cyan-dk)]">the implementation tax.</span></>}
+        intro="ClaimARC is engineered to drop into your existing workflow — not replace it. Onboarding is documented end-to-end, testing is free, and your business rules drive the output."
+      />
+      <div className="mt-12 grid gap-6 md:grid-cols-3">
+        {implementationPillars.map((p, i) => {
+          const Icon = p.icon;
+          return (
+            <Reveal key={p.title} delay={i * 90}>
+              <div
+                className="relative flex h-full flex-col bg-white p-7"
+                style={{
+                  borderRadius: "14px",
+                  border: "1px solid #D6E2EB",
+                  borderLeft: `3px solid ${p.accent}`,
+                }}
+              >
+                <div
+                  className="flex h-11 w-11 items-center justify-center rounded-xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${p.accent}22, ${p.accent}05)`,
+                    border: `1px solid ${p.accent}44`,
+                    color: p.accent,
+                  }}
+                >
+                  <Icon size={22} />
+                </div>
+                <h3 className="mt-5 text-xl font-bold text-[var(--text-hi)]">{p.title}</h3>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text-mid)]">{p.body}</p>
+                <p className="mt-5 text-[0.7rem] font-semibold uppercase tracking-[0.18em]" style={{ color: p.accent }}>
+                  {p.footnote}
+                </p>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </Section>
+
+    <NextPage
+      title="Next: where the data comes from."
+      description="The Accelerator is only as smart as the remittance it learns from. Claim to Cash Conversion is how paper EOBs, checks, and correspondence become the structured data the AI uses to price you."
+      to="/eob-conversion"
+      cta="Claim to Cash Conversion"
+    />
 
     <CtaBand
       kicker="ClaimARC partnerships are limited and require qualification."

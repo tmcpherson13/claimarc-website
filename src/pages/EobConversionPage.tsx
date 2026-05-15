@@ -7,6 +7,7 @@ import StatRow from "@/components/marketing/StatRow";
 import StepFlow from "@/components/marketing/StepFlow";
 import ValueCards from "@/components/marketing/ValueCards";
 import CtaBand from "@/components/marketing/CtaBand";
+import NextPage from "@/components/marketing/NextPage";
 import { Section, SectionHeading } from "@/components/marketing/primitives";
 
 const steps = [
@@ -114,6 +115,13 @@ const EobConversionPage = () => (
         <span className="inline-flex items-center gap-2"><InfinityIcon size={16} className="text-[var(--arc-1)]" />A competitive moat that builds itself.</span>
       </div>
     </Section>
+
+    <NextPage
+      title="Next: the electronic side of the same engine."
+      description="Conversion handles paper and correspondence. ERA Processing handles the 835s already coming in — normalized, reconciled, and posted across every payer."
+      to="/era-processing"
+      cta="ERA Processing"
+    />
 
     <CtaBand
       kicker="Every paper EOB processed manually is a cost your organization shouldn't be carrying."
