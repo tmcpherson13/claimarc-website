@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "ClaimARC Website <notifications@claimarc.com>",
+          from: "ClaimARC Website <onboarding@resend.dev>",
           to: [notifyTo],
           reply_to: record.email,
           subject: `New contact request — ${record.organization}`,
