@@ -35,11 +35,7 @@ const App = () => (
           <Route path="/insights/:slug" element={<InsightsDetail />} />
           <Route path="/contact" element={<ContactPage />} />
 
-          {/* Legacy ZDefense paths → closest ClaimARC equivalent */}
-          <Route path="/platform" element={<Navigate to="/why-claimarc" replace />} />
-          <Route path="/why-zdefense" element={<Navigate to="/why-claimarc" replace />} />
-          <Route path="/solutions" element={<Navigate to="/why-claimarc" replace />} />
-          <Route path="/workflows" element={<Navigate to="/why-claimarc" replace />} />
+          {/* Legacy short-link redirects */}
           <Route path="/pricing" element={<Navigate to="/contact" replace />} />
           <Route path="/about" element={<Navigate to="/why-claimarc" replace />} />
 
