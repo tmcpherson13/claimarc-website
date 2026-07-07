@@ -40,8 +40,9 @@ const STATIC_ROUTES = [
   { loc: "/accelerator",    freq: "monthly", priority: "0.9" },
   { loc: "/eob-conversion", freq: "monthly", priority: "0.9" },
   { loc: "/era-processing", freq: "monthly", priority: "0.9" },
+  { loc: "/contract-intelligence", freq: "monthly", priority: "0.9" },
   { loc: "/why-claimarc",   freq: "monthly", priority: "0.8" },
-  { loc: "/leadership",     freq: "monthly", priority: "0.7" },
+  { loc: "/our-story",      freq: "monthly", priority: "0.6" },
   { loc: "/contact",        freq: "monthly", priority: "0.7" },
   { loc: "/insights",       freq: "weekly",  priority: "0.8" },
 ];

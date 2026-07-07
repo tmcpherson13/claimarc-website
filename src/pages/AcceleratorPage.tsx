@@ -81,7 +81,7 @@ const delivers = [
     icon: Banknote,
     accent: "cyan" as const,
     title: "Cash flow on your schedule",
-    body: "Turn a 45+ day wait into 1 day, on the claims you choose, without covenants or new debt on the balance sheet. Meet payroll. Fund operations. Grow.",
+    body: "Turn a 55+ day wait into 1 day, on the claims you choose, without covenants or new debt on the balance sheet. Meet payroll. Fund operations. Grow.",
     footnote: "Workflow enhanced, not disrupted.",
   },
 ];
@@ -105,10 +105,10 @@ const AcceleratorPage = () => (
       eyebrow="Claim Payment Accelerator · Patent Pending · AI-Powered"
       title={<>Unlock capital already sitting in <span className="arc-text">unpaid claims.</span></>}
       body="Stop financing your own receivables. ClaimARC scores every claim for propensity to pay, then advances the cash to you in as little as one business day — at a fraction of the cost of a line of credit or factoring, with the upside returned to you. You choose which claims to fund. Nothing about your billing workflow changes."
-      statValue="45"
+      statValue="55"
       statSuffix="+"
       statLabel="Days you're currently waiting"
-      statNote="Industry-avg DSO · HFMA"
+      statNote="Industry-avg wait to be paid · Kodiak, 2026"
     />
     <ComplianceStrip />
 

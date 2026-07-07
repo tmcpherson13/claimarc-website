@@ -105,10 +105,10 @@ const EraProcessingPage = () => (
     </Section>
 
     <NextPage
-      title="Next: see how it all fits together."
-      description="ERA closes the loop on remittance. The whole platform — pipeline, scoring, and acceleration — runs on what you've just seen feed in."
-      to="/why-claimarc"
-      cta="See the full platform"
+      title="Next: what you're paid vs. what you're owed."
+      description="ERA closes the loop on remittance. Contract Intelligence closes the loop on payment — benchmarking what payers paid against what the market says you're owed."
+      to="/contract-intelligence"
+      cta="Contract Intelligence"
     />
 
   </Layout>

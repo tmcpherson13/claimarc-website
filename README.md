@@ -54,9 +54,14 @@ supabase db push                                  # creates contact_submissions
 supabase functions deploy contact
 ```
 
-Optional function env: `CONTACT_WEBHOOK_URL` (Slack/Teams incoming webhook) for instant
-lead notifications. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by the
-Supabase runtime automatically.
+Optional function env:
+- `RESEND_API_KEY` — emails the team via [Resend](https://resend.com) on every submission.
+  `CONTACT_NOTIFY_EMAIL` overrides the recipient (defaults to `info@claimarc.com`). The
+  `from` address (`notifications@claimarc.com`) must be on a domain verified in Resend.
+- `CONTACT_WEBHOOK_URL` — Slack/Teams incoming webhook for instant lead notifications.
+
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are provided by the Supabase runtime
+automatically.
 
 Submissions land in `public.contact_submissions` (RLS-locked; only the edge function can
 write). Read them from the Supabase dashboard or build an export.

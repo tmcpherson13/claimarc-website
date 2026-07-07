@@ -2,8 +2,7 @@ import { Sparkles, Zap, Database } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
-import LeadershipGrid from "@/components/marketing/LeadershipGrid";
-import CtaBand from "@/components/marketing/CtaBand";
+import NextPage from "@/components/marketing/NextPage";
 import ScrollIndicator from "@/components/marketing/ScrollIndicator";
 import { Section, SectionHeading, Eyebrow } from "@/components/marketing/primitives";
 
@@ -28,27 +27,28 @@ const aboutPillars = [
   },
 ];
 
-const LeadershipPage = () => (
+const OurStoryPage = () => (
   <Layout>
     <SeoHead
-      title="About & Leadership — ClaimARC"
-      description="ClaimARC, a Retrieve Remit company, was built to solve healthcare's two biggest revenue-cycle pain points: time-to-reimbursement and making sense of claim-to-cash data. Meet the team and learn the origin story."
-      path="/leadership"
+      title="Our Story — ClaimARC"
+      description="ClaimARC, a Retrieve Remit company, was built to solve healthcare's two biggest revenue-cycle pain points: time-to-reimbursement and making sense of claim-to-cash data. Here's the origin story."
+      path="/our-story"
     />
 
     {/* Hero */}
     <section className="relative overflow-hidden">
       <div className="shell relative py-24 md:py-32">
         <Reveal>
-          <Eyebrow tone="arc" className="mb-5">The team behind ClaimARC</Eyebrow>
+          <Eyebrow tone="arc" className="mb-5">Our story</Eyebrow>
           <h1 className="display text-balance text-4xl leading-[1.05] md:text-6xl">
-            Operators, data scientists,{" "}
-            <span className="arc-text">and capital allocators.</span>
+            Built by people who got tired{" "}
+            <span className="arc-text">of waiting.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-mid)]">
-            ClaimARC was built by leaders who've spent careers inside healthcare revenue
-            cycle, applied AI, and institutional finance — and decided to stop accepting
-            that providers had to wait 45+ days for money they'd already earned.
+            ClaimARC was built by a team with careers inside healthcare revenue
+            cycle, applied AI, and institutional finance — who decided to stop
+            accepting that providers had to wait 55+ days for money they'd
+            already earned.
           </p>
         </Reveal>
         <ScrollIndicator />
@@ -123,23 +123,14 @@ const LeadershipPage = () => (
       </div>
     </Section>
 
-    <Section tone="light">
-      <SectionHeading
-        align="center"
-        eyebrow="Leadership"
-        title={<>The people accountable for every advance.</>}
-        intro="Real names, real expertise, real accountability. We treat client capital like our own — because it is."
-        className="mb-12"
-      />
-      <LeadershipGrid />
-    </Section>
-
-    <CtaBand
-      kicker="Want to meet the team?"
-      headline="Every conversation includes a working session with leadership."
-      subhead="If you're qualified to evaluate ClaimARC, you should be talking to the people building it."
+    <NextPage
+      eyebrow="Continue the conversation"
+      title="See the platform this story built."
+      description="Acceleration, claim-to-cash conversion, ERA processing, and contract intelligence — one platform, built on the belief that providers shouldn't have to wait for money they've already earned."
+      to="/why-claimarc"
+      cta="See how it works"
     />
   </Layout>
 );
 
-export default LeadershipPage;
+export default OurStoryPage;
