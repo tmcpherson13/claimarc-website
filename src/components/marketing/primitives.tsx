@@ -107,6 +107,7 @@ export function SectionHeading({
   // `invert` retained for backwards compat — dark-first means no-op
   invert: _invert = false,
   className = "",
+  as: Tag = "h2",
 }: {
   eyebrow?: string;
   eyebrowTone?: "cyan" | "lime" | "white" | "arc";
@@ -119,6 +120,9 @@ export function SectionHeading({
   align?: "left" | "center";
   invert?: boolean;
   className?: string;
+  /** Heading tag — defaults to h2. Pass "h1" for a page's only top-level heading
+      (e.g. a page with no separate hero section, like /insights). */
+  as?: "h1" | "h2";
 }) {
   return (
     <div
@@ -133,9 +137,9 @@ export function SectionHeading({
           {eyebrow}
         </Eyebrow>
       ) : null}
-      <h2 className="display text-balance text-3xl leading-[1.12] tracking-tight text-[var(--text-hi)] md:text-[2.6rem]">
+      <Tag className="display text-balance text-3xl leading-[1.12] tracking-tight text-[var(--text-hi)] md:text-[2.6rem]">
         {title}
-      </h2>
+      </Tag>
       {intro && (
         <p className="mt-5 text-lg leading-relaxed text-[var(--text-mid)]">
           {intro}
