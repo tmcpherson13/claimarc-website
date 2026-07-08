@@ -187,12 +187,13 @@ const ContactPage = () => {
                     Thanks — we're on it.
                   </h2>
                   <p className="mt-3 text-sm leading-relaxed text-[var(--text-mid)]">
-                    Your email client should have opened with the details prefilled. If it
-                    didn't, just send a note to{" "}
+                    We've received your request and the team's been notified.
+                    We'll get back to you within one business day — or reach us
+                    directly at{" "}
                     <a href={`mailto:${COMPANY.email}`} className="font-semibold text-[var(--arc-1)]">
                       {COMPANY.email}
                     </a>{" "}
-                    and we'll get back to you within one business day.
+                    anytime.
                   </p>
                 </div>
               ) : (
