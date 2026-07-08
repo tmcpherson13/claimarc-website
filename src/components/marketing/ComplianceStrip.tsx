@@ -38,7 +38,7 @@ const badges: Badge[] = [
 const ComplianceStrip = () => (
   <div className="relative border-y border-white/[0.06] bg-white/[0.015] backdrop-blur-xl">
     <div className="shell-wide py-7">
-      <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 md:grid-cols-4">
         {badges.map(({ label, sub, Icon, accent }) => (
           <div key={label} className="flex items-center gap-3">
             <span
