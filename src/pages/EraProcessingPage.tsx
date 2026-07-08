@@ -40,7 +40,7 @@ const delivers = [
   {
     icon: CheckCircle2,
     accent: "cyan" as const,
-    title: "Hands-off posting",
+    title: "Automated posting",
     body: "Auto-postable 835 output across every payer means your team stops chasing remittance and starts working exceptions — not data entry.",
     footnote: "Less keying. Cleaner books.",
   },
