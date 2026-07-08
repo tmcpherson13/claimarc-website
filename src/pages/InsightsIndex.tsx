@@ -35,6 +35,7 @@ const InsightsIndex = () => (
 
     <Section tone="light" className="pt-24 md:pt-28">
       <SectionHeading
+        as="h1"
         eyebrow="Insights"
         title={<>Research, regulatory notes, and <span className="arc-text">revenue cycle reads.</span></>}
         intro="Periodic papers from the ClaimARC research team — quantitative reads on payer behavior, denial trends, and where AI is reshaping the revenue cycle. Open the PDF for the full analysis."
