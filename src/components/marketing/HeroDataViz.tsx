@@ -154,7 +154,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
       <p className="mt-5 max-w-[420px] text-center text-xs leading-relaxed text-[var(--text-lo)]">
         Industry-average wait to be paid sourced from Kodiak Solutions, 2026
         RCM Benchmark. ClaimARC's 1-business-day funding is our target for
-        selected claims — see hero footnote for full disclosure.
+        selected claims.
       </p>
     </div>
   );

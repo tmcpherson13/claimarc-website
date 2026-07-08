@@ -1,4 +1,4 @@
-import { TrendingUp, Clock, AlertTriangle, Banknote } from "lucide-react";
+import { TrendingUp, Clock, Building2, Banknote } from "lucide-react";
 import Reveal from "./Reveal";
 import { Section, SectionHeading } from "./primitives";
 
@@ -12,8 +12,8 @@ import { Section, SectionHeading } from "./primitives";
  * provider from the fight instead of fighting harder.
  *
  * Sources are kept short under each stat. Numbers chosen for emotional
- * pull (the 80.7% overturn rate is the single sharpest one — "they know
- * they owe you").
+ * pull (432 rural hospitals at risk of closing is the single sharpest
+ * one — this isn't an abstract inconvenience, it's an existential threat).
  */
 const stats = [
   {
@@ -37,14 +37,14 @@ const stats = [
     source: "Experian Health · Change Healthcare 2025",
   },
   {
-    icon: AlertTriangle,
+    icon: Building2,
     accent: "var(--lime)",
-    value: "80.7",
-    unit: "%",
-    label: "Of MA denials get overturned",
+    value: "432",
+    unit: "",
+    label: "Rural hospitals at risk of closing",
     detail:
-      "On appeal. Meaning the majority of Medicare Advantage denials were clinically inappropriate to begin with.",
-    source: "KFF analysis of MA prior auth, 2024",
+      "Cash flow, not care quality, is the reason — 41.2% of rural hospitals are now operating in the red.",
+    source: "Chartis, 2026",
   },
   {
     icon: Banknote,

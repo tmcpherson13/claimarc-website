@@ -114,11 +114,20 @@ const AcceleratorPage = () => (
 
     <StatRow
       stats={[
-        { value: "5.2%", label: "Annual A/R increase", note: "Trend keeps getting worse · Becker's / Kodiak, 2024", accent: "lime" },
+        { value: "5.2%", label: "YoY growth in unpaid claims", note: "Your outstanding A/R balance is growing, not shrinking · Becker's / Kodiak, 2024", accent: "lime" },
         { value: "1", label: "Business day to payment*", note: "ClaimARC funding target", accent: "cyan" },
-        { value: "2-way", label: "Bi-directional true-up", note: "Overage returned to you on every advance", accent: "cyan" },
+        { value: "100%", label: "Of overage returned to you", note: "Bi-directional true-up — on every single advance", accent: "cyan" },
       ]}
     />
+
+    <Section tone="light">
+      <SectionHeading
+        eyebrow="Why most financing options fall short"
+        title={<>It isn't a loan. It isn't factoring.</>}
+        intro="It's payment acceleration priced by AI on your own data — with the upside returned to you, not kept by a lender."
+      />
+      <CompareTable themHeading="LOC / Factoring" usHeading="ClaimARC Accelerator" rows={compareRows} />
+    </Section>
 
     <Section tone="navy">
       <SectionHeading
@@ -129,15 +138,6 @@ const AcceleratorPage = () => (
         intro="Submit. Score. Select. Get paid. The true-up keeps every advance precise — overpredict or underpredict, the difference comes back to you."
       />
       <StepFlow steps={steps} />
-    </Section>
-
-    <Section tone="light">
-      <SectionHeading
-        eyebrow="Why most financing options fall short"
-        title={<>It isn't a loan. It isn't factoring.</>}
-        intro="It's payment acceleration priced by AI on your own data — with the upside returned to you, not kept by a lender."
-      />
-      <CompareTable themHeading="LOC / Factoring" usHeading="ClaimARC Accelerator" rows={compareRows} />
     </Section>
 
     <Section tone="mist">
