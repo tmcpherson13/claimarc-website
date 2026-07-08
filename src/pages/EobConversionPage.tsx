@@ -25,7 +25,7 @@ const steps = [
   {
     title: "Extract",
     lead: "Our platform processes",
-    body: "ML data-lifting pulls every data element from the image. Each file is quality-checked and structured for clean 835 generation.",
+    body: "ML data-lifting pulls every data element from most images. Each file is quality-checked and structured for clean 835 generation.",
     footnote: "Builds your intelligence layer.",
   },
   {
@@ -95,8 +95,8 @@ const EobConversionPage = () => (
     <Section tone="light">
       <SectionHeading
         eyebrow="From paper to structured intelligence"
-        title={<>Five steps. Zero manual handling.</>}
-        intro="Your team stops keying remittance by hand. ClaimARC delivers clean, postable data — and quietly builds the data asset that powers the rest of the platform."
+        title={<>Five steps. Minimal manual handling.</>}
+        intro="Your team stops keying remittance by hand — our trained specialists handle what the models can't. ClaimARC delivers clean, postable data — and quietly builds the data asset that powers the rest of the platform."
       />
       <StepFlow steps={steps} />
     </Section>
