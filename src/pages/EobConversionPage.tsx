@@ -88,7 +88,7 @@ const EobConversionPage = () => (
       stats={[
         { value: "$20B", label: "Annual admin burden", note: "Remittance processing inefficiency · HFMA", accent: "lime" },
         { value: "24 & 48hr", label: "Turnaround options", note: "ClaimARC service-level agreement", accent: "cyan" },
-        { value: "100%", label: "Auto-postable output", note: "ANSI X12 5010 835 · your business rules", accent: "cyan" },
+        { value: "835", label: "Auto-postable output", note: "ANSI X12 5010 · exceptions routed to a trained specialist", accent: "cyan" },
       ]}
     />
 
