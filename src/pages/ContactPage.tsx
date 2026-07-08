@@ -228,15 +228,15 @@ const ContactPage = () => {
                     <div>
                       <label htmlFor="role" className={labelCls}>Your role</label>
                       <select id="role" value={form.role} onChange={set("role")} className={inputCls}>
-                        <option value="">Select…</option>
-                        {roles.map((r) => <option key={r} value={r}>{r}</option>)}
+                        <option value="" className="bg-[var(--ink-1)] text-[var(--text-hi)]">Select…</option>
+                        {roles.map((r) => <option key={r} value={r} className="bg-[var(--ink-1)] text-[var(--text-hi)]">{r}</option>)}
                       </select>
                     </div>
                     <div>
                       <label htmlFor="volume" className={labelCls}>Monthly claim volume</label>
                       <select id="volume" value={form.volume} onChange={set("volume")} className={inputCls}>
-                        <option value="">Select…</option>
-                        {volumes.map((v) => <option key={v} value={v}>{v}</option>)}
+                        <option value="" className="bg-[var(--ink-1)] text-[var(--text-hi)]">Select…</option>
+                        {volumes.map((v) => <option key={v} value={v} className="bg-[var(--ink-1)] text-[var(--text-hi)]">{v}</option>)}
                       </select>
                     </div>
                   </div>
@@ -245,7 +245,7 @@ const ContactPage = () => {
                     <label htmlFor="service" className={labelCls}>What are you most interested in?</label>
                     <select id="service" value={form.service} onChange={set("service")} className={inputCls}>
                       <option value="">Select…</option>
-                      {serviceOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                      {serviceOptions.map((s) => <option key={s} value={s} className="bg-[var(--ink-1)] text-[var(--text-hi)]">{s}</option>)}
                     </select>
                   </div>
 
