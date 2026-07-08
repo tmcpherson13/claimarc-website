@@ -16,8 +16,8 @@ const aboutPillars = [
   {
     icon: Sparkles,
     accent: "var(--arc-2)",
-    title: "Built with AI, ML, RPA",
-    body: "Tasks that used to require staff, spreadsheets, and unavoidable data leakage are now handled by machine learning models with measurable accuracy. The technology finally caught up to the problem.",
+    title: "Automation, backed by experts",
+    body: "Machine learning now handles a real share of this work — reliably, at scale. Where the models reach their limit, a dedicated team of trained claims specialists closes the gap, so every exception still gets a real answer, not a black box.",
   },
   {
     icon: Zap,
@@ -81,13 +81,15 @@ const OurStoryPage = () => (
             leakage and operational drag. The cost of "good enough" compounds quietly.
           </p>
           <p>
-            AI, ML, and RPA have finally reached the maturity needed to handle this
-            work at the accuracy bar that healthcare requires. The result is a step
-            change: efficiency where the work used to be tedious, accuracy where errors
-            used to be expensive, and time back for the people who used to do the
-            keying. The data byproduct then powers our Claim Payment Accelerator — letting
-            providers receive payments quickly, at a fraction of the cost of factoring
-            or a line of credit.
+            AI and ML have advanced far enough to automate a real share of this work —
+            but not all of it. Where the technology reaches its limit, a dedicated team
+            of trained claims specialists closes the gap, working the exceptions the
+            models can't resolve on their own. The result is a step change: efficiency
+            where automation carries the load, expert judgment where it still needs a
+            person, and time back for the people who used to do all of it by hand. The
+            data byproduct then powers our Claim Payment Accelerator — letting providers
+            receive payments quickly, at a fraction of the cost of factoring or a line
+            of credit.
           </p>
           <p className="text-[var(--text-hi)]">
             As healthcare keeps evolving, the providers that invest in this layer of
