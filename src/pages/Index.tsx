@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Banknote, FileStack, RefreshCw } from "lucide-react";
+import { ArrowRight, Banknote, FileStack, RefreshCw, Scale } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import Reveal from "@/components/marketing/Reveal";
@@ -52,6 +52,14 @@ const serviceCards = [
     desc: "Electronic remittance normalized, reconciled, and posted across every payer — with a searchable, audit-ready archive and reporting on demand.",
     accent: "var(--arc-3)",
   },
+  {
+    to: "/contract-intelligence",
+    icon: Scale,
+    name: "Contract Intelligence",
+    tag: "Powered by CIQ Health",
+    desc: "Payer contracts benchmarked against real, nationwide market rates — surfacing underpayment claim by claim and backing every renegotiation with data.",
+    accent: "var(--arc-1)",
+  },
 ];
 
 const Index = () => (
@@ -94,7 +102,7 @@ const Index = () => (
           </h1>
           <p className="mt-5 max-w-xl text-xl leading-snug tracking-tight text-[var(--text-mid)] sm:text-2xl">
             <span className="text-[var(--text-hi)]">AI scores every claim.</span>{" "}
-            We advance the cash — instead of the 45+ days you wait on the payer now.
+            We advance the cash — instead of the 55+ days you wait on the payer now.
           </p>
           <p className="mt-3 max-w-xl text-xs leading-relaxed text-[var(--text-lo)]">
             <span className="text-[var(--lime)]">*</span> One business day is our funding target. Most claims fund same- or next-day; some may take additional review based on payer and scoring profile.
@@ -125,7 +133,7 @@ const Index = () => (
         align="center"
         eyebrow="The answer"
         title={<>One platform. <span className="arc-text">Acceleration at the center.</span></>}
-        intro="Acceleration is the differentiator. Claim-to-cash conversion and ERA processing are the supporting services that feed it — each works on its own; together they create an advantage built from your own data."
+        intro="Acceleration is the differentiator. Claim-to-cash conversion, ERA processing, and contract intelligence are the supporting services that feed it — each works on its own; together they create an advantage built from your own data."
         className="mb-4"
       />
       {(() => {
@@ -206,7 +214,7 @@ const Index = () => (
         );
       })()}
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid gap-6 md:grid-cols-3">
         {serviceCards.slice(1).map((s, i) => {
           const Icon = s.icon;
           return (
@@ -268,7 +276,7 @@ const Index = () => (
     {/* 04 — Proof. Three numbers + a thin compliance band. */}
     <StatRow
       stats={[
-        { value: "45+", label: "Days you're currently waiting", note: "Industry-avg DSO · HFMA", accent: "cyan" },
+        { value: "55+", label: "Days you're currently waiting", note: "Industry-avg wait to be paid · Kodiak, 2026", accent: "cyan" },
         { value: "99.7%", label: "Real-world EOB data accuracy", note: "98.5% contracted SLA · ClaimARC", accent: "lime" },
         { value: "1", label: "Business day to payment*", note: "ClaimARC Accelerator funding target", accent: "cyan" },
       ]}
@@ -291,7 +299,7 @@ const Index = () => (
     <CtaBand
       kicker="We onboard a small number of new partners each quarter. We work the math with you first."
       headline="The question isn't whether you can afford ClaimARC."
-      highlight="It's whether you can afford another 45 days of waiting."
+      highlight="It's whether you can afford another 55 days of waiting."
       subhead="Book a 30-minute working session with our team and see the model against your own numbers."
     />
     </div>

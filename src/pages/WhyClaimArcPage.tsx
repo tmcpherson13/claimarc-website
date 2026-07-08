@@ -31,7 +31,7 @@ const advantages = [
     icon: TrendingUp,
     accent: "cyan" as const,
     title: "Cash flow transformation",
-    body: "A 45+ day wait becomes 1 business day (target). Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and HIPAA compliant at every step.",
+    body: "A 55+ day wait becomes 1 business day (target). Your workflow is enhanced, not disrupted. Meet payroll. Fund operations. Grow. SOC 2 Type II and HIPAA compliant at every step.",
     footnote: "Bank, clearinghouse & lockbox agnostic.",
   },
   {

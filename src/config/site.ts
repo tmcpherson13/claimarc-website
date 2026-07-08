@@ -1,6 +1,6 @@
 // Single source of truth for ClaimARC marketing site navigation + metadata.
 
-import { Banknote, FileStack, RefreshCw, type LucideIcon } from "lucide-react";
+import { Banknote, FileStack, RefreshCw, Scale, type LucideIcon } from "lucide-react";
 
 export const SITE_URL = "https://www.claimarc.com";
 
@@ -49,12 +49,19 @@ export const services: ServiceNavItem[] = [
     accent: "var(--arc-3)",
     icon: RefreshCw,
   },
+  {
+    label: "Contract Intelligence",
+    to: "/contract-intelligence",
+    blurb: "Benchmark payer contracts against real market rates.",
+    accent: "var(--arc-1)",
+    icon: Scale,
+  },
 ];
 
 export const primaryNav: NavItem[] = [
   { label: "Why ClaimARC", to: "/why-claimarc" },
   { label: "Insights", to: "/insights" },
-  { label: "Leadership", to: "/leadership" },
+  { label: "Our Story", to: "/our-story" },
 ];
 
 export const compliance = [

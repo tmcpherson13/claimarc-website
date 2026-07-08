@@ -5,11 +5,11 @@ import { ArrowRight } from "lucide-react";
  * HeroDataViz — "The Duel"
  *
  * Replaces the fabricated Funding Ledger mockup with a single decisive
- * before/after lockup: 45 days (industry-average DSO) versus 1 day
- * (ClaimARC's funding target).
+ * before/after lockup: 55 days (industry-average wait to be paid) versus
+ * 1 day (ClaimARC's funding target).
  *
  * Treatment:
- *  - The 45 sits in slate with a hard strikethrough that draws on mount.
+ *  - The 55 sits in slate with a hard strikethrough that draws on mount.
  *  - The 1 sits in lime, mono, oversized — the punchline.
  *  - An arrow animates between them once.
  *  - A small DSO sparkline beneath shows the curve dropping (animated path).
@@ -17,7 +17,7 @@ import { ArrowRight } from "lucide-react";
  * No fake claim IDs, no synthesized $ amounts. The dataviz IS the pitch.
  */
 const HeroDataViz = ({ className = "" }: { className?: string }) => {
-  const [counted, setCounted] = useState(45);
+  const [counted, setCounted] = useState(55);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -25,7 +25,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
       setCounted(1);
       return;
     }
-    const FROM = 45;
+    const FROM = 55;
     const TO = 1;
     const DURATION = 3200;
     const start = performance.now();
@@ -50,7 +50,7 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
     <div className={`relative hidden lg:flex flex-col items-center justify-center ${className}`} aria-hidden="true">
       {/* The duel — two big numerals with an arrow between */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 lg:gap-10">
-        {/* Before — 45 days */}
+        {/* Before — 55 days */}
         <div className="text-right">
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[var(--text-lo)]">
             Industry average
@@ -60,12 +60,12 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
             style={{ letterSpacing: "-0.04em" }}
           >
             <span className="relative inline-block">
-              45
+              55
               <span className="absolute left-[-6%] right-[-6%] top-1/2 h-[6px] -translate-y-1/2 bg-[var(--text-mid)] origin-left animate-[strikeDraw_0.7s_cubic-bezier(0.16,1,0.3,1)_0.6s_forwards] scale-x-0 rounded-full" />
             </span>
           </p>
           <p className="mono mt-2 text-xs uppercase tracking-[0.18em] text-[var(--text-lo)]">
-            DAYS · DSO
+            DAYS TO PAYMENT
           </p>
         </div>
 
@@ -152,9 +152,9 @@ const HeroDataViz = ({ className = "" }: { className?: string }) => {
 
       {/* Footnote caption beneath the chart */}
       <p className="mt-5 max-w-[420px] text-center text-xs leading-relaxed text-[var(--text-lo)]">
-        Industry-average DSO sourced from HFMA / Kodiak benchmarks. ClaimARC's
-        1-business-day funding is our target for selected claims — see hero
-        footnote for full disclosure.
+        Industry-average wait to be paid sourced from Kodiak Solutions, 2026
+        RCM Benchmark. ClaimARC's 1-business-day funding is our target for
+        selected claims — see hero footnote for full disclosure.
       </p>
     </div>
   );

@@ -8,8 +8,9 @@ import Index from "./pages/Index";
 import EobConversionPage from "./pages/EobConversionPage";
 import EraProcessingPage from "./pages/EraProcessingPage";
 import AcceleratorPage from "./pages/AcceleratorPage";
+import ContractIntelligencePage from "./pages/ContractIntelligencePage";
 import WhyClaimArcPage from "./pages/WhyClaimArcPage";
-import LeadershipPage from "./pages/LeadershipPage";
+import OurStoryPage from "./pages/OurStoryPage";
 import ContactPage from "./pages/ContactPage";
 import InsightsIndex from "./pages/InsightsIndex";
 import InsightsDetail from "./pages/InsightsDetail";
@@ -29,8 +30,9 @@ const App = () => (
           <Route path="/eob-conversion" element={<EobConversionPage />} />
           <Route path="/era-processing" element={<EraProcessingPage />} />
           <Route path="/accelerator" element={<AcceleratorPage />} />
+          <Route path="/contract-intelligence" element={<ContractIntelligencePage />} />
           <Route path="/why-claimarc" element={<WhyClaimArcPage />} />
-          <Route path="/leadership" element={<LeadershipPage />} />
+          <Route path="/our-story" element={<OurStoryPage />} />
           <Route path="/insights" element={<InsightsIndex />} />
           <Route path="/insights/:slug" element={<InsightsDetail />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -38,6 +40,7 @@ const App = () => (
           {/* Legacy short-link redirects */}
           <Route path="/pricing" element={<Navigate to="/contact" replace />} />
           <Route path="/about" element={<Navigate to="/why-claimarc" replace />} />
+          <Route path="/leadership" element={<Navigate to="/our-story" replace />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

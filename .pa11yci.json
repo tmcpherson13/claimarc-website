@@ -21,7 +21,8 @@
     "http://127.0.0.1:4173/accelerator",
     "http://127.0.0.1:4173/eob-conversion",
     "http://127.0.0.1:4173/era-processing",
-    "http://127.0.0.1:4173/leadership",
+    "http://127.0.0.1:4173/contract-intelligence",
+    "http://127.0.0.1:4173/our-story",
     "http://127.0.0.1:4173/contact",
     "http://127.0.0.1:4173/insights"
   ]
