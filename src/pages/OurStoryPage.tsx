@@ -17,7 +17,7 @@ const aboutPillars = [
     icon: Sparkles,
     accent: "var(--arc-2)",
     title: "Automation, backed by experts",
-    body: "Machine learning now handles a real share of this work — reliably, at scale. Where the models reach their limit, a dedicated team of trained claims specialists closes the gap, so every exception still gets a real answer, not a black box.",
+    body: "Machine learning now handles a real share of this work — reliably, at scale. Where the models reach their limit, a dedicated team of claims specialists closes the gap, so every anomaly gets a real answer, not an exception.",
   },
   {
     icon: Zap,
