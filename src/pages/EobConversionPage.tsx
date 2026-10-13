@@ -1,4 +1,4 @@
-import { Infinity as InfinityIcon, ShieldCheck, Zap } from "lucide-react";
+import { Infinity as InfinityIcon, ShieldCheck, Stethoscope, Zap } from "lucide-react";
 import Layout from "@/components/Layout";
 import SeoHead from "@/components/SeoHead";
 import ServiceHero from "@/components/marketing/ServiceHero";
@@ -76,7 +76,7 @@ const EobConversionPage = () => (
     <ServiceHero
       eyebrow="Claim to Cash Conversion · HIPAA Compliant"
       title={<>Unlock the data buried <span className="arc-text">in paper and correspondence.</span></>}
-      body="ClaimARC turns paper Explanation of Benefits, checks, and correspondence — indexed and categorized — into structured, auto-postable 835 files. Your custom business rules applied, returned ready to post. The same clean output feeds the AI that powers claim payment acceleration. Works with whatever lockbox, bank, or scanning vendor you already use; nothing in your workflow changes."
+      body="ClaimARC turns paper Explanation of Benefits, checks, and correspondence — indexed and categorized — into structured, auto-postable 835 files. Your custom business rules applied, returned ready to post. The same clean output feeds the AI that powers claim payment acceleration. Covers medical and dental claims (837P, 837I, 837D) across major payers. Works with whatever lockbox, bank, or scanning vendor you already use; nothing in your workflow changes."
       statValue="99.7"
       statSuffix="%"
       statLabel="Real-world data accuracy"
@@ -112,6 +112,7 @@ const EobConversionPage = () => (
         <span className="inline-flex items-center gap-2"><Zap size={16} className="text-[var(--arc-1)]" />Eliminate the cost of manual error.</span>
         <span className="inline-flex items-center gap-2"><ShieldCheck size={16} className="text-[var(--lime)]" />Enterprise security. Zero compromise.</span>
         <span className="inline-flex items-center gap-2"><InfinityIcon size={16} className="text-[var(--arc-1)]" />A competitive moat that builds itself.</span>
+        <span className="inline-flex items-center gap-2"><Stethoscope size={16} className="text-[var(--lime)]" />Medical & dental — full 837P, 837I, 837D support.</span>
       </div>
     </Section>
 
